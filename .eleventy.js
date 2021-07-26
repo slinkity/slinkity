@@ -1,7 +1,22 @@
 const { readFile, writeFile } = require('fs/promises')
+const { promisify } = require('util')
+const sass = require('sass')
+const sassRender = promisify(sass.render)
 
 module.exports = function config(eleventyConfig) {
   eleventyConfig.addTemplateFormats('jsx')
+  eleventyConfig.addTemplateFormats('scss')
+
+  eleventyConfig.addExtension('scss', {
+    read: false,
+    outputFileExtension: 'css',
+    getData: () => ({ layout: '' }),
+    compile: (_, inputPath) => async (data) => {
+      const { css } = await sassRender({ file: inputPath })
+      return css
+    },
+  })
+
   eleventyConfig.addExtension('jsx', {
     read: false,
     getData: () => ({}),
