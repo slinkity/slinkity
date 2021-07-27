@@ -6,6 +6,7 @@ const sassRender = promisify(sass.render)
 module.exports = function config(eleventyConfig) {
   eleventyConfig.addTemplateFormats('jsx')
   eleventyConfig.addTemplateFormats('scss')
+  eleventyConfig.addPassthroughCopy('components')
 
   eleventyConfig.addExtension('scss', {
     read: false,
