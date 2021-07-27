@@ -1,3 +1,4 @@
 {
+  "root": "_site",
   "plugins": ["@snowpack/plugin-react-refresh"]
 }

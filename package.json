@@ -1,4 +1,8 @@
 {
+
+  "scripts": {
+    "dev": "(ELEVENTY_EXPERIMENTAL=true eleventy --watch --incremental) & snowpack dev"
+  },
   "dependencies": {
     "@11ty/eleventy": "^1.0.0-canary.39",
     "@snowpack/plugin-react-refresh": "^2.5.0",
