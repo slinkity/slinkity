@@ -9,7 +9,6 @@ const Logo = ({ height = 500, width = 500 }) => (
     viewBox="0 0 1569.4 2186"
     height={height}
     width={width}
-    xml:space="preserve"
     aria-hidden="true"
     focusable="false"
   >
