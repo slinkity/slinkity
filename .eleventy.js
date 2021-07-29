@@ -1,7 +1,32 @@
-const { readFile, writeFile } = require('fs/promises')
+const { readFile } = require('fs/promises')
 const { promisify } = require('util')
 const sass = require('sass')
 const sassRender = promisify(sass.render)
+const { writeFileRec } = require('./utils/fileHelpers')
+const requireFromString = require('require-from-string')
+const { build } = require('esbuild')
+const { renderToString } = require('react-dom/server')
+const React = require('react')
+
+const makeAllPackagesExternalPlugin = {
+  name: 'make-all-packages-external',
+  setup(build) {
+    let filter = /^[^.\/]|^\.[^.\/]|^\.\.[^\/]/ // Must not start with "/" or "./" or "../"
+    build.onResolve({ filter }, (args) => ({ path: args.path, external: true }))
+  },
+}
+
+const getCommonJSModule = async (inputPath = '') => {
+  const { outputFiles } = await build({
+    entryPoints: [inputPath],
+    format: 'cjs',
+    bundle: true,
+    plugins: [makeAllPackagesExternalPlugin],
+    write: false,
+  })
+  const { text } = outputFiles[0]
+  return requireFromString(text, inputPath)
+}
 
 module.exports = function config(eleventyConfig) {
   eleventyConfig.addTemplateFormats('jsx')
@@ -28,10 +53,15 @@ module.exports = function config(eleventyConfig) {
           .replace(/^_site/, '')
           .replace(/jsx$/, 'js')
 
-        await writeFile(jsxOutputPath, await readFile(inputPath))
+        await writeFileRec(jsxOutputPath, await readFile(inputPath))
+        const component = await getCommonJSModule(jsxOutputPath)
+
+        const elementAsHTMLString = renderToString(
+          React.createElement(component.default, {})
+        )
 
         return `
-        <div id="${jsxOutputPath}"></div>
+        <div id="${jsxOutputPath}">${elementAsHTMLString}</div>
         <script type="module">
           import ReactDOM from 'react-dom'
           import React from 'react'
