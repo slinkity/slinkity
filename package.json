@@ -9,9 +9,10 @@
   "dependencies": {
     "@11ty/eleventy": "^1.0.0-canary.39",
     "@snowpack/plugin-react-refresh": "^2.5.0",
-    "esbuild": "^0.12.15",
+    "esbuild": "^0.12.17",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "require-from-string": "^2.0.2",
     "sass": "^1.36.0",
     "snowpack": "^3.8.3"
   }
