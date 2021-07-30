@@ -65,7 +65,7 @@ module.exports = function config(eleventyConfig) {
 
   eleventyConfig.addTemplateFormats('jsx')
   eleventyConfig.addTemplateFormats('scss')
-  eleventyConfig.addPassthroughCopy('components')
+  eleventyConfig.addPassthroughCopy('**/_includes/**.jsx')
 
   eleventyConfig.addExtension('scss', {
     read: false,
@@ -88,7 +88,7 @@ module.exports = function config(eleventyConfig) {
           .replace(/jsx$/, 'js')
 
         await writeFileRec(jsxOutputPath, await readFile(inputPath))
-        const component = await getCommonJSModule(jsxOutputPath)
+        const component = await getCommonJSModule(inputPath)
 
         const elementAsHTMLString = renderToString(
           React.createElement(component.default, {})
