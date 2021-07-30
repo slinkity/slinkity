@@ -60,7 +60,7 @@ module.exports = function config(eleventyConfig) {
       config: snowpackConfig,
     })
 
-    await writeFile(SNOWPACK_PORT_PATH, `${snowpackServer.port}`)
+    await writeFileRec(SNOWPACK_PORT_PATH, `${snowpackServer.port}`)
   })
 
   eleventyConfig.addTemplateFormats('jsx')
