@@ -1,5 +1,6 @@
-const { readFile } = require('fs/promises')
+const { readFile, writeFile } = require('fs/promises')
 const { promisify } = require('util')
+const { join } = require('path')
 const sass = require('sass')
 const sassRender = promisify(sass.render)
 const { writeFileRec } = require('./utils/fileHelpers')
@@ -7,6 +8,11 @@ const requireFromString = require('require-from-string')
 const { build } = require('esbuild')
 const { renderToString } = require('react-dom/server')
 const React = require('react')
+const { startServer, createConfiguration } = require('snowpack')
+const { isPortInUse } = require('./utils/isPortInUse')
+
+// TODO: replace _site with user configuration
+const SNOWPACK_PORT_PATH = join(process.cwd(), '_site', '.snowpack-port')
 
 const makeAllPackagesExternalPlugin = {
   name: 'make-all-packages-external',
@@ -28,7 +34,35 @@ const getCommonJSModule = async (inputPath = '') => {
   return requireFromString(text, inputPath)
 }
 
+const getSnowpackPort = async () => {
+  try {
+    return Number((await readFile(SNOWPACK_PORT_PATH)).toString())
+  } catch (e) {
+    return undefined
+  }
+}
+
 module.exports = function config(eleventyConfig) {
+  let snowpackServer = null
+  const mode = process.argv.includes('--watch') ? 'development' : 'production'
+  const snowpackConfig = createConfiguration({
+    root: join(process.cwd(), '_site'),
+    mode,
+  })
+
+  eleventyConfig.on('beforeBuild', async () => {
+    if (snowpackServer) return
+
+    const snowpackPort = await getSnowpackPort()
+    if (snowpackPort != null && (await isPortInUse(snowpackPort))) return
+
+    snowpackServer = await startServer({
+      config: snowpackConfig,
+    })
+
+    await writeFile(SNOWPACK_PORT_PATH, `${snowpackServer.port}`)
+  })
+
   eleventyConfig.addTemplateFormats('jsx')
   eleventyConfig.addTemplateFormats('scss')
   eleventyConfig.addPassthroughCopy('components')
