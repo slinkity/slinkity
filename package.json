@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "license": "unlicensed",
   "scripts": {
-    "start": "(ELEVENTY_EXPERIMENTAL=true eleventy --watch --incremental) & snowpack dev"
+    "start": "ELEVENTY_EXPERIMENTAL=true eleventy --watch --incremental"
   },
   "dependencies": {
     "@11ty/eleventy": "^1.0.0-canary.39",
