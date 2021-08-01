@@ -1,4 +1,5 @@
 const portScanner = require('portscanner')
+const { readFile } = require('fs/promises')
 
 const isPortInUse = (port) =>
   new Promise((resolve, reject) => {
@@ -9,6 +10,15 @@ const isPortInUse = (port) =>
     })
   })
 
+const getSnowpackPort = async (snowpackPortPath = '') => {
+  try {
+    return Number((await readFile(snowpackPortPath)).toString())
+  } catch (e) {
+    return undefined
+  }
+}
+
 module.exports = {
   isPortInUse,
+  getSnowpackPort,
 }
