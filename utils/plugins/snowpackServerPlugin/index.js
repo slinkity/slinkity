@@ -13,6 +13,13 @@ module.exports = function snowpackServerPlugin(eleventyConfig, { dir }) {
     root: join(process.cwd(), dir.output),
     mode: isUsingWatch ? 'development' : 'development',
     plugins: ['@snowpack/plugin-react-refresh'],
+    devOptions: {
+      // same defaults as `snowpack dev`
+      // https://github.com/snowpackjs/snowpack/blob/002f863d3583b0c75d150b15a330fe1439a306ed/snowpack/src/commands/dev.ts#L1042-L1046
+      output: 'dashboard',
+      open: 'default',
+      hmr: true,
+    }
   })
 
   eleventyConfig.on('beforeBuild', async () => {
@@ -35,8 +42,7 @@ module.exports = function snowpackServerPlugin(eleventyConfig, { dir }) {
       {
         config: snowpackConfig,
       },
-      // TODO: figure out if these variables are required on setting mode to development
-      { isDev: true, isWatch: true }
+      { isWatch: true }
     )
 
     // write the current snowpack port to a file
