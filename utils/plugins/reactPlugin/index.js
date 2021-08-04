@@ -3,7 +3,7 @@ const { readFile } = require('fs/promises')
 const { writeFileRec } = require('../../fileHelpers')
 const { renderToString } = require('react-dom/server')
 const { toCommonJSModule } = require('./toCommonJSModule')
-const { join } = require('path')
+const { join, relative } = require('path')
 
 module.exports = function reactPlugin(eleventyConfig, { dir }) {
   eleventyConfig.addTemplateFormats('jsx')
@@ -14,11 +14,8 @@ module.exports = function reactPlugin(eleventyConfig, { dir }) {
     getData: () => ({}),
     compile: (_, inputPath) =>
       async function (data) {
-        const jsxOutputPath = data.page.outputPath.replace(/\.html$/, '.jsx')
-        const jsxImportPath = jsxOutputPath.replace(
-          new RegExp(`^${dir.output}`),
-          ''
-        )
+        const jsxImportPath = relative(dir.input, inputPath)
+        const jsxOutputPath = join(dir.output, jsxImportPath)
 
         await writeFileRec(jsxOutputPath, await readFile(inputPath))
         const component = await toCommonJSModule(inputPath)
@@ -32,7 +29,7 @@ module.exports = function reactPlugin(eleventyConfig, { dir }) {
       <script type="module">
         import ReactDOM from 'react-dom'
         import React from 'react'
-        import Component from '${jsxImportPath}'
+        import Component from '/${jsxImportPath}'
 
         ReactDOM.render(React.createElement(Component), document.getElementById('${jsxOutputPath}'))
       </script>
