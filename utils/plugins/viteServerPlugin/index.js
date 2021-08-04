@@ -2,6 +2,8 @@ const { isPortInUse, getServerPort } = require('./getServerPort')
 const { writeFileRec } = require('../../fileHelpers')
 const { join } = require('path')
 const { createServer, build } = require('vite')
+const { promisify } = require('util')
+const glob = promisify(require('glob'))
 
 const isUsingWatch = process.argv.includes('--watch')
 
@@ -48,6 +50,9 @@ module.exports = function viteServerPlugin(eleventyConfig, { dir }) {
         build: {
           outDir: '',
           emptyOutDir: true,
+          rollupOptions: {
+            input: await glob(`${dir.output}/**/*.html`, { absolute: true }),
+          },
         },
       })
     }
