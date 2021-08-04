@@ -10,9 +10,9 @@ const isPortInUse = (port) =>
     })
   })
 
-const getSnowpackPort = async (snowpackPortPath = '') => {
+const getServerPort = async (serverPortPath = '') => {
   try {
-    return Number((await readFile(snowpackPortPath)).toString())
+    return Number((await readFile(serverPortPath)).toString())
   } catch (e) {
     return undefined
   }
@@ -20,5 +20,5 @@ const getSnowpackPort = async (snowpackPortPath = '') => {
 
 module.exports = {
   isPortInUse,
-  getSnowpackPort,
+  getServerPort,
 }

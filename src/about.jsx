@@ -5,7 +5,7 @@ import Logo from './_components/Logo'
 const Home = () => (
   <main>
     <Logo />
-    <h1>Reac11ty ⚛️</h1>
+    <h1>About ⚛️</h1>
     <Counter />
   </main>
 )

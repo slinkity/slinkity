@@ -7,7 +7,7 @@ const { join } = require('path')
 
 module.exports = function reactPlugin(eleventyConfig, { dir }) {
   eleventyConfig.addTemplateFormats('jsx')
-  eleventyConfig.addPassthroughCopy(join(dir.input, dir.includes, '**.jsx'))
+  eleventyConfig.addPassthroughCopy(join(dir.input, '_includes', 'components'))
 
   eleventyConfig.addExtension('jsx', {
     read: false,
@@ -15,9 +15,10 @@ module.exports = function reactPlugin(eleventyConfig, { dir }) {
     compile: (_, inputPath) =>
       async function (data) {
         const jsxOutputPath = data.page.outputPath.replace(/\.html$/, '.jsx')
-        const jsxImportPath = jsxOutputPath
-          .replace(new RegExp(`^${dir.output}`), '')
-          .replace(/jsx$/, 'js')
+        const jsxImportPath = jsxOutputPath.replace(
+          new RegExp(`^${dir.output}`),
+          ''
+        )
 
         await writeFileRec(jsxOutputPath, await readFile(inputPath))
         const component = await toCommonJSModule(inputPath)

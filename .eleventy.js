@@ -1,4 +1,4 @@
-const snowpackServerPlugin = require('./utils/plugins/snowpackServerPlugin')
+const viteServerPlugin = require('./utils/plugins/viteServerPlugin')
 const reactPlugin = require('./utils/plugins/reactPlugin')
 const sassPlugin = require('./utils/plugins/sassPlugin')
 
@@ -9,7 +9,7 @@ const dir = {
 }
 
 module.exports = function (eleventyConfig) {
-  eleventyConfig.addPlugin(snowpackServerPlugin, { dir })
+  eleventyConfig.addPlugin(viteServerPlugin, { dir })
   eleventyConfig.addPlugin(reactPlugin, { dir })
   eleventyConfig.addPlugin(sassPlugin)
 
