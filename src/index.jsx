@@ -1,6 +1,6 @@
 import React from 'react'
 import Counter from './_includes/components/Counter'
-import Logo from './_components/Logo'
+import Logo from './_includes/components/Logo'
 
 const Home = () => (
   <main>
