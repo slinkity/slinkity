@@ -12,6 +12,7 @@
     "cheerio": "^1.0.0-rc.10",
     "esbuild": "^0.12.17",
     "glob": "^7.1.7",
+    "html-react-parser": "^1.2.7",
     "portscanner": "^2.1.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",

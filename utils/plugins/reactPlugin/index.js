@@ -5,6 +5,7 @@ const { renderToString } = require('react-dom/server')
 const { toCommonJSModule } = require('./toCommonJSModule')
 const { join, relative } = require('path')
 const cheerio = require('cheerio')
+const parseHtmlToReact = require('html-react-parser')
 
 const REACT_RENDERER_FILE_NAME = '_slinkity-react-renderer.js'
 
@@ -33,8 +34,8 @@ module.exports = function reactPlugin(eleventyConfig, { dir }) {
   eleventyConfig.addExtension('jsx', {
     read: false,
     getData: async (inputPath) => {
-      const { data } = await toCommonJSModule(inputPath)
-      return data
+      const { getProps = () => ({}) } = await toCommonJSModule(inputPath)
+      return getProps({})
     },
     compile: (_, inputPath) =>
       async function (data) {
@@ -43,7 +44,7 @@ module.exports = function reactPlugin(eleventyConfig, { dir }) {
         // TODO: make this more efficient with caching
         // We already build the component in getData!
         // See https://github.com/11ty/eleventy-plugin-vue/blob/master/.eleventy.js
-        const { default: component, data: frontMatterData = {} } =
+        const { default: component, getProps = () => ({}) } =
           await toCommonJSModule(inputPath)
 
         if (component == null) {
@@ -53,16 +54,22 @@ module.exports = function reactPlugin(eleventyConfig, { dir }) {
           return ''
         }
 
+        const props = getProps(data)
+
         const elementAsHTMLString = renderToString(
-          React.createElement(component, {})
+          React.createElement(
+            component,
+            props,
+            parseHtmlToReact(data.content || '')
+          )
         )
 
-        if (frontMatterData.render === 'static') {
+        if (props.render === 'static') {
           return elementAsHTMLString
         } else {
-          const isLazy = frontMatterData.render === 'lazy'
+          const isLazy = props.render === 'lazy'
           return `
-        <slinkity-react-renderer data-s-path="${jsxImportPath}"
+        <slinkity-react-renderer data-s-path="${jsxImportPath}" data-s-page="true"
         ${isLazy ? 'data-s-lazy="true"' : ''}>
           ${elementAsHTMLString}
         </slinkity-react-renderer>
@@ -101,9 +108,22 @@ module.exports = function reactPlugin(eleventyConfig, { dir }) {
             import ReactDOM from 'react-dom'
             import React from 'react'
             import Component from '/${componentPath}'
+
+            const mountPoint = document.querySelector('slinkity-react-renderer[data-s-path="${componentPath}"]')
+            const innerReactEl = mountPoint.querySelector('slinkity-react-renderer[data-s-page="true"]')
+
+            let children
+            if (innerReactEl) {
+              const props = {
+                dangerouslySetInnerHTML: { __html: innerReactEl.innerHTML },
+              }
+              for (const attribute of innerReactEl.attributes) {
+                props[attribute.name] = attribute.value
+              }
+              children = React.createElement(innerReactEl.tagName, props)
+            }
     
-            ReactDOM.render(React.createElement(Component),
-            document.querySelector('slinkity-react-renderer[data-s-path="${componentPath}"]'))
+            ReactDOM.render(React.createElement(Component, {}, children), mountPoint)
           </script>`
             if (isLazy) {
               // wrap "lazy" components in a template so we can load them later
