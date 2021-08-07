@@ -4,6 +4,7 @@ const { program } = require('commander')
 const UserConfig = require('@11ty/eleventy/src/UserConfig')
 const { join, resolve } = require('path')
 const { quote: unixQuote } = require('shell-quote')
+const meta = require('../package.json')
 const winQuote = (args) =>
   args.map((arg) => `"${arg.replace(/"/g, '\\"')}"`).join(' ')
 const quote = process.platform === 'win32' ? winQuote : unixQuote
@@ -83,7 +84,7 @@ const isEleventyArg = (arg) => Boolean(eleventyArgs[arg])
 const applyOption = (option) =>
   program.option(option.flag, option.description, option.defaultValue)
 
-program.version('0.0.1')
+program.version(meta.version)
 applyOption(eleventyArgs.input)
 applyOption(eleventyArgs.output)
 applyOption(eleventyArgs.watch)
