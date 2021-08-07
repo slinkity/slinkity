@@ -19,7 +19,12 @@ module.exports = function reactPlugin(eleventyConfig, { dir }) {
     },
     compile: (_, inputPath) =>
       async function (data) {
-        const jsxImportPath = relative(dir.input, inputPath)
+        const jsxImportPath = relative(dir.input, inputPath).replace(
+          /.jsx$/,
+          ''
+        )
+
+        console.log({ jsxImportPath })
 
         // TODO: make this more efficient with caching
         // We already build the component in getData!
@@ -71,10 +76,13 @@ module.exports = function reactPlugin(eleventyConfig, { dir }) {
           .toArray()
           .map((el) => el.attribs)
 
+        // copy all associated components to the build
         await Promise.all(
-          rendererAttrs.map(async ({ 'data-s-path': componentPath }) => {
+          rendererAttrs.map(async ({ 'data-s-path': dataSPath }) => {
+            const componentPath = dataSPath + '.jsx'
             const jsxInputPath = join(process.cwd(), dir.input, componentPath)
             const jsxOutputPath = join(process.cwd(), dir.output, componentPath)
+            console.log({ jsxInputPath, jsxOutputPath })
             await writeFileRec(jsxOutputPath, await readFile(jsxInputPath))
           })
         )
@@ -85,7 +93,7 @@ module.exports = function reactPlugin(eleventyConfig, { dir }) {
             const loadScript = `<script type="module">
             import ReactDOM from 'react-dom'
             import React from 'react'
-            import Component from '/${componentPath}'
+            import Component from '/${componentPath}.js'
 
             const mountPoint = document.querySelector('slinkity-react-renderer[data-s-path="${componentPath}"]')
             const innerReactEl = mountPoint.querySelector('slinkity-react-renderer[data-s-page="true"]')

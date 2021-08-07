@@ -42,6 +42,9 @@
   },
   "scripts": {
     "build": "babel src -d lib",
-    "watch": "babel src -d lib -w"
+    "watch": "babel src -d lib -w",
+    "setup-example": "mkdir example/node_modules/slinkity && cp package.json example/node_modules/slinkity/package.json && cp package-lock.json example/node_modules/slinkity/package-lock.json",
+    "build-example": "babel src -d example/node_modules/slinkity/lib",
+    "watch-example": "babel src -d example/node_modules/slinkity/lib -w"
   }
 }
