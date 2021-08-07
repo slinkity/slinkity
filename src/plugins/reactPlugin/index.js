@@ -83,25 +83,10 @@ module.exports = function reactPlugin(eleventyConfig, { dir }) {
         const componentScripts = rendererAttrs.map(
           ({ 'data-s-path': componentPath, 'data-s-lazy': isLazy = false }) => {
             const loadScript = `<script type="module">
-            import ReactDOM from 'react-dom'
-            import React from 'react'
+            import { renderComponent } from 'slinkity/lib/plugins/reactPlugin/_slinkity-react-renderer.js'
             import Component from '/${componentPath}'
 
-            const mountPoint = document.querySelector('slinkity-react-renderer[data-s-path="${componentPath}"]')
-            const innerReactEl = mountPoint.querySelector('slinkity-react-renderer[data-s-page="true"]')
-
-            let children
-            if (innerReactEl) {
-              const props = {
-                dangerouslySetInnerHTML: { __html: innerReactEl.innerHTML },
-              }
-              for (const attribute of innerReactEl.attributes) {
-                props[attribute.name] = attribute.value
-              }
-              children = React.createElement(innerReactEl.tagName, props)
-            }
-    
-            ReactDOM.render(React.createElement(Component, {}, children), mountPoint)
+            renderComponent({ Component, componentPath: '${componentPath}' })
           </script>`
             if (isLazy) {
               // wrap "lazy" components in a template so we can load them later

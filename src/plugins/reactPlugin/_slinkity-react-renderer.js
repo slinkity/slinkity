@@ -1,4 +1,31 @@
+import React from 'react'
 import ReactDOM from 'react-dom'
+
+export const renderComponent = ({
+  Component = () => {},
+  componentPath = '',
+}) => {
+  const mountPoint = document.querySelector(
+    `slinkity-react-renderer[data-s-path="${componentPath}"]`
+  )
+  const innerReactEl = mountPoint.querySelector(
+    'slinkity-react-renderer[data-s-page="true"]'
+  )
+
+  let children
+  if (innerReactEl) {
+    const props = {
+      dangerouslySetInnerHTML: { __html: innerReactEl.innerHTML },
+    }
+    for (const attribute of innerReactEl.attributes) {
+      props[attribute.name] = attribute.value
+    }
+    children = React.createElement(innerReactEl.tagName, props)
+  }
+
+  ReactDOM.render(React.createElement(Component, {}, children), mountPoint)
+}
+
 export default class SlinkityReactRenderer extends HTMLElement {
   connectedCallback() {
     const options = {
