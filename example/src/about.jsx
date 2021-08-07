@@ -2,14 +2,14 @@ import React from 'react'
 import Counter from './_includes/components/Counter'
 import Logo from './_includes/components/Logo'
 
-export const getProps = (eleventyData) => ({ layout: 'layout', render: 'lazy' })
+export const getProps = (eleventyData) => ({ layout: 'base' })
 
-const Home = () => (
+const About = () => (
   <>
     <Logo />
-    <h1>Reac11ty ⚛️</h1>
+    <h1>About ⚛️</h1>
     <Counter />
   </>
 )
 
-export default Home
+export default About

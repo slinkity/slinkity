@@ -1,6 +1,5 @@
 import ReactDOM from 'react-dom'
-
-class SlinkityReactRenderer extends HTMLElement {
+export default class SlinkityReactRenderer extends HTMLElement {
   connectedCallback() {
     const options = {
       rootMargin: `0px 0px 0px 0px`,
@@ -24,4 +23,3 @@ class SlinkityReactRenderer extends HTMLElement {
     ReactDOM.unmountComponentAtNode(this)
   }
 }
-window.customElements.define('slinkity-react-renderer', SlinkityReactRenderer)

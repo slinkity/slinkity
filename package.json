@@ -1,24 +1,46 @@
 {
-  "name": "11ty-jsx",
-  "description": "A starter template to using React as an 11ty template, plus the power of snowpack",
-  "version": "1.0.0",
+  "name": "slinkity",
+  "description": "You better not think this is the Slinkity project (bringing dynamic components and page transitions to any 11ty site). That's just crazy",
+  "version": "0.0.1",
   "license": "MIT",
-  "scripts": {
-    "start": "ELEVENTY_EXPERIMENTAL=true eleventy --watch --incremental"
+  "main": "./lib/plugin.js",
+  "homepage": "https://slinkity.dev",
+  "author": {
+    "name": "Ben Holmes",
+    "email": "hey@bholmes.dev",
+    "url": "https://bholmes.dev/"
   },
+  "bin": {
+    "slinkity": "./lib/cli.js"
+  },
+  "keywords": [
+    "eleventy",
+    "eleventy-plugin"
+  ],
   "dependencies": {
     "@11ty/eleventy": "^1.0.0-canary.39",
-    "@snowpack/plugin-react-refresh": "^2.5.0",
     "cheerio": "^1.0.0-rc.10",
+    "commander": "^5.1.0",
+    "concurrently": "^6.2.0",
     "esbuild": "^0.12.17",
     "glob": "^7.1.7",
     "html-react-parser": "^1.2.7",
-    "portscanner": "^2.1.1",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
     "require-from-string": "^2.0.2",
     "sass": "^1.36.0",
-    "snowpack": "^3.8.3",
+    "shell-quote": "^1.7.2",
     "vite": "^2.4.4"
+  },
+  "peerDependencies": {
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "snowpack": "^3.8.3"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.14.8",
+    "@babel/core": "^7.15.0",
+    "@babel/preset-env": "^7.15.0"
+  },
+  "scripts": {
+    "build": "babel src -d lib"
   }
 }

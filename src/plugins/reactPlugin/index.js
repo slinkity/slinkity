@@ -1,35 +1,15 @@
 const React = require('react')
 const { readFile } = require('fs/promises')
-const { writeFileRec } = require('../../fileHelpers')
+const { writeFileRec } = require('../../utils/fileHelpers')
 const { renderToString } = require('react-dom/server')
 const { toCommonJSModule } = require('./toCommonJSModule')
 const { join, relative } = require('path')
 const cheerio = require('cheerio')
 const parseHtmlToReact = require('html-react-parser')
 
-const REACT_RENDERER_FILE_NAME = '_slinkity-react-renderer.js'
-
 module.exports = function reactPlugin(eleventyConfig, { dir }) {
   eleventyConfig.addTemplateFormats('jsx')
   eleventyConfig.addPassthroughCopy(join(dir.input, dir.includes, 'components'))
-
-  // TODO: remove this once we can directly import from node_modules
-  let reactRendererAddedToBuild = false
-  const addReactRendererToBuild = async () => {
-    // don't repeatedly read / write the _slinkity-react-renderer
-    // during production builds
-    if (reactRendererAddedToBuild) return
-
-    const reactRenderer = await readFile(
-      join(__dirname, REACT_RENDERER_FILE_NAME)
-    )
-    await writeFileRec(
-      join(dir.output, REACT_RENDERER_FILE_NAME),
-      reactRenderer
-    )
-
-    reactRendererAddedToBuild = true
-  }
 
   eleventyConfig.addExtension('jsx', {
     read: false,
@@ -87,8 +67,6 @@ module.exports = function reactPlugin(eleventyConfig, { dir }) {
       const hasDynamicReact = $('slinkity-react-renderer').length > 0
 
       if (hasDynamicReact) {
-        addReactRendererToBuild()
-
         const rendererAttrs = $('slinkity-react-renderer')
           .toArray()
           .map((el) => el.attribs)
@@ -135,7 +113,10 @@ module.exports = function reactPlugin(eleventyConfig, { dir }) {
         )
 
         $('body').append(
-          `<script type="module" src="/_slinkity-react-renderer.js" async></script>
+          `<script type="module" async>
+            import SlinkityReactRenderer from 'slinkity/lib/plugins/reactPlugin/_slinkity-react-renderer.js'
+            window.customElements.define('slinkity-react-renderer', SlinkityReactRenderer)
+          </script>
           ${componentScripts.join('')}`
         )
         return $.html()
