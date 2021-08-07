@@ -1,16 +1,18 @@
 {
-  "name": "example",
+  "name": "slinkity-example",
   "version": "1.0.0",
-  "description": "",
+  "description": "An example playground to try out Slinkity features",
   "main": ".eleventy.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "link": "cd ../ && npm link && cd - && npm link slinkity",
+    "build": "slinkity",
+    "watch": "slinkity --watch",
+    "serve": "slinkity --serve"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2"
-  }
+  "author": {
+    "name": "Ben Holmes",
+    "email": "hey@bholmes.dev",
+    "url": "https://bholmes.dev/"
+  },
+  "license": "MIT"
 }
