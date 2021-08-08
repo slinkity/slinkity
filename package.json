@@ -1,7 +1,7 @@
 {
   "name": "slinkity",
-  "description": "You better not think this is the Slinkity project (bringing dynamic components and page transitions to any 11ty site). That's just crazy",
-  "version": "0.0.1",
+  "description": "To 11ty and beyond! The tool for bringing dynamic, clientside interactions to your static 11ty site",
+  "version": "0.0.2",
   "license": "MIT",
   "main": "./lib/plugin.js",
   "homepage": "https://slinkity.dev",
