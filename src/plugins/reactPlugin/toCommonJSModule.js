@@ -1,5 +1,6 @@
 const requireFromString = require('require-from-string')
 const { build } = require('esbuild')
+const { log } = require('../../utils/logger')
 
 const makeAllPackagesExternalPlugin = {
   name: 'make-all-packages-external',
@@ -9,7 +10,10 @@ const makeAllPackagesExternalPlugin = {
   },
 }
 
-const toCommonJSModule = async (inputPath = '') => {
+module.exports = async function toCommonJSModule({
+  inputPath = '',
+  shouldHaveDefaultExport = true,
+}) {
   const { outputFiles } = await build({
     entryPoints: [inputPath],
     format: 'cjs',
@@ -18,9 +22,12 @@ const toCommonJSModule = async (inputPath = '') => {
     write: false,
   })
   const { text } = outputFiles[0]
-  return requireFromString(text, inputPath)
-}
-
-module.exports = {
-  toCommonJSModule,
+  const result = requireFromString(text, inputPath)
+  if (shouldHaveDefaultExport && result.default == null) {
+    log({
+      type: 'error',
+      message: `Looks like you forgot to export default from "${inputPath}"`,
+    })
+  }
+  return result
 }

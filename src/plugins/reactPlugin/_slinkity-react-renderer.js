@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom'
 export const renderComponent = ({
   Component = () => {},
   componentPath = '',
+  props = {},
 }) => {
   const mountPoint = document.querySelector(
     `slinkity-react-renderer[data-s-path="${componentPath}"]`
@@ -14,16 +15,16 @@ export const renderComponent = ({
 
   let children
   if (innerReactEl) {
-    const props = {
+    const childrenProps = {
       dangerouslySetInnerHTML: { __html: innerReactEl.innerHTML },
     }
     for (const attribute of innerReactEl.attributes) {
-      props[attribute.name] = attribute.value
+      childrenProps[attribute.name] = attribute.value
     }
-    children = React.createElement(innerReactEl.tagName, props)
+    children = React.createElement(innerReactEl.tagName, childrenProps)
   }
 
-  ReactDOM.render(React.createElement(Component, {}, children), mountPoint)
+  ReactDOM.render(React.createElement(Component, props, children), mountPoint)
 }
 
 export default class SlinkityReactRenderer extends HTMLElement {

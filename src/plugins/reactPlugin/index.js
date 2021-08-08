@@ -1,20 +1,25 @@
-const React = require('react')
 const { readFile } = require('fs/promises')
 const { writeFileRec } = require('../../utils/fileHelpers')
-const { renderToString } = require('react-dom/server')
-const { toCommonJSModule } = require('./toCommonJSModule')
+const toCommonJSModule = require('./toCommonJSModule')
 const { join, relative } = require('path')
 const cheerio = require('cheerio')
-const parseHtmlToReact = require('html-react-parser')
+const addShortcode = require('./addShortcode')
+const { stringify } = require('javascript-stringify')
+const toRendererHtml = require('./toRendererHtml')
+const { log } = require('../../utils/logger')
 
 module.exports = function reactPlugin(eleventyConfig, { dir }) {
   eleventyConfig.addTemplateFormats('jsx')
   eleventyConfig.addPassthroughCopy(join(dir.input, dir.includes, 'components'))
 
+  const componentToPropsMap = {}
+
+  eleventyConfig.addPlugin(addShortcode, { componentToPropsMap })
+
   eleventyConfig.addExtension('jsx', {
     read: false,
     getData: async (inputPath) => {
-      const { getProps = () => ({}) } = await toCommonJSModule(inputPath)
+      const { getProps = () => ({}) } = await toCommonJSModule({ inputPath })
       return getProps({})
     },
     compile: (_, inputPath) =>
@@ -24,37 +29,20 @@ module.exports = function reactPlugin(eleventyConfig, { dir }) {
         // TODO: make this more efficient with caching
         // We already build the component in getData!
         // See https://github.com/11ty/eleventy-plugin-vue/blob/master/.eleventy.js
-        const { default: component, getProps = () => ({}) } =
-          await toCommonJSModule(inputPath)
-
-        if (component == null) {
-          console.error(
-            `Looks like you forgot to export default from your .jsx file: ${inputPath}`
-          )
-          return ''
-        }
+        const { default: Component = () => {}, getProps = () => ({}) } =
+          await toCommonJSModule({ inputPath })
 
         const props = getProps(data)
+        componentToPropsMap[jsxImportPath] ??= props
 
-        const elementAsHTMLString = renderToString(
-          React.createElement(
-            component,
-            props,
-            parseHtmlToReact(data.content || '')
-          )
-        )
-
-        if (props.render === 'static') {
-          return elementAsHTMLString
-        } else {
-          const isLazy = props.render === 'lazy'
-          return `
-        <slinkity-react-renderer data-s-path="${jsxImportPath}" data-s-page="true"
-        ${isLazy ? 'data-s-lazy="true"' : ''}>
-          ${elementAsHTMLString}
-        </slinkity-react-renderer>
-        `
-        }
+        return toRendererHtml({
+          Component,
+          componentPath: jsxImportPath,
+          props,
+          render: props.render,
+          isPage: true,
+          innerHTML: data.content,
+        })
       },
   })
 
@@ -79,14 +67,15 @@ module.exports = function reactPlugin(eleventyConfig, { dir }) {
           })
         )
 
-        // TODO: handle component props, children
         const componentScripts = rendererAttrs.map(
           ({ 'data-s-path': componentPath, 'data-s-lazy': isLazy = false }) => {
             const loadScript = `<script type="module">
-            import { renderComponent } from 'slinkity/lib/plugins/reactPlugin/_slinkity-react-renderer.js'
-            import Component from '/${componentPath}'
-
-            renderComponent({ Component, componentPath: '${componentPath}' })
+            import { renderComponent } from 'slinkity/lib/plugins/reactPlugin/_slinkity-react-renderer.js';
+            import Component from '/${componentPath}';
+            const props = ${stringify(
+              componentToPropsMap[componentPath] ?? {}
+            )}; 
+            renderComponent({ Component, componentPath: '${componentPath}', props });
           </script>`
             if (isLazy) {
               // wrap "lazy" components in a template so we can load them later
@@ -99,8 +88,8 @@ module.exports = function reactPlugin(eleventyConfig, { dir }) {
 
         $('body').append(
           `<script type="module" async>
-            import SlinkityReactRenderer from 'slinkity/lib/plugins/reactPlugin/_slinkity-react-renderer.js'
-            window.customElements.define('slinkity-react-renderer', SlinkityReactRenderer)
+            import SlinkityReactRenderer from 'slinkity/lib/plugins/reactPlugin/_slinkity-react-renderer.js';
+            window.customElements.define('slinkity-react-renderer', SlinkityReactRenderer);
           </script>
           ${componentScripts.join('')}`
         )
