@@ -10,6 +10,8 @@ const winQuote = (args) =>
 const quote = process.platform === 'win32' ? winQuote : unixQuote
 const eleventyDefaults = require('./utils/eleventyDefaults')
 
+const ELEVENTY_VERSION = '@11ty/eleventy@1.0.0-canary.39'
+
 const eleventyArgs = {
   input: {
     flag: '--input <input>',
@@ -60,7 +62,7 @@ const slinkityArgs = {
     flag: '--eleventy-cmd <cmd>',
     description:
       'Command Slinkity should run to start eleventy. Useful if you want to try a different 11ty version or canary, i.e. `npx @11ty/eleventy@canaryX.X.X',
-    defaultValue: 'npx @11ty/eleventy',
+    defaultValue: `npx ${ELEVENTY_VERSION}`,
   },
   viteCmd: {
     flag: '--vite-cmd <cmd>',
