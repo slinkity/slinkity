@@ -123,12 +123,12 @@ const eleventyCmdArgs = quote(
 )
 
 const eleventyConfigPath = join(process.cwd(), options.config)
-let eleventyConfig = () => ({})
+let eleventyConfig
 try {
   eleventyConfig = require(eleventyConfigPath)
 } catch (e) {}
 
-const { dir: userConfigDir = {} } = eleventyConfig(new UserConfig())
+const userConfigDir = eleventyConfig?.(new UserConfig())?.dir ?? {}
 
 const dir = {
   ...eleventyDefaults.dir,

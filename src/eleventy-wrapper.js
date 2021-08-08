@@ -1,16 +1,14 @@
 const slinkity = require('./plugin')
 const { config: userConfigPath, dir } = JSON.parse(process.env.SLINKITY_CONFIG)
 
-let userConfig = () => {}
+let userConfigFn
 try {
-  userConfig = require(userConfigPath)
+  userConfigFn = require(userConfigPath)
 } catch (e) {}
 
 module.exports = function (eleventyConfig) {
   eleventyConfig.addPlugin(slinkity, { dir })
 
-  return {
-    ...userConfig(eleventyConfig),
-    dir,
-  }
+  const userConfig = userConfigFn?.(eleventyConfig) ?? {}
+  return { ...userConfig, dir }
 }
