@@ -37,6 +37,14 @@ Now you're off to the races! This command will:
 1. Start up [11ty in `--watch` mode](https://www.11ty.dev/docs/usage/#re-run-eleventy-when-you-save) to listen for file changes
 2. Start up [a Vite server](https://vitejs.dev/guide/#index-html-and-project-root) pointed at your 11ty build. This helps us process all sorts of file types, including SASS styles, React components, and more 🚀
 
+When you're ready for a production build, just run:
+
+```bash
+npx slinkity
+```
+
+...and your shiny new site will appear in the `_site` folder (or [wherever you tell 11ty to build your site](https://www.11ty.dev/docs/config/#output-directory)).
+
 ### [📚 Find our full documentation here →](https://slinkity.dev/)
 
 ## Feature set
