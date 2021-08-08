@@ -22,13 +22,13 @@ You'll need an existing 11ty site to get started. If you're new to 11ty, you can
 Then, you can install Slinkity into your project repo like so:
 
 ```bash
-npm i slinkity
+npm i --save-dev slinkity
 ```
 
 ...and run our CLI command to spin up the dev server:
 
 ```bash
-slinkity --serve
+npx slinkity --serve
 # Also consider the --incremental flag for faster builds during development
 ```
 
