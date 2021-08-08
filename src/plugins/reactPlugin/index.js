@@ -6,7 +6,6 @@ const cheerio = require('cheerio')
 const addShortcode = require('./addShortcode')
 const { stringify } = require('javascript-stringify')
 const toRendererHtml = require('./toRendererHtml')
-const { log } = require('../../utils/logger')
 
 module.exports = function reactPlugin(eleventyConfig, { dir }) {
   eleventyConfig.addTemplateFormats('jsx')
