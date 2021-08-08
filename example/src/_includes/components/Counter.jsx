@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import styles from './Counter.module.css'
 
 function Counter() {
   // Declare a new state variable, which we'll call "count"
@@ -7,7 +8,9 @@ function Counter() {
   return (
     <div>
       <p>You clicked {count} times</p>
-      <button onClick={() => setCount(count + 1)}>Click me</button>
+      <button className={styles.clickBtn} onClick={() => setCount(count + 1)}>
+        Click me
+      </button>
     </div>
   )
 }

@@ -16,6 +16,9 @@ module.exports = async function toCommonJSModule({
 }) {
   const { outputFiles } = await build({
     entryPoints: [inputPath],
+    // TODO: this helps swallow CSS module errors
+    // But this causes CSS module classes to get stripped from the output!
+    outfile: '',
     format: 'cjs',
     bundle: true,
     plugins: [makeAllPackagesExternalPlugin],
