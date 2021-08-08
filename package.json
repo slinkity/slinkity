@@ -25,6 +25,7 @@
     "esbuild": "^0.12.17",
     "glob": "^7.1.7",
     "html-react-parser": "^1.2.7",
+    "javascript-stringify": "^2.1.0",
     "require-from-string": "^2.0.2",
     "sass": "^1.36.0",
     "shell-quote": "^1.7.2",
