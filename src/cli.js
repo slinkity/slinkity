@@ -122,7 +122,12 @@ const eleventyCmdArgs = quote(
   )
 )
 
-const eleventyConfig = require(join(process.cwd(), options.config))
+const eleventyConfigPath = join(process.cwd(), options.config)
+let eleventyConfig = () => {}
+try {
+  eleventyConfig = require(eleventyConfigPath)
+} catch (e) {}
+
 const { dir: userConfigDir = {} } = eleventyConfig(new UserConfig())
 
 const dir = {
@@ -146,7 +151,7 @@ const eleventyCmd = {
     ELEVENTY_EXPERIMENTAL: true,
     SLINKITY_SERVE: options.serve,
     SLINKITY_CONFIG: JSON.stringify({
-      config: resolve(options.config),
+      config: eleventyConfigPath,
       dir,
     }),
   },
