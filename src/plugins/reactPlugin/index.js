@@ -33,7 +33,7 @@ module.exports = function reactPlugin(eleventyConfig, { dir }) {
           await toCommonJSModule({ inputPath })
 
         const props = getProps(data)
-        componentToPropsMap[jsxImportPath] ??= props
+        componentToPropsMap[jsxImportPath] = props
 
         return toRendererHtml({
           Component,
