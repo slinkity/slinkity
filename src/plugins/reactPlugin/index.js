@@ -1,4 +1,4 @@
-const { readFile } = require('fs/promises')
+const { readFile } = require('fs').promises
 const { writeFileRec } = require('../../utils/fileHelpers')
 const toCommonJSModule = require('./toCommonJSModule')
 const { join, relative } = require('path')

@@ -1,4 +1,4 @@
-const { writeFile, mkdir } = require('fs/promises')
+const { writeFile, mkdir } = require('fs').promises
 const { dirname } = require('path')
 
 const writeFileRec = async (outputPath = '', contents = '') => {
