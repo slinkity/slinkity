@@ -2,7 +2,7 @@
 const concurrently = require('concurrently')
 const { program } = require('commander')
 const UserConfig = require('@11ty/eleventy/src/UserConfig')
-const { join, resolve } = require('path')
+const { join } = require('path')
 const { quote: unixQuote } = require('shell-quote')
 const meta = require('../package.json')
 const winQuote = (args) =>
