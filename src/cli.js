@@ -123,7 +123,7 @@ const eleventyCmdArgs = quote(
 )
 
 const eleventyConfigPath = join(process.cwd(), options.config)
-let eleventyConfig = () => {}
+let eleventyConfig = () => ({})
 try {
   eleventyConfig = require(eleventyConfigPath)
 } catch (e) {}
