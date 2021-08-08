@@ -18,7 +18,7 @@ module.exports = async function toCommonJSModule({
     entryPoints: [inputPath],
     // TODO: this helps swallow CSS module errors
     // But this causes CSS module classes to get stripped from the output!
-    outfile: '',
+    outfile: 'ignore',
     format: 'cjs',
     bundle: true,
     plugins: [makeAllPackagesExternalPlugin],
