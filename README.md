@@ -22,6 +22,10 @@ You'll need an existing 11ty site to get started. If you're new to 11ty, you can
 Then, you can install Slinkity into your project repo like so:
 
 ```bash
+# First, uninstall any existing version of 11ty in your project!
+# Slinkity will go install the latest "canary" build
+npm uninstall @11ty/eleventy
+
 npm i --save-dev slinkity
 ```
 
@@ -44,6 +48,8 @@ npx slinkity
 ```
 
 ...and your shiny new site will appear in the `_site` folder (or [wherever you tell 11ty to build your site](https://www.11ty.dev/docs/config/#output-directory)).
+
+> About that canary build: For Slinkity to work properly, we're relying on the latest "experimental" build of 11ty. This could involve some gotchas with existing 11ty plugins. If anything unexpected happens, let us know on our [GitHub issues page](https://github.com/Holben888/slinkity/issues).
 
 ### [📚 Find our full documentation here →](https://slinkity.dev/)
 
