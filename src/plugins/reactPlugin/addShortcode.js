@@ -22,7 +22,7 @@ module.exports = function addShortcode(
   eleventyConfig,
   { componentToPropsMap }
 ) {
-  eleventyConfig.addShortcode(
+  eleventyConfig.addAsyncShortcode(
     'react',
     async function (componentPath, ...vargs) {
       const relComponentPath =
