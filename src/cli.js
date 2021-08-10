@@ -1,16 +1,13 @@
 #!/usr/bin/env node
-const concurrently = require('concurrently')
 const { program } = require('commander')
 const UserConfig = require('@11ty/eleventy/src/UserConfig')
 const { join } = require('path')
-const { quote: unixQuote } = require('shell-quote')
 const meta = require('../package.json')
-const winQuote = (args) =>
-  args.map((arg) => `"${arg.replace(/"/g, '\\"')}"`).join(' ')
-const quote = process.platform === 'win32' ? winQuote : unixQuote
 const eleventyDefaults = require('./utils/eleventyDefaults')
+const parseSimpleShellCmd = require('./utils/parseSimpleShellCmd')
+const concurrentlyByArgvs = require('./utils/concurrentlyByArgvs')
 
-const ELEVENTY_VERSION = '@11ty/eleventy@1.0.0-canary.39'
+const ELEVENTY_VERSION = `@11ty/eleventy@${meta.dependencies['@11ty/eleventy']}`
 
 const eleventyArgs = {
   input: {
@@ -103,25 +100,27 @@ applyOption(slinkityArgs.viteCmd)
 
 program.parse()
 const options = program.opts()
-const eleventyCmdArgs = quote(
-  Object.entries(options).reduce(
-    (eleventyCmdArgs, [arg, value]) => {
-      if (
-        isEleventyArg(arg) &&
-        value !== undefined &&
-        value !== eleventyArgs[arg]?.defaultValue
-      ) {
-        return [...eleventyCmdArgs, `--${arg}=${value}`]
-      } else if (arg === 'serve' && value) {
-        // 11ty should always run in --watch mode,
-        // since Vite is replacing Browsersync
-        return [...eleventyCmdArgs, '--watch']
-      } else {
-        return eleventyCmdArgs
-      }
-    },
-    [`--config=${join(__dirname, 'eleventy-wrapper.js')}`]
-  )
+
+const eleventyCmdArgv = Object.entries(options).reduce(
+  (eleventyCmdArgs, [arg, value]) => {
+    if (
+      isEleventyArg(arg) &&
+      value !== undefined &&
+      value !== eleventyArgs[arg]?.defaultValue
+    ) {
+      return [...eleventyCmdArgs, `--${arg}=${value}`]
+    } else if (arg === 'serve' && value) {
+      // 11ty should always run in --watch mode,
+      // since Vite is replacing Browsersync
+      return [...eleventyCmdArgs, '--watch']
+    } else {
+      return eleventyCmdArgs
+    }
+  },
+  [
+    ...parseSimpleShellCmd(options.eleventyCmd),
+    `--config=${join(__dirname, 'eleventy-wrapper.js')}`,
+  ]
 )
 
 const eleventyConfigPath = join(process.cwd(), options.config)
@@ -139,14 +138,15 @@ const dir = {
   output: options.output ?? userConfigDir.output ?? eleventyDefaults.dir.output,
 }
 
-const viteCmdArgs = quote([
+const viteCmdArgv = [
+  ...parseSimpleShellCmd(options.viteCmd),
   '--clearScreen=false',
   `--port=${options.port}`,
   dir.output,
-])
+]
 
 const eleventyCmd = {
-  command: `${options.eleventyCmd} ${eleventyCmdArgs}`,
+  argv: eleventyCmdArgv,
   name: '11ty',
   prefixColor: '#faff02',
   env: {
@@ -159,15 +159,15 @@ const eleventyCmd = {
   },
 }
 const viteCmd = {
-  command: `${options.viteCmd} ${viteCmdArgs}`,
+  argv: viteCmdArgv,
   name: 'vite',
   prefixColor: '#ff00d6',
 }
 
 ;(async () => {
   if (options.serve) {
-    await concurrently([eleventyCmd, viteCmd])
+    await concurrentlyByArgvs([eleventyCmd, viteCmd])
   } else {
-    await concurrently([eleventyCmd], { prefix: 'none' })
+    await concurrentlyByArgvs([eleventyCmd], { raw: true })
   }
 })().catch(() => {})

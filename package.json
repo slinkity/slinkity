@@ -18,10 +18,11 @@
     "eleventy-plugin"
   ],
   "dependencies": {
-    "@11ty/eleventy": "1.0.0-canary.39",
+    "@11ty/eleventy": "1.0.0-canary.40",
     "cheerio": "^1.0.0-rc.10",
     "commander": "^5.1.0",
     "concurrently": "^6.2.0",
+    "cross-spawn": "^7.0.3",
     "esbuild": "^0.12.17",
     "glob": "^7.1.7",
     "html-react-parser": "^1.2.7",
