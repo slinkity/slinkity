@@ -7,7 +7,7 @@ const eleventyDefaults = require('./utils/eleventyDefaults')
 const parseSimpleShellCmd = require('./utils/parseSimpleShellCmd')
 const concurrentlyByArgvs = require('./utils/concurrentlyByArgvs')
 
-const ELEVENTY_VERSION = '@11ty/eleventy@1.0.0-canary.39'
+const ELEVENTY_VERSION = `@11ty/eleventy@${meta.dependencies['@11ty/eleventy']}`
 
 const eleventyArgs = {
   input: {
