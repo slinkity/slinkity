@@ -13,7 +13,7 @@ module.exports = function reactPlugin(eleventyConfig, { dir }) {
 
   const componentToPropsMap = {}
 
-  eleventyConfig.addPlugin(addShortcode, { componentToPropsMap })
+  addShortcode(eleventyConfig, { componentToPropsMap })
 
   eleventyConfig.addExtension('jsx', {
     read: false,
