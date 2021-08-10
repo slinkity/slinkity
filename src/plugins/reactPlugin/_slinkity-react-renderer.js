@@ -7,7 +7,7 @@ export const renderComponent = ({
   props = {},
 }) => {
   const mountPoint = document.querySelector(
-    `slinkity-react-renderer[data-s-path="${componentPath}"]`
+    `slinkity-react-renderer[data-s-path=${JSON.stringify(componentPath)}]`
   )
   const innerReactEl = mountPoint.querySelector(
     'slinkity-react-renderer[data-s-page="true"]'

@@ -1,11 +1,12 @@
 const { readFile } = require('fs').promises
 const { writeFileRec } = require('../../utils/fileHelpers')
 const toCommonJSModule = require('./toCommonJSModule')
-const { join, relative } = require('path')
+const { join, relative, sep } = require('path')
 const cheerio = require('cheerio')
 const addShortcode = require('./addShortcode')
 const { stringify } = require('javascript-stringify')
 const toRendererHtml = require('./toRendererHtml')
+const htmlEscape = require('../../utils/htmlEscape')
 
 module.exports = function reactPlugin(eleventyConfig, { dir }) {
   eleventyConfig.addTemplateFormats('jsx')
@@ -70,15 +71,21 @@ module.exports = function reactPlugin(eleventyConfig, { dir }) {
           ({ 'data-s-path': componentPath, 'data-s-lazy': isLazy = false }) => {
             const loadScript = `<script type="module">
             import { renderComponent } from 'slinkity/lib/plugins/reactPlugin/_slinkity-react-renderer.js';
-            import Component from '/${componentPath}';
+            import Component from ${JSON.stringify(
+              '/' + componentPath.split(sep).join('/')
+            )};
             const props = ${stringify(
               componentToPropsMap[componentPath] ?? {}
             )}; 
-            renderComponent({ Component, componentPath: '${componentPath}', props });
+            renderComponent({ Component, componentPath: ${JSON.stringify(
+              componentPath
+            )}, props });
           </script>`
             if (isLazy) {
               // wrap "lazy" components in a template so we can load them later
-              return `<template data-s-path=${componentPath}>${loadScript}</template>`
+              return `<template data-s-path="${htmlEscape(
+                componentPath
+              )}">${loadScript}</template>`
             } else {
               return loadScript
             }
