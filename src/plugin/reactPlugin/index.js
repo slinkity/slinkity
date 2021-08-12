@@ -22,8 +22,8 @@ module.exports = function reactPlugin(eleventyConfig, { dir }) {
   eleventyConfig.addExtension('jsx', {
     read: false,
     getData: async (inputPath) => {
-      const { getProps = () => ({}) } = await toCommonJSModule({ inputPath })
-      return getProps({})
+      const { frontMatter = {} } = await toCommonJSModule({ inputPath })
+      return frontMatter
     },
     compile: (_, inputPath) =>
       async function (data) {
@@ -32,7 +32,7 @@ module.exports = function reactPlugin(eleventyConfig, { dir }) {
         // TODO: make this more efficient with caching
         // We already build the component in getData!
         // See https://github.com/11ty/eleventy-plugin-vue/blob/master/.eleventy.js
-        const { default: Component = () => {}, getProps = () => ({}) } =
+        const { default: Component = () => null, getProps = () => ({}) } =
           await toCommonJSModule({ inputPath })
 
         const props = getProps(data)
