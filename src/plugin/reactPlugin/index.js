@@ -10,6 +10,39 @@ const htmlEscape = require('../../utils/htmlEscape')
 
 const SLINKITY_REACT_RENDERER_PATH =
   'slinkity/lib/plugin/reactPlugin/_slinkity-react-renderer.js'
+function formatDataForProps(eleventyData = {}) {
+  const formattedCollections = {}
+  for (let name of Object.keys(eleventyData.collections)) {
+    formattedCollections[name] = eleventyData.collections[name].map((item) => {
+      /**
+       * Items omitted:
+       * - template: reference to the Template class
+       *   - reason: this is an unwieldy object that's nearly impossible to stringify for clientside use
+       * - templateContent setter: method to set rendered templateContent
+       *   - reason: components shouldn't be able to set underlying 11ty data
+       * - data.collections: a nested, circular reference to the outer collections
+       *   - reason: it's best to remove circular dependencies before stringifying for clientside use
+       */
+      const { collections, ...data } = item.data
+      return {
+        inputPath: item.inputPath,
+        fileSlug: item.fileSlug,
+        filePathStem: item.filePathStem,
+        date: item.date,
+        outputPath: item.outputPath,
+        url: item.url,
+        data,
+        get templateContent() {
+          return item.templateContent
+        },
+      }
+    })
+  }
+  return {
+    ...eleventyData,
+    collections: formattedCollections,
+  }
+}
 
 module.exports = function reactPlugin(eleventyConfig, { dir }) {
   eleventyConfig.addTemplateFormats('jsx')
@@ -35,7 +68,7 @@ module.exports = function reactPlugin(eleventyConfig, { dir }) {
         const { default: Component = () => null, getProps = () => ({}) } =
           await toCommonJSModule({ inputPath })
 
-        const props = getProps(data)
+        const props = getProps(formatDataForProps(data))
         componentToPropsMap[jsxImportPath] = props
 
         return toRendererHtml({
