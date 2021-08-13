@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/styles/styles.css">
+  <link rel="stylesheet" href="/styles/prism-synthwave-84.css">
+  <link rel="icon" type="img/png" href="/assets/favicon.png" />
+  <link rel="canonical" href="https://slinkity.dev" />
+  <title>{{title or 'Slinkity'}}</title>
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@slinkitydotdev" />
+  <meta name="twitter:creator" content="@slinkitydotdev" />
+  <meta name="description"
+    content="To eleventy and beyond! The incredible build plugin for components, page transitions, and more." />
+  <meta property="og:url" content="https://slinkity.dev" />
+  <meta property="og:image" content="https://slinkity.dev/assets/og-image-banner.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:site_name" content="Slinkity" />
+  <meta property="og:title" />
+  <meta property="og:description"
+    content="To eleventy and beyond! The incredible build plugin for components, page transitions, and more." />
+</head>
+
+<body>
+  {{ content | safe }}
+
+  {% include 'footer.html' %}
+</body>
+
+</html>

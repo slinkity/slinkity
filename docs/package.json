@@ -1,0 +1,22 @@
+{
+  "name": "slinkity-home",
+  "version": "1.0.0",
+  "description": "Landing page for the Slinkity build plugin. To eleventy and beyond 🚀",
+  "main": ".eleventy.js",
+  "scripts": {
+    "start": "eleventy --serve",
+    "build": "eleventy",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Ben Holmes",
+  "license": "unlicensed",
+  "dependencies": {
+    "@11ty/eleventy": "^1.0.0-canary.39",
+    "eleventy-plugin-sass": "^1.2.0",
+    "js-yaml": "^3.14.1"
+  },
+  "devDependencies": {
+    "@11ty/eleventy-plugin-syntaxhighlight": "^3.1.2"
+  }
+}

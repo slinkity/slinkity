@@ -1,0 +1,37 @@
+---
+layout: base-layout
+---
+
+<main class="docs__container">
+  <ul class="docs__nav">
+    <li>
+      <a href="/docs/" class="{{'active' if doc.data.page.url === page.url else ''}}">Overview</a>
+    </li>
+    <li>
+      <a href="/docs/quick-start" class="{{'active' if doc.data.page.url === page.url else ''}}">Quick start</a>
+    </li>
+    <li>
+      <a href="/docs/component-shortcodes/" class="{{'active' if doc.data.page.url === page.url else ''}}">Component
+        shortcodes</a>
+    </li>
+    <li>
+      <a href="/docs/component-pages-layouts/" class="{{'active' if doc.data.page.url === page.url else ''}}">Component
+        pages</a>
+    </li>
+    <li>
+      <a href="/docs/rendering-eager-lazy-static/"
+        class="{{'active' if '/rendering-eager-lazy-static/' === page.url else ''}}">Rendering eagerly, lazily, or
+        statically</a>
+    </li>
+    <!-- {%- for doc in collections.docs -%}
+    <li>
+      <a href="{{doc.data.page.url}}"
+        class="{{'active' if doc.data.page.url === page.url else ''}}">{{doc.data.title}}</a>
+    </li>
+    {%- endfor -%} -->
+  </ul>
+  <article class="docs">
+    <h1>{{ title }}</h1>
+    {{ content | safe }}
+  </article>
+</main>
