@@ -1,7 +1,7 @@
 {
   "name": "slinkity",
   "description": "To 11ty and beyond! The tool for bringing dynamic, clientside interactions to your static 11ty site",
-  "version": "0.0.3-alpha.5",
+  "version": "0.0.3-alpha.6",
   "license": "MIT",
   "main": "./lib/plugin.js",
   "homepage": "https://slinkity.dev",
@@ -13,10 +13,41 @@
   "bin": {
     "slinkity": "./lib/cli.js"
   },
+  "engines": {
+    "node": ">=12"
+  },
   "keywords": [
+    "static-site-generator",
+    "static-site",
+    "ssg",
+    "documentation",
+    "website",
+    "jekyll",
+    "blog",
+    "templates",
+    "generator",
+    "framework",
     "eleventy",
-    "eleventy-plugin"
+    "eleventy-plugin",
+    "11ty",
+    "html",
+    "markdown",
+    "liquid",
+    "nunjucks",
+    "pug",
+    "handlebars",
+    "mustache",
+    "ejs",
+    "haml",
+    "react",
+    "vite",
+    "bundler"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/Holben888/slinkity.git"
+  },
+  "bugs": "https://github.com/Holben888/slinkity/issues",
   "dependencies": {
     "@11ty/eleventy": "1.0.0-canary.40",
     "cheerio": "^1.0.0-rc.10",
