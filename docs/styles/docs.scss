@@ -1,0 +1,45 @@
+.docs__container {
+  --nav-width: 200px;
+  display: grid;
+  grid-template-columns: var(--nav-width) 1fr;
+  max-width: calc(var(--content-max-width) + var(--nav-width));
+  width: 100%;
+  align-items: flex-start;
+  margin: auto;
+  padding: 0 20px;
+  column-gap: 40px;
+
+  .docs__nav {
+    list-style: none;
+    padding: 16px 0;
+    background: var(--grey-100);
+    border-radius: 10px;
+    margin-top: 40px;
+
+    li {
+      margin: 0;
+    }
+
+    li > a {
+      --bg: var(--grey-100);
+      display: block;
+      padding: 10px 20px;
+      text-decoration: none;
+      color: var(--white);
+
+      &.active {
+        color: var(--pink);
+      }
+
+      &:hover {
+        color: var(--black);
+      }
+    }
+  }
+
+  .docs {
+    max-width: auto;
+    margin: 0;
+    padding: 0;
+  }
+}

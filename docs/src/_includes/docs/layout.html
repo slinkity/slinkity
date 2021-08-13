@@ -1,0 +1,17 @@
+---
+layout: base-layout
+---
+
+<main class="docs__container">
+  <ul class="docs__nav">
+    {%- for navLink in navLinksSorted -%}
+    <li>
+      <a href="{{navLink.href}}" class="{{'active' if navLink.href === page.url else ''}}">{{navLink.title}}</a>
+    </li>
+    {%- endfor -%}
+  </ul>
+  <article class="docs">
+    <h1>{{ title }}</h1>
+    {{ content | safe }}
+  </article>
+</main>
