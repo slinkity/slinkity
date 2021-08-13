@@ -24,8 +24,8 @@ module.exports = {
         )
 
         return {
-          href: matchingDocInfo?.data.page.url,
-          title: matchingDocInfo?.data.title,
+          href: matchingDocInfo && matchingDocInfo.data.page.url,
+          title: matchingDocInfo && matchingDocInfo.data.title,
         }
       })
     },
