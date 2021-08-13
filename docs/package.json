@@ -12,8 +12,8 @@
   "author": "Ben Holmes",
   "license": "MIT",
   "devDependencies": {
+    "@11ty/eleventy": "^1.0.0-canary.40",
     "@11ty/eleventy-plugin-syntaxhighlight": "^3.1.2",
-    "eleventy-plugin-sass": "^1.2.0",
     "js-yaml": "^3.14.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
