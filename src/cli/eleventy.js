@@ -62,7 +62,7 @@ function applyUserConfigDir(dir = {}) {
 
     const config = require('./slinkityConfig')({ dir })
 
-    let elev = new Eleventy(options.input, options.output, {
+    let elev = new Eleventy(dir.input, dir.output, {
       quietMode: options.quiet,
       configPath: options.config,
       config,

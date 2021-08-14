@@ -65,7 +65,11 @@ module.exports = function reactPlugin(eleventyConfig, { dir }) {
         await Promise.all(
           rendererAttrs.map(async ({ 'data-s-path': componentPath }) => {
             const jsxInputPath = join(process.cwd(), dir.input, componentPath)
-            const jsxOutputPath = join(process.cwd(), dir.output, componentPath)
+            const jsxOutputPath = join(
+              process.cwd(),
+              relative(process.cwd(), dir.output),
+              componentPath
+            )
             await writeFileRec(jsxOutputPath, await readFile(jsxInputPath))
           })
         )
