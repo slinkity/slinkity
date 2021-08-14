@@ -25,7 +25,6 @@ const eleventyArgs = {
   formats: {
     flag: '--formats <formats>',
     description: 'Whitelist only certain template types',
-    defaultValue: 'liquid,md,html',
   },
   quiet: {
     flag: '--quiet',
