@@ -102,15 +102,20 @@ const userConfigDir = toEleventyConfigDir({
 
 ;(async () => {
   if (options.serve) {
+    const eleventyDir = {
+      ...userConfigDir,
+      outputAbsolutePath: resolve(process.cwd(), userConfigDir.output),
+    }
     await viteServe({
-      input: resolve(process.cwd(), userConfigDir.output),
+      input: resolve(process.cwd(), eleventyDir.output),
       port: options.port,
     })
-    await startEleventy(userConfigDir)(toEleventyOptions(options))
+    await startEleventy(eleventyDir)(toEleventyOptions(options))
   } else {
     const eleventyDir = {
       ...userConfigDir,
       output: resolve(__dirname, ELEVENTY_BUILD_OUTPUT),
+      outputAbsolutePath: resolve(__dirname, ELEVENTY_BUILD_OUTPUT),
     }
     // Eleventy builds to an internal temp directory
     // For Vite to pull from in a 2 step build process
