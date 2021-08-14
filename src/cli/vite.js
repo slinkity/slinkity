@@ -44,7 +44,7 @@ async function build({ input, output }) {
       configFile: (await getConfigFile()).path,
       build: {
         outDir: output,
-        emptyOutDir: false,
+        emptyOutDir: true,
         rollupOptions: {
           input: inputFiles,
         },

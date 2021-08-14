@@ -52,6 +52,7 @@
     "cheerio": "^1.0.0-rc.10",
     "commander": "^5.1.0",
     "esbuild": "^0.12.17",
+    "fs-extra": "^10.0.0",
     "glob": "^7.1.7",
     "html-react-parser": "^1.2.7",
     "javascript-stringify": "^2.1.0",
@@ -60,9 +61,9 @@
     "vite": "^2.4.4"
   },
   "peerDependencies": {
+    "@11ty/eleventy": "1.0.0-canary.41",
     "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "@11ty/eleventy": "1.0.0-canary.41"
+    "react-dom": "^17.0.2"
   },
   "devDependencies": {
     "@babel/cli": "^7.14.8",

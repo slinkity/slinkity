@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 const { program } = require('commander')
 const { resolve } = require('path')
+const { emptyDir } = require('fs-extra')
 const { startEleventy, toEleventyConfigDir } = require('./eleventy')
 const meta = require('../../package.json')
 const { build: viteBuild, serve: viteServe } = require('./vite')
@@ -107,15 +108,16 @@ const userConfigDir = toEleventyConfigDir({
     })
     await startEleventy(userConfigDir)(toEleventyOptions(options))
   } else {
-    const dir = {
+    const eleventyDir = {
       ...userConfigDir,
       output: resolve(__dirname, ELEVENTY_BUILD_OUTPUT),
     }
     // Eleventy builds to an internal temp directory
     // For Vite to pull from in a 2 step build process
-    await startEleventy(dir)(toEleventyOptions(options))
+    await emptyDir(eleventyDir.output)
+    await startEleventy(eleventyDir)(toEleventyOptions(options))
     await viteBuild({
-      input: eleventyOptions.output,
+      input: eleventyDir.output,
       output: resolve(process.cwd(), userConfigDir.output),
     })
   }
