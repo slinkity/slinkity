@@ -1,0 +1,17 @@
+{
+  "name": "backup",
+  "version": "1.0.0",
+  "description": "",
+  "main": ".eleventy.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@11ty/eleventy": "^1.0.0-canary.41",
+    "sass": "^1.37.5",
+    "vite": "^2.4.4"
+  }
+}

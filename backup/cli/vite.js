@@ -16,7 +16,7 @@ async function getConfigFile() {
     const contents = (await readFile(path)).toString()
     return { path, contents }
   } catch {
-    console.log('No vite config file found. Using defaults')
+    /* Just let Vite use its defaults */
   }
   return { path: false }
 }
@@ -39,7 +39,7 @@ async function build({ input, output }) {
       configFile: (await getConfigFile()).path,
       build: {
         outDir: output,
-        emptyOutDir: true,
+        emptyOutDir: false,
         rollupOptions: {
           input: inputFiles,
         },

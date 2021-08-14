@@ -73,7 +73,7 @@ const toEleventyOptions = (allOptions) => {
     if (eleventyArgs[name] != null) {
       eleventyOptions[name] = value
     }
-    if (name === 'serve') {
+    if (name === 'serve' && value === true) {
       eleventyOptions.watch = true
     }
   }
@@ -103,14 +103,14 @@ const userConfigDir = toEleventyConfigDir({
 
 ;(async () => {
   if (options.serve) {
-    await startEleventy(toEleventyOptions(options))
+    await startEleventy(userConfigDir)(toEleventyOptions(options))
     await viteServe({ input: resolve(process.cwd(), userConfigDir.output) })
   } else {
     const eleventyOptions = {
       ...toEleventyOptions(options),
       output: resolve(__dirname, ELEVENTY_BUILD_OUTPUT),
     }
-    await startEleventy(eleventyOptions)
+    await startEleventy(userConfigDir)(eleventyOptions)
     await viteBuild({
       input: eleventyOptions.output,
       output: resolve(process.cwd(), userConfigDir.output),
