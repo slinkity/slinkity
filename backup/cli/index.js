@@ -103,8 +103,8 @@ const userConfigDir = toEleventyConfigDir({
 
 ;(async () => {
   if (options.serve) {
-    await startEleventy(userConfigDir)(toEleventyOptions(options))
     await viteServe({ input: resolve(process.cwd(), userConfigDir.output) })
+    await startEleventy(userConfigDir)(toEleventyOptions(options))
   } else {
     const eleventyOptions = {
       ...toEleventyOptions(options),
