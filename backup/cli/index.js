@@ -60,8 +60,7 @@ const slinkityArgs = {
   },
   port: {
     flag: '--port <port>',
-    description: 'Port for Vite server',
-    defaultValue: '8080',
+    description: 'Port for Vite server (default: 3000)',
   },
 }
 
@@ -103,7 +102,10 @@ const userConfigDir = toEleventyConfigDir({
 
 ;(async () => {
   if (options.serve) {
-    await viteServe({ input: resolve(process.cwd(), userConfigDir.output) })
+    await viteServe({
+      input: resolve(process.cwd(), userConfigDir.output),
+      port: options.port,
+    })
     await startEleventy(userConfigDir)(toEleventyOptions(options))
   } else {
     const eleventyOptions = {

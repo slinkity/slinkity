@@ -15,19 +15,25 @@ async function getConfigFile() {
     const path = resolve(process.cwd(), 'vite.config.mjs')
     const contents = (await readFile(path)).toString()
     return { path, contents }
-  } catch {
-    /* Just let Vite use its defaults */
-  }
+  } catch {}
   return { path: false }
 }
 
-async function serve({ input }) {
-  const configFile = await getConfigFile()
-  const server = await vite.createServer({
+async function serve({ input, port }) {
+  // TODO: allow user vite.config to override these settings
+  // Currently *our* settings override any *user* settings
+
+  const options = {
     configFile: configFile.path,
     root: resolve(process.cwd(), input),
     clearScreen: false,
-  })
+  }
+  if (port) {
+    options.port = port
+  }
+
+  const configFile = await getConfigFile()
+  const server = await vite.createServer(options)
   await server.listen()
 }
 
