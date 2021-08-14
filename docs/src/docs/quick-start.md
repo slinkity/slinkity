@@ -6,19 +6,13 @@ All you need is an empty directory to get started! But if you prefer a starter p
 
 ## Installation
 
-If you're adding Slinkity to an existing 11ty project, we recommend uninstalling any `@11ty/eleventy` versions from your `package.json` first:
+First, install Slinkity + the latest 11ty into your project repo like so:
 
 ```bash
-npm uninstall @11ty/eleventy
+npm i --save-dev slinkity @11ty/eleventy@1.0.0-canary.41
 ```
 
-> Slinkity relies on the [latest 1.0 canary build](https://www.npmjs.com/package/@11ty/eleventy/v/1.0.0-canary.39) to work properly, which Slinkity will automatically install as a dependency. Yes, this could involve some gotchas with existing 11ty plugins! If anything unexpected happens, let us know on our [GitHub issues page](https://github.com/Holben888/slinkity/issues).
-
-Now you can install Slinkity into your project repo like so:
-
-```bash
-npm i --save-dev slinkity
-```
+> Slinkity relies on 11ty's [latest 1.0 canary build](https://www.npmjs.com/package/@11ty/eleventy/v/1.0.0-canary.41) to work properly. Yes, this could involve some gotchas with existing 11ty plugins! If anything unexpected happens, let us know on our [GitHub issues page](https://github.com/Holben888/slinkity/issues).
 
 ...and run our CLI command to spin up the dev server:
 
