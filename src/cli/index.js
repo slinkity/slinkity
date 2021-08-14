@@ -2,7 +2,7 @@
 const { program } = require('commander')
 const { resolve } = require('path')
 const { startEleventy, toEleventyConfigDir } = require('./eleventy')
-const meta = require('./package.json')
+const meta = require('../../package.json')
 const { build: viteBuild, serve: viteServe } = require('./vite')
 
 const ELEVENTY_BUILD_OUTPUT = '.temp-11ty-build'

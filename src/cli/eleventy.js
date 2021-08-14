@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+// TODO: fix 11ty debug helper
 const debug = require('debug')('Eleventy:cmd')
 const Eleventy = require('@11ty/eleventy/src/Eleventy')
 const EleventyErrorHandler = require('@11ty/eleventy/src/EleventyErrorHandler')

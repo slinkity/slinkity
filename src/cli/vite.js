@@ -3,7 +3,6 @@ const { resolve } = require('path')
 const { promisify } = require('util')
 const glob = promisify(require('glob'))
 const { readFile } = require('fs').promises
-const fs = require('fs')
 
 async function getConfigFile() {
   try {
@@ -22,6 +21,7 @@ async function getConfigFile() {
 async function serve({ input, port }) {
   // TODO: allow user vite.config to override these settings
   // Currently *our* settings override any *user* settings
+  const configFile = await getConfigFile()
 
   const options = {
     configFile: configFile.path,
@@ -32,7 +32,6 @@ async function serve({ input, port }) {
     options.port = port
   }
 
-  const configFile = await getConfigFile()
   const server = await vite.createServer(options)
   await server.listen()
 }
