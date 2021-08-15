@@ -7,7 +7,7 @@ const { resolve } = require('path')
 function toUserConfig(configPath = '') {
   let userConfig
   try {
-    userConfig = require(resolve(process.cwd(), configPath))
+    userConfig = require(resolve(configPath))
     return userConfig
   } catch {
     /* we'll use defaults if no config file is present */

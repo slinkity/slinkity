@@ -7,7 +7,7 @@ const { readFile } = require('fs').promises
 async function getConfigFile() {
   for (const ext of ['js', 'mjs', 'ts']) {
     try {
-      const path = resolve(process.cwd(), `vite.config.${ext}`)
+      const path = resolve(`vite.config.${ext}`)
       await readFile(path)
       return path
     } catch { /* if this fails, try the next ext */ }
@@ -23,7 +23,7 @@ async function serve({ input, port }) {
 
   const options = {
     configFile: configFile,
-    root: resolve(process.cwd(), input),
+    root: resolve(input),
     clearScreen: false,
   }
   if (port) {
