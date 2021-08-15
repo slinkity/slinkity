@@ -1,6 +1,3 @@
-const { renderToString } = require('react-dom/server')
-const parseHtmlToReact = require('html-react-parser')
-const React = require('react')
 
 module.exports = function toRendererHtml({
   componentPath = '',
@@ -10,8 +7,13 @@ module.exports = function toRendererHtml({
   isPage = false,
   innerHTML = '',
 }) {
+  // only import these dependencies when triggered
+  // this prevents "cannot find module react*"
+  // when running slinkity without react and react-dom installed
+  const parseHtmlToReact = require('html-react-parser')
+  const { renderToString } = require('react-dom/server')
   const elementAsHTMLString = renderToString(
-    React.createElement(Component, props, parseHtmlToReact(innerHTML || ''))
+    require('react').createElement(Component, props, parseHtmlToReact(innerHTML || ''))
   )
   if (render === 'static') {
     return elementAsHTMLString
