@@ -2,8 +2,8 @@ const slinkity = require('../plugin')
 
 module.exports =
   ({ dir }) =>
-  (eleventyConfig) => {
-    eleventyConfig.addPlugin(slinkity, { dir })
+    (eleventyConfig) => {
+      eleventyConfig.addPlugin(slinkity, { dir })
 
-    return {}
-  }
+      return {}
+    }

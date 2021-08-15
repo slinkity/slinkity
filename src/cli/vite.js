@@ -9,12 +9,12 @@ async function getConfigFile() {
     const path = resolve(process.cwd(), 'vite.config.js')
     const contents = (await readFile(path)).toString()
     return { path, contents }
-  } catch {}
+  } catch { /* if this fails, try to find a .mjs config */ }
   try {
     const path = resolve(process.cwd(), 'vite.config.mjs')
     const contents = (await readFile(path)).toString()
     return { path, contents }
-  } catch {}
+  } catch { /* if this fails, let Vite use its defaults */ }
   return { path: false }
 }
 

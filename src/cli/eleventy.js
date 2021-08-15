@@ -1,5 +1,4 @@
 // TODO: fix 11ty debug helper
-const debug = require('debug')('Eleventy:cmd')
 const Eleventy = require('@11ty/eleventy/src/Eleventy')
 const EleventyErrorHandler = require('@11ty/eleventy/src/EleventyErrorHandler')
 const UserConfig = require('@11ty/eleventy/src/UserConfig')
@@ -47,7 +46,7 @@ function applyUserConfigDir(dir = {}) {
     }
 
     const errorHandler = new EleventyErrorHandler()
-    process.on('unhandledRejection', (error, promise) => {
+    process.on('unhandledRejection', (error) => {
       errorHandler.fatal(error, 'Unhandled rejection in promise')
     })
     process.on('uncaughtException', (error) => {
