@@ -5,16 +5,14 @@ const glob = promisify(require('glob'))
 const { readFile } = require('fs').promises
 
 async function getConfigFile() {
-  try {
-    const path = resolve(process.cwd(), 'vite.config.js')
-    const contents = (await readFile(path)).toString()
-    return { path, contents }
-  } catch { /* if this fails, try to find a .mjs config */ }
-  try {
-    const path = resolve(process.cwd(), 'vite.config.mjs')
-    const contents = (await readFile(path)).toString()
-    return { path, contents }
-  } catch { /* if this fails, let Vite use its defaults */ }
+  for (const ext of ['js', 'mjs', 'ts']) {
+    try {
+      const path = resolve(process.cwd(), `vite.config.${ext}`)
+      const contents = (await readFile(path)).toString()
+      return { path, contents }
+    } catch { /* if this fails, try the next ext */ }
+  }
+  
   return { path: false }
 }
 
