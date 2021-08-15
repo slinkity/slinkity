@@ -73,7 +73,7 @@ module.exports = function reactPlugin(eleventyConfig, { dir }) {
         const componentScripts = rendererAttrs.map(
           ({ 'data-s-path': componentPath, 'data-s-lazy': isLazy = false }) => {
             const loadScript = `<script type="module">
-            import { renderComponent } from '${SLINKITY_REACT_RENDERER_PATH}';
+            import { renderComponent } from ${JSON.stringify(SLINKITY_REACT_RENDERER_PATH)};
             import Component from ${JSON.stringify('/' + componentPath.split(sep).join('/'))};
             const props = ${stringify(componentToPropsMap[componentPath] ?? {})}; 
             renderComponent({ Component, componentPath: ${JSON.stringify(componentPath)}, props });
@@ -91,7 +91,7 @@ module.exports = function reactPlugin(eleventyConfig, { dir }) {
 
         $('body').append(
           `<script type="module" async>
-            import SlinkityReactRenderer from '${SLINKITY_REACT_RENDERER_PATH}';
+            import SlinkityReactRenderer from ${JSON.stringify(SLINKITY_REACT_RENDERER_PATH)};
             window.customElements.define('slinkity-react-renderer', SlinkityReactRenderer);
           </script>
           ${componentScripts.join('')}`
