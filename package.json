@@ -77,7 +77,7 @@
     "build": "babel src -d lib",
     "prepare": "npm run build",
     "watch": "babel src -d lib -w",
-    "lint": "eslint \"src/**/*.{js,jsx}\"",
-    "lint:fix": "eslint --fix \"src/**/*.{js,jsx}\""
+    "lint": "eslint \"src/**/*.{js,jsx,mjs}\"",
+    "lint:fix": "eslint --fix \"src/**/*.{js,jsx,mjs}\""
   }
 }
