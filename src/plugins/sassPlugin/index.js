@@ -12,7 +12,7 @@ module.exports = function sassPlugin(eleventyConfig) {
     read: false,
     outputFileExtension: 'css',
     getData: () => ({ layout: '' }),
-    compile: (_, inputPath) => async (data) => {
+    compile: (_, inputPath) => async () => {
       const { css } = await sassRender({ file: inputPath })
       return css
     },
