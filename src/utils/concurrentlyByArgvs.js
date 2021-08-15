@@ -28,6 +28,7 @@ const spawn = require('cross-spawn')
  * @param {concurrently.Options} options
  */
 module.exports = function concurrentlyByArgvs(commands, options = {}) {
+  // eslint-disable-next-line no-unused-vars
   const keyedCommands = commands.map(({ argv, ...commandInfo }, i) => ({
     ...commandInfo,
     command: `${i}`,

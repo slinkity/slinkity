@@ -1,4 +1,3 @@
-const { writeFileRec } = require('../../utils/fileHelpers')
 const { join } = require('path')
 const { build } = require('vite')
 const { promisify } = require('util')

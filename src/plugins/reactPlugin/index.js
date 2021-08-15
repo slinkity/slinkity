@@ -71,15 +71,9 @@ module.exports = function reactPlugin(eleventyConfig, { dir }) {
           ({ 'data-s-path': componentPath, 'data-s-lazy': isLazy = false }) => {
             const loadScript = `<script type="module">
             import { renderComponent } from 'slinkity/lib/plugins/reactPlugin/_slinkity-react-renderer.js';
-            import Component from ${JSON.stringify(
-              '/' + componentPath.split(sep).join('/')
-            )};
-            const props = ${stringify(
-              componentToPropsMap[componentPath] ?? {}
-            )}; 
-            renderComponent({ Component, componentPath: ${JSON.stringify(
-              componentPath
-            )}, props });
+            import Component from ${JSON.stringify('/' + componentPath.split(sep).join('/'))};
+            const props = ${stringify(componentToPropsMap[componentPath] ?? {})}; 
+            renderComponent({ Component, componentPath: ${JSON.stringify(componentPath)}, props });
           </script>`
             if (isLazy) {
               // wrap "lazy" components in a template so we can load them later

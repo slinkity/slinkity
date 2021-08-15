@@ -5,7 +5,7 @@ const { log } = require('../../utils/logger')
 const makeAllPackagesExternalPlugin = {
   name: 'make-all-packages-external',
   setup(build) {
-    let filter = /^[^.\/]|^\.[^.\/]|^\.\.[^\/]/ // Must not start with "/" or "./" or "../"
+    let filter = /^[^./]|^\.[^./]|^\.\.[^/]/ // Must not start with "/" or "./" or "../"
     build.onResolve({ filter }, (args) => ({ path: args.path, external: true }))
   },
 }

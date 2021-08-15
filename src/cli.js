@@ -57,8 +57,7 @@ const slinkityArgs = {
   },
   eleventyCmd: {
     flag: '--eleventy-cmd <cmd>',
-    description:
-      'Command Slinkity should run to start eleventy. Useful if you want to try a different 11ty version or canary, i.e. `npx @11ty/eleventy@canaryX.X.X',
+    description: 'Command Slinkity should run to start eleventy. Useful if you want to try a different 11ty version or canary, i.e. `npx @11ty/eleventy@canaryX.X.X',
     defaultValue: `npx ${ELEVENTY_VERSION}`,
   },
   viteCmd: {
@@ -127,7 +126,7 @@ const eleventyConfigPath = join(process.cwd(), options.config)
 let eleventyConfig
 try {
   eleventyConfig = require(eleventyConfigPath)
-} catch (e) {}
+} catch (e) { /* we'll use defaults if no eleventyConfig is present */ }
 
 const userConfigDir = eleventyConfig?.(new UserConfig())?.dir ?? {}
 

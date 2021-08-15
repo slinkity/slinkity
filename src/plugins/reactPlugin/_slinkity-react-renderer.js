@@ -30,7 +30,7 @@ export const renderComponent = ({
 export default class SlinkityReactRenderer extends HTMLElement {
   connectedCallback() {
     const options = {
-      rootMargin: `0px 0px 0px 0px`,
+      rootMargin: '0px 0px 0px 0px',
       threshold: 0,
     }
     const isLazy = Boolean(this.getAttribute('data-s-lazy'))
