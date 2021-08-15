@@ -1,7 +1,6 @@
 const toRendererHtml = require('./toRendererHtml')
 const { join } = require('path')
 const toCommonJSModule = require('./toCommonJSModule')
-const { dir } = require('../../utils/getConfigFromEnv')()
 const { log } = require('../../utils/logger')
 
 const argsArrayToPropsObj = function ({ vargs = [], errorMsg = '' }) {
@@ -20,7 +19,7 @@ const argsArrayToPropsObj = function ({ vargs = [], errorMsg = '' }) {
 
 module.exports = function addShortcode(
   eleventyConfig,
-  { componentToPropsMap }
+  { componentToPropsMap, dir }
 ) {
   eleventyConfig.addAsyncShortcode(
     'react',

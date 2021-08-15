@@ -8,13 +8,16 @@ const { stringify } = require('javascript-stringify')
 const toRendererHtml = require('./toRendererHtml')
 const htmlEscape = require('../../utils/htmlEscape')
 
+const SLINKITY_REACT_RENDERER_PATH =
+  'slinkity/lib/plugin/reactPlugin/_slinkity-react-renderer.js'
+
 module.exports = function reactPlugin(eleventyConfig, { dir }) {
   eleventyConfig.addTemplateFormats('jsx')
   eleventyConfig.addPassthroughCopy(join(dir.input, dir.includes, 'components'))
 
   const componentToPropsMap = {}
 
-  addShortcode(eleventyConfig, { componentToPropsMap })
+  addShortcode(eleventyConfig, { componentToPropsMap, dir })
 
   eleventyConfig.addExtension('jsx', {
     read: false,
@@ -61,8 +64,8 @@ module.exports = function reactPlugin(eleventyConfig, { dir }) {
 
         await Promise.all(
           rendererAttrs.map(async ({ 'data-s-path': componentPath }) => {
-            const jsxInputPath = join(process.cwd(), dir.input, componentPath)
-            const jsxOutputPath = join(process.cwd(), dir.output, componentPath)
+            const jsxInputPath = join(dir.input, componentPath)
+            const jsxOutputPath = join(dir.output, componentPath)
             await writeFileRec(jsxOutputPath, await readFile(jsxInputPath))
           })
         )
@@ -70,7 +73,7 @@ module.exports = function reactPlugin(eleventyConfig, { dir }) {
         const componentScripts = rendererAttrs.map(
           ({ 'data-s-path': componentPath, 'data-s-lazy': isLazy = false }) => {
             const loadScript = `<script type="module">
-            import { renderComponent } from 'slinkity/lib/plugins/reactPlugin/_slinkity-react-renderer.js';
+            import { renderComponent } from ${JSON.stringify(SLINKITY_REACT_RENDERER_PATH)};
             import Component from ${JSON.stringify('/' + componentPath.split(sep).join('/'))};
             const props = ${stringify(componentToPropsMap[componentPath] ?? {})}; 
             renderComponent({ Component, componentPath: ${JSON.stringify(componentPath)}, props });
@@ -88,7 +91,7 @@ module.exports = function reactPlugin(eleventyConfig, { dir }) {
 
         $('body').append(
           `<script type="module" async>
-            import SlinkityReactRenderer from 'slinkity/lib/plugins/reactPlugin/_slinkity-react-renderer.js';
+            import SlinkityReactRenderer from ${JSON.stringify(SLINKITY_REACT_RENDERER_PATH)};
             window.customElements.define('slinkity-react-renderer', SlinkityReactRenderer);
           </script>
           ${componentScripts.join('')}`

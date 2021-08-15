@@ -1,9 +1,9 @@
 {
   "name": "slinkity",
   "description": "To 11ty and beyond! The tool for bringing dynamic, clientside interactions to your static 11ty site",
-  "version": "0.0.3-alpha.6",
+  "version": "0.1.0-alpha.1",
   "license": "MIT",
-  "main": "./lib/plugin.js",
+  "main": "./lib/plugin/index.js",
   "homepage": "https://slinkity.dev",
   "author": {
     "name": "Ben Holmes",
@@ -11,7 +11,7 @@
     "url": "https://bholmes.dev/"
   },
   "bin": {
-    "slinkity": "./lib/cli.js"
+    "slinkity": "./lib/cli/index.js"
   },
   "engines": {
     "node": ">=12"
@@ -49,21 +49,19 @@
   },
   "bugs": "https://github.com/Holben888/slinkity/issues",
   "dependencies": {
-    "@11ty/eleventy": "1.0.0-canary.40",
     "cheerio": "^1.0.0-rc.10",
     "commander": "^5.1.0",
-    "concurrently": "^6.2.0",
-    "cross-spawn": "^7.0.3",
     "esbuild": "^0.12.17",
+    "fs-extra": "^10.0.0",
     "glob": "^7.1.7",
     "html-react-parser": "^1.2.7",
     "javascript-stringify": "^2.1.0",
     "require-from-string": "^2.0.2",
     "sass": "^1.36.0",
-    "shell-quote": "^1.7.2",
     "vite": "^2.4.4"
   },
   "peerDependencies": {
+    "@11ty/eleventy": "1.0.0-canary.41",
     "react": "^17.0.2",
     "react-dom": "^17.0.2"
   },
