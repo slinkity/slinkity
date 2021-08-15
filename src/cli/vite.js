@@ -8,12 +8,12 @@ async function getConfigFile() {
   for (const ext of ['js', 'mjs', 'ts']) {
     try {
       const path = resolve(process.cwd(), `vite.config.${ext}`)
-      const contents = (await readFile(path)).toString()
-      return { path, contents }
+      await readFile(path)
+      return path
     } catch { /* if this fails, try the next ext */ }
   }
   
-  return { path: false }
+  return false
 }
 
 async function serve({ input, port }) {
@@ -22,7 +22,7 @@ async function serve({ input, port }) {
   const configFile = await getConfigFile()
 
   const options = {
-    configFile: configFile.path,
+    configFile: configFile,
     root: resolve(process.cwd(), input),
     clearScreen: false,
   }
@@ -39,7 +39,7 @@ async function build({ input, output }) {
   if (inputFiles.length) {
     await vite.build({
       root: input,
-      configFile: (await getConfigFile()).path,
+      configFile: await getConfigFile(),
       build: {
         outDir: output,
         emptyOutDir: true,
