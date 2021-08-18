@@ -33,17 +33,20 @@ module.exports = function reactPlugin(eleventyConfig, { dir }) {
         // TODO: make this more efficient with caching
         // We already build the component in getData!
         // See https://github.com/11ty/eleventy-plugin-vue/blob/master/.eleventy.js
-        const { default: Component = () => null, getProps = () => ({}) } =
+        const { default: Component = () => null, getProps = () => ({}), frontMatter = {} } =
           await toCommonJSModule({ inputPath })
 
-        const props = getProps(toFormattedDataForProps(data))
+        const props = await getProps(toFormattedDataForProps({
+          ...data,
+          shortcodes: eleventyConfig.javascriptFunctions ?? {}
+        }))
         componentToPropsMap[jsxImportPath] = props
 
         return toRendererHtml({
           Component,
           componentPath: jsxImportPath,
           props,
-          render: props.render,
+          render: frontMatter.render ?? 'eager',
           isPage: true,
           innerHTML: data.content,
         })
