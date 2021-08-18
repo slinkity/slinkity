@@ -9,6 +9,9 @@ const toRendererHtml = require('./toRendererHtml')
 const htmlEscape = require('../../utils/htmlEscape')
 const toFormattedDataForProps = require('./toFormattedDataForProps')
 
+const SLINKITY_REACT_RENDERER_PATH =
+  'slinkity/lib/plugin/reactPlugin/_slinkity-react-renderer.js'
+
 module.exports = function reactPlugin(eleventyConfig, { dir }) {
   eleventyConfig.addTemplateFormats('jsx')
   eleventyConfig.addPassthroughCopy(join(dir.input, dir.includes, 'components'))
