@@ -1,6 +1,7 @@
 const requireFromString = require('require-from-string')
 const { build } = require('esbuild')
 const { log } = require('../../utils/logger')
+const cssModulesPlugin = require('esbuild-css-modules-plugin')
 
 const makeAllPackagesExternalPlugin = {
   name: 'make-all-packages-external',
@@ -21,7 +22,9 @@ module.exports = async function toCommonJSModule({
     outfile: 'ignore',
     format: 'cjs',
     bundle: true,
-    plugins: [makeAllPackagesExternalPlugin],
+    plugins: [makeAllPackagesExternalPlugin, cssModulesPlugin({
+      inject: (cssContent, digest) => console.log(`"${cssContent}", "${digest}"`),
+    })],   
     write: false,
   })
   const { text } = outputFiles[0]
