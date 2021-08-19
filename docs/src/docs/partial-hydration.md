@@ -11,7 +11,7 @@ To choose how a given component is rendered, you'll need to pass the `render` pr
 ```jsx
 // Page.jsx
 export const frontMatter = {
-  render: eager;
+  render: 'eager';
 }
 
 function Page() {...}
