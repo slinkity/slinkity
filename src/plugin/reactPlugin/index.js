@@ -23,7 +23,10 @@ module.exports = function reactPlugin(eleventyConfig, { dir }) {
   eleventyConfig.addExtension('jsx', {
     read: false,
     getData: async (inputPath) => {
-      const { frontMatter = {} } = await toCommonJSModule({ inputPath })
+      const { frontMatter = {} } = await toCommonJSModule({
+        inputPath,
+        shouldHaveDefaultExport: false,
+      })
       return frontMatter
     },
     compile: (_, inputPath) =>
