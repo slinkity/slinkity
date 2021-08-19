@@ -7,6 +7,7 @@ const addShortcode = require('./addShortcode')
 const { stringify } = require('javascript-stringify')
 const toRendererHtml = require('./toRendererHtml')
 const htmlEscape = require('../../utils/htmlEscape')
+const toFormattedDataForProps = require('./toFormattedDataForProps')
 
 const SLINKITY_REACT_RENDERER_PATH =
   'slinkity/lib/plugin/reactPlugin/_slinkity-react-renderer.js'
@@ -22,8 +23,8 @@ module.exports = function reactPlugin(eleventyConfig, { dir }) {
   eleventyConfig.addExtension('jsx', {
     read: false,
     getData: async (inputPath) => {
-      const { getProps = () => ({}) } = await toCommonJSModule({ inputPath })
-      return getProps({})
+      const { frontMatter = {} } = await toCommonJSModule({ inputPath })
+      return frontMatter
     },
     compile: (_, inputPath) =>
       async function (data) {
@@ -32,17 +33,20 @@ module.exports = function reactPlugin(eleventyConfig, { dir }) {
         // TODO: make this more efficient with caching
         // We already build the component in getData!
         // See https://github.com/11ty/eleventy-plugin-vue/blob/master/.eleventy.js
-        const { default: Component = () => {}, getProps = () => ({}) } =
+        const { default: Component = () => null, getProps = () => ({}), frontMatter = {} } =
           await toCommonJSModule({ inputPath })
 
-        const props = getProps(data)
+        const props = await getProps(toFormattedDataForProps({
+          ...data,
+          shortcodes: eleventyConfig.javascriptFunctions ?? {}
+        }))
         componentToPropsMap[jsxImportPath] = props
 
         return toRendererHtml({
           Component,
           componentPath: jsxImportPath,
           props,
-          render: props.render,
+          render: frontMatter.render ?? 'eager',
           isPage: true,
           innerHTML: data.content,
         })
