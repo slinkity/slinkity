@@ -100,7 +100,7 @@ Now how do we use this component on our `index.html` page? Let's reach for a [sh
 This will do a few things:
 1. Go find `_includes/component/GlassCounter.jsx` (notice the `_includes` and `.jsx` are optional)
 2. "Statically" render the component and insert it as HTML. This means you'll always see your component, even when disabling JS in your browser ([go try it!](https://developer.chrome.com/docs/devtools/javascript/disable/)).
-3. ["Hydrate"](https://www.gatsbyjs.com/docs/conceptual/react-hydration/) that HTML we just rendered with our JavaScript component
+3. ["Hydrate"](/docs/partial-hydration/) that HTML we just rendered with our JavaScript component
 
 Now in your browser preview, clicking the button should increase your counter 🎉
 
