@@ -125,7 +125,7 @@ If all goes well, we should see a build output like this under [our build direct
   <h1>A tragic tale</h1>
   <!--components are placed inside a custom web component-->
   <!--that handles all the JS fetching and loading-->
-  <slinkity-react-renderer data-s-path="about.jsx" data-s-page="true">
+  <slinkity-react-renderer>
     <p data-reactroot="">
       Did YOU ever hear the Tragedy of Darth Plagueis the Wise?
     </p>
