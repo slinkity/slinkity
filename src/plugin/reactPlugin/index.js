@@ -122,7 +122,7 @@ module.exports = function reactPlugin(eleventyConfig, { dir }) {
       )
 
       $('body').append(
-        `<script type="module" async>
+        `<script type="module">
   import MountPoint from ${JSON.stringify(SLINKITY_REACT_MOUNT_POINT_PATH)};
   window.customElements.define(${SLINKITY_REACT_MOUNT_POINT}, MountPoint);
 </script>
