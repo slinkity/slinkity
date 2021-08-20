@@ -1,4 +1,3 @@
-
 module.exports = function toRendererHtml({
   componentPath = '',
   Component = () => {},
@@ -13,7 +12,7 @@ module.exports = function toRendererHtml({
   const parseHtmlToReact = require('html-react-parser')
   const { renderToString } = require('react-dom/server')
   const elementAsHTMLString = renderToString(
-    require('react').createElement(Component, props, parseHtmlToReact(innerHTML || ''))
+    require('react').createElement(Component, props, parseHtmlToReact(innerHTML || '')),
   )
   if (render === 'static') {
     return elementAsHTMLString
@@ -21,9 +20,7 @@ module.exports = function toRendererHtml({
     const isLazy = render === 'lazy'
     return `<slinkity-react-renderer data-s-path="${componentPath}" ${
       isPage ? 'data-s-page="true"' : ''
-    } ${
-      isLazy ? 'data-s-lazy="true"' : ''
-    }>${elementAsHTMLString}</slinkity-react-renderer>`
+    } ${isLazy ? 'data-s-lazy="true"' : ''}>${elementAsHTMLString}</slinkity-react-renderer>`
       .replace(/\n/g, '')
       .trim()
   }

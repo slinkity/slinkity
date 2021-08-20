@@ -53,10 +53,7 @@ function applyUserConfigDir(dir = {}) {
       errorHandler.fatal(error, 'Uncaught exception')
     })
     process.on('rejectionHandled', (promise) => {
-      errorHandler.warn(
-        promise,
-        'A promise rejection was handled asynchronously'
-      )
+      errorHandler.warn(promise, 'A promise rejection was handled asynchronously')
     })
 
     const config = require('./slinkityConfig')({ dir })

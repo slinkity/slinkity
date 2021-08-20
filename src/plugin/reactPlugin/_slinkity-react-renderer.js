@@ -1,17 +1,11 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 
-export const renderComponent = ({
-  Component = () => {},
-  componentPath = '',
-  props = {},
-}) => {
+export const renderComponent = ({ Component = () => {}, componentPath = '', props = {} }) => {
   const mountPoint = document.querySelector(
-    `slinkity-react-renderer[data-s-path=${JSON.stringify(componentPath)}]`
+    `slinkity-react-renderer[data-s-path=${JSON.stringify(componentPath)}]`,
   )
-  const innerReactEl = mountPoint.querySelector(
-    'slinkity-react-renderer[data-s-page="true"]'
-  )
+  const innerReactEl = mountPoint.querySelector('slinkity-react-renderer[data-s-page="true"]')
 
   let children
   if (innerReactEl) {

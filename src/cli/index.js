@@ -13,13 +13,11 @@ const eleventyArgs = {
   },
   output: {
     flag: '--output <output>',
-    description:
-      'Write HTML output to this folder (defaults to eleventy config or `_site`)',
+    description: 'Write HTML output to this folder (defaults to eleventy config or `_site`)',
   },
   watch: {
     flag: '--watch',
-    description:
-      'Wait for files to change and automatically rewrite (no web server)',
+    description: 'Wait for files to change and automatically rewrite (no web server)',
   },
   formats: {
     flag: '--formats <formats>',
@@ -36,8 +34,7 @@ const eleventyArgs = {
   },
   dryrun: {
     flag: '--dryrun',
-    description:
-      'Don’t write any files. Useful with `DEBUG=Eleventy* npx eleventy`',
+    description: 'Don’t write any files. Useful with `DEBUG=Eleventy* npx eleventy`',
   },
   incremental: {
     flag: '--incremental',
@@ -62,8 +59,7 @@ const slinkityArgs = {
   },
 }
 
-const applyOption = (option) =>
-  program.option(option.flag, option.description, option.defaultValue)
+const applyOption = (option) => program.option(option.flag, option.description, option.defaultValue)
 const toEleventyOptions = (allOptions) => {
   const eleventyOptions = {}
   for (let [name, value] of Object.entries(allOptions)) {

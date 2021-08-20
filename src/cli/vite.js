@@ -10,9 +10,11 @@ async function getConfigFile() {
       const path = resolve(`vite.config.${ext}`)
       await readFile(path)
       return path
-    } catch { /* if this fails, try the next ext */ }
+    } catch {
+      /* if this fails, try the next ext */
+    }
   }
-  
+
   return false
 }
 

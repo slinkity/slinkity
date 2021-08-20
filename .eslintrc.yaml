@@ -28,5 +28,5 @@ rules:
     - error
     - trailingComma: "all"
       singleQuote: true
-      printWidth: 120
+      printWidth: 100
       endOfLine: "auto"
