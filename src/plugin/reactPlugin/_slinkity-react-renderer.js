@@ -2,21 +2,25 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 
 export const renderComponent = ({ Component = () => {}, props = {}, hashId = '' }) => {
-  const mountPoint = document.querySelector(`slinkity-react-renderer[data-s-hash-id="${hashId}"]`)
-  const innerReactEl = mountPoint.querySelector('slinkity-react-renderer[data-s-page="true"]')
+  const mountPoints = document.querySelectorAll(
+    `slinkity-react-renderer[data-s-hash-id="${hashId}"]`,
+  )
+  for (const mountPoint of mountPoints) {
+    const innerReactEl = mountPoint.querySelector('slinkity-react-renderer[data-s-page="true"]')
 
-  let children
-  if (innerReactEl) {
-    const childrenProps = {
-      dangerouslySetInnerHTML: { __html: innerReactEl.innerHTML },
+    let children
+    if (innerReactEl) {
+      const childrenProps = {
+        dangerouslySetInnerHTML: { __html: innerReactEl.innerHTML },
+      }
+      for (const attribute of innerReactEl.attributes) {
+        childrenProps[attribute.name] = attribute.value
+      }
+      children = React.createElement(innerReactEl.tagName, childrenProps)
     }
-    for (const attribute of innerReactEl.attributes) {
-      childrenProps[attribute.name] = attribute.value
-    }
-    children = React.createElement(innerReactEl.tagName, childrenProps)
+
+    ReactDOM.render(React.createElement(Component, props, children), mountPoint)
   }
-
-  ReactDOM.render(React.createElement(Component, props, children), mountPoint)
 }
 
 export default class SlinkityReactRenderer extends HTMLElement {
@@ -27,8 +31,8 @@ export default class SlinkityReactRenderer extends HTMLElement {
     }
     const isLazy = Boolean(this.getAttribute('data-s-lazy'))
     if (isLazy) {
-      const path = this.getAttribute('data-s-path')
-      const template = document.querySelector(`template[data-s-path="${path}"]`)
+      const hashId = this.getAttribute('data-s-hash-id')
+      const template = document.querySelector(`template[data-s-hash-id="${hashId}"]`)
       const observer = new IntersectionObserver(function (entries) {
         for (const entry of entries) {
           if (entry.isIntersecting) {

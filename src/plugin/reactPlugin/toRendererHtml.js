@@ -17,7 +17,6 @@ module.exports = function toRendererHtml({
   const elementAsHTMLString = renderToString(
     require('react').createElement(Component, props, parseHtmlToReact(innerHTML || '')),
   )
-  console.log({ componentPath, props })
   if (render === 'static') {
     return elementAsHTMLString
   } else {

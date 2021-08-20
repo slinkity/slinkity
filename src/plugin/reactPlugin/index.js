@@ -79,12 +79,20 @@ module.exports = function reactPlugin(eleventyConfig, { dir }) {
         }),
       )
 
+      const previouslySeenHashes = new Set()
       const componentScripts = rendererAttrs.map(
         ({
           'data-s-path': componentPath,
           'data-s-hash-id': hashId,
           'data-s-lazy': isLazy = false,
         }) => {
+          // if we've already generated a script for a given hash
+          // we shouldn't generate another one
+          if (previouslySeenHashes.has(hashId)) {
+            return null
+          }
+          previouslySeenHashes.add(hashId)
+
           const loadScript = `<script type="module">
             import { renderComponent } from ${JSON.stringify(SLINKITY_REACT_RENDERER_PATH)};
             import Component from ${JSON.stringify('/' + componentPath.split(sep).join('/'))};
@@ -108,7 +116,7 @@ module.exports = function reactPlugin(eleventyConfig, { dir }) {
             import SlinkityReactRenderer from ${JSON.stringify(SLINKITY_REACT_RENDERER_PATH)};
             window.customElements.define('slinkity-react-renderer', SlinkityReactRenderer);
           </script>
-          ${componentScripts.join('')}`,
+          ${componentScripts.filter((script) => script !== null).join('')}`,
       )
       return $.html()
     } else {
