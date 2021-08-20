@@ -7,7 +7,6 @@ const addShortcode = require('./addShortcode')
 const toRendererHtml = require('./toRendererHtml')
 const toFormattedDataForProps = require('./toFormattedDataForProps')
 const { writeFileRec } = require('../../utils/fileHelpers')
-const htmlEscape = require('../../utils/htmlEscape')
 
 const SLINKITY_REACT_RENDERER_PATH = 'slinkity/lib/plugin/reactPlugin/_slinkity-react-renderer.js'
 
@@ -104,7 +103,7 @@ module.exports = function reactPlugin(eleventyConfig, { dir }) {
           </script>`
           if (isLazy) {
             // wrap "lazy" components in a template so we can load them later
-            return `<template data-s-path="${htmlEscape(componentPath)}">${loadScript}</template>`
+            return `<template data-s-hash-id="${hashId}">${loadScript}</template>`
           } else {
             return loadScript
           }
