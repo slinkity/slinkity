@@ -30,3 +30,4 @@ rules:
       singleQuote: true
       printWidth: 100
       endOfLine: "auto"
+      semi: false
