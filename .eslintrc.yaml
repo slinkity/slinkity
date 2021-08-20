@@ -2,7 +2,12 @@ env:
   node: true
   browser: true
   es6: true
-extends: "eslint:recommended"
+  jest: true
+extends:
+  - "eslint:recommended"
+  - "prettier"
+plugins:
+  - "prettier"
 parserOptions:
   ecmaVersion: 2020
   sourceType: module
@@ -19,3 +24,9 @@ rules:
   semi:
     - error
     - never
+  prettier/prettier:
+    - error
+    - trailingComma: "all"
+      singleQuote: true
+      printWidth: 120
+      endOfLine: "auto"
