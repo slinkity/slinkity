@@ -1,10 +1,8 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 
-export const renderComponent = ({ Component = () => {}, componentPath = '', props = {} }) => {
-  const mountPoint = document.querySelector(
-    `slinkity-react-renderer[data-s-path=${JSON.stringify(componentPath)}]`,
-  )
+export const renderComponent = ({ Component = () => {}, props = {}, hashId = '' }) => {
+  const mountPoint = document.querySelector(`slinkity-react-renderer[data-s-hash-id="${hashId}"]`)
   const innerReactEl = mountPoint.querySelector('slinkity-react-renderer[data-s-page="true"]')
 
   let children

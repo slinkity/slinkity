@@ -1,13 +1,13 @@
 const { readFile } = require('fs').promises
-const { writeFileRec } = require('../../utils/fileHelpers')
-const toCommonJSModule = require('./toCommonJSModule')
+const { stringify } = require('javascript-stringify')
 const { join, relative, sep } = require('path')
 const cheerio = require('cheerio')
+const toCommonJSModule = require('./toCommonJSModule')
 const addShortcode = require('./addShortcode')
-const { stringify } = require('javascript-stringify')
 const toRendererHtml = require('./toRendererHtml')
-const htmlEscape = require('../../utils/htmlEscape')
 const toFormattedDataForProps = require('./toFormattedDataForProps')
+const { writeFileRec } = require('../../utils/fileHelpers')
+const htmlEscape = require('../../utils/htmlEscape')
 
 const SLINKITY_REACT_RENDERER_PATH = 'slinkity/lib/plugin/reactPlugin/_slinkity-react-renderer.js'
 
@@ -80,12 +80,19 @@ module.exports = function reactPlugin(eleventyConfig, { dir }) {
       )
 
       const componentScripts = rendererAttrs.map(
-        ({ 'data-s-path': componentPath, 'data-s-lazy': isLazy = false }) => {
+        ({
+          'data-s-path': componentPath,
+          'data-s-hash-id': hashId,
+          'data-s-lazy': isLazy = false,
+        }) => {
           const loadScript = `<script type="module">
             import { renderComponent } from ${JSON.stringify(SLINKITY_REACT_RENDERER_PATH)};
             import Component from ${JSON.stringify('/' + componentPath.split(sep).join('/'))};
-            const props = ${stringify(componentToPropsMap[componentPath] ?? {})}; 
-            renderComponent({ Component, componentPath: ${JSON.stringify(componentPath)}, props });
+            renderComponent({
+              Component,
+              props: ${stringify(componentToPropsMap[componentPath] ?? {})},
+              hashId: "${hashId}"
+            });
           </script>`
           if (isLazy) {
             // wrap "lazy" components in a template so we can load them later

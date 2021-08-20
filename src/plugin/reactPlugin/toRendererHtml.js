@@ -1,3 +1,6 @@
+const toHtmlAttrString = require('../../utils/toHtmlAttrString')
+const toPropsHash = require('../../utils/toPropsHash')
+
 module.exports = function toRendererHtml({
   componentPath = '',
   Component = () => {},
@@ -14,13 +17,23 @@ module.exports = function toRendererHtml({
   const elementAsHTMLString = renderToString(
     require('react').createElement(Component, props, parseHtmlToReact(innerHTML || '')),
   )
+  console.log({ componentPath, props })
   if (render === 'static') {
     return elementAsHTMLString
   } else {
-    const isLazy = render === 'lazy'
-    return `<slinkity-react-renderer data-s-path="${componentPath}" ${
-      isPage ? 'data-s-page="true"' : ''
-    } ${isLazy ? 'data-s-lazy="true"' : ''}>${elementAsHTMLString}</slinkity-react-renderer>`
+    const attrs = {
+      ['data-s-path']: componentPath,
+      ['data-s-hash-id']: toPropsHash({ componentPath, props }),
+    }
+    if (render === 'lazy') {
+      attrs['data-s-lazy'] = true
+    }
+    if (isPage) {
+      attrs['data-s-page'] = true
+    }
+    return `<slinkity-react-renderer ${toHtmlAttrString(
+      attrs,
+    )}>${elementAsHTMLString}</slinkity-react-renderer>`
       .replace(/\n/g, '')
       .trim()
   }
