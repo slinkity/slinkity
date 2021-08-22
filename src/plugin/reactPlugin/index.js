@@ -71,7 +71,7 @@ module.exports = function reactPlugin(eleventyConfig, { dir }) {
     if (hasDynamicReact) {
       // 1. Record the "instance" index for each mount point on the page
       // This is used to match up scripts to mount points later
-      $(SLINKITY_REACT_MOUNT_POINT).each((index) => {
+      $(SLINKITY_REACT_MOUNT_POINT).each(function (index) {
         $(this).attr(SLINKITY_ATTRS.instance, `${index}`)
       })
 
@@ -124,7 +124,7 @@ module.exports = function reactPlugin(eleventyConfig, { dir }) {
       $('body').append(
         `<script type="module">
   import MountPoint from ${JSON.stringify(SLINKITY_REACT_MOUNT_POINT_PATH)};
-  window.customElements.define(${SLINKITY_REACT_MOUNT_POINT}, MountPoint);
+  window.customElements.define("${SLINKITY_REACT_MOUNT_POINT}", MountPoint);
 </script>
 ${componentScripts.join('')}`,
       )
