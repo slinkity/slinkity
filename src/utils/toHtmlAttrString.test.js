@@ -35,4 +35,17 @@ describe('toHtmlAttrString', () => {
 
     expect(toHtmlAttrString(props)).toEqual(expected)
   })
+  it('should escape invalid Html characters', () => {
+    const props = {
+      ['data-angular']: '<neat>',
+      ['data-quotacious']: '"I\'m a value!"',
+      ['data-yes-and']: 'Yes &',
+      ['data-all-together-now']: '<cool> I\'m ready to "rock & roll"',
+    }
+
+    const expected =
+      'data-angular="&lt;neat&gt;" data-quotacious="&quot;I&#39;m a value!&quot;" data-yes-and="Yes &amp;" data-all-together-now="&lt;cool&gt; I&#39;m ready to &quot;rock &amp; roll&quot;"'
+
+    expect(toHtmlAttrString(props)).toEqual(expected)
+  })
 })
