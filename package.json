@@ -1,7 +1,7 @@
 {
   "name": "slinkity",
   "description": "To 11ty and beyond! The tool for bringing dynamic, clientside interactions to your static 11ty site",
-  "version": "0.1.0-alpha.3",
+  "version": "0.1.1",
   "license": "MIT",
   "main": "./lib/plugin/index.js",
   "homepage": "https://slinkity.dev",
@@ -70,6 +70,7 @@
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^3.4.0",
+    "jest": "^27.0.6",
     "prettier": "^2.3.2"
   },
   "scripts": {
@@ -77,6 +78,8 @@
     "prepare": "npm run build",
     "watch": "babel src -d lib -w",
     "lint": "eslint \"src/**/*.{js,jsx,mjs}\"",
-    "lint:fix": "eslint --fix \"src/**/*.{js,jsx,mjs}\""
+    "lint:fix": "eslint --fix \"src/**/*.{js,jsx,mjs}\"",
+    "test": "jest ./src",
+    "test:watch": "jest ./src --watch"
   }
 }

@@ -1,11 +1,19 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
+import { SLINKITY_ATTRS, SLINKITY_REACT_MOUNT_POINT } from '../../utils/consts'
 
-export const renderComponent = ({ Component = () => {}, componentPath = '', props = {} }) => {
+export const renderComponent = ({
+  Component = () => {},
+  props = {},
+  componentPath = '',
+  instance = 1,
+}) => {
   const mountPoint = document.querySelector(
-    `slinkity-react-renderer[data-s-path=${JSON.stringify(componentPath)}]`,
+    `${SLINKITY_REACT_MOUNT_POINT}[${SLINKITY_ATTRS.path}="${componentPath}"][${SLINKITY_ATTRS.instance}="${instance}"]`,
   )
-  const innerReactEl = mountPoint.querySelector('slinkity-react-renderer[data-s-page="true"]')
+  const innerReactEl = mountPoint.querySelector(
+    `${SLINKITY_REACT_MOUNT_POINT}[${SLINKITY_ATTRS.type}="page"]`,
+  )
 
   let children
   if (innerReactEl) {
@@ -21,16 +29,19 @@ export const renderComponent = ({ Component = () => {}, componentPath = '', prop
   ReactDOM.render(React.createElement(Component, props, children), mountPoint)
 }
 
-export default class SlinkityReactRenderer extends HTMLElement {
+export default class SlinkityReactMountPoint extends HTMLElement {
   connectedCallback() {
     const options = {
       rootMargin: '0px 0px 0px 0px',
       threshold: 0,
     }
-    const isLazy = Boolean(this.getAttribute('data-s-lazy'))
+    const isLazy = Boolean(this.getAttribute(SLINKITY_ATTRS.lazy))
     if (isLazy) {
-      const path = this.getAttribute('data-s-path')
-      const template = document.querySelector(`template[data-s-path="${path}"]`)
+      const componentPath = this.getAttribute(SLINKITY_ATTRS.path)
+      const instance = this.getAttribute(SLINKITY_ATTRS.instance)
+      const template = document.querySelector(
+        `template[${SLINKITY_ATTRS.path}="${componentPath}"][${SLINKITY_ATTRS.instance}="${instance}"]`,
+      )
       const observer = new IntersectionObserver(function (entries) {
         for (const entry of entries) {
           if (entry.isIntersecting) {

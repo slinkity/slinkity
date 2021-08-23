@@ -1,15 +1,17 @@
 const { readFile } = require('fs').promises
-const { writeFileRec } = require('../../utils/fileHelpers')
-const toCommonJSModule = require('./toCommonJSModule')
+const { stringify } = require('javascript-stringify')
 const { join, relative, sep } = require('path')
 const cheerio = require('cheerio')
+const toCommonJSModule = require('./toCommonJSModule')
 const addShortcode = require('./addShortcode')
-const { stringify } = require('javascript-stringify')
 const toRendererHtml = require('./toRendererHtml')
-const htmlEscape = require('../../utils/htmlEscape')
 const toFormattedDataForProps = require('./toFormattedDataForProps')
+const { writeFileRec } = require('../../utils/fileHelpers')
+const toHtmlAttrString = require('../../utils/toHtmlAttrString')
+const { SLINKITY_ATTRS, SLINKITY_REACT_MOUNT_POINT } = require('../../utils/consts')
 
-const SLINKITY_REACT_RENDERER_PATH = 'slinkity/lib/plugin/reactPlugin/_slinkity-react-renderer.js'
+const SLINKITY_REACT_MOUNT_POINT_PATH =
+  'slinkity/lib/plugin/reactPlugin/_slinkity-react-mount-point.js'
 
 module.exports = function reactPlugin(eleventyConfig, { dir }) {
   eleventyConfig.addTemplateFormats('jsx')
@@ -54,7 +56,7 @@ module.exports = function reactPlugin(eleventyConfig, { dir }) {
           componentPath: jsxImportPath,
           props,
           render: frontMatter.render ?? 'eager',
-          isPage: true,
+          type: 'page',
           innerHTML: data.content,
         })
       },
@@ -64,32 +66,55 @@ module.exports = function reactPlugin(eleventyConfig, { dir }) {
     if (!outputPath.endsWith('.html')) return content
 
     const $ = cheerio.load(content)
-    const hasDynamicReact = $('slinkity-react-renderer').length > 0
+    const hasDynamicReact = $(SLINKITY_REACT_MOUNT_POINT).length > 0
 
     if (hasDynamicReact) {
-      const rendererAttrs = $('slinkity-react-renderer')
+      // 1. Record the "instance" index for each mount point on the page
+      // This is used to match up scripts to mount points later
+      $(SLINKITY_REACT_MOUNT_POINT).each(function (index) {
+        $(this).attr(SLINKITY_ATTRS.instance, `${index}`)
+      })
+
+      // 2. Get the attributes for all mount points on the page
+      const rendererAttrs = $(SLINKITY_REACT_MOUNT_POINT)
         .toArray()
         .map((el) => el.attribs)
 
+      // 3. Copy the associated component file to the output dir
       await Promise.all(
-        rendererAttrs.map(async ({ 'data-s-path': componentPath }) => {
+        rendererAttrs.map(async ({ [SLINKITY_ATTRS.path]: componentPath }) => {
           const jsxInputPath = join(dir.input, componentPath)
           const jsxOutputPath = join(dir.output, componentPath)
           await writeFileRec(jsxOutputPath, await readFile(jsxInputPath))
         }),
       )
 
+      // 4. Generate scripts to hydrate our mount points
       const componentScripts = rendererAttrs.map(
-        ({ 'data-s-path': componentPath, 'data-s-lazy': isLazy = false }) => {
+        ({
+          [SLINKITY_ATTRS.path]: componentPath,
+          [SLINKITY_ATTRS.instance]: instance,
+          [SLINKITY_ATTRS.lazy]: isLazy = false,
+        }) => {
+          // TODO: abstract "props" to some other file, instead of stringifying in-place
+          // We could be generating identical, large prop blobs
           const loadScript = `<script type="module">
-            import { renderComponent } from ${JSON.stringify(SLINKITY_REACT_RENDERER_PATH)};
+            import { renderComponent } from ${JSON.stringify(SLINKITY_REACT_MOUNT_POINT_PATH)};
             import Component from ${JSON.stringify('/' + componentPath.split(sep).join('/'))};
-            const props = ${stringify(componentToPropsMap[componentPath] ?? {})}; 
-            renderComponent({ Component, componentPath: ${JSON.stringify(componentPath)}, props });
+            renderComponent({
+              Component,
+              componentPath: ${JSON.stringify(componentPath)},
+              instance: "${instance}",
+              props: ${stringify(componentToPropsMap[componentPath] ?? {})},
+            });
           </script>`
           if (isLazy) {
+            const attrs = toHtmlAttrString({
+              [SLINKITY_ATTRS.path]: componentPath,
+              [SLINKITY_ATTRS.instance]: instance,
+            })
             // wrap "lazy" components in a template so we can load them later
-            return `<template data-s-path="${htmlEscape(componentPath)}">${loadScript}</template>`
+            return `<template ${attrs}>${loadScript}</template>`
           } else {
             return loadScript
           }
@@ -97,11 +122,11 @@ module.exports = function reactPlugin(eleventyConfig, { dir }) {
       )
 
       $('body').append(
-        `<script type="module" async>
-            import SlinkityReactRenderer from ${JSON.stringify(SLINKITY_REACT_RENDERER_PATH)};
-            window.customElements.define('slinkity-react-renderer', SlinkityReactRenderer);
-          </script>
-          ${componentScripts.join('')}`,
+        `<script type="module">
+  import MountPoint from ${JSON.stringify(SLINKITY_REACT_MOUNT_POINT_PATH)};
+  window.customElements.define("${SLINKITY_REACT_MOUNT_POINT}", MountPoint);
+</script>
+${componentScripts.join('')}`,
       )
       return $.html()
     } else {

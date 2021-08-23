@@ -1,9 +1,12 @@
+const { SLINKITY_ATTRS, SLINKITY_REACT_MOUNT_POINT } = require('../../utils/consts')
+const toHtmlAttrString = require('../../utils/toHtmlAttrString')
+
 module.exports = function toRendererHtml({
   componentPath = '',
   Component = () => {},
   props = {},
   render = 'eager',
-  isPage = false,
+  type = 'shortcode',
   innerHTML = '',
 }) {
   // only import these dependencies when triggered
@@ -17,10 +20,16 @@ module.exports = function toRendererHtml({
   if (render === 'static') {
     return elementAsHTMLString
   } else {
-    const isLazy = render === 'lazy'
-    return `<slinkity-react-renderer data-s-path="${componentPath}" ${
-      isPage ? 'data-s-page="true"' : ''
-    } ${isLazy ? 'data-s-lazy="true"' : ''}>${elementAsHTMLString}</slinkity-react-renderer>`
+    const attrs = {
+      [SLINKITY_ATTRS.path]: componentPath,
+      [SLINKITY_ATTRS.type]: type,
+    }
+    if (render === 'lazy') {
+      attrs[SLINKITY_ATTRS.lazy] = true
+    }
+    return `<${SLINKITY_REACT_MOUNT_POINT} ${toHtmlAttrString(
+      attrs,
+    )}>${elementAsHTMLString}</${SLINKITY_REACT_MOUNT_POINT}>`
       .replace(/\n/g, '')
       .trim()
   }
