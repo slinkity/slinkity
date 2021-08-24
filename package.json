@@ -1,7 +1,7 @@
 {
   "name": "slinkity",
   "description": "To 11ty and beyond! The tool for bringing dynamic, clientside interactions to your static 11ty site",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "license": "MIT",
   "main": "./lib/plugin/index.js",
   "homepage": "https://slinkity.dev",
