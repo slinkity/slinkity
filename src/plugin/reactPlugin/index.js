@@ -8,6 +8,7 @@ const toRendererHtml = require('./toRendererHtml')
 const toFormattedDataForProps = require('./toFormattedDataForProps')
 const { writeFileRec } = require('../../utils/fileHelpers')
 const toHtmlAttrString = require('../../utils/toHtmlAttrString')
+const toUnixPath = require('../../utils/toUnixPath')
 const { SLINKITY_ATTRS, SLINKITY_REACT_MOUNT_POINT } = require('../../utils/consts')
 
 const SLINKITY_REACT_MOUNT_POINT_PATH =
@@ -100,10 +101,10 @@ module.exports = function reactPlugin(eleventyConfig, { dir }) {
           // We could be generating identical, large prop blobs
           const loadScript = `<script type="module">
             import { renderComponent } from ${JSON.stringify(SLINKITY_REACT_MOUNT_POINT_PATH)};
-            import Component from ${JSON.stringify('/' + componentPath.split(sep).join('/'))};
+            import Component from ${JSON.stringify('/' + toUnixPath(componentPath))};
             renderComponent({
               Component,
-              componentPath: ${JSON.stringify(componentPath)},
+              componentPath: ${JSON.stringify(toUnixPath(componentPath))},
               instance: "${instance}",
               props: ${stringify(componentToPropsMap[componentPath] ?? {})},
             });
