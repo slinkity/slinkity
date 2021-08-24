@@ -17,23 +17,24 @@ Slinkity is a tool for bringing dynamic, clientside interactions to your static 
 
 ## Quick start
 
-You'll need an existing 11ty site to get started. If you're new to 11ty, you can make your first project using the lovely guide + community resources [over here](https://www.11ty.dev/docs/getting-started/).
+All you need is an empty directory to get started! But if you prefer a starter project with some pre-populated content, you can use the lovely guide + community resources [over on the 11ty docs](https://www.11ty.dev/docs/getting-started/).
 
-Then, you can install Slinkity into your project repo like so:
+### Installation
+
+First, install Slinkity + the latest 11ty into your project repo like so:
 
 ```bash
-# First, uninstall any existing version of 11ty in your project!
-# Slinkity will go install the latest "canary" build
-npm uninstall @11ty/eleventy
-
-npm i --save-dev slinkity
+npm i --save-dev slinkity @11ty/eleventy@1.0.0-canary.41
 ```
+
+> Slinkity relies on 11ty's [latest 1.0 canary build](https://www.npmjs.com/package/@11ty/eleventy/v/1.0.0-canary.41) to work properly. Yes, this could involve some gotchas with existing 11ty plugins! If anything unexpected happens, let us know on our [GitHub issues page](https://github.com/Holben888/slinkity/issues).
 
 ...and run our CLI command to spin up the dev server:
 
 ```bash
 npx slinkity --serve
-# Also consider the --incremental flag for faster builds during development
+# Also consider the --incremental flag
+# for faster builds during development
 ```
 
 Now you're off to the races! This command will:
@@ -49,9 +50,7 @@ npx slinkity
 
 ...and your shiny new site will appear in the `_site` folder (or [wherever you tell 11ty to build your site](https://www.11ty.dev/docs/config/#output-directory)).
 
-> About that canary build: For Slinkity to work properly, we're relying on the latest "experimental" build of 11ty. This could involve some gotchas with existing 11ty plugins. If anything unexpected happens, let us know on our [GitHub issues page](https://github.com/Holben888/slinkity/issues).
-
-### [📚 Find our full documentation here →](https://slinkity.dev/)
+### [📚 Dive in to the docs here →](https://slinkity.dev/docs/quick-start/)
 
 ## Feature set
 
