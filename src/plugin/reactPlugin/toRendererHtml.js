@@ -1,5 +1,6 @@
 const { SLINKITY_ATTRS, SLINKITY_REACT_MOUNT_POINT } = require('../../utils/consts')
 const toHtmlAttrString = require('../../utils/toHtmlAttrString')
+const toUnixPath = require('../../utils/toUnixPath')
 
 module.exports = function toRendererHtml({
   componentPath = '',
@@ -21,7 +22,7 @@ module.exports = function toRendererHtml({
     return elementAsHTMLString
   } else {
     const attrs = {
-      [SLINKITY_ATTRS.path]: componentPath,
+      [SLINKITY_ATTRS.path]: toUnixPath(componentPath),
       [SLINKITY_ATTRS.type]: type,
     }
     if (render === 'lazy') {
