@@ -49,13 +49,13 @@
   },
   "bugs": "https://github.com/Holben888/slinkity/issues",
   "dependencies": {
-    "cheerio": "^1.0.0-rc.10",
     "commander": "^5.1.0",
     "esbuild": "^0.12.17",
     "fs-extra": "^10.0.0",
     "glob": "^7.1.7",
     "html-react-parser": "^1.2.7",
     "javascript-stringify": "^2.1.0",
+    "node-html-parser": "^4.1.3",
     "require-from-string": "^2.0.2",
     "sass": "^1.36.0",
     "vite": "^2.4.4"
