@@ -2,7 +2,7 @@
 title: Overview
 ---
 
-> 🚧 **This project is heavily under construction!** 🚧 As excited as you may be, we don't recommend this early alpha for production use. Still, give it a try if you want to have some fun and don't mind [logging bugs](https://github.com/Holben888/slinkity/issues) along the way :)
+> 🚧 **This project is heavily under construction!** 🚧 As excited as you may be, we don't recommend this early alpha for production use. Still, give it a try if you want to have some fun and don't mind [logging bugs](https://github.com/slinkity/slinkity/issues) along the way :)
 
 ## In brief
 
@@ -50,4 +50,4 @@ _*CSS modules **will** work with JavaScript enabled. However, disabling JavaScri
 
 ## Have an idea? Notice a bug?
 
-We'd love to hear your feedback! Feel free to log an issue on our [GitHub issues page](https://github.com/Holben888/slinkity/issues). If your question is more personal, [our Twitter DMs](https://twitter.com/slinkitydotdev) are always open as well.
+We'd love to hear your feedback! Feel free to log an issue on our [GitHub issues page](https://github.com/slinkity/slinkity/issues). If your question is more personal, [our Twitter DMs](https://twitter.com/slinkitydotdev) are always open as well.

@@ -43,7 +43,7 @@ in file "${this.page.inputPath}"`,
       render,
     })
 
-    // Fixes https://github.com/Holben888/slinkity/issues/15
+    // Fixes https://github.com/slinkity/slinkity/issues/15
     // To prevent 11ty's markdown parser from wrapping components in <p> tags,
     // We need to wrap our custom element in some recognizable block (like a <div>)
     if (extname(this.page.inputPath) === '.md') {
