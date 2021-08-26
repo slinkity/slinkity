@@ -6,13 +6,19 @@ All you need is an empty directory to get started! But if you prefer a starter p
 
 ## Installation
 
-First, install Slinkity + the latest 11ty into your project repo like so:
+If you're starting from a new directory, be sure to create a new `package.json` like so:
+
+```bash
+npm init -y
+```
+
+Then, install Slinkity + the latest 11ty into your project:
 
 ```bash
 npm i --save-dev slinkity @11ty/eleventy@1.0.0-canary.41
 ```
 
-> Slinkity relies on 11ty's [latest 1.0 canary build](https://www.npmjs.com/package/@11ty/eleventy/v/1.0.0-canary.41) to work properly. Yes, this could involve some gotchas with existing 11ty plugins! If anything unexpected happens, let us know on our [GitHub issues page](https://github.com/Holben888/slinkity/issues).
+> Slinkity relies on 11ty's [latest 1.0 canary build](https://www.npmjs.com/package/@11ty/eleventy/v/1.0.0-canary.41) to work properly. Yes, this could involve some gotchas with existing 11ty plugins! If anything unexpected happens, let us know on our [GitHub issues page](https://github.com/slinkity/slinkity/issues).
 
 ...and run our CLI command to spin up the dev server:
 
@@ -84,7 +90,7 @@ _**Note:** Make sure this file is under `_includes/components`. Slinkity will co
 Next, go ahead and install `react` and `react-dom` as project dependencies. This will help your Vite server compile your component.
 
 ```bash
-npm i react react-dom --save-dev
+npm i --save-dev react react-dom
 ```
 
 Now how do we use this component on our `index.html` page? Let's reach for a [shortcode](https://www.11ty.dev/docs/shortcodes/):
