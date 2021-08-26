@@ -1,19 +1,15 @@
 const { parse } = require('node-html-parser')
 const { join } = require('path')
 const { readFile } = require('fs').promises
-const { stringify } = require('javascript-stringify')
 const applyHtmlWrapper = require('./applyHtmlWrapper')
-const toHtmlAttrString = require('../../utils/toHtmlAttrString')
 const { SLINKITY_ATTRS, SLINKITY_REACT_MOUNT_POINT } = require('../../utils/consts')
 const { writeFileRec } = require('../../utils/fileHelpers')
-const toUnixPath = require('../../utils/toUnixPath')
-
-const SLINKITY_REACT_MOUNT_POINT_PATH =
-  'slinkity/lib/plugin/reactPlugin/_slinkity-react-mount-point.js'
+const toLoaderScript = require('./toLoaderScript')
+const toClientImportStatement = require('./toClientImportStatement')
 
 const webComponentLoader = `
 <script type="module">
-  import MountPoint from ${JSON.stringify(SLINKITY_REACT_MOUNT_POINT_PATH)};
+  import MountPoint from ${toClientImportStatement('_mount-point.js')};
   window.customElements.define("${SLINKITY_REACT_MOUNT_POINT}", MountPoint);
 </script>`
 
@@ -71,28 +67,12 @@ async function toHydrationLoadersApplied({ content, componentToPropsMap, dir, is
         [SLINKITY_ATTRS.instance]: instance,
         [SLINKITY_ATTRS.lazy]: isLazy = false,
       }) => {
-        // TODO: abstract "props" to some other file, instead of stringifying in-place
-        // We could be generating identical, large prop blobs
-        const loadScript = `<script type="module">
-            import { renderComponent } from ${JSON.stringify(SLINKITY_REACT_MOUNT_POINT_PATH)};
-            import Component from ${JSON.stringify('/' + toUnixPath(componentPath))};
-            renderComponent({
-              Component,
-              componentPath: ${JSON.stringify(toUnixPath(componentPath))},
-              instance: "${instance}",
-              props: ${stringify(componentToPropsMap[componentPath] ?? {})},
-            });
-          </script>`
-        if (isLazy) {
-          const attrs = toHtmlAttrString({
-            [SLINKITY_ATTRS.path]: componentPath,
-            [SLINKITY_ATTRS.instance]: instance,
-          })
-          // wrap "lazy" components in a template so we can load them later
-          return `<template ${attrs}>${loadScript}</template>`
-        } else {
-          return loadScript
-        }
+        return toLoaderScript({
+          componentPath,
+          type: isLazy ? 'lazy' : 'eager',
+          instance,
+          props: componentToPropsMap[SLINKITY_ATTRS.path] ?? {},
+        })
       },
     )
 
