@@ -1,5 +1,5 @@
 const toRendererHtml = require('./toRendererHtml')
-const { join } = require('path')
+const { join, extname } = require('path')
 const toCommonJSModule = require('./toCommonJSModule')
 const { log } = require('../../utils/logger')
 
@@ -36,11 +36,20 @@ in file "${this.page.inputPath}"`,
       inputPath: join(dir.input, relComponentPath),
     })
 
-    return toRendererHtml({
+    const html = toRendererHtml({
       componentPath: relComponentPath,
       Component,
       props,
       render,
     })
+
+    // Fixes https://github.com/Holben888/slinkity/issues/15
+    // To prevent 11ty's markdown parser from wrapping components in <p> tags,
+    // We need to wrap our custom element in some recognizable block (like a <div>)
+    if (extname(this.page.inputPath) === '.md') {
+      return `<div>${html}</div>`
+    } else {
+      return html
+    }
   })
 }
