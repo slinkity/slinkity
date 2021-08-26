@@ -48,7 +48,7 @@ in file "${this.page.inputPath}"`,
       hydrate: render,
     })
 
-    const { default: Component = () => {} } = await toCommonJSModule({
+    const { default: Component = () => {}, styles = '' } = await toCommonJSModule({
       inputPath: join(dir.input, relComponentPath),
     })
 
@@ -57,6 +57,7 @@ in file "${this.page.inputPath}"`,
       Component,
       props,
       render,
+      styles,
     })
 
     // Fixes https://github.com/slinkity/slinkity/issues/15

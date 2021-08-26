@@ -38,6 +38,7 @@ module.exports = function reactPlugin(eleventyConfig, { dir }) {
           default: Component = () => null,
           getProps = () => ({}),
           frontMatter = {},
+          styles = '',
         } = await toCommonJSModule({ inputPath })
 
         const props = await getProps(
@@ -62,6 +63,7 @@ module.exports = function reactPlugin(eleventyConfig, { dir }) {
           id,
           render: hydrate,
           innerHTML: data.content,
+          styles,
         })
       },
   })
