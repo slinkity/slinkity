@@ -1,6 +1,6 @@
 const { readFile } = require('fs').promises
 const { stringify } = require('javascript-stringify')
-const { join, relative, sep } = require('path')
+const { join, relative } = require('path')
 const { parse } = require('node-html-parser')
 const toCommonJSModule = require('./toCommonJSModule')
 const addShortcode = require('./addShortcode')
