@@ -1,7 +1,7 @@
 const { readFile } = require('fs').promises
 const { stringify } = require('javascript-stringify')
 const { join, relative } = require('path')
-const cheerio = require('cheerio')
+const { parse } = require('node-html-parser')
 const toCommonJSModule = require('./toCommonJSModule')
 const addShortcode = require('./addShortcode')
 const toRendererHtml = require('./toRendererHtml')
@@ -66,20 +66,22 @@ module.exports = function reactPlugin(eleventyConfig, { dir }) {
   eleventyConfig.addTransform('add-react-renderer-script', async function (content, outputPath) {
     if (!outputPath.endsWith('.html')) return content
 
-    const $ = cheerio.load(content)
-    const hasDynamicReact = $(SLINKITY_REACT_MOUNT_POINT).length > 0
+    const root = parse(content)
+    const mountPoints = [...root.querySelectorAll(SLINKITY_REACT_MOUNT_POINT)]
 
-    if (hasDynamicReact) {
+    if (mountPoints.length > 0) {
       // 1. Record the "instance" index for each mount point on the page
       // This is used to match up scripts to mount points later
-      $(SLINKITY_REACT_MOUNT_POINT).each(function (index) {
-        $(this).attr(SLINKITY_ATTRS.instance, `${index}`)
+      mountPoints.forEach((mountPoint, index) => {
+        mountPoint.setAttribute(SLINKITY_ATTRS.instance, `${index}`)
       })
 
       // 2. Get the attributes for all mount points on the page
-      const rendererAttrs = $(SLINKITY_REACT_MOUNT_POINT)
-        .toArray()
-        .map((el) => el.attribs)
+      const rendererAttrs = mountPoints.map((mountPoint) => ({
+        [SLINKITY_ATTRS.path]: mountPoint.getAttribute(SLINKITY_ATTRS.path) || '',
+        [SLINKITY_ATTRS.instance]: mountPoint.getAttribute(SLINKITY_ATTRS.instance) || '',
+        [SLINKITY_ATTRS.lazy]: mountPoint.getAttribute(SLINKITY_ATTRS.lazy) === 'true',
+      }))
 
       // 3. Copy the associated component file to the output dir
       await Promise.all(
@@ -122,16 +124,17 @@ module.exports = function reactPlugin(eleventyConfig, { dir }) {
         },
       )
 
-      $('body').append(
-        `<script type="module">
-  import MountPoint from ${JSON.stringify(SLINKITY_REACT_MOUNT_POINT_PATH)};
-  window.customElements.define("${SLINKITY_REACT_MOUNT_POINT}", MountPoint);
-</script>
-${componentScripts.join('')}`,
+      root.querySelector('body').insertAdjacentHTML(
+        'beforeend',
+        `
+		  <script type="module">
+		    import MountPoint from ${JSON.stringify(SLINKITY_REACT_MOUNT_POINT_PATH)};
+		    window.customElements.define("${SLINKITY_REACT_MOUNT_POINT}", MountPoint);
+		  </script>
+		  ${componentScripts.join('')}
+		`,
       )
-      return $.html()
-    } else {
-      return content
-    }
+      return root.outerHTML
+    } else return content
   })
 }
