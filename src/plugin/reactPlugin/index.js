@@ -57,7 +57,6 @@ module.exports = function reactPlugin(eleventyConfig, { dir }) {
           componentPath: jsxImportPath,
           props,
           render: frontMatter.render ?? 'eager',
-          type: 'page',
           innerHTML: data.content,
         })
       },

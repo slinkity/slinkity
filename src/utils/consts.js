@@ -5,13 +5,11 @@
  * instance: The numeric position of a mount point in the DOM
  *  (i.e. the second mount point has an instance of 2)
  * lazy: Boolean for whether to load a mount point's scripts lazily
- * type: Whether the mount point is for a page ("page") or a shortcode ("shortcode")
  */
 const SLINKITY_ATTRS = {
   path: 'data-s-path',
   instance: 'data-s-instance',
   lazy: 'data-s-lazy',
-  type: 'data-s-type',
 }
 
 /**

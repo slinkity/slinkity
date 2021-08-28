@@ -7,7 +7,6 @@ module.exports = function toRendererHtml({
   Component = () => {},
   props = {},
   render = 'eager',
-  type = 'shortcode',
   innerHTML = '',
 }) {
   // only import these dependencies when triggered
@@ -23,7 +22,6 @@ module.exports = function toRendererHtml({
   } else {
     const attrs = {
       [SLINKITY_ATTRS.path]: toUnixPath(componentPath),
-      [SLINKITY_ATTRS.type]: type,
     }
     if (render === 'lazy') {
       attrs[SLINKITY_ATTRS.lazy] = true
