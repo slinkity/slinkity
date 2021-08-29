@@ -6,6 +6,7 @@ const toCommonJSModule = require('./toCommonJSModule')
 const addShortcode = require('./addShortcode')
 const toRendererHtml = require('./toRendererHtml')
 const toFormattedDataForProps = require('./toFormattedDataForProps')
+const applyHtmlWrapper = require('./applyHtmlWrapper')
 const { writeFileRec } = require('../../utils/fileHelpers')
 const toHtmlAttrString = require('../../utils/toHtmlAttrString')
 const toUnixPath = require('../../utils/toUnixPath')
@@ -66,6 +67,7 @@ module.exports = function reactPlugin(eleventyConfig, { dir }) {
     if (!outputPath.endsWith('.html')) return content
 
     const root = parse(content)
+    applyHtmlWrapper(root)
     const mountPoints = [...root.querySelectorAll(SLINKITY_REACT_MOUNT_POINT)]
 
     if (mountPoints.length > 0) {
