@@ -6,18 +6,18 @@ const toUnixPath = require('../../utils/toUnixPath')
  * Generates a string of HTML from a React component,
  * with a hydration mount point + attributes applied when necessary
  * @param {{
- *  componentPath: string,
  *  Component: () => void,
  *  render: 'eager' | 'lazy' | 'static',
+ *  componentPath?: string,
  *  props?: Object.<string, Any>,
  *  innerHTML?: string
  * }} params Component to process with all related attributes
  * @returns {string} Mount point with parameters + children applied
  */
 module.exports = function toRendererHtml({
-  componentPath,
   Component,
   render,
+  componentPath,
   props = {},
   innerHTML = '',
 }) {
