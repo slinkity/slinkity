@@ -16,9 +16,8 @@ const argsArrayToPropsObj = function ({ vargs = [], errorMsg = '' }) {
   }
   return props
 }
-module.exports.argsArrayToPropsObj = argsArrayToPropsObj
 
-module.exports.default = function addShortcode(eleventyConfig, { componentToPropsMap, dir }) {
+module.exports = function addShortcode(eleventyConfig, { componentToPropsMap, dir }) {
   eleventyConfig.addAsyncShortcode('react', async function (componentPath, ...vargs) {
     const relComponentPath =
       join(dir.includes, componentPath) + (componentPath.endsWith('.jsx') ? '' : '.jsx')
@@ -54,3 +53,4 @@ in file "${this.page.inputPath}"`,
     }
   })
 }
+module.exports.argsArrayToPropsObj = argsArrayToPropsObj
