@@ -1,11 +1,12 @@
-const toClientImportStatement = require('./toClientImportStatement')
 const { sep } = require('path')
+const { stringify } = require('javascript-stringify')
+const toClientImportStatement = require('./toClientImportStatement')
 
 module.exports = function toLoaderScript({
   componentPath = '',
   type = 'lazy',
   instance = '',
-  stringifiedProps = '',
+  props = {},
 }) {
   // TODO: abstract "props" to some other file, instead of stringifying in-place
   // We could be generating identical, large prop blobs
@@ -19,7 +20,7 @@ module.exports = function toLoaderScript({
       Component,
       componentPath: ${JSON.stringify(componentPath)},
       instance: "${instance}",
-      props: ${stringifiedProps},
+      props: ${stringify(props)},
     });
   </script>`
   } else if (type === 'lazy') {
@@ -30,7 +31,7 @@ module.exports = function toLoaderScript({
       componentImporter: async () => await import(${componentImportStatement}),
       componentPath: ${JSON.stringify(componentPath)},
       instance: "${instance}",
-      props: ${stringifiedProps},
+      props: ${stringify(props)},
     });
   </script>`
   } else {
