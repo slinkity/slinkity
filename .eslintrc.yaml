@@ -5,7 +5,11 @@ env:
   jest: true
 extends:
   - "eslint:recommended"
+  - "plugin:react/recommended"
   - "prettier"
+settings:
+  react:
+    version: detect
 plugins:
   - "prettier"
 parserOptions:
@@ -31,3 +35,5 @@ rules:
       printWidth: 100
       endOfLine: "auto"
       semi: false
+  react/prop-types:
+    - 0
