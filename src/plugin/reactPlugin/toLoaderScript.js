@@ -2,12 +2,22 @@ const { sep } = require('path')
 const { stringify } = require('javascript-stringify')
 const toClientImportStatement = require('./toClientImportStatement')
 
-module.exports = function toLoaderScript({
-  componentPath = '',
-  type = 'lazy',
-  instance = '',
-  props = {},
-}) {
+/**
+ * Generate the `<script>` necessary to load a Component into a given mount point
+ * On the client, this script should:
+ * - import the Component from the correct path
+ * - import the correct loader based on the `type`
+ * - apply the `props` correctly stringified
+ * - call the loader at the correct time
+ * @param {{
+ *   componentPath: string,
+ *   type: 'eager' | 'lazy',
+ *   instance: string,
+ *   props: Object.<string, any>
+ * }} params
+ * @returns {string} String of HTML to run loader in the client
+ */
+module.exports = function toLoaderScript({ componentPath, type, instance, props = {} }) {
   // TODO: abstract "props" to some other file, instead of stringifying in-place
   // We could be generating identical, large prop blobs
   const componentImportStatement = JSON.stringify('/' + componentPath.split(sep).join('/'))
