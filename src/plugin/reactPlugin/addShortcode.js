@@ -53,3 +53,4 @@ in file "${this.page.inputPath}"`,
     }
   })
 }
+module.exports.argsArrayToPropsObj = argsArrayToPropsObj
