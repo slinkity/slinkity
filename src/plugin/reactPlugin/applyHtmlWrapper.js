@@ -3,7 +3,7 @@
  * - (If missing) An <html> wrapper with lang="en" and <!DOCTYPE html>
  * - (If missing) A <body> wrapper
  * - (If missing) A <head> with emmett-based defaults
- * @param { import('node-html-parser').HTMLElement } rootElement 
+ * @param { import('node-html-parser').HTMLElement } rootElement
  */
 module.exports = function applyHtmlWrapper(rootElement) {
   let content = rootElement.innerHTML
@@ -36,14 +36,15 @@ function toBodyWrapper(content) {
  * @return {string}
  */
 function toHtmlWrapper(content, applyHead = true) {
-  return `<!DOCTYPE html>
-<html lang="en">${applyHead ? `
+  const head = `
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
-</head>` : ''}
+</head>`
+  return `<!DOCTYPE html>
+<html lang="en">${applyHead ? head : ''}
 
 ${content}
 
