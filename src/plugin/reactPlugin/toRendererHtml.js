@@ -17,7 +17,7 @@ const toUnixPath = require('../../utils/toUnixPath')
 module.exports = function toRendererHtml({
   Component,
   render,
-  componentPath,
+  componentPath = '',
   props = {},
   innerHTML = '',
 }) {
