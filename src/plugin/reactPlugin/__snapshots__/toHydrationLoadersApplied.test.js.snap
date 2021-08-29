@@ -23,37 +23,40 @@ exports[`toHydrationLoadersApplied with mount points should apply correct hydrat
 
 
 <script type=\\"module\\">
-  import MountPoint from \\"slinkity/lib/plugin/reactPlugin/_slinkity-react-mount-point.js\\";
+  import MountPoint from \\"slinkity/lib/plugin/reactPlugin/_client/_mount-point.js\\";
   window.customElements.define(\\"slinkity-react-mount-point\\", MountPoint);
 </script>
 <script type=\\"module\\">
-            import { renderComponent } from \\"slinkity/lib/plugin/reactPlugin/_slinkity-react-mount-point.js\\";
-            import Component from \\"//nice.jsx\\";
-            renderComponent({
-              Component,
-              componentPath: \\"/nice.jsx\\",
-              instance: \\"0\\",
-              props: {},
-            });
-          </script><script type=\\"module\\">
-            import { renderComponent } from \\"slinkity/lib/plugin/reactPlugin/_slinkity-react-mount-point.js\\";
-            import Component from \\"//more/Nested.jsx\\";
-            renderComponent({
-              Component,
-              componentPath: \\"/more/Nested.jsx\\",
-              instance: \\"1\\",
-              props: {},
-            });
-          </script><script type=\\"module\\">
-            import { renderComponent } from \\"slinkity/lib/plugin/reactPlugin/_slinkity-react-mount-point.js\\";
-            import Component from \\"//index.jsx\\";
-            renderComponent({
-              Component,
-              componentPath: \\"/index.jsx\\",
-              instance: \\"2\\",
-              props: {},
-            });
-          </script>
+    import Component from \\"//nice.jsx\\";
+    import eagerLoader from \\"slinkity/lib/plugin/reactPlugin/_client/_eager-loader.js\\";
+  
+    eagerLoader({ 
+      Component,
+      componentPath: \\"/nice.jsx\\",
+      instance: \\"0\\",
+      props: {},
+    });
+  </script><script type=\\"module\\">
+    import Component from \\"//more/Nested.jsx\\";
+    import eagerLoader from \\"slinkity/lib/plugin/reactPlugin/_client/_eager-loader.js\\";
+  
+    eagerLoader({ 
+      Component,
+      componentPath: \\"/more/Nested.jsx\\",
+      instance: \\"1\\",
+      props: {},
+    });
+  </script><script type=\\"module\\">
+    import Component from \\"//index.jsx\\";
+    import eagerLoader from \\"slinkity/lib/plugin/reactPlugin/_client/_eager-loader.js\\";
+  
+    eagerLoader({ 
+      Component,
+      componentPath: \\"/index.jsx\\",
+      instance: \\"2\\",
+      props: {},
+    });
+  </script>
 		</body>
 </html>"
 `;
@@ -81,37 +84,37 @@ exports[`toHydrationLoadersApplied with mount points should apply correct hydrat
 
 
 <script type=\\"module\\">
-  import MountPoint from \\"slinkity/lib/plugin/reactPlugin/_slinkity-react-mount-point.js\\";
+  import MountPoint from \\"slinkity/lib/plugin/reactPlugin/_client/_mount-point.js\\";
   window.customElements.define(\\"slinkity-react-mount-point\\", MountPoint);
 </script>
-<template data-s-path=\\"/nice.jsx\\" data-s-instance=\\"0\\"><script type=\\"module\\">
-            import { renderComponent } from \\"slinkity/lib/plugin/reactPlugin/_slinkity-react-mount-point.js\\";
-            import Component from \\"//nice.jsx\\";
-            renderComponent({
-              Component,
-              componentPath: \\"/nice.jsx\\",
-              instance: \\"0\\",
-              props: {},
-            });
-          </script></template><template data-s-path=\\"/more/Nested.jsx\\" data-s-instance=\\"1\\"><script type=\\"module\\">
-            import { renderComponent } from \\"slinkity/lib/plugin/reactPlugin/_slinkity-react-mount-point.js\\";
-            import Component from \\"//more/Nested.jsx\\";
-            renderComponent({
-              Component,
-              componentPath: \\"/more/Nested.jsx\\",
-              instance: \\"1\\",
-              props: {},
-            });
-          </script></template><template data-s-path=\\"/index.jsx\\" data-s-instance=\\"2\\"><script type=\\"module\\">
-            import { renderComponent } from \\"slinkity/lib/plugin/reactPlugin/_slinkity-react-mount-point.js\\";
-            import Component from \\"//index.jsx\\";
-            renderComponent({
-              Component,
-              componentPath: \\"/index.jsx\\",
-              instance: \\"2\\",
-              props: {},
-            });
-          </script></template>
+<script type=\\"module\\">
+    import lazyLoader from \\"slinkity/lib/plugin/reactPlugin/_client/_lazy-loader.js\\";
+  
+    lazyLoader({ 
+      componentImporter: async () => await import(\\"//nice.jsx\\"),
+      componentPath: \\"/nice.jsx\\",
+      instance: \\"0\\",
+      props: {},
+    });
+  </script><script type=\\"module\\">
+    import lazyLoader from \\"slinkity/lib/plugin/reactPlugin/_client/_lazy-loader.js\\";
+  
+    lazyLoader({ 
+      componentImporter: async () => await import(\\"//more/Nested.jsx\\"),
+      componentPath: \\"/more/Nested.jsx\\",
+      instance: \\"1\\",
+      props: {},
+    });
+  </script><script type=\\"module\\">
+    import lazyLoader from \\"slinkity/lib/plugin/reactPlugin/_client/_lazy-loader.js\\";
+  
+    lazyLoader({ 
+      componentImporter: async () => await import(\\"//index.jsx\\"),
+      componentPath: \\"/index.jsx\\",
+      instance: \\"2\\",
+      props: {},
+    });
+  </script>
 		</body>
 </html>"
 `;
@@ -139,39 +142,40 @@ exports[`toHydrationLoadersApplied with mount points should apply correct props 
 
 
 <script type=\\"module\\">
-  import MountPoint from \\"slinkity/lib/plugin/reactPlugin/_slinkity-react-mount-point.js\\";
+  import MountPoint from \\"slinkity/lib/plugin/reactPlugin/_client/_mount-point.js\\";
   window.customElements.define(\\"slinkity-react-mount-point\\", MountPoint);
 </script>
-<template data-s-path=\\"/nav.jsx\\" data-s-instance=\\"0\\"><script type=\\"module\\">
-            import { renderComponent } from \\"slinkity/lib/plugin/reactPlugin/_slinkity-react-mount-point.js\\";
-            import Component from \\"//nav.jsx\\";
-            renderComponent({
-              Component,
-              componentPath: \\"/nav.jsx\\",
-              instance: \\"0\\",
-              props: {firstProp:'nice',secondProp:42,thirdProp:false,helper() {
+<script type=\\"module\\">
+    import lazyLoader from \\"slinkity/lib/plugin/reactPlugin/_client/_lazy-loader.js\\";
+  
+    lazyLoader({ 
+      componentImporter: async () => await import(\\"//nav.jsx\\"),
+      componentPath: \\"/nav.jsx\\",
+      instance: \\"0\\",
+      props: {firstProp:'nice',secondProp:42,thirdProp:false,helper() {
   return 'Testing non-JSON properties';
 }},
-            });
-          </script></template><script type=\\"module\\">
-            import { renderComponent } from \\"slinkity/lib/plugin/reactPlugin/_slinkity-react-mount-point.js\\";
-            import Component from \\"//nested/Heading.jsx\\";
-            renderComponent({
-              Component,
-              componentPath: \\"/nested/Heading.jsx\\",
-              instance: \\"1\\",
-              props: {text:{weight:'bold',content:'Welcome to the site'}},
-            });
-          </script><template data-s-path=\\"/index.jsx\\" data-s-instance=\\"2\\"><script type=\\"module\\">
-            import { renderComponent } from \\"slinkity/lib/plugin/reactPlugin/_slinkity-react-mount-point.js\\";
-            import Component from \\"//index.jsx\\";
-            renderComponent({
-              Component,
-              componentPath: \\"/index.jsx\\",
-              instance: \\"2\\",
-              props: {list:['Have a nice day world']},
-            });
-          </script></template>
+    });
+  </script><script type=\\"module\\">
+    import Component from \\"//nested/Heading.jsx\\";
+    import eagerLoader from \\"slinkity/lib/plugin/reactPlugin/_client/_eager-loader.js\\";
+  
+    eagerLoader({ 
+      Component,
+      componentPath: \\"/nested/Heading.jsx\\",
+      instance: \\"1\\",
+      props: {text:{weight:'bold',content:'Welcome to the site'}},
+    });
+  </script><script type=\\"module\\">
+    import lazyLoader from \\"slinkity/lib/plugin/reactPlugin/_client/_lazy-loader.js\\";
+  
+    lazyLoader({ 
+      componentImporter: async () => await import(\\"//index.jsx\\"),
+      componentPath: \\"/index.jsx\\",
+      instance: \\"2\\",
+      props: {list:['Have a nice day world']},
+    });
+  </script>
 		</body>
 </html>"
 `;

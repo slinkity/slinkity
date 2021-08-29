@@ -71,7 +71,7 @@ async function toHydrationLoadersApplied({ content, componentToPropsMap, dir, is
           componentPath,
           type: isLazy ? 'lazy' : 'eager',
           instance,
-          props: componentToPropsMap[SLINKITY_ATTRS.path] ?? {},
+          props: componentToPropsMap[componentPath] ?? {},
         })
       },
     )
