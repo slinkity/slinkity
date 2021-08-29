@@ -2,11 +2,23 @@ const { SLINKITY_ATTRS, SLINKITY_REACT_MOUNT_POINT } = require('../../utils/cons
 const toHtmlAttrString = require('../../utils/toHtmlAttrString')
 const toUnixPath = require('../../utils/toUnixPath')
 
+/**
+ * Generates a string of HTML from a React component,
+ * with a hydration mount point + attributes applied when necessary
+ * @param {{
+ *  componentPath: string,
+ *  Component: () => void,
+ *  render: 'eager' | 'lazy' | 'static',
+ *  props?: Object.<string, Any>,
+ *  innerHTML?: string
+ * }} params Component to process with all related attributes
+ * @returns {string} Mount point with parameters + children applied
+ */
 module.exports = function toRendererHtml({
-  componentPath = '',
-  Component = () => {},
+  componentPath,
+  Component,
+  render,
   props = {},
-  render = 'eager',
   innerHTML = '',
 }) {
   // only import these dependencies when triggered
