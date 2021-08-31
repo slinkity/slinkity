@@ -1,4 +1,3 @@
-const { sep } = require('path')
 const { stringify } = require('javascript-stringify')
 const toClientImportStatement = require('./toClientImportStatement')
 const toUnixPath = require('../../utils/toUnixPath')
