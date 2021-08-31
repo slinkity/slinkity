@@ -27,7 +27,7 @@ exports[`toHydrationLoadersApplied with mount points should apply correct hydrat
   window.customElements.define(\\"slinkity-react-mount-point\\", MountPoint);
 </script>
 <script type=\\"module\\">
-    import Component from \\"//nice.jsx\\";
+    import Component from \\"/nice.jsx\\";
     import eagerLoader from \\"slinkity/lib/plugin/reactPlugin/_client/_eager-loader.js\\";
   
     eagerLoader({ 
@@ -37,7 +37,7 @@ exports[`toHydrationLoadersApplied with mount points should apply correct hydrat
       props: {},
     });
   </script><script type=\\"module\\">
-    import Component from \\"//more/Nested.jsx\\";
+    import Component from \\"/more/Nested.jsx\\";
     import eagerLoader from \\"slinkity/lib/plugin/reactPlugin/_client/_eager-loader.js\\";
   
     eagerLoader({ 
@@ -47,7 +47,7 @@ exports[`toHydrationLoadersApplied with mount points should apply correct hydrat
       props: {},
     });
   </script><script type=\\"module\\">
-    import Component from \\"//index.jsx\\";
+    import Component from \\"/index.jsx\\";
     import eagerLoader from \\"slinkity/lib/plugin/reactPlugin/_client/_eager-loader.js\\";
   
     eagerLoader({ 
@@ -91,7 +91,7 @@ exports[`toHydrationLoadersApplied with mount points should apply correct hydrat
     import lazyLoader from \\"slinkity/lib/plugin/reactPlugin/_client/_lazy-loader.js\\";
   
     lazyLoader({ 
-      componentImporter: async () => await import(\\"//nice.jsx\\"),
+      componentImporter: async () => await import(\\"/nice.jsx\\"),
       componentPath: \\"/nice.jsx\\",
       instance: \\"0\\",
       props: {},
@@ -100,7 +100,7 @@ exports[`toHydrationLoadersApplied with mount points should apply correct hydrat
     import lazyLoader from \\"slinkity/lib/plugin/reactPlugin/_client/_lazy-loader.js\\";
   
     lazyLoader({ 
-      componentImporter: async () => await import(\\"//more/Nested.jsx\\"),
+      componentImporter: async () => await import(\\"/more/Nested.jsx\\"),
       componentPath: \\"/more/Nested.jsx\\",
       instance: \\"1\\",
       props: {},
@@ -109,7 +109,7 @@ exports[`toHydrationLoadersApplied with mount points should apply correct hydrat
     import lazyLoader from \\"slinkity/lib/plugin/reactPlugin/_client/_lazy-loader.js\\";
   
     lazyLoader({ 
-      componentImporter: async () => await import(\\"//index.jsx\\"),
+      componentImporter: async () => await import(\\"/index.jsx\\"),
       componentPath: \\"/index.jsx\\",
       instance: \\"2\\",
       props: {},
@@ -149,7 +149,7 @@ exports[`toHydrationLoadersApplied with mount points should apply correct props 
     import lazyLoader from \\"slinkity/lib/plugin/reactPlugin/_client/_lazy-loader.js\\";
   
     lazyLoader({ 
-      componentImporter: async () => await import(\\"//nav.jsx\\"),
+      componentImporter: async () => await import(\\"/nav.jsx\\"),
       componentPath: \\"/nav.jsx\\",
       instance: \\"0\\",
       props: {firstProp:'nice',secondProp:42,thirdProp:false,helper() {
@@ -157,7 +157,7 @@ exports[`toHydrationLoadersApplied with mount points should apply correct props 
 }},
     });
   </script><script type=\\"module\\">
-    import Component from \\"//nested/Heading.jsx\\";
+    import Component from \\"/nested/Heading.jsx\\";
     import eagerLoader from \\"slinkity/lib/plugin/reactPlugin/_client/_eager-loader.js\\";
   
     eagerLoader({ 
@@ -170,7 +170,7 @@ exports[`toHydrationLoadersApplied with mount points should apply correct props 
     import lazyLoader from \\"slinkity/lib/plugin/reactPlugin/_client/_lazy-loader.js\\";
   
     lazyLoader({ 
-      componentImporter: async () => await import(\\"//index.jsx\\"),
+      componentImporter: async () => await import(\\"/index.jsx\\"),
       componentPath: \\"/index.jsx\\",
       instance: \\"2\\",
       props: {list:['Have a nice day world']},
