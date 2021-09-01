@@ -45,9 +45,9 @@ Whenever we visit `page-with-shortcode.html`, we'll import React and our `compon
 
 ## "lazy"
 
-This is very similar to eager, but with a twist: we **only load the necessary JavaScript when your component is scrolled into view.** This uses the [Intersection Observer API](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API) to figure out whether your component is on the page. Once it is, we quickly grab the necessary dependencies to hydrate your component.
+This is very similar to eager, but with a twist: we **only load your component's JS when your component is scrolled into view.** This uses the [Intersection Observer API](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API) to figure out whether your component is on the page. Once it is, we quickly grab the necessary dependencies to hydrate your component.
 
-> No, you won't see an empty box while we download your component! All components are pre-rendered at build time so the user can have some placeholder content. Once all resources are downloaded, your component will become interactive.
+> Note: We **still import Slinkity-specific scripts** ahead of time using [module preloading](https://developer.mozilla.org/en-US/docs/Web/HTML/Link_types/modulepreload). Don't worry, it's a very small bundle! We just use this to mount your component once it scrolls into view.
 
 ## "static"
 

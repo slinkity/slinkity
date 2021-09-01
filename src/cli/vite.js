@@ -47,6 +47,11 @@ async function build({ input, output }) {
         emptyOutDir: true,
         rollupOptions: {
           input: inputFiles,
+          output: {
+            manualChunks: {
+              react: ['react'],
+            },
+          },
         },
       },
     })
