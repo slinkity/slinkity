@@ -10,9 +10,13 @@ module.exports = function reactPlugin(eleventyConfig, { dir }) {
   eleventyConfig.addTemplateFormats('jsx')
   eleventyConfig.addPassthroughCopy(join(dir.input, dir.includes, 'components'))
 
+  const componentAttrStore = toComponentAttrStore()
+
   addShortcode(eleventyConfig, { componentAttrStore, dir })
 
-  const componentAttrStore = toComponentAttrStore()
+  eleventyConfig.on('beforeBuild', () => {
+    componentAttrStore.clear()
+  })
 
   eleventyConfig.addExtension('jsx', {
     read: false,
