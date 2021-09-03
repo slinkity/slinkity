@@ -1,15 +1,9 @@
 import renderComponent from './_renderer'
 
-export default function eagerLoader({
-  Component = () => null,
-  componentPath = '',
-  instance = '',
-  props = {},
-}) {
+export default function eagerLoader({ id, Component = () => null, props = {} }) {
   renderComponent({
     Component,
-    componentPath,
-    instance,
+    id,
     props,
   })
 }

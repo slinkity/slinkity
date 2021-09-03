@@ -41,7 +41,7 @@ in file "${this.page.inputPath}"`,
 
     const { render = 'eager' } = props
     const id = componentAttrStore.push({
-      path: componentPath,
+      path: relComponentPath,
       props,
       // TODO: add CSS module support
       styles: '',
@@ -53,9 +53,8 @@ in file "${this.page.inputPath}"`,
     })
 
     const html = toRendererHtml({
-      componentPath: relComponentPath,
-      Component,
       id,
+      Component,
       props,
       render,
     })

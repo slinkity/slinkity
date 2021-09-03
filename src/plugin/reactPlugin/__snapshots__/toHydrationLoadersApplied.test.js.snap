@@ -29,9 +29,8 @@ exports[`toHydrationLoadersApplied with mount points should apply correct hydrat
     import eagerLoader from \\"slinkity/lib/plugin/reactPlugin/_client/_eager-loader.js\\";
   
     eagerLoader({ 
+      id: \\"0\\",
       Component,
-      componentPath: \\"not-important.jsx\\",
-      instance: \\"undefined\\",
       props: {},
     });
   </script><script type=\\"module\\">
@@ -39,9 +38,8 @@ exports[`toHydrationLoadersApplied with mount points should apply correct hydrat
     import eagerLoader from \\"slinkity/lib/plugin/reactPlugin/_client/_eager-loader.js\\";
   
     eagerLoader({ 
+      id: \\"1\\",
       Component,
-      componentPath: \\"not-important.jsx\\",
-      instance: \\"undefined\\",
       props: {},
     });
   </script><script type=\\"module\\">
@@ -49,9 +47,8 @@ exports[`toHydrationLoadersApplied with mount points should apply correct hydrat
     import eagerLoader from \\"slinkity/lib/plugin/reactPlugin/_client/_eager-loader.js\\";
   
     eagerLoader({ 
+      id: \\"2\\",
       Component,
-      componentPath: \\"not-important.jsx\\",
-      instance: \\"undefined\\",
       props: {},
     });
   </script></body>
@@ -86,27 +83,24 @@ exports[`toHydrationLoadersApplied with mount points should apply correct hydrat
     import lazyLoader from \\"slinkity/lib/plugin/reactPlugin/_client/_lazy-loader.js\\";
   
     lazyLoader({ 
+      id: \\"0\\",
       componentImporter: async () => await import(\\"/not-important.jsx\\"),
-      componentPath: \\"not-important.jsx\\",
-      instance: \\"undefined\\",
       props: {},
     });
   </script><script type=\\"module\\">
     import lazyLoader from \\"slinkity/lib/plugin/reactPlugin/_client/_lazy-loader.js\\";
   
     lazyLoader({ 
+      id: \\"1\\",
       componentImporter: async () => await import(\\"/not-important.jsx\\"),
-      componentPath: \\"not-important.jsx\\",
-      instance: \\"undefined\\",
       props: {},
     });
   </script><script type=\\"module\\">
     import lazyLoader from \\"slinkity/lib/plugin/reactPlugin/_client/_lazy-loader.js\\";
   
     lazyLoader({ 
+      id: \\"2\\",
       componentImporter: async () => await import(\\"/not-important.jsx\\"),
-      componentPath: \\"not-important.jsx\\",
-      instance: \\"undefined\\",
       props: {},
     });
   </script></body>
@@ -142,9 +136,8 @@ exports[`toHydrationLoadersApplied with mount points should apply correct props 
     import eagerLoader from \\"slinkity/lib/plugin/reactPlugin/_client/_eager-loader.js\\";
   
     eagerLoader({ 
+      id: \\"0\\",
       Component,
-      componentPath: \\"nav.jsx\\",
-      instance: \\"undefined\\",
       props: {firstProp:'nice',secondProp:42,thirdProp:false,helper() {
   return 'Testing non-JSON properties';
 }},
@@ -153,18 +146,16 @@ exports[`toHydrationLoadersApplied with mount points should apply correct props 
     import lazyLoader from \\"slinkity/lib/plugin/reactPlugin/_client/_lazy-loader.js\\";
   
     lazyLoader({ 
+      id: \\"1\\",
       componentImporter: async () => await import(\\"/nested/Heading.jsx\\"),
-      componentPath: \\"nested/Heading.jsx\\",
-      instance: \\"undefined\\",
       props: {text:{weight:'bold',content:'Welcome to the site'}},
     });
   </script><script type=\\"module\\">
     import lazyLoader from \\"slinkity/lib/plugin/reactPlugin/_client/_lazy-loader.js\\";
   
     lazyLoader({ 
+      id: \\"2\\",
       componentImporter: async () => await import(\\"/index.jsx\\"),
-      componentPath: \\"index.jsx\\",
-      instance: \\"undefined\\",
       props: {list:['Have a nice day world']},
     });
   </script></body>

@@ -55,7 +55,7 @@ async function toHydrationLoadersApplied({ content, componentAttrStore, dir, isD
         if (!componentAttrs) {
           throw new Error(errorMessage({ id, inputPath: this.inputPath }))
         }
-        return componentAttrs
+        return { id, ...componentAttrs }
       })
 
       // 3. Copy the associated component file to the output dir
@@ -70,10 +70,11 @@ async function toHydrationLoadersApplied({ content, componentAttrStore, dir, isD
       }
 
       // 4. Generate scripts to hydrate our mount points
-      const componentScripts = hydrationAttrs.map(({ hydrate, path: componentPath, props }) =>
+      const componentScripts = hydrationAttrs.map(({ path: componentPath, hydrate, id, props }) =>
         toLoaderScript({
           componentPath,
-          type: hydrate,
+          hydrate,
+          id,
           props,
         }),
       )
@@ -85,9 +86,8 @@ async function toHydrationLoadersApplied({ content, componentAttrStore, dir, isD
       // we silently fail so our error logs aren't buried by 11ty's
       // TODO: handle Slinkity-specific exceptions at the CLI level
       // so we can stop living in fear of exceptions
-      console.log({ e })
       if (e?.message) {
-        log('error', e.message)
+        log({ type: 'error', message: e.message })
       }
       return root.outerHTML
     }

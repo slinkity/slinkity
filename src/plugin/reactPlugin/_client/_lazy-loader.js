@@ -5,35 +5,23 @@ const options = {
   threshold: 0,
 }
 
-function toMountPoint({ componentPath = '', instance = '' }) {
-  return document.querySelector(
-    `${SLINKITY_REACT_MOUNT_POINT}[${SLINKITY_ATTRS.path}="${componentPath}"][${SLINKITY_ATTRS.instance}="${instance}"]`,
-  )
+function getMountPointById(id) {
+  return document.querySelector(`${SLINKITY_REACT_MOUNT_POINT}[${SLINKITY_ATTRS.id}="${id}"]`)
 }
 
-export default function lazyLoader({
-  componentImporter = () => () => null,
-  componentPath = '',
-  instance = '',
-  props = {},
-}) {
+export default function lazyLoader({ id, componentImporter = () => () => null, props = {} }) {
   const observer = new IntersectionObserver(async function (entries) {
     for (const entry of entries) {
       if (entry.isIntersecting) {
-        const mountPoint = toMountPoint({ componentPath, instance })
-        if (!mountPoint.getAttribute('data-s-is-mounted')) {
+        const mountPoint = getMountPointById(id)
+        if (!mountPoint.getAttribute('data-s-is-hydrated')) {
           const { default: renderComponent } = await import('./_renderer')
           const { default: Component } = await componentImporter()
-          renderComponent({
-            Component,
-            componentPath,
-            instance,
-            props,
-          })
-          mountPoint.setAttribute('data-s-is-mounted', true)
+          renderComponent({ id, Component, props })
+          mountPoint.setAttribute('data-s-is-hydrated', true)
         }
       }
     }
   }, options)
-  observer.observe(toMountPoint({ componentPath, instance }))
+  observer.observe(getMountPointById(id))
 }
