@@ -47,8 +47,8 @@ async function toHydrationLoadersApplied({ content, componentAttrStore, dir, isD
   const mountPoints = [...root.querySelectorAll(SLINKITY_REACT_MOUNT_POINT)]
 
   if (mountPoints.length > 0) {
-    // 1. Get the attributes for all mount points on the page
     try {
+      // 1. Get the attributes for all mount points on the page
       const hydrationAttrs = mountPoints.map((mountPoint) => {
         const id = mountPoint.getAttribute(SLINKITY_ATTRS.id) || ''
         const componentAttrs = componentAttrStore.get(parseInt(id))
@@ -58,7 +58,7 @@ async function toHydrationLoadersApplied({ content, componentAttrStore, dir, isD
         return { id, ...componentAttrs }
       })
 
-      // 3. Copy the associated component file to the output dir
+      // 2. Copy the associated component file to the output dir
       if (!isDryRun && dir) {
         await Promise.all(
           hydrationAttrs.map(async ({ path: componentPath }) => {
@@ -69,7 +69,7 @@ async function toHydrationLoadersApplied({ content, componentAttrStore, dir, isD
         )
       }
 
-      // 4. Generate scripts to hydrate our mount points
+      // 3. Generate scripts to hydrate our mount points
       const componentScripts = hydrationAttrs.map(({ path: componentPath, hydrate, id, props }) =>
         toLoaderScript({
           componentPath,
