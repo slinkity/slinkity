@@ -17,7 +17,17 @@ const argsArrayToPropsObj = function ({ vargs = [], errorMsg = '' }) {
   return props
 }
 
-module.exports = function addShortcode(eleventyConfig, { componentToPropsMap, dir }) {
+/**
+ * @param {object} eleventyConfig
+ * @param {{
+ *   componentAttrStore: import('./componentAttrStore').ComponentAttrStore,
+ *   dir: {
+ *     input: string,
+ *     output: string,
+ *   }
+ * }} params
+ */
+module.exports = function addShortcode(eleventyConfig, { componentAttrStore, dir }) {
   eleventyConfig.addAsyncShortcode('react', async function (componentPath, ...vargs) {
     const relComponentPath =
       join(dir.includes, componentPath) + (componentPath.endsWith('.jsx') ? '' : '.jsx')
@@ -30,7 +40,13 @@ in file "${this.page.inputPath}"`,
     })
 
     const { render = 'eager' } = props
-    componentToPropsMap[relComponentPath] = props
+    const id = componentAttrStore.push({
+      path: componentPath,
+      props,
+      // TODO: add CSS module support
+      styles: '',
+      hydrate: render,
+    })
 
     const { default: Component = () => {} } = await toCommonJSModule({
       inputPath: join(dir.input, relComponentPath),
@@ -39,6 +55,7 @@ in file "${this.page.inputPath}"`,
     const html = toRendererHtml({
       componentPath: relComponentPath,
       Component,
+      id,
       props,
       render,
     })

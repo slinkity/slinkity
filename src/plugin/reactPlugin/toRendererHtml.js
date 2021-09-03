@@ -1,6 +1,5 @@
 const { SLINKITY_ATTRS, SLINKITY_REACT_MOUNT_POINT } = require('../../utils/consts')
 const toHtmlAttrString = require('../../utils/toHtmlAttrString')
-const toUnixPath = require('../../utils/toUnixPath')
 
 /**
  * Generates a string of HTML from a React component,
@@ -8,19 +7,13 @@ const toUnixPath = require('../../utils/toUnixPath')
  * @param {{
  *  Component: () => void,
  *  render: 'eager' | 'lazy' | 'static',
- *  componentPath?: string,
+ *  id: string
  *  props?: Object.<string, Any>,
  *  innerHTML?: string
  * }} params Component to process with all related attributes
  * @returns {string} Mount point with parameters + children applied
  */
-module.exports = function toRendererHtml({
-  Component,
-  render,
-  componentPath = '',
-  props = {},
-  innerHTML = '',
-}) {
+module.exports = function toRendererHtml({ Component, render, id, props = {}, innerHTML = '' }) {
   // only import these dependencies when triggered
   // this prevents "cannot find module react*"
   // when running slinkity without react and react-dom installed
@@ -32,15 +25,10 @@ module.exports = function toRendererHtml({
   if (render === 'static') {
     return elementAsHTMLString
   } else {
-    const attrs = {
-      [SLINKITY_ATTRS.path]: toUnixPath(componentPath),
-    }
-    if (render === 'lazy') {
-      attrs[SLINKITY_ATTRS.lazy] = true
-    }
-    return `<${SLINKITY_REACT_MOUNT_POINT} ${toHtmlAttrString(
-      attrs,
-    )}>${elementAsHTMLString}</${SLINKITY_REACT_MOUNT_POINT}>`
+    const attrs = toHtmlAttrString({
+      [SLINKITY_ATTRS.id]: id,
+    })
+    return `<${SLINKITY_REACT_MOUNT_POINT} ${attrs}>${elementAsHTMLString}</${SLINKITY_REACT_MOUNT_POINT}>`
       .replace(/\n/g, '')
       .trim()
   }

@@ -4,14 +4,15 @@ const addShortcode = require('./addShortcode')
 const toRendererHtml = require('./toRendererHtml')
 const toFormattedDataForProps = require('./toFormattedDataForProps')
 const { toHydrationLoadersApplied } = require('./toHydrationLoadersApplied')
+const { toComponentAttrStore } = require('./componentAttrStore')
 
 module.exports = function reactPlugin(eleventyConfig, { dir }) {
   eleventyConfig.addTemplateFormats('jsx')
   eleventyConfig.addPassthroughCopy(join(dir.input, dir.includes, 'components'))
 
-  const componentToPropsMap = {}
+  addShortcode(eleventyConfig, { componentAttrStore, dir })
 
-  addShortcode(eleventyConfig, { componentToPropsMap, dir })
+  const componentAttrStore = toComponentAttrStore()
 
   eleventyConfig.addExtension('jsx', {
     read: false,
@@ -41,13 +42,21 @@ module.exports = function reactPlugin(eleventyConfig, { dir }) {
             shortcodes: eleventyConfig.javascriptFunctions ?? {},
           }),
         )
-        componentToPropsMap[jsxImportPath] = props
+        const hydrate = frontMatter.render ?? 'eager'
+        const id = componentAttrStore.push({
+          path: jsxImportPath,
+          props,
+          // TODO: add CSS module support
+          styles: '',
+          hydrate,
+        })
 
         return toRendererHtml({
           Component,
           componentPath: jsxImportPath,
           props,
-          render: frontMatter.render ?? 'eager',
+          id,
+          render: hydrate,
           innerHTML: data.content,
         })
       },
@@ -56,6 +65,6 @@ module.exports = function reactPlugin(eleventyConfig, { dir }) {
   eleventyConfig.addTransform('add-react-renderer-script', async function (content, outputPath) {
     if (!outputPath.endsWith('.html')) return content
 
-    return await toHydrationLoadersApplied({ content, componentToPropsMap, dir })
+    return await toHydrationLoadersApplied({ content, componentAttrStore, dir })
   })
 }
