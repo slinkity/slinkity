@@ -1,15 +1,10 @@
 /**
  * Slinkity-specific data attributes
  * Applied to mount points and associated scripts
- * path: Relative path to the component associated with a given mount point
- * instance: The numeric position of a mount point in the DOM
- *  (i.e. the second mount point has an instance of 2)
- * lazy: Boolean for whether to load a mount point's scripts lazily
+ * id: Unique identifier used to hydrate the component
  */
 const SLINKITY_ATTRS = {
-  path: 'data-s-path',
-  instance: 'data-s-instance',
-  lazy: 'data-s-lazy',
+  id: 'data-s-id',
 }
 
 /**

@@ -6,8 +6,14 @@ const toHtmlAttrString = require('../../utils/toHtmlAttrString')
 const fileHelpers = require('../../utils/fileHelpers')
 const applyHtmlWrapper = require('./applyHtmlWrapper')
 const { toHydrationLoadersApplied, webComponentLoader } = require('./toHydrationLoadersApplied')
+const { toComponentAttrStore } = require('./componentAttrStore')
 
 const READ_FILE_CALLED = 'readFile called'
+function toMountPointAttrs(id) {
+  return toHtmlAttrString({
+    [SLINKITY_ATTRS.id]: id,
+  })
+}
 
 jest.mock('fs', () => ({
   promises: {
@@ -29,22 +35,22 @@ describe('toHydrationLoadersApplied', () => {
   <ul id="list"><li>Hello World</li></ul>
 </body>
 </html>`
-      const componentToPropsMap = {}
+      const componentAttrStore = toComponentAttrStore()
 
       const actual = await toHydrationLoadersApplied({
         content,
-        componentToPropsMap,
+        componentAttrStore,
         isDryRun: true,
       })
       expect(actual).toEqual(content)
     })
     it('should applyHtmlWrapper if none exists', async () => {
       const content = '<ul id="list"><li>Hello World</li></ul>'
-      const componentToPropsMap = {}
+      const componentAttrStore = toComponentAttrStore()
 
       const actual = await toHydrationLoadersApplied({
         content,
-        componentToPropsMap,
+        componentAttrStore,
         isDryRun: true,
       })
       const expectedRoot = parse(actual)
@@ -54,16 +60,21 @@ describe('toHydrationLoadersApplied', () => {
   })
   describe('with mount points', () => {
     it('should apply web component loader', async () => {
-      const componentToPropsMap = {}
-      const props = {
-        [SLINKITY_ATTRS.path]: '/very/cool/path.jsx',
-      }
+      const componentAttrStore = toComponentAttrStore()
+      const ids = [
+        componentAttrStore.push({
+          props: {},
+          styles: '',
+          path: 'very-cool-component.jsx',
+          hydrate: 'eager',
+        }),
+      ]
       const content = `<html>
 <head>
   <title>It's hydration time</title>
 </head>
 <body>
-  <${SLINKITY_REACT_MOUNT_POINT} ${toHtmlAttrString(props)}>
+  <${SLINKITY_REACT_MOUNT_POINT} ${toMountPointAttrs(ids[0])}>
     <ul id="list"><li>Hello World</li></ul>
   </${SLINKITY_REACT_MOUNT_POINT}>
 </body>
@@ -71,70 +82,52 @@ describe('toHydrationLoadersApplied', () => {
 
       const actual = await toHydrationLoadersApplied({
         content,
-        componentToPropsMap,
+        componentAttrStore,
         isDryRun: true,
       })
       expect(actual).toContain(webComponentLoader)
     })
-    it('should apply instance attributes to all mount points in chronological order', async () => {
-      const componentToPropsMap = {}
-      const props = {
-        [SLINKITY_ATTRS.path]: '/very/cool/path.jsx',
-      }
-      const content = `<html>
-<head>
-  <title>It's hydration time</title>
-</head>
-<body>
-  <${SLINKITY_REACT_MOUNT_POINT} ${toHtmlAttrString(props)}>
-    <ul id="list"><li>Hello World</li></ul>
-  </${SLINKITY_REACT_MOUNT_POINT}>
-  <${SLINKITY_REACT_MOUNT_POINT} ${toHtmlAttrString(props)}>
-    <ul id="list"><li>Goodbye World</li></ul>
-  </${SLINKITY_REACT_MOUNT_POINT}>
-  <${SLINKITY_REACT_MOUNT_POINT} ${toHtmlAttrString(props)}>
-    <ul id="list"><li>Have a nice day world</li></ul>
-  </${SLINKITY_REACT_MOUNT_POINT}>
-</body>
-</html>`
-
-      const actual = await toHydrationLoadersApplied({
-        content,
-        componentToPropsMap,
-        isDryRun: true,
-      })
-      const root = parse(actual)
-      const mountPoints = root.querySelectorAll(SLINKITY_REACT_MOUNT_POINT)
-      const instancesPerMountPoint = mountPoints.map((mountPoint) =>
-        mountPoint?.getAttribute(SLINKITY_ATTRS.instance),
-      )
-      expect(instancesPerMountPoint).toEqual(['0', '1', '2'])
-    })
-    test.each(['true', 'false'])(
-      'should apply correct hydration loaders when isLazy is %s',
-      async (isLazy) => {
-        const componentToPropsMap = {}
-        const toProps = (componentPath) => ({
-          [SLINKITY_ATTRS.path]: componentPath,
-          [SLINKITY_ATTRS.lazy]: isLazy,
-        })
+    test.each(['eager', 'lazy'])(
+      'should apply correct hydration loaders when hydrate is %s',
+      async (hydrate) => {
+        const componentAttrStore = toComponentAttrStore()
+        const ids = [
+          componentAttrStore.push({
+            path: 'not-important.jsx',
+            hydrate,
+            props: {},
+            styles: '',
+          }),
+          componentAttrStore.push({
+            path: 'not-important.jsx',
+            hydrate,
+            props: {},
+            styles: '',
+          }),
+          componentAttrStore.push({
+            path: 'not-important.jsx',
+            hydrate,
+            props: {},
+            styles: '',
+          }),
+        ]
         const content = `<html>
 <head>
   <title>It's hydration time</title>
 </head>
 <body>
   <h1>My incredible site</h1>
-  <${SLINKITY_REACT_MOUNT_POINT} ${toHtmlAttrString(toProps('/nice.jsx'))}>
+  <${SLINKITY_REACT_MOUNT_POINT} ${toMountPointAttrs(ids[0])}>
     <nav>
       <a href="/home">Home</a>
       <a href="/about">About</a>
       <a href="/contact">Contact</a>
     </nav>
   </${SLINKITY_REACT_MOUNT_POINT}>
-  <${SLINKITY_REACT_MOUNT_POINT} ${toHtmlAttrString(toProps('/more/Nested.jsx'))}>
+  <${SLINKITY_REACT_MOUNT_POINT} ${toMountPointAttrs(ids[1])}>
     <h2>Welcome to the site</h2>
   </${SLINKITY_REACT_MOUNT_POINT}>
-  <${SLINKITY_REACT_MOUNT_POINT} ${toHtmlAttrString(toProps('/index.jsx'))}>
+  <${SLINKITY_REACT_MOUNT_POINT} ${toMountPointAttrs(ids[2])}>
     <ul id="list"><li>Have a nice day world</li></ul>
   </${SLINKITY_REACT_MOUNT_POINT}>
 </body>
@@ -142,53 +135,65 @@ describe('toHydrationLoadersApplied', () => {
 
         const actual = await toHydrationLoadersApplied({
           content,
-          componentToPropsMap,
+          componentAttrStore,
           isDryRun: true,
         })
         expect(actual).toMatchSnapshot()
       },
     )
-    it('should apply correct props based on componentToPropsMap', async () => {
-      const componentToPropsMap = {
-        ['/nav.jsx']: {
-          firstProp: 'nice',
-          secondProp: 42,
-          thirdProp: false,
-          helper() {
-            return 'Testing non-JSON properties'
+    it('should apply correct props based on componentAttrStore', async () => {
+      const componentAttrStore = toComponentAttrStore()
+      const ids = [
+        componentAttrStore.push({
+          path: 'nav.jsx',
+          hydrate: 'eager',
+          props: {
+            firstProp: 'nice',
+            secondProp: 42,
+            thirdProp: false,
+            helper() {
+              return 'Testing non-JSON properties'
+            },
           },
-        },
-        ['/nested/Heading.jsx']: {
-          text: {
-            weight: 'bold',
-            content: 'Welcome to the site',
+          styles: '',
+        }),
+        componentAttrStore.push({
+          path: 'nested/Heading.jsx',
+          hydrate: 'lazy',
+          props: {
+            text: {
+              weight: 'bold',
+              content: 'Welcome to the site',
+            },
           },
-        },
-        ['/index.jsx']: {
-          list: ['Have a nice day world'],
-        },
-      }
-      const toProps = (componentPath, isLazy = false) => ({
-        [SLINKITY_ATTRS.path]: componentPath,
-        [SLINKITY_ATTRS.lazy]: isLazy,
-      })
+          styles: '',
+        }),
+        componentAttrStore.push({
+          path: 'index.jsx',
+          hydrate: 'lazy',
+          props: {
+            list: ['Have a nice day world'],
+          },
+          styles: '',
+        }),
+      ]
       const content = `<html>
 <head>
   <title>It's hydration time</title>
 </head>
 <body>
   <h1>My incredible site</h1>
-  <${SLINKITY_REACT_MOUNT_POINT} ${toHtmlAttrString(toProps('/nav.jsx', true))}>
+  <${SLINKITY_REACT_MOUNT_POINT} ${toMountPointAttrs(ids[0])}>
     <nav>
       <a href="/home">Home</a>
       <a href="/about">About</a>
       <a href="/contact">Contact</a>
     </nav>
   </${SLINKITY_REACT_MOUNT_POINT}>
-  <${SLINKITY_REACT_MOUNT_POINT} ${toHtmlAttrString(toProps('/nested/Heading.jsx'))}>
+  <${SLINKITY_REACT_MOUNT_POINT} ${toMountPointAttrs(ids[1])}>
     <h2>Welcome to the site</h2>
   </${SLINKITY_REACT_MOUNT_POINT}>
-  <${SLINKITY_REACT_MOUNT_POINT} ${toHtmlAttrString(toProps('/index.jsx', true))}>
+  <${SLINKITY_REACT_MOUNT_POINT} ${toMountPointAttrs(ids[2])}>
     <ul id="list"><li>Have a nice day world</li></ul>
   </${SLINKITY_REACT_MOUNT_POINT}>
 </body>
@@ -196,7 +201,7 @@ describe('toHydrationLoadersApplied', () => {
 
       const actual = await toHydrationLoadersApplied({
         content,
-        componentToPropsMap,
+        componentAttrStore,
         isDryRun: true,
       })
       expect(actual).toMatchSnapshot()
@@ -207,10 +212,21 @@ describe('toHydrationLoadersApplied', () => {
       jest.clearAllMocks()
     })
     it('should read the JSX file from the correct path', async () => {
-      const componentToPropsMap = {}
-      const toProps = (componentPath) => ({
-        [SLINKITY_ATTRS.path]: componentPath,
-      })
+      const componentAttrStore = toComponentAttrStore()
+      const ids = [
+        componentAttrStore.push({
+          path: 'nav.jsx',
+          hydrate: 'eager',
+          props: {},
+          styles: '',
+        }),
+        componentAttrStore.push({
+          path: 'nested/Heading.jsx',
+          hydrate: 'eager',
+          props: {},
+          styles: '',
+        }),
+      ]
       const dir = {
         input: 'src',
         output: '_site',
@@ -221,14 +237,14 @@ describe('toHydrationLoadersApplied', () => {
   <title>It's hydration time</title>
 </head>
 <body>
-  <${SLINKITY_REACT_MOUNT_POINT} ${toHtmlAttrString(toProps('/nav.jsx'))}>
+  <${SLINKITY_REACT_MOUNT_POINT} ${toMountPointAttrs(ids[0])}>
   <nav>
     <a href="/home">Home</a>
     <a href="/about">About</a>
     <a href="/contact">Contact</a>
   </nav>
   </${SLINKITY_REACT_MOUNT_POINT}>
-  <${SLINKITY_REACT_MOUNT_POINT} ${toHtmlAttrString(toProps('/nested/Heading.jsx'))}>
+  <${SLINKITY_REACT_MOUNT_POINT} ${toMountPointAttrs(ids[1])}>
     <h2>Welcome to the site</h2>
   </${SLINKITY_REACT_MOUNT_POINT}>
 </body>
@@ -236,21 +252,32 @@ describe('toHydrationLoadersApplied', () => {
 
       await toHydrationLoadersApplied({
         content,
-        componentToPropsMap,
+        componentAttrStore,
         dir,
         isDryRun: false,
       })
       expect(fsPromises.readFile).toHaveBeenCalledTimes(2)
       expect(fsPromises.readFile.mock.calls).toEqual([
-        [toRelativeInput('/nav.jsx')],
-        [toRelativeInput('/nested/Heading.jsx')],
+        [toRelativeInput('nav.jsx')],
+        [toRelativeInput('nested/Heading.jsx')],
       ])
     })
     it('should write the JSX file from the correct path', async () => {
-      const componentToPropsMap = {}
-      const toProps = (componentPath) => ({
-        [SLINKITY_ATTRS.path]: componentPath,
-      })
+      const componentAttrStore = toComponentAttrStore()
+      const ids = [
+        componentAttrStore.push({
+          path: 'nav.jsx',
+          hydrate: 'eager',
+          props: {},
+          styles: '',
+        }),
+        componentAttrStore.push({
+          path: 'nested/Heading.jsx',
+          hydrate: 'eager',
+          props: {},
+          styles: '',
+        }),
+      ]
       const dir = {
         input: 'src',
         output: '_site',
@@ -261,14 +288,14 @@ describe('toHydrationLoadersApplied', () => {
   <title>It's hydration time</title>
 </head>
 <body>
-  <${SLINKITY_REACT_MOUNT_POINT} ${toHtmlAttrString(toProps('/nav.jsx'))}>
+  <${SLINKITY_REACT_MOUNT_POINT} ${toMountPointAttrs(ids[0])}>
   <nav>
     <a href="/home">Home</a>
     <a href="/about">About</a>
     <a href="/contact">Contact</a>
   </nav>
   </${SLINKITY_REACT_MOUNT_POINT}>
-  <${SLINKITY_REACT_MOUNT_POINT} ${toHtmlAttrString(toProps('/nested/Heading.jsx'))}>
+  <${SLINKITY_REACT_MOUNT_POINT} ${toMountPointAttrs(ids[1])}>
     <h2>Welcome to the site</h2>
   </${SLINKITY_REACT_MOUNT_POINT}>
 </body>
@@ -276,14 +303,14 @@ describe('toHydrationLoadersApplied', () => {
 
       await toHydrationLoadersApplied({
         content,
-        componentToPropsMap,
+        componentAttrStore,
         dir,
         isDryRun: false,
       })
       expect(fileHelpers.writeFileRec).toHaveBeenCalledTimes(2)
       expect(fileHelpers.writeFileRec.mock.calls).toEqual([
-        [toRelativeOutput('/nav.jsx'), READ_FILE_CALLED],
-        [toRelativeOutput('/nested/Heading.jsx'), READ_FILE_CALLED],
+        [toRelativeOutput('nav.jsx'), READ_FILE_CALLED],
+        [toRelativeOutput('nested/Heading.jsx'), READ_FILE_CALLED],
       ])
     })
   })

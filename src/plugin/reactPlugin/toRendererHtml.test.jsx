@@ -1,7 +1,5 @@
 const toRendererHtml = require('./toRendererHtml')
 const React = require('react')
-const { parse } = require('node-html-parser')
-const { SLINKITY_ATTRS, SLINKITY_REACT_MOUNT_POINT } = require('../../utils/consts')
 
 describe('toRendererHtml', () => {
   describe('render: static', () => {
@@ -19,7 +17,7 @@ describe('toRendererHtml', () => {
       expect(toRendererHtml({ Component, render: 'static' })).toMatchSnapshot()
     })
   })
-  describe('render: eager', () => {
+  describe('render: eager or lazy', () => {
     it('should wrap HTML in mount point', () => {
       const Component = () => (
         <section>
@@ -30,11 +28,10 @@ describe('toRendererHtml', () => {
           </p>
         </section>
       )
-      const componentPath = '/very/cool.jsx'
 
-      expect(toRendererHtml({ Component, render: 'eager', componentPath })).toMatchSnapshot()
+      expect(toRendererHtml({ Component, render: 'eager', id: 27 })).toMatchSnapshot()
     })
-    it('should apply props as additional data attributes', () => {
+    it('should apply props to the component', () => {
       const Component = ({ logo, links }) => (
         <nav>
           <img src={logo.src} alt={logo.alt} />
@@ -45,7 +42,6 @@ describe('toRendererHtml', () => {
           ))}
         </nav>
       )
-      const componentPath = '_includes/components/nice-nav.jsx'
       const props = {
         logo: {
           src: 'accessible-logo.png',
@@ -67,17 +63,7 @@ describe('toRendererHtml', () => {
         ],
       }
 
-      expect(toRendererHtml({ Component, render: 'eager', componentPath, props })).toMatchSnapshot()
-    })
-  })
-  describe('render: lazy', () => {
-    it('should add lazy as a data attribute', () => {
-      const Component = () => <p>Not important</p>
-
-      const output = toRendererHtml({ Component, render: 'lazy' })
-      const mountPoint = parse(output).querySelector(SLINKITY_REACT_MOUNT_POINT)
-
-      expect(mountPoint.getAttribute(SLINKITY_ATTRS.lazy)).toEqual('true')
+      expect(toRendererHtml({ Component, render: 'lazy', id: 62, props })).toMatchSnapshot()
     })
   })
 })

@@ -6,12 +6,23 @@ const { SLINKITY_ATTRS, SLINKITY_REACT_MOUNT_POINT } = require('../../utils/cons
 const { writeFileRec } = require('../../utils/fileHelpers')
 const toLoaderScript = require('./toLoaderScript')
 const toClientImportStatement = require('./toClientImportStatement')
+const { log } = require('../../utils/logger')
 
 const webComponentLoader = `
 <script type="module">
   import MountPoint from ${toClientImportStatement('_mount-point.js')};
   window.customElements.define("${SLINKITY_REACT_MOUNT_POINT}", MountPoint);
 </script>`
+
+const errorMessage = ({
+  id,
+  inputPath,
+}) => `We failed to hydrate a mount point with the id ${id} in the file ${inputPath}
+We recommend trying to:
+1. delete your output directory and restart the server / build
+2. clear your node_modules and running a clean install with "npm i"
+
+Visit https://slinkity.dev to review our changelogs!`
 
 /**
  * Applies all necessary scripts to an HTML document for clientside hydration
@@ -21,7 +32,7 @@ const webComponentLoader = `
  *
  * @param {{
  *   content: string,
- *   componentToPropsMap: Object.<string, any>,
+ *   componentAttrStore: import('./componentAttrStore').ComponentAttrStore,
  *   dir?: {
  *     input: string,
  *     output: string,
@@ -30,59 +41,56 @@ const webComponentLoader = `
  * }} params
  * @returns {string} output HTML content with all hydration scripts applied
  */
-async function toHydrationLoadersApplied({ content, componentToPropsMap, dir, isDryRun = false }) {
+async function toHydrationLoadersApplied({ content, componentAttrStore, dir, isDryRun = false }) {
   const root = parse(content)
   applyHtmlWrapper(root)
   const mountPoints = [...root.querySelectorAll(SLINKITY_REACT_MOUNT_POINT)]
 
   if (mountPoints.length > 0) {
-    // 1. Record the "instance" index for each mount point on the page
-    // This is used to match up scripts to mount points later
-    mountPoints.forEach((mountPoint, index) => {
-      mountPoint.setAttribute(SLINKITY_ATTRS.instance, `${index}`)
-    })
+    try {
+      // 1. Get the attributes for all mount points on the page
+      const hydrationAttrs = mountPoints.map((mountPoint) => {
+        const id = mountPoint.getAttribute(SLINKITY_ATTRS.id) || ''
+        const componentAttrs = componentAttrStore.get(parseInt(id))
+        if (!componentAttrs) {
+          throw new Error(errorMessage({ id, inputPath: this.inputPath }))
+        }
+        return { id, ...componentAttrs }
+      })
 
-    // 2. Get the attributes for all mount points on the page
-    const rendererAttrs = mountPoints.map((mountPoint) => ({
-      [SLINKITY_ATTRS.path]: mountPoint.getAttribute(SLINKITY_ATTRS.path) || '',
-      [SLINKITY_ATTRS.instance]: mountPoint.getAttribute(SLINKITY_ATTRS.instance) || '',
-      [SLINKITY_ATTRS.lazy]: mountPoint.getAttribute(SLINKITY_ATTRS.lazy) === 'true',
-    }))
+      // 2. Copy the associated component file to the output dir
+      if (!isDryRun && dir) {
+        await Promise.all(
+          hydrationAttrs.map(async ({ path: componentPath }) => {
+            const jsxInputPath = join(dir.input, componentPath)
+            const jsxOutputPath = join(dir.output, componentPath)
+            await writeFileRec(jsxOutputPath, await readFile(jsxInputPath))
+          }),
+        )
+      }
 
-    // 3. Copy the associated component file to the output dir
-    if (!isDryRun && dir) {
-      await Promise.all(
-        rendererAttrs.map(async ({ [SLINKITY_ATTRS.path]: componentPath }) => {
-          const jsxInputPath = join(dir.input, componentPath)
-          const jsxOutputPath = join(dir.output, componentPath)
-          await writeFileRec(jsxOutputPath, await readFile(jsxInputPath))
+      // 3. Generate scripts to hydrate our mount points
+      const componentScripts = hydrationAttrs.map(({ path: componentPath, hydrate, id, props }) =>
+        toLoaderScript({
+          componentPath,
+          hydrate,
+          id,
+          props,
         }),
       )
+
+      root
+        .querySelector('body')
+        .insertAdjacentHTML('beforeend', `${webComponentLoader}${componentScripts.join('')}`)
+    } catch (e) {
+      // we silently fail so our error logs aren't buried by 11ty's
+      // TODO: handle Slinkity-specific exceptions at the CLI level
+      // so we can stop living in fear of exceptions
+      if (e?.message) {
+        log({ type: 'error', message: e.message })
+      }
+      return root.outerHTML
     }
-
-    // 4. Generate scripts to hydrate our mount points
-    const componentScripts = rendererAttrs.map(
-      ({
-        [SLINKITY_ATTRS.path]: componentPath,
-        [SLINKITY_ATTRS.instance]: instance,
-        [SLINKITY_ATTRS.lazy]: isLazy = false,
-      }) => {
-        return toLoaderScript({
-          componentPath,
-          type: isLazy ? 'lazy' : 'eager',
-          instance,
-          props: componentToPropsMap[componentPath] ?? {},
-        })
-      },
-    )
-
-    root.querySelector('body').insertAdjacentHTML(
-      'beforeend',
-      `
-${webComponentLoader}
-${componentScripts.join('')}
-		`,
-    )
   }
   return root.outerHTML
 }
