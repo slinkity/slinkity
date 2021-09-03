@@ -7,7 +7,7 @@ const toHtmlAttrString = require('../../utils/toHtmlAttrString')
  * @param {{
  *  Component: () => void,
  *  render: 'eager' | 'lazy' | 'static',
- *  id: number
+ *  id: string,
  *  props?: Object.<string, Any>,
  *  innerHTML?: string
  * }} params Component to process with all related attributes
