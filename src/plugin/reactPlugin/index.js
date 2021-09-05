@@ -38,7 +38,7 @@ module.exports = function reactPlugin(eleventyConfig, { dir }) {
           default: Component = () => null,
           getProps = () => ({}),
           frontMatter = {},
-          styles = '',
+          __stylesGenerated = '',
         } = await toCommonJSModule({ inputPath })
 
         const props = await getProps(
@@ -51,8 +51,7 @@ module.exports = function reactPlugin(eleventyConfig, { dir }) {
         const id = componentAttrStore.push({
           path: jsxImportPath,
           props,
-          // TODO: add CSS module support
-          styles: '',
+          styles: __stylesGenerated,
           hydrate,
         })
 
@@ -63,7 +62,6 @@ module.exports = function reactPlugin(eleventyConfig, { dir }) {
           id,
           render: hydrate,
           innerHTML: data.content,
-          styles,
         })
       },
   })

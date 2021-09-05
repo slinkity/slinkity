@@ -39,17 +39,16 @@ Check your props on react shortcode "${componentPath}"
 in file "${this.page.inputPath}"`,
     })
 
+    const { default: Component = () => {}, __stylesGenerated = '' } = await toCommonJSModule({
+      inputPath: join(dir.input, relComponentPath),
+    })
+
     const { render = 'eager' } = props
     const id = componentAttrStore.push({
       path: relComponentPath,
       props,
-      // TODO: add CSS module support
-      styles: '',
       hydrate: render,
-    })
-
-    const { default: Component = () => {}, styles = '' } = await toCommonJSModule({
-      inputPath: join(dir.input, relComponentPath),
+      styles: __stylesGenerated,
     })
 
     const html = toRendererHtml({
@@ -57,7 +56,6 @@ in file "${this.page.inputPath}"`,
       Component,
       props,
       render,
-      styles,
     })
 
     // Fixes https://github.com/slinkity/slinkity/issues/15

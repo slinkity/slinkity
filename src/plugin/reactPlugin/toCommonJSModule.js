@@ -11,10 +11,17 @@ const makeAllPackagesExternalPlugin = {
   },
 }
 
-module.exports = async function toCommonJSModule({
-  inputPath = '',
-  shouldHaveDefaultExport = true,
-}) {
+/**
+ * Retrieve a given ES module as a CommonJS module
+ * @param {{
+ *   inputPath: string,
+ *   shouldHaveDefaultExport?: boolean,
+ * }} params
+ * @returns {Object.<string, any> & {
+ *   __stylesGenerated?: string
+ * }}
+ */
+module.exports = async function toCommonJSModule({ inputPath, shouldHaveDefaultExport = true }) {
   const { outputFiles } = await build({
     entryPoints: [inputPath],
     outfile: 'ignore',
@@ -23,7 +30,7 @@ module.exports = async function toCommonJSModule({
     plugins: [
       makeAllPackagesExternalPlugin,
       cssModulesPlugin({
-        inject: (content) => `module.exports.styles = \`${content}\``,
+        inject: (content) => `module.exports.__stylesGenerated = \`${content}\``,
       }),
     ],
     write: false,

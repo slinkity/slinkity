@@ -2,8 +2,7 @@ const { SLINKITY_ATTRS, SLINKITY_REACT_MOUNT_POINT } = require('../../utils/cons
 const toHtmlAttrString = require('../../utils/toHtmlAttrString')
 
 const toBasicMinified = (str = '') => str.replace(/\n/g, '').trim()
-const toStylesApplied = (html = '', styles = '') =>
-  styles ? `${html}<style>${styles}</style>` : html
+
 /**
  * Generates a string of HTML from a React component,
  * with a hydration mount point + attributes applied when necessary
@@ -30,18 +29,15 @@ module.exports = function toRendererHtml({ Component, render, id, props = {}, in
 
   if (render === 'static') {
     const elementAsHTMLString = renderToStaticMarkup(reactElement)
-    const stylesApplied = toStylesApplied(elementAsHTMLString, styles)
-    const minified = toBasicMinified(stylesApplied)
+    const minified = toBasicMinified(elementAsHTMLString)
     return minified
   } else {
     const elementAsHTMLString = renderToString(reactElement)
     const attrs = toHtmlAttrString({
       [SLINKITY_ATTRS.id]: id,
     })
-
     const mountPointApplied = `<${SLINKITY_REACT_MOUNT_POINT} ${attrs}>${elementAsHTMLString}</${SLINKITY_REACT_MOUNT_POINT}>`
-    const stylesApplied = toStylesApplied(mountPointApplied, styles)
-    const minified = toBasicMinified(stylesApplied)
+    const minified = toBasicMinified(mountPointApplied)
     return minified
   }
 }
