@@ -18,10 +18,11 @@ const makeAllPackagesExternalPlugin = {
  *   shouldHaveDefaultExport?: boolean,
  * }} params
  * @returns {Object.<string, any> & {
- *   __stylesGenerated?: string
+ *   __stylesGenerated: Object.<string, string>
  * }}
  */
 module.exports = async function toCommonJSModule({ inputPath, shouldHaveDefaultExport = true }) {
+  const __stylesGenerated = {}
   const { outputFiles } = await build({
     entryPoints: [inputPath],
     outfile: 'ignore',
@@ -30,7 +31,10 @@ module.exports = async function toCommonJSModule({ inputPath, shouldHaveDefaultE
     plugins: [
       makeAllPackagesExternalPlugin,
       cssModulesPlugin({
-        inject: (content) => `module.exports.__stylesGenerated = \`${content}\``,
+        inject: (content, key) => {
+          __stylesGenerated[key] = content
+          return ''
+        },
       }),
     ],
     write: false,
@@ -43,5 +47,5 @@ module.exports = async function toCommonJSModule({ inputPath, shouldHaveDefaultE
       message: `Looks like you forgot to export default from "${inputPath}"`,
     })
   }
-  return result
+  return { ...result, __stylesGenerated }
 }

@@ -38,7 +38,7 @@ module.exports = function reactPlugin(eleventyConfig, { dir }) {
           default: Component = () => null,
           getProps = () => ({}),
           frontMatter = {},
-          __stylesGenerated = '',
+          __stylesGenerated,
         } = await toCommonJSModule({ inputPath })
 
         const props = await getProps(

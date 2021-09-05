@@ -39,7 +39,7 @@ Check your props on react shortcode "${componentPath}"
 in file "${this.page.inputPath}"`,
     })
 
-    const { default: Component = () => {}, __stylesGenerated = '' } = await toCommonJSModule({
+    const { default: Component = () => {}, __stylesGenerated } = await toCommonJSModule({
       inputPath: join(dir.input, relComponentPath),
     })
 
