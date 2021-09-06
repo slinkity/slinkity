@@ -1,5 +1,7 @@
+const crypto = require('crypto')
 const requireFromString = require('require-from-string')
 const { build } = require('esbuild')
+const cssModulesPlugin = require('esbuild-css-modules-plugin')
 const { log } = require('../../utils/logger')
 
 const makeAllPackagesExternalPlugin = {
@@ -10,18 +12,33 @@ const makeAllPackagesExternalPlugin = {
   },
 }
 
-module.exports = async function toCommonJSModule({
-  inputPath = '',
-  shouldHaveDefaultExport = true,
-}) {
+/**
+ * Retrieve a given ES module as a CommonJS module
+ * @param {{
+ *   inputPath: string,
+ *   shouldHaveDefaultExport?: boolean,
+ * }} params
+ * @returns {Object.<string, any> & {
+ *   __stylesGenerated: Object.<string, string>
+ * }}
+ */
+module.exports = async function toCommonJSModule({ inputPath, shouldHaveDefaultExport = true }) {
+  const __stylesGenerated = {}
   const { outputFiles } = await build({
     entryPoints: [inputPath],
-    // TODO: this helps swallow CSS module errors
-    // But this causes CSS module classes to get stripped from the output!
     outfile: 'ignore',
     format: 'cjs',
     bundle: true,
-    plugins: [makeAllPackagesExternalPlugin],
+    plugins: [
+      makeAllPackagesExternalPlugin,
+      cssModulesPlugin({
+        inject: (content) => {
+          const key = crypto.createHash('md5').update(content).digest('hex')
+          __stylesGenerated[key] = content
+          return ''
+        },
+      }),
+    ],
     write: false,
   })
   const { text } = outputFiles[0]
@@ -32,5 +49,5 @@ module.exports = async function toCommonJSModule({
       message: `Looks like you forgot to export default from "${inputPath}"`,
     })
   }
-  return result
+  return { ...result, __stylesGenerated }
 }

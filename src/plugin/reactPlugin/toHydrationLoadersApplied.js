@@ -14,6 +14,19 @@ const webComponentLoader = `
   window.customElements.define("${SLINKITY_REACT_MOUNT_POINT}", MountPoint);
 </script>`
 
+/**
+ * @param {Object.<string, string>} styleMap
+ * @return {string} Styles map stringified for the DOM
+ */
+function toStyle(styleMap) {
+  const styles = Object.values(styleMap)
+  return styles.length
+    ? `<style>
+  ${Object.values(styleMap).join('\n')}
+</style>`
+    : ''
+}
+
 const errorMessage = ({
   id,
   inputPath,
@@ -79,9 +92,22 @@ async function toHydrationLoadersApplied({ content, componentAttrStore, dir, isD
         }),
       )
 
+      // 4. Generate styles for CSS-in-JS (style imports and CSS modules)
+      // Here, we flatten each component's generated styles into a single map for the page
+      const styleMap = hydrationAttrs.reduce((styleMap, { styles }) => {
+        for (const [key, content] of Object.entries(styles)) {
+          styleMap[key] = content
+        }
+        return styleMap
+      }, {})
+      const style = toStyle(styleMap)
+
       root
         .querySelector('body')
-        .insertAdjacentHTML('beforeend', `${webComponentLoader}${componentScripts.join('')}`)
+        .insertAdjacentHTML(
+          'beforeend',
+          `${webComponentLoader}${componentScripts.join('')}${style}`,
+        )
     } catch (e) {
       // we silently fail so our error logs aren't buried by 11ty's
       // TODO: handle Slinkity-specific exceptions at the CLI level

@@ -39,17 +39,16 @@ Check your props on react shortcode "${componentPath}"
 in file "${this.page.inputPath}"`,
     })
 
+    const { default: Component = () => {}, __stylesGenerated } = await toCommonJSModule({
+      inputPath: join(dir.input, relComponentPath),
+    })
+
     const { render = 'eager' } = props
     const id = componentAttrStore.push({
       path: relComponentPath,
       props,
-      // TODO: add CSS module support
-      styles: '',
       hydrate: render,
-    })
-
-    const { default: Component = () => {} } = await toCommonJSModule({
-      inputPath: join(dir.input, relComponentPath),
+      styles: __stylesGenerated,
     })
 
     const html = toRendererHtml({
