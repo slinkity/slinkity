@@ -1,7 +1,8 @@
+const crypto = require('crypto')
 const requireFromString = require('require-from-string')
 const { build } = require('esbuild')
-const { log } = require('../../utils/logger')
 const cssModulesPlugin = require('esbuild-css-modules-plugin')
+const { log } = require('../../utils/logger')
 
 const makeAllPackagesExternalPlugin = {
   name: 'make-all-packages-external',
@@ -31,7 +32,8 @@ module.exports = async function toCommonJSModule({ inputPath, shouldHaveDefaultE
     plugins: [
       makeAllPackagesExternalPlugin,
       cssModulesPlugin({
-        inject: (content, key) => {
+        inject: (content) => {
+          const key = crypto.createHash('md5').update(content).digest('hex')
           __stylesGenerated[key] = content
           return ''
         },
