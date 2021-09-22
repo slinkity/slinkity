@@ -1,3 +1,6 @@
+$mobile: 500px;
+$tablet: 860px;
+
 @import './docs.scss';
 @import './home.scss';
 
@@ -36,8 +39,6 @@
   font-style: italic;
   font-display: swap;
 }
-
-$mobile: 500px;
 
 :root {
   --content-max-width: 740px;
