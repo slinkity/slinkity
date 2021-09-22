@@ -185,7 +185,9 @@ a,
 a:visited {
   color: var(--primary);
   padding: 2px;
-  transition: background-position-x 0.2s, color 0.2s;
+  transition-property: background-position-x, color, opacity;
+  transition-duration: 0.2s;
+  transition-timing-function: linear;
   background: linear-gradient(
     80deg,
     var(--bg, var(--black)) 33%,
@@ -204,6 +206,18 @@ a:visited {
 
 h2 {
   margin-top: 2.4rem;
+scroll-margin-top: 1rem;
+  + .header-anchor {
+    font-size: 1.5em;
+    margin-block-start: 2.4rem;
+    margin-block-end: .83em;
+    padding-inline: .25em;
+
+    @supports not (padding-inline: .25em) {
+      padding-inline-start: .25em;
+      padding-inline-end: .25em;
+    }
+  }
 }
 
 .tagline {
@@ -283,5 +297,17 @@ footer {
     font-size: 0.8rem;
     margin: auto;
     max-width: var(--content-max-width);
+  }
+}
+
+.sr-only {
+  &:not(:where(:focus, :active, :focus-within)) {
+    clip: rect(0 0 0 0); 
+    clip-path: inset(50%);
+    height: 1px;
+    overflow: hidden;
+    position: absolute;
+    white-space: nowrap; 
+    width: 1px;
   }
 }
