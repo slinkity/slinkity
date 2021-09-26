@@ -56,7 +56,7 @@ function applyUserConfigDir(dir = {}) {
       errorHandler.warn(promise, 'A promise rejection was handled asynchronously')
     })
 
-    const config = require('./slinkityConfig')({ dir })
+    const config = await require('./slinkityConfig')({ dir })
 
     let elev = new Eleventy(dir.input, dir.output, {
       quietMode: options.quiet,
