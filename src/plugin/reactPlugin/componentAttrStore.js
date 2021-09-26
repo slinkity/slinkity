@@ -1,15 +1,15 @@
 /**
  * The componentAttrStore is the bridge between page + shortcode components
- * And our HTML transform that *hydrates* those components.
+ * and our HTML transform that *hydrates* those components.
  * - component mount points are ID'd by their index in the DOM (first, second, etc)
- * - by passing in an index, you'll receive all values necessary to hydrate that mount point
+ * - by passing in an index, you'll receive all values necessary to hydrate that mount point (see ComponentAttrs type def)
  *
- * @typedef {{
- *   path: string,
- *   props: Object.<string, any>,
- *   styles: string,
- *   hydrate: 'eager' | 'lazy' | 'static'
- * }} ComponentAttrs
+ * @typedef ComponentAttrs
+ * @property {string[]} styleImports - all files imported by a given component as ES modules (ex. all CSS module imports)
+ * @property {string} path - the component's file path
+ * @property {Record<string, any>} props - all props passed to the component
+ * @property {'eager' | 'lazy' | 'static'} hydrate - mode to use when hydrating the component
+
  * @typedef {{
  *  push: (componentAttrs: ComponentAttrs) => number;
  *  get: (index: number) => ComponentAttrs;

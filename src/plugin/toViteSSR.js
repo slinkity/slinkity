@@ -3,6 +3,39 @@ const requireFromString = require('require-from-string')
 const logger = require('../utils/logger')
 
 /**
+ *
+ * @param {import('vite').ModuleNode} importedModules - modules to traverse for styles
+ * @returns {import('vite').ModuleNode[]} importedStyles
+ */
+function traverseModulesForStyles(importedModules) {
+  let importedStyles = []
+  for (const importedModule of importedModules) {
+    if (importedModule.file.endsWith('css')) {
+      importedStyles = [...importedStyles, importedModule]
+    } else {
+      importedStyles = [
+        ...importedStyles,
+        ...traverseModulesForStyles(importedModule.importedModules),
+      ]
+    }
+  }
+  return importedStyles
+}
+
+/**
+ *
+ * @param {import('vite').ModuleGraph} viteModuleGraph - import graph to traverse for styles
+ * @param {string} filePath - file to traverse
+ * @returns {import('vite').ModuleNode[]} importedStyles
+ */
+function getAllImportedStyles(viteModuleGraph, filePath) {
+  const styles = traverseModulesForStyles(
+    viteModuleGraph.urlToModuleMap.get(filePath).importedModules,
+  )
+  return styles
+}
+
+/**
  * @typedef ViteSSRParams
  * @property {'dev' | 'prod'} environment - whether we want a dev server or a production build
  * @property {import('./index').PluginOptions['dir']} dir
@@ -21,6 +54,11 @@ const logger = require('../utils/logger')
  * @returns {ViteSSR} viteSSR
  */
 module.exports = async function toViteSSR({ environment, dir }) {
+  /**
+   * @type {Record<string, FormattedModule>}
+   */
+  const probablyInefficientCache = {}
+
   if (environment === 'dev') {
     const server = await createServer({
       root: dir.output,
@@ -31,20 +69,26 @@ module.exports = async function toViteSSR({ environment, dir }) {
     })
     return {
       async toCommonJSComponentModule(filePath) {
-        return {
+        if (probablyInefficientCache[filePath]) return probablyInefficientCache[filePath]
+        const viteOutput = await server.ssrLoadModule(filePath)
+        const styleModules = getAllImportedStyles(server.moduleGraph, filePath)
+
+        /**
+         * @type {FormattedModule}
+         */
+        const mod = {
           default: () => null,
           getProps: () => ({}),
           frontMatter: {},
-          __stylesGenerated: {},
-          ...(await server.ssrLoadModule(filePath)),
+          __stylesGenerated: styleModules.map((style) => style.file),
+          ...viteOutput,
         }
+        console.log({ filePath, mod })
+        probablyInefficientCache[filePath] = mod
+        return mod
       },
     }
   } else {
-    /**
-     * @type {Record<string, any>}
-     */
-    const probablyInefficientCache = {}
     return {
       async toCommonJSComponentModule(filePath) {
         if (probablyInefficientCache[filePath]) return probablyInefficientCache[filePath]
@@ -73,7 +117,7 @@ module.exports = async function toViteSSR({ environment, dir }) {
           default: () => null,
           getProps: () => ({}),
           frontMatter: {},
-          __stylesGenerated: {},
+          __stylesGenerated: [],
           ...requireFromString(output[0].code),
         }
         probablyInefficientCache[filePath] = mod

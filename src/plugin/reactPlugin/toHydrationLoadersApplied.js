@@ -15,15 +15,14 @@ const webComponentLoader = `
 </script>`
 
 /**
- * @param {Object.<string, string>} styleMap
- * @return {string} Styles map stringified for the DOM
+ * @param {import('./componentAttrStore').ComponentAttrs['styleImports']} styleImports
+ * @return {string} styles as stringified module with import statements
  */
-function toStyle(styleMap) {
-  const styles = Object.values(styleMap)
-  return styles.length
-    ? `<style>
-  ${Object.values(styleMap).join('\n')}
-</style>`
+function toStyleImportModule(styleImports) {
+  return styleImports.length
+    ? `<script type="module">
+  ${styleImports.map((styleImport) => `import ${JSON.stringify(styleImport)}`).join('\n')}
+</script>`
     : ''
 }
 
@@ -92,21 +91,20 @@ async function toHydrationLoadersApplied({ content, componentAttrStore, dir, isD
         }),
       )
 
-      // 4. Generate styles for CSS-in-JS (style imports and CSS modules)
-      // Here, we flatten each component's generated styles into a single map for the page
-      const styleMap = hydrationAttrs.reduce((styleMap, { styles }) => {
-        for (const [key, content] of Object.entries(styles)) {
-          styleMap[key] = content
-        }
-        return styleMap
-      }, {})
-      const style = toStyle(styleMap)
+      // 4. Generate module for all component styles imported as ES modules (ex. CSS modules)
+      const allStyleImports = [
+        // convert to Set for de-duping
+        ...new Set(hydrationAttrs.map(({ styleImports }) => styleImports).flat()),
+      ]
+      const styleImportModule = toStyleImportModule(allStyleImports)
+
+      console.log({ hydrationAttrs, allStyleImports, styleImportModule })
 
       root
         .querySelector('body')
         .insertAdjacentHTML(
           'beforeend',
-          `${webComponentLoader}${componentScripts.join('')}${style}`,
+          `${webComponentLoader}${componentScripts.join('\n')}${styleImportModule}`,
         )
     } catch (e) {
       // we silently fail so our error logs aren't buried by 11ty's

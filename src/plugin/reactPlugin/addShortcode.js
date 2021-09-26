@@ -45,7 +45,7 @@ in file "${this.page.inputPath}"`,
       path: relComponentPath,
       props,
       hydrate: render,
-      styles: __stylesGenerated,
+      styleImports: __stylesGenerated,
     })
 
     const html = toRendererHtml({

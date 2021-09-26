@@ -24,7 +24,6 @@ module.exports = function reactPlugin(eleventyConfig, { dir, viteSSR }) {
   eleventyConfig.addExtension('jsx', {
     read: false,
     getData: async (inputPath) => {
-      console.log({ pluginViteSSR: viteSSR, dir })
       const { frontMatter } = await viteSSR.toCommonJSComponentModule(inputPath)
       return frontMatter
     },
