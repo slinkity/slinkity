@@ -94,13 +94,6 @@ module.exports = async function toViteSSR({ environment, dir }) {
             },
           },
         })
-        if (!output?.length) {
-          logger.log({
-            type: 'error',
-            message: `Module ${filePath} didn't have any output. Is this file blank?`,
-          })
-          return {}
-        }
         /**
          * @type {FormattedModule}
          */
@@ -109,10 +102,22 @@ module.exports = async function toViteSSR({ environment, dir }) {
           getProps: () => ({}),
           frontMatter: {},
           __stylesGenerated: generatedStyles.getCSS(),
+        }
+        if (!output?.length) {
+          logger.log({
+            type: 'error',
+            message: `Module ${filePath} didn't have any output. Is this file blank?`,
+          })
+          return mod
+        }
+        probablyInefficientCache[filePath] = {
+          ...mod,
+          // converts our stringified JS to a CommonJS module in memory
+          // saves reading / writing to disk!
+          // TODO: check performance impact
           ...requireFromString(output[0].code),
         }
-        probablyInefficientCache[filePath] = mod
-        return mod
+        return probablyInefficientCache[filePath]
       },
     }
   }
