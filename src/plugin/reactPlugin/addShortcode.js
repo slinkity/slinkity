@@ -36,7 +36,7 @@ Check your props on react shortcode "${componentPath}"
 in file "${this.page.inputPath}"`,
     })
 
-    const { default: Component, __stylesGenerated } = await viteSSR.toCommonJSComponentModule(
+    const { default: Component, __stylesGenerated } = await viteSSR.toComponentCommonJSModule(
       join(dir.input, relComponentPath),
     )
 

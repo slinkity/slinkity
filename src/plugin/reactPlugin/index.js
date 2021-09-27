@@ -24,7 +24,7 @@ module.exports = function reactPlugin(eleventyConfig, { dir, viteSSR }) {
   eleventyConfig.addExtension('jsx', {
     read: false,
     getData: async (inputPath) => {
-      const { frontMatter } = await viteSSR.toCommonJSComponentModule(inputPath)
+      const { frontMatter } = await viteSSR.toComponentCommonJSModule(inputPath)
       return frontMatter
     },
     compile: (_, inputPath) =>
@@ -36,7 +36,7 @@ module.exports = function reactPlugin(eleventyConfig, { dir, viteSSR }) {
           getProps,
           frontMatter,
           __stylesGenerated,
-        } = await viteSSR.toCommonJSComponentModule(inputPath)
+        } = await viteSSR.toComponentCommonJSModule(inputPath)
 
         const props = await getProps(
           toFormattedDataForProps({

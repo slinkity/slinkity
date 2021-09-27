@@ -46,7 +46,7 @@ function gimmeCSSPlugin() {
  * }} FormattedModule - expected keys from a given component module
  *
  * @typedef ViteSSR - available fns for module conversion
- * @property {(filePath: string) => Promise<FormattedModule>} toCommonJSComponentModule - fn to grab a Node-friendly module output from a given file path
+ * @property {(filePath: string) => Promise<FormattedModule>} toComponentCommonJSModule - fn to grab a Node-friendly module output from a given file path
  *
  * @returns {ViteSSR} viteSSR
  */
@@ -63,7 +63,7 @@ module.exports = async function toViteSSR({ environment, dir }) {
       clearScreen: false,
     })
     return {
-      async toCommonJSComponentModule(filePath) {
+      async toComponentCommonJSModule(filePath) {
         const viteOutput = await server.ssrLoadModule(filePath)
         return {
           default: () => null,
@@ -80,7 +80,7 @@ module.exports = async function toViteSSR({ environment, dir }) {
      */
     const probablyInefficientCache = {}
     return {
-      async toCommonJSComponentModule(filePath) {
+      async toComponentCommonJSModule(filePath) {
         if (probablyInefficientCache[filePath]) return probablyInefficientCache[filePath]
 
         const { output } = await build({
