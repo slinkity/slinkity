@@ -48,7 +48,7 @@ module.exports = function reactPlugin(eleventyConfig, { dir, viteSSR }) {
         const id = componentAttrStore.push({
           path: jsxImportPath,
           props,
-          styles: __stylesGenerated,
+          styleToFilePathMap: __stylesGenerated,
           hydrate,
         })
 

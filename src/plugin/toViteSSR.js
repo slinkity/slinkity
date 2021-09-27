@@ -3,36 +3,33 @@ const requireFromString = require('require-from-string')
 const logger = require('../utils/logger')
 
 /**
- *
- * @param {import('vite').ModuleNode} importedModules - modules to traverse for styles
- * @returns {import('vite').ModuleNode[]} importedStyles
+ * @typedef {import('./reactPlugin/componentAttrStore').ComponentAttrs['styleToFilePathMap']} StyleToFilePathMap
+ * @returns {{
+ *   getCSS: () => StyleToFilePathMap;
+ *   plugin: import('vite').PluginOption;
+ * }}
  */
-function traverseModulesForStyles(importedModules) {
-  let importedStyles = []
-  for (const importedModule of importedModules) {
-    if (importedModule.file.endsWith('css')) {
-      importedStyles = [...importedStyles, importedModule]
-    } else {
-      importedStyles = [
-        ...importedStyles,
-        ...traverseModulesForStyles(importedModule.importedModules),
-      ]
-    }
-  }
-  return importedStyles
-}
+function gimmeCSSPlugin() {
+  /**
+   * @type {StyleToFilePathMap}
+   */
+  const styleToFilePathMap = {}
 
-/**
- *
- * @param {import('vite').ModuleGraph} viteModuleGraph - import graph to traverse for styles
- * @param {string} filePath - file to traverse
- * @returns {import('vite').ModuleNode[]} importedStyles
- */
-function getAllImportedStyles(viteModuleGraph, filePath) {
-  const styles = traverseModulesForStyles(
-    viteModuleGraph.urlToModuleMap.get(filePath).importedModules,
-  )
-  return styles
+  return {
+    getCSS() {
+      return styleToFilePathMap
+    },
+    plugin: {
+      name: 'gimme-css-plugin',
+      transform(code, id) {
+        if (/\.(css)$/.test(id)) {
+          styleToFilePathMap[id] = code
+          return { code: '' }
+        }
+        return null
+      },
+    },
+  }
 }
 
 /**
@@ -54,14 +51,12 @@ function getAllImportedStyles(viteModuleGraph, filePath) {
  * @returns {ViteSSR} viteSSR
  */
 module.exports = async function toViteSSR({ environment, dir }) {
-  /**
-   * @type {Record<string, FormattedModule>}
-   */
-  const probablyInefficientCache = {}
+  const generatedStyles = gimmeCSSPlugin()
 
   if (environment === 'dev') {
     const server = await createServer({
       root: dir.output,
+      plugins: [generatedStyles.plugin],
       server: {
         middlewareMode: 'ssr',
       },
@@ -69,32 +64,28 @@ module.exports = async function toViteSSR({ environment, dir }) {
     })
     return {
       async toCommonJSComponentModule(filePath) {
-        if (probablyInefficientCache[filePath]) return probablyInefficientCache[filePath]
         const viteOutput = await server.ssrLoadModule(filePath)
-        const styleModules = getAllImportedStyles(server.moduleGraph, filePath)
-
-        /**
-         * @type {FormattedModule}
-         */
-        const mod = {
+        return {
           default: () => null,
           getProps: () => ({}),
           frontMatter: {},
-          __stylesGenerated: styleModules.map((style) => style.file),
+          __stylesGenerated: generatedStyles.getCSS(),
           ...viteOutput,
         }
-        console.log({ filePath, mod })
-        probablyInefficientCache[filePath] = mod
-        return mod
       },
     }
   } else {
+    /**
+     * @type {Record<string, FormattedModule>}
+     */
+    const probablyInefficientCache = {}
     return {
       async toCommonJSComponentModule(filePath) {
         if (probablyInefficientCache[filePath]) return probablyInefficientCache[filePath]
 
         const { output } = await build({
           root: '_site',
+          plugins: [generatedStyles.plugin],
           build: {
             ssr: true,
             write: false,
@@ -117,7 +108,7 @@ module.exports = async function toViteSSR({ environment, dir }) {
           default: () => null,
           getProps: () => ({}),
           frontMatter: {},
-          __stylesGenerated: [],
+          __stylesGenerated: generatedStyles.getCSS(),
           ...requireFromString(output[0].code),
         }
         probablyInefficientCache[filePath] = mod

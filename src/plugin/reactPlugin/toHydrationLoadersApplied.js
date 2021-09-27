@@ -15,14 +15,15 @@ const webComponentLoader = `
 </script>`
 
 /**
- * @param {import('./componentAttrStore').ComponentAttrs['styleImports']} styleImports
+ * @param {import('./componentAttrStore').ComponentAttrs['styleToFilePathMap']} styleToFilePathMap
  * @return {string} styles as stringified module with import statements
  */
-function toStyleImportModule(styleImports) {
-  return styleImports.length
-    ? `<script type="module">
-  ${styleImports.map((styleImport) => `import ${JSON.stringify(styleImport)}`).join('\n')}
-</script>`
+function toStyleTag(styleToFilePathMap) {
+  const styles = Object.values(styleToFilePathMap)
+  return styles.length
+    ? `<style>
+  ${Object.values(styleToFilePathMap).join('\n')}
+</style>`
     : ''
 }
 
@@ -92,19 +93,21 @@ async function toHydrationLoadersApplied({ content, componentAttrStore, dir, isD
       )
 
       // 4. Generate module for all component styles imported as ES modules (ex. CSS modules)
-      const allStyleImports = [
-        // convert to Set for de-duping
-        ...new Set(hydrationAttrs.map(({ styleImports }) => styleImports).flat()),
-      ]
-      const styleImportModule = toStyleImportModule(allStyleImports)
-
-      console.log({ hydrationAttrs, allStyleImports, styleImportModule })
+      // Here, we flatten each component's generated styles into a single map for the page
+      const stylesStringified = toStyleTag(
+        hydrationAttrs.reduce((styleMap, { path, styleToFilePathMap }) => {
+          for (const [key, content] of Object.entries(styleToFilePathMap)) {
+            styleMap[key] = content
+          }
+          return styleMap
+        }, {}),
+      )
 
       root
         .querySelector('body')
         .insertAdjacentHTML(
           'beforeend',
-          `${webComponentLoader}${componentScripts.join('\n')}${styleImportModule}`,
+          `${webComponentLoader}${componentScripts.join('\n')}${stylesStringified}`,
         )
     } catch (e) {
       // we silently fail so our error logs aren't buried by 11ty's

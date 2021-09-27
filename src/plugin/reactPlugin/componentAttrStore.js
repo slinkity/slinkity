@@ -5,7 +5,8 @@
  * - by passing in an index, you'll receive all values necessary to hydrate that mount point (see ComponentAttrs type def)
  *
  * @typedef ComponentAttrs
- * @property {string[]} styleImports - all files imported by a given component as ES modules (ex. all CSS module imports)
+ * @property {Record<string, string>} styleToFilePathMap - map of all files imported by a
+ * given component as ES modules (ex. all CSS module imports)
  * @property {string} path - the component's file path
  * @property {Record<string, any>} props - all props passed to the component
  * @property {'eager' | 'lazy' | 'static'} hydrate - mode to use when hydrating the component
