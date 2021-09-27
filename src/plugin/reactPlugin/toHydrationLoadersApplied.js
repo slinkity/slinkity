@@ -95,7 +95,7 @@ async function toHydrationLoadersApplied({ content, componentAttrStore, dir, isD
       // 4. Generate module for all component styles imported as ES modules (ex. CSS modules)
       // Here, we flatten each component's generated styles into a single map for the page
       const stylesStringified = toStyleTag(
-        hydrationAttrs.reduce((styleMap, { path, styleToFilePathMap }) => {
+        hydrationAttrs.reduce((styleMap, { styleToFilePathMap }) => {
           for (const [key, content] of Object.entries(styleToFilePathMap)) {
             styleMap[key] = content
           }
