@@ -33,7 +33,8 @@ exports[`toHydrationLoadersApplied with mount points should apply correct hydrat
       Component,
       props: {},
     });
-  </script><script type=\\"module\\">
+  </script>
+<script type=\\"module\\">
     import Component from \\"/not-important.jsx\\";
     import eagerLoader from \\"slinkity/lib/plugin/reactPlugin/_client/_eager-loader.js\\";
   
@@ -42,7 +43,8 @@ exports[`toHydrationLoadersApplied with mount points should apply correct hydrat
       Component,
       props: {},
     });
-  </script><script type=\\"module\\">
+  </script>
+<script type=\\"module\\">
     import Component from \\"/not-important.jsx\\";
     import eagerLoader from \\"slinkity/lib/plugin/reactPlugin/_client/_eager-loader.js\\";
   
@@ -87,7 +89,8 @@ exports[`toHydrationLoadersApplied with mount points should apply correct hydrat
       componentImporter: async () => await import(\\"/not-important.jsx\\"),
       props: {},
     });
-  </script><script type=\\"module\\">
+  </script>
+<script type=\\"module\\">
     import lazyLoader from \\"slinkity/lib/plugin/reactPlugin/_client/_lazy-loader.js\\";
   
     lazyLoader({ 
@@ -95,7 +98,8 @@ exports[`toHydrationLoadersApplied with mount points should apply correct hydrat
       componentImporter: async () => await import(\\"/not-important.jsx\\"),
       props: {},
     });
-  </script><script type=\\"module\\">
+  </script>
+<script type=\\"module\\">
     import lazyLoader from \\"slinkity/lib/plugin/reactPlugin/_client/_lazy-loader.js\\";
   
     lazyLoader({ 
@@ -142,7 +146,8 @@ exports[`toHydrationLoadersApplied with mount points should apply correct props 
   return 'Testing non-JSON properties';
 }},
     });
-  </script><script type=\\"module\\">
+  </script>
+<script type=\\"module\\">
     import lazyLoader from \\"slinkity/lib/plugin/reactPlugin/_client/_lazy-loader.js\\";
   
     lazyLoader({ 
@@ -150,7 +155,8 @@ exports[`toHydrationLoadersApplied with mount points should apply correct props 
       componentImporter: async () => await import(\\"/nested/Heading.jsx\\"),
       props: {text:{weight:'bold',content:'Welcome to the site'}},
     });
-  </script><script type=\\"module\\">
+  </script>
+<script type=\\"module\\">
     import lazyLoader from \\"slinkity/lib/plugin/reactPlugin/_client/_lazy-loader.js\\";
   
     lazyLoader({ 

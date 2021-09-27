@@ -64,7 +64,7 @@ describe('toHydrationLoadersApplied', () => {
       const ids = [
         componentAttrStore.push({
           props: {},
-          styles: '',
+          styleToFilePathMap: {},
           path: 'very-cool-component.jsx',
           hydrate: 'eager',
         }),
@@ -96,19 +96,19 @@ describe('toHydrationLoadersApplied', () => {
             path: 'not-important.jsx',
             hydrate,
             props: {},
-            styles: '',
+            styleToFilePathMap: {},
           }),
           componentAttrStore.push({
             path: 'not-important.jsx',
             hydrate,
             props: {},
-            styles: '',
+            styleToFilePathMap: {},
           }),
           componentAttrStore.push({
             path: 'not-important.jsx',
             hydrate,
             props: {},
-            styles: '',
+            styleToFilePathMap: {},
           }),
         ]
         const content = `<html>
@@ -155,7 +155,7 @@ describe('toHydrationLoadersApplied', () => {
               return 'Testing non-JSON properties'
             },
           },
-          styles: '',
+          styleToFilePathMap: {},
         }),
         componentAttrStore.push({
           path: 'nested/Heading.jsx',
@@ -166,7 +166,7 @@ describe('toHydrationLoadersApplied', () => {
               content: 'Welcome to the site',
             },
           },
-          styles: '',
+          styleToFilePathMap: {},
         }),
         componentAttrStore.push({
           path: 'index.jsx',
@@ -174,7 +174,7 @@ describe('toHydrationLoadersApplied', () => {
           props: {
             list: ['Have a nice day world'],
           },
-          styles: '',
+          styleToFilePathMap: {},
         }),
       ]
       const content = `<html>
@@ -218,13 +218,13 @@ describe('toHydrationLoadersApplied', () => {
           path: 'nav.jsx',
           hydrate: 'eager',
           props: {},
-          styles: '',
+          styleToFilePathMap: {},
         }),
         componentAttrStore.push({
           path: 'nested/Heading.jsx',
           hydrate: 'eager',
           props: {},
-          styles: '',
+          styleToFilePathMap: {},
         }),
       ]
       const dir = {
@@ -269,13 +269,13 @@ describe('toHydrationLoadersApplied', () => {
           path: 'nav.jsx',
           hydrate: 'eager',
           props: {},
-          styles: '',
+          styleToFilePathMap: {},
         }),
         componentAttrStore.push({
           path: 'nested/Heading.jsx',
           hydrate: 'eager',
           props: {},
-          styles: '',
+          styleToFilePathMap: {},
         }),
       ]
       const dir = {
