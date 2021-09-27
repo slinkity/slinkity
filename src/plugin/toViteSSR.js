@@ -22,7 +22,7 @@ function gimmeCSSPlugin() {
     plugin: {
       name: 'gimme-css-plugin',
       transform(code, id) {
-        if (/\.(css)$/.test(id)) {
+        if (/\.(css|scss|sass|less|stylus)$/.test(id)) {
           styleToFilePathMap[id] = code
           return { code: '' }
         }
