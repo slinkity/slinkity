@@ -84,7 +84,7 @@ module.exports = async function toViteSSR({ environment, dir }) {
         if (probablyInefficientCache[filePath]) return probablyInefficientCache[filePath]
 
         const { output } = await build({
-          root: '_site',
+          root: dir.output,
           plugins: [generatedStyles.plugin],
           build: {
             ssr: true,
