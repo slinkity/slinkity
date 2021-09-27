@@ -7,24 +7,25 @@ exports[`toHydrationLoadersApplied with mount points should apply correct hydrat
 </head>
 <body>
   <h1>My incredible site</h1>
-  <slinkity-react-mount-point data-s-id=\\"0\\">
+  <slinkity-react-mount-point>
     <nav>
       <a href=\\"/home\\">Home</a>
       <a href=\\"/about\\">About</a>
       <a href=\\"/contact\\">Contact</a>
     </nav>
   </slinkity-react-mount-point>
-  <slinkity-react-mount-point data-s-id=\\"1\\">
+  <slinkity-react-mount-point>
     <h2>Welcome to the site</h2>
   </slinkity-react-mount-point>
-  <slinkity-react-mount-point data-s-id=\\"2\\">
+  <slinkity-react-mount-point>
     <ul id=\\"list\\"><li>Have a nice day world</li></ul>
   </slinkity-react-mount-point>
 
 <script type=\\"module\\">
   import MountPoint from \\"slinkity/lib/plugin/reactPlugin/_client/_mount-point.js\\";
   window.customElements.define(\\"slinkity-react-mount-point\\", MountPoint);
-</script><script type=\\"module\\">
+</script>
+<script type=\\"module\\">
     import Component from \\"/not-important.jsx\\";
     import eagerLoader from \\"slinkity/lib/plugin/reactPlugin/_client/_eager-loader.js\\";
   
@@ -53,7 +54,8 @@ exports[`toHydrationLoadersApplied with mount points should apply correct hydrat
       Component,
       props: {},
     });
-  </script></body>
+  </script>
+</body>
 </html>"
 `;
 
@@ -64,24 +66,25 @@ exports[`toHydrationLoadersApplied with mount points should apply correct hydrat
 </head>
 <body>
   <h1>My incredible site</h1>
-  <slinkity-react-mount-point data-s-id=\\"0\\">
+  <slinkity-react-mount-point>
     <nav>
       <a href=\\"/home\\">Home</a>
       <a href=\\"/about\\">About</a>
       <a href=\\"/contact\\">Contact</a>
     </nav>
   </slinkity-react-mount-point>
-  <slinkity-react-mount-point data-s-id=\\"1\\">
+  <slinkity-react-mount-point>
     <h2>Welcome to the site</h2>
   </slinkity-react-mount-point>
-  <slinkity-react-mount-point data-s-id=\\"2\\">
+  <slinkity-react-mount-point>
     <ul id=\\"list\\"><li>Have a nice day world</li></ul>
   </slinkity-react-mount-point>
 
 <script type=\\"module\\">
   import MountPoint from \\"slinkity/lib/plugin/reactPlugin/_client/_mount-point.js\\";
   window.customElements.define(\\"slinkity-react-mount-point\\", MountPoint);
-</script><script type=\\"module\\">
+</script>
+<script type=\\"module\\">
     import lazyLoader from \\"slinkity/lib/plugin/reactPlugin/_client/_lazy-loader.js\\";
   
     lazyLoader({ 
@@ -107,7 +110,8 @@ exports[`toHydrationLoadersApplied with mount points should apply correct hydrat
       componentImporter: async () => await import(\\"/not-important.jsx\\"),
       props: {},
     });
-  </script></body>
+  </script>
+</body>
 </html>"
 `;
 
@@ -118,24 +122,25 @@ exports[`toHydrationLoadersApplied with mount points should apply correct props 
 </head>
 <body>
   <h1>My incredible site</h1>
-  <slinkity-react-mount-point data-s-id=\\"0\\">
+  <slinkity-react-mount-point>
     <nav>
       <a href=\\"/home\\">Home</a>
       <a href=\\"/about\\">About</a>
       <a href=\\"/contact\\">Contact</a>
     </nav>
   </slinkity-react-mount-point>
-  <slinkity-react-mount-point data-s-id=\\"1\\">
+  <slinkity-react-mount-point>
     <h2>Welcome to the site</h2>
   </slinkity-react-mount-point>
-  <slinkity-react-mount-point data-s-id=\\"2\\">
+  <slinkity-react-mount-point>
     <ul id=\\"list\\"><li>Have a nice day world</li></ul>
   </slinkity-react-mount-point>
 
 <script type=\\"module\\">
   import MountPoint from \\"slinkity/lib/plugin/reactPlugin/_client/_mount-point.js\\";
   window.customElements.define(\\"slinkity-react-mount-point\\", MountPoint);
-</script><script type=\\"module\\">
+</script>
+<script type=\\"module\\">
     import Component from \\"/nav.jsx\\";
     import eagerLoader from \\"slinkity/lib/plugin/reactPlugin/_client/_eager-loader.js\\";
   
@@ -164,6 +169,7 @@ exports[`toHydrationLoadersApplied with mount points should apply correct props 
       componentImporter: async () => await import(\\"/index.jsx\\"),
       props: {list:['Have a nice day world']},
     });
-  </script></body>
+  </script>
+</body>
 </html>"
 `;
