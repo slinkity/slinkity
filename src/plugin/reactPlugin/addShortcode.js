@@ -46,6 +46,7 @@ in file "${this.page.inputPath}"`,
       props,
       hydrate: render,
       styleToFilePathMap: __stylesGenerated,
+      pageInputPath: this.page.inputPath,
     })
 
     const html = toRendererHtml({

@@ -10,8 +10,12 @@
  * @property {string} path - the component's file path
  * @property {Record<string, any>} props - all props passed to the component
  * @property {'eager' | 'lazy' | 'static'} hydrate - mode to use when hydrating the component
-
+ * @property {string} pageInputPath - the page where this component lives, based on 11ty's inputPath property (ex. src/index.html)
+ *
+ * @typedef {ComponentAttrs & {id: number}} ComponentAttrsWithId
+ *
  * @typedef {{
+ *  getAllByPage: (pageInputPath: string) => ComponentAttrsWithId[];
  *  push: (componentAttrs: ComponentAttrs) => number;
  *  get: (index: number) => ComponentAttrs;
  *  clear: () => void;
@@ -19,7 +23,14 @@
  * @returns {ComponentAttrStore}
  */
 function toComponentAttrStore() {
+  /**
+   * @type {ComponentAttrs[]}
+   */
   let componentAttrStore = []
+  /**
+   * @type {Record<string, number>[]}
+   */
+  let pageToComponentIndicesMap = {}
 
   /**
    * Add a new item to the store, and receive an index used for later get() calls
@@ -29,6 +40,11 @@ function toComponentAttrStore() {
   function push(componentAttrs) {
     const currentIndex = componentAttrStore.length
     componentAttrStore.push(componentAttrs)
+    const componentIndicesForPage = pageToComponentIndicesMap[componentAttrs.pageInputPath] ?? []
+    pageToComponentIndicesMap[componentAttrs.pageInputPath] = [
+      ...componentIndicesForPage,
+      currentIndex,
+    ]
     return currentIndex
   }
 
@@ -38,6 +54,18 @@ function toComponentAttrStore() {
    */
   function get(index) {
     return componentAttrStore[index]
+  }
+
+  /**
+   * Get attributes for all components on a given page
+   * @param {string} pageInputPath - the page where these components live, based on 11ty's inputPath property (ex. src/index.html)
+   * @returns {ComponentAttrsWithId[]} list of attributes (including the component's ID) for all components
+   */
+  function getAllByPage(pageInputPath) {
+    return (pageToComponentIndicesMap[pageInputPath] ?? []).map((index) => ({
+      ...get(index),
+      id: index,
+    }))
   }
 
   /**
@@ -51,10 +79,9 @@ function toComponentAttrStore() {
   return {
     push,
     get,
+    getAllByPage,
     clear,
   }
 }
 
-module.exports = {
-  toComponentAttrStore,
-}
+module.exports = { toComponentAttrStore }
