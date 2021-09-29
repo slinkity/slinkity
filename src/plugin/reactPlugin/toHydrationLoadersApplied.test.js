@@ -9,6 +9,8 @@ const { toComponentAttrStore } = require('./componentAttrStore')
 
 const READ_FILE_CALLED = 'readFile called'
 
+const hydrationModes = ['eager', 'lazy']
+
 jest.mock('fs', () => ({
   promises: {
     readFile: jest.fn().mockReturnValue(READ_FILE_CALLED),
@@ -38,8 +40,8 @@ function toComponentAttrsWithDefaults(...componentAttrs) {
 }
 
 describe('toHydrationLoadersApplied', () => {
-  describe('with no mount points', () => {
-    it('should not modify content when no mount points exist', async () => {
+  describe('with no hydrated components', () => {
+    it('should not modify content when no componentAttrs exist', async () => {
       const content = `<html>
 <head>
   <title>I'm already here!</title>
@@ -66,8 +68,141 @@ describe('toHydrationLoadersApplied', () => {
       applyHtmlWrapper(expectedRoot)
       expect(actual).toEqual(expectedRoot.outerHTML)
     })
+    it('should *not* apply web component loader when no hydrated components exist', async () => {
+      const componentAttrs = toComponentAttrsWithDefaults({
+        path: 'very-cool-component.jsx',
+        hydrate: 'static',
+      })
+      const content = `<html>
+<head>
+  <title>It's hydration time</title>
+</head>
+<body>
+  <${SLINKITY_REACT_MOUNT_POINT}>
+    <ul id="list"><li>Hello World</li></ul>
+  </${SLINKITY_REACT_MOUNT_POINT}>
+</body>
+</html>`
+      const actual = await toHydrationLoadersApplied({
+        content,
+        componentAttrs,
+        isDryRun: true,
+      })
+      expect(actual).not.toContain(webComponentLoader)
+    })
   })
-  describe('with mount points', () => {
+  describe('with styles', () => {
+    const content = `<html>
+<head>
+  <title>It's hydration time</title>
+</head>
+<body>
+  <${SLINKITY_REACT_MOUNT_POINT}>
+    <ul id="list"><li>Hello World</li></ul>
+  </${SLINKITY_REACT_MOUNT_POINT}>
+</body>
+</html>`
+    test.each([...hydrationModes, 'static'])(
+      'should apply `<style>` tag when hydration mode is %s',
+      async (hydrate) => {
+        const actual = await toHydrationLoadersApplied({
+          content,
+          componentAttrs: toComponentAttrsWithDefaults({
+            hydrate,
+            styleToFilePathMap: {
+              'styles.module.css': `
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}`,
+            },
+          }),
+          isDryRun: true,
+        })
+        expect(actual).toMatchSnapshot()
+      },
+    )
+    it('should flatten multiple style entries to single `<style>` tag', async () => {
+      const actual = await toHydrationLoadersApplied({
+        content,
+        componentAttrs: toComponentAttrsWithDefaults(
+          {
+            styleToFilePathMap: {
+              'styles.module.css': `
+              .container {
+                display: grid;
+                place-items: center;
+              }
+              .blockquote {
+                padding: 0;
+              }`,
+              'more-styles.module.css': `
+              h1 {
+                font-size: 6rem;
+              }`,
+            },
+          },
+          {
+            styleToFilePathMap: {
+              'even-more-styles.module.css': `
+              .container {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+              }`,
+            },
+          },
+        ),
+        isDryRun: true,
+      })
+      expect(actual).toMatchSnapshot()
+    })
+    it('should dedup styles when key is repeated', async () => {
+      const actual = await toHydrationLoadersApplied({
+        content,
+        componentAttrs: toComponentAttrsWithDefaults(
+          {
+            styleToFilePathMap: {
+              'styles.module.css': `
+              .container {
+                display: grid;
+                place-items: center;
+              }
+              .blockquote {
+                padding: 0;
+              }`,
+              'more-styles.module.css': `
+              h1 {
+                font-size: 6rem;
+              }`,
+            },
+          },
+          {
+            styleToFilePathMap: {
+              'even-more-styles.module.css': `
+              .container {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+              }`,
+              'styles.module.css': `
+              .container {
+                display: grid;
+                place-items: center;
+              }
+              .blockquote {
+                padding: 0;
+              }`,
+            },
+          },
+        ),
+        isDryRun: true,
+      })
+      expect(actual).toMatchSnapshot()
+    })
+  })
+  describe('with hydrated components', () => {
     it('should apply web component loader', async () => {
       const content = `<html>
 <head>
@@ -90,7 +225,7 @@ describe('toHydrationLoadersApplied', () => {
       })
       expect(actual).toContain(webComponentLoader)
     })
-    test.each(['eager', 'lazy'])(
+    test.each(hydrationModes)(
       'should apply correct hydration loaders when hydrate is %s',
       async (hydrate) => {
         const content = `<html>
