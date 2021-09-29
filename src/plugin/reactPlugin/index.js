@@ -50,6 +50,7 @@ module.exports = function reactPlugin(eleventyConfig, { dir, viteSSR }) {
           props,
           styleToFilePathMap: __stylesGenerated,
           hydrate,
+          pageInputPath: inputPath,
         })
 
         return toRendererHtml({
@@ -65,7 +66,12 @@ module.exports = function reactPlugin(eleventyConfig, { dir, viteSSR }) {
 
   eleventyConfig.addTransform('add-react-renderer-script', async function (content, outputPath) {
     if (!outputPath.endsWith('.html')) return content
+    const componentAttrs = componentAttrStore.getAllByPage(this.inputPath)
 
-    return await toHydrationLoadersApplied({ content, componentAttrStore, dir })
+    return await toHydrationLoadersApplied({
+      content,
+      componentAttrs,
+      dir,
+    })
   })
 }
