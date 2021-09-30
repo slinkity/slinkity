@@ -6,6 +6,10 @@
   title: Owner
   handle: bholmesdev
   image: https://pbs.twimg.com/profile_images/1131721513026170883/kvrKqlHc_400x400.png
+- name: Anthony Campolo
+  title: Maintainer
+  handle: ajcwebdev
+  image: https://pbs.twimg.com/profile_images/1395285322305478664/OGq8Gd6j_400x400.jpg
 - name: Rishov Sarkar
   title: Contributor
   handle: ArkaneMoose
