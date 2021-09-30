@@ -49,7 +49,8 @@
   }
 
   .docs {
-    max-width: auto;
+    overflow: auto;
+    max-width: 100%;
     margin: 0;
     padding: 0;
 
