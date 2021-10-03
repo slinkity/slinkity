@@ -1,0 +1,7 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`toRendererHtml render: eager or lazy should apply props to the component 1`] = `"<slinkity-react-mount-point data-s-id=\\"62\\"><nav data-reactroot=\\"\\"><img src=\\"accessible-logo.png\\" alt=\\"Great logo\\"/><a href=\\"/home\\">Home</a><a href=\\"/about\\">About</a><a href=\\"/contact\\">Contact</a></nav></slinkity-react-mount-point>"`;
+
+exports[`toRendererHtml render: eager or lazy should wrap HTML in mount point 1`] = `"<slinkity-react-mount-point data-s-id=\\"27\\"><section data-reactroot=\\"\\"><h2>Our eager hydration</h2><p>Is extremely useful</p><p>Learn more about it <a href=\\"https://slinkity.dev/docs/partial-hydration/\\">here</a></p></section></slinkity-react-mount-point>"`;
+
+exports[`toRendererHtml render: static should generate HTML without a mount point 1`] = `"<h2>This test file is:</h2><ul><li>Very cool</li><li>Extremely helpful</li></ul>"`;

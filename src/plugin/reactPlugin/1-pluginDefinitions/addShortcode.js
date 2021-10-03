@@ -1,6 +1,6 @@
 const toRendererHtml = require('./toRendererHtml')
 const { join, extname } = require('path')
-const { log } = require('../../utils/logger')
+const { log } = require('../../../utils/logger')
 
 const argsArrayToPropsObj = function ({ vargs = [], errorMsg = '' }) {
   if (vargs.length % 2 !== 0) {
@@ -19,9 +19,9 @@ const argsArrayToPropsObj = function ({ vargs = [], errorMsg = '' }) {
 /**
  * @param {object} eleventyConfig
  * @typedef AddShortcodeParams
- * @property {import('./componentAttrStore').ComponentAttrStore} componentAttrStore
- * @property {import('../index').PluginOptions['dir']} dir
- * @property {import('../toViteSSR').ViteSSR} viteSSR
+ * @property {import('../2-pageTransform/componentAttrStore').ComponentAttrStore} componentAttrStore
+ * @property {import('../../index').PluginOptions['dir']} dir
+ * @property {import('../../../cli/toViteSSR').ViteSSR} viteSSR
  * @param {AddShortcodeParams}
  */
 module.exports = function addShortcode(eleventyConfig, { componentAttrStore, dir, viteSSR }) {

@@ -1,5 +1,5 @@
 const slinkity = require('../plugin')
-const toViteSSR = require('../plugin/toViteSSR')
+const toViteSSR = require('./toViteSSR')
 
 module.exports = async function slinkityConfig({ dir }) {
   const isDev = process.argv.includes('--watch') || process.argv.includes('--serve')

@@ -2,11 +2,11 @@ const { parse } = require('node-html-parser')
 const { join } = require('path')
 const { readFile } = require('fs').promises
 const applyHtmlWrapper = require('./applyHtmlWrapper')
-const { SLINKITY_REACT_MOUNT_POINT } = require('../../utils/consts')
-const { writeFileRec } = require('../../utils/fileHelpers')
+const { SLINKITY_REACT_MOUNT_POINT } = require('../../../utils/consts')
+const { writeFileRec } = require('../../../utils/fileHelpers')
 const toLoaderScript = require('./toLoaderScript')
 const toClientImportStatement = require('./toClientImportStatement')
-const { log } = require('../../utils/logger')
+const { log } = require('../../../utils/logger')
 
 const webComponentLoader = `
 <script type="module">
@@ -49,7 +49,7 @@ ${stacktrace}`
  * @typedef HydrationLoadersAppliedParams
  * @property {string} content - markup template content passed by 11ty's HTML transform
  * @property {import('./componentAttrStore').ComponentAttrsWithId[]} componentAttrs - all component attributes used for rendering and hydration
- * @property {import('../index').PluginOptions['dir']} dir - input and output directories
+ * @property {import('../../index').PluginOptions['dir']} dir - input and output directories
  * @property {boolean?} isDryRun - whether to write components to output directory. When isDryRun = true, no file system actions will occur
  *
  * @param {HydrationLoadersAppliedParams}

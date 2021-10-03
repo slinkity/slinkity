@@ -1,9 +1,6 @@
-const { join, relative } = require('path')
-const addShortcode = require('./addShortcode')
-const toRendererHtml = require('./toRendererHtml')
-const toFormattedDataForProps = require('./toFormattedDataForProps')
-const { toHydrationLoadersApplied } = require('./toHydrationLoadersApplied')
-const { toComponentAttrStore } = require('./componentAttrStore')
+const { join } = require('path')
+const { addPageExtension, addShortcode } = require('./1-pluginDefinitions')
+const { toHydrationLoadersApplied, toComponentAttrStore } = require('./2-pageTransform')
 
 /**
  * @param {Object} eleventyConfig - config passed down by Eleventy
@@ -15,63 +12,24 @@ module.exports = function reactPlugin(eleventyConfig, { dir, viteSSR }) {
 
   const componentAttrStore = toComponentAttrStore()
 
-  addShortcode(eleventyConfig, { componentAttrStore, dir, viteSSR })
-
   eleventyConfig.on('beforeBuild', () => {
     componentAttrStore.clear()
   })
 
-  eleventyConfig.addExtension('jsx', {
-    read: false,
-    getData: async (inputPath) => {
-      const { frontMatter } = await viteSSR.toComponentCommonJSModule(inputPath)
-      return frontMatter
+  addPageExtension(eleventyConfig, { componentAttrStore, dir, viteSSR })
+  addShortcode(eleventyConfig, { componentAttrStore, dir, viteSSR })
+
+  eleventyConfig.addTransform(
+    'apply-react-hydration-loaders',
+    async function (content, outputPath) {
+      if (!outputPath.endsWith('.html')) return content
+      const componentAttrs = componentAttrStore.getAllByPage(this.inputPath)
+
+      return await toHydrationLoadersApplied({
+        content,
+        componentAttrs,
+        dir,
+      })
     },
-    compile: (_, inputPath) =>
-      async function (data) {
-        const jsxImportPath = relative(dir.input, inputPath)
-
-        const {
-          default: Component,
-          getProps,
-          frontMatter,
-          __stylesGenerated,
-        } = await viteSSR.toComponentCommonJSModule(inputPath)
-
-        const props = await getProps(
-          toFormattedDataForProps({
-            ...data,
-            shortcodes: eleventyConfig.javascriptFunctions ?? {},
-          }),
-        )
-        const hydrate = frontMatter.render ?? 'eager'
-        const id = componentAttrStore.push({
-          path: jsxImportPath,
-          props,
-          styleToFilePathMap: __stylesGenerated,
-          hydrate,
-          pageInputPath: inputPath,
-        })
-
-        return toRendererHtml({
-          Component,
-          componentPath: jsxImportPath,
-          props,
-          id,
-          render: hydrate,
-          innerHTML: data.content,
-        })
-      },
-  })
-
-  eleventyConfig.addTransform('add-react-renderer-script', async function (content, outputPath) {
-    if (!outputPath.endsWith('.html')) return content
-    const componentAttrs = componentAttrStore.getAllByPage(this.inputPath)
-
-    return await toHydrationLoadersApplied({
-      content,
-      componentAttrs,
-      dir,
-    })
-  })
+  )
 }

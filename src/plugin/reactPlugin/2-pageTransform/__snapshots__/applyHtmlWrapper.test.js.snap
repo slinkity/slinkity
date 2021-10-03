@@ -1,0 +1,58 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`applyHtmlWrapper should apply missing <html>,<head>, and <body> to fragment 1`] = `
+"<!DOCTYPE html>
+<html lang=\\"en\\">
+<head>
+  <meta charset=\\"UTF-8\\">
+  <meta http-equiv=\\"X-UA-Compatible\\" content=\\"IE=edge\\">
+  <meta name=\\"viewport\\" content=\\"width=device-width, initial-scale=1.0\\">
+  <title>Document</title>
+</head>
+
+<body>
+  <ul id=\\"list\\"><li>Hello World</li></ul>
+</body>
+
+</html>"
+`;
+
+exports[`applyHtmlWrapper should not apply <body> when <body> is already present 1`] = `
+"<!DOCTYPE html>
+<html lang=\\"en\\">
+<head>
+  <meta charset=\\"UTF-8\\">
+  <meta http-equiv=\\"X-UA-Compatible\\" content=\\"IE=edge\\">
+  <meta name=\\"viewport\\" content=\\"width=device-width, initial-scale=1.0\\">
+  <title>Document</title>
+</head>
+
+<body><p>Content!</p></body>
+
+</html>"
+`;
+
+exports[`applyHtmlWrapper should not apply <head> when <head> is already present 1`] = `
+"<!DOCTYPE html>
+<html lang=\\"en\\">
+
+<head>
+  <title>I'm already here!</title>
+</head>
+<body>
+  <ul id=\\"list\\"><li>Hello World</li></ul>
+</body>
+
+</html>"
+`;
+
+exports[`applyHtmlWrapper should not do anything when <html> is already present 1`] = `
+"<html>
+<head>
+  <title>I'm already here!</title>
+</head>
+<body>
+  <ul id=\\"list\\"><li>Hello World</li></ul>
+</body>
+</html>"
+`;

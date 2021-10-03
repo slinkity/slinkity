@@ -6,7 +6,7 @@
  *  includes: string;
  *  layouts: string;
  * }} dir - paths to all significant directories, as specified in 11ty's "dir" documentation
- * @property {import('./toViteSSR').ViteSSR | null} viteSSR - utility to import components as Node-friendly modules
+ * @property {import('../cli/toViteSSR').ViteSSR | null} viteSSR - utility to import components as Node-friendly modules
  */
 
 const reactPlugin = require('./reactPlugin')

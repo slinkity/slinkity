@@ -1,5 +1,5 @@
-const { SLINKITY_ATTRS, SLINKITY_REACT_MOUNT_POINT } = require('../../utils/consts')
-const toHtmlAttrString = require('../../utils/toHtmlAttrString')
+const { SLINKITY_ATTRS, SLINKITY_REACT_MOUNT_POINT } = require('../../../utils/consts')
+const toHtmlAttrString = require('../../../utils/toHtmlAttrString')
 
 const toBasicMinified = (str = '') => str.replace(/\n/g, '').trim()
 

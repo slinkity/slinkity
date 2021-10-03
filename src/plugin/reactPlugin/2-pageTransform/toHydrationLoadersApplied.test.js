@@ -1,8 +1,8 @@
 const { parse } = require('node-html-parser')
 const fsPromises = require('fs').promises
 const { join } = require('path')
-const { SLINKITY_REACT_MOUNT_POINT } = require('../../utils/consts')
-const fileHelpers = require('../../utils/fileHelpers')
+const { SLINKITY_REACT_MOUNT_POINT } = require('../../../utils/consts')
+const fileHelpers = require('../../../utils/fileHelpers')
 const applyHtmlWrapper = require('./applyHtmlWrapper')
 const { toHydrationLoadersApplied, webComponentLoader } = require('./toHydrationLoadersApplied')
 const { toComponentAttrStore } = require('./componentAttrStore')
@@ -16,7 +16,7 @@ jest.mock('fs', () => ({
     readFile: jest.fn().mockReturnValue(READ_FILE_CALLED),
   },
 }))
-jest.mock('../../utils/fileHelpers', () => ({
+jest.mock('../../../utils/fileHelpers', () => ({
   writeFileRec: jest.fn().mockResolvedValue(),
 }))
 

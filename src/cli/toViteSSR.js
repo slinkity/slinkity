@@ -3,7 +3,7 @@ const requireFromString = require('require-from-string')
 const logger = require('../utils/logger')
 
 /**
- * @typedef {import('./reactPlugin/componentAttrStore').ComponentAttrs['styleToFilePathMap']} StyleToFilePathMap
+ * @typedef {import('./reactPlugin/2-pageTransform/componentAttrStore').ComponentAttrs['styleToFilePathMap']} StyleToFilePathMap
  * @returns {{
  *   getCSS: () => StyleToFilePathMap;
  *   plugin: import('vite').PluginOption;

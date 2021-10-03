@@ -1,6 +1,6 @@
 const { stringify } = require('javascript-stringify')
 const toClientImportStatement = require('./toClientImportStatement')
-const toUnixPath = require('../../utils/toUnixPath')
+const toUnixPath = require('../../../utils/toUnixPath')
 
 /**
  * Generate the `<script>` necessary to load a Component into a given mount point
