@@ -1,0 +1,10 @@
+@use '../tools';
+
+.twitter-cta {
+    text-align: center;
+    font-size: 1.2rem;
+
+    @media (max-width: breakpoint(mobile)) {
+        font-size: 1rem;
+    }
+}
