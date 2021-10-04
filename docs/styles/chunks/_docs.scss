@@ -1,0 +1,81 @@
+@use '../tools' as *;
+
+.docs {
+  max-width: 100%;
+  overflow: auto;
+  margin: 0;
+  padding: 0;
+
+  @media (min-width: breakpoint(tablet)) {
+    grid-column: content-start / content-end;
+  }
+
+  &__container {
+    --nav-width: 200px;
+    --site-gap: 40px;
+    display: grid;
+    grid-template-columns: 1fr;
+    max-width: calc(var(--content-max-width) + var(--nav-width));
+    width: 100%;
+    align-items: flex-start;
+    margin: auto;
+    padding: 0 20px;
+    gap: var(--site-gap);
+
+    @media (min-width: breakpoint(tablet)) {
+      grid-template-columns: [side-start] var(--nav-width) [side-end content-start] 1fr [content-end];
+    }
+  }
+
+  > h1 {
+    margin-block-start: var(--site-gap);
+  }
+
+  &__nav {
+    list-style: none;
+    padding: 16px 0;
+    background: var(--grey-100);
+    border-radius: 10px;
+    position: sticky;
+    top: var(--site-gap);
+
+    @media (min-width: breakpoint(tablet)) {
+      margin-block-start: var(--site-gap);
+      grid-column: side-start / side-end;
+    }
+
+    li {
+      margin: 0;
+
+      & > a {
+        --bg: var(--grey-100);
+        display: block;
+        padding: 10px 20px;
+        text-decoration: none;
+        color: var(--white);
+
+        &.active {
+          color: var(--pink);
+        }
+        
+        &:is(:hover, :focus) {
+          color: var(--black);
+        }
+      }
+    }
+  }
+}
+
+.heading-wrapper {
+  display: flex;
+  gap: 1em;
+  align-items: center;
+
+  &:is(:hover, :focus-within) .header-anchor {
+    opacity: 1;
+  }
+
+  .header-anchor {
+    opacity: 0;
+  }
+}

@@ -1,0 +1,17 @@
+@use '../tools';
+
+.demo-embed {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    border: 5px solid transparent;
+    border-image: linear-gradient(var(--primary), var(--secondary)) 1;
+
+    @supports not (aspect-ratio: auto) {
+        height: 400px;
+
+        @media (max-width: breakpoint(mobile)) {
+            height: 240px;
+        }
+    }
+}

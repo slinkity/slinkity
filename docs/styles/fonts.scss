@@ -1,0 +1,35 @@
+@font-face {
+    font-family: Atkinson;
+    src: url('/assets/Atkinson/Atkinson-Hyperlegible-Regular.woff2'),
+        url('/assets/Atkinson/Atkinson-Hyperlegible-Regular.woff'),
+        url('/assets/Atkinson/Atkinson-Hyperlegible-Regular.ttf');
+    font-display: swap;
+}
+
+@font-face {
+    font-family: Atkinson;
+    src: url('/assets/Atkinson/Atkinson-Hyperlegible-Italic.woff2'),
+        url('/assets/Atkinson/Atkinson-Hyperlegible-Italic.woff'),
+        url('/assets/Atkinson/Atkinson-Hyperlegible-Italic.ttf');
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: Atkinson;
+    src: url('/assets/Atkinson/Atkinson-Hyperlegible-Bold.woff2'),
+        url('/assets/Atkinson/Atkinson-Hyperlegible-Bold.woff'),
+        url('/assets/Atkinson/Atkinson-Hyperlegible-Bold.ttf');
+    font-weight: bold;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: Atkinson;
+    src: url('/assets/Atkinson/Atkinson-Hyperlegible-BoldItalic.woff2'),
+        url('/assets/Atkinson/Atkinson-Hyperlegible-BoldItalic.woff'),
+        url('/assets/Atkinson/Atkinson-Hyperlegible-BoldItalic.ttf');
+    font-weight: bold;
+    font-style: italic;
+    font-display: swap;
+}

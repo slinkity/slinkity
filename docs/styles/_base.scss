@@ -1,0 +1,120 @@
+body {
+    margin: 60px 0;
+    color: white;
+    line-height: 1.4;
+    background: var(--black);
+
+    &:before {
+        content: '';
+        background-image: url('/assets/constellation-background.svg');
+        background-repeat: repeat;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        max-height: -webkit-fill-available;
+    }
+
+    code,
+    pre {
+        font-family: var(--pro-hacker-font);
+        font-size: 0.8rem;
+        background: #333;
+        padding: 2px;
+    }
+}
+
+a, a:visited {
+    color: var(--primary);
+    padding: 2px;
+    transition-property: background-position-x, color, opacity;
+    transition-duration: 0.2s;
+    transition-timing-function: linear;
+    background: linear-gradient(
+        80deg,
+        var(--bg, var(--black)) 33%,
+        var(--primary),
+        var(--secondary)
+    );
+    background-size: 300% 100%;
+    background-position-x: 0;
+
+    &:hover {
+        background-position-x: 100%;
+        color: var(--black);
+        text-decoration: none;
+    }
+}
+
+:is(ul, ol) > li {
+    margin-block-end: 1rem;
+}
+
+h1 {
+    margin-block-end: 0;
+    
+    > svg {
+        max-width: 95vw;
+        height: auto;
+    }
+}
+
+h2 {
+    margin-top: 2.4rem;
+    scroll-margin-top: 1rem;
+    
+    + .header-anchor {
+        font-size: 1.5em;
+        margin-block-start: 2.4rem;
+        margin-block-end: .83em;
+        padding-inline: .25em;
+
+        @supports not (padding-inline: .25em) {
+        padding-inline-start: .25em;
+        padding-inline-end: .25em;
+        }
+    }
+}
+
+blockquote {
+    --bg: var(--grey-100);
+    display: flex;
+    margin-left: 0;
+    margin-right: 0;
+    padding-right: 20px;
+    background: var(--bg);
+    border-radius: 0 5px 5px 0;
+
+    &::before {
+        content: '';
+        display: inline-block;
+        width: 14px;
+        margin-right: 20px;
+        background: linear-gradient(var(--pink), var(--yellow));
+    }
+}
+
+article {
+    max-width: var(--content-max-width);
+    margin: auto;
+    padding: 20px;
+    background: linear-gradient(
+        transparent,
+        var(--black) 30px,
+        var(--black) calc(100% - 30px),
+        transparent
+    );
+}
+
+footer {
+    padding: 10px;
+
+    p {
+        text-align: center;
+        font-style: italic;
+        font-size: 0.8rem;
+        margin: auto;
+        max-width: var(--content-max-width);
+    }
+}
