@@ -5,7 +5,7 @@ const { relative } = require('path')
 /**
  * @param {object} eleventyConfig
  * @typedef AddPageExtParams
- * @property {import('../2-pageTransform/componentAttrStore').ComponentAttrStore} componentAttrStore
+ * @property {import('../../componentAttrStore').ComponentAttrStore} componentAttrStore
  * @property {import('../../index').PluginOptions['dir']} dir
  * @property {import('../../../cli/toViteSSR').ViteSSR} viteSSR
  * @param {AddPageExtParams}

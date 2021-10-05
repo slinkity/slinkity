@@ -15,7 +15,7 @@ const webComponentLoader = `
 </script>`
 
 /**
- * @param {import('./componentAttrStore').ComponentAttrs['styleToFilePathMap']} styleToFilePathMap
+ * @param {import('../../componentAttrStore').ComponentAttrs['styleToFilePathMap']} styleToFilePathMap
  * @return {string} styles as stringified module with import statements
  */
 function toStyleTag(styleToFilePathMap) {
@@ -48,7 +48,7 @@ ${stacktrace}`
  *
  * @typedef HydrationLoadersAppliedParams
  * @property {string} content - markup template content passed by 11ty's HTML transform
- * @property {import('./componentAttrStore').ComponentAttrsWithId[]} componentAttrs - all component attributes used for rendering and hydration
+ * @property {import('../../componentAttrStore').ComponentAttrsWithId[]} componentAttrs - all component attributes used for rendering and hydration
  * @property {import('../../index').PluginOptions['dir']} dir - input and output directories
  * @property {boolean?} isDryRun - whether to write components to output directory. When isDryRun = true, no file system actions will occur
  *

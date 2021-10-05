@@ -47,6 +47,7 @@ function gimmeCSSPlugin() {
  *
  * @typedef ViteSSR - available fns for module conversion
  * @property {(filePath: string) => Promise<FormattedModule>} toComponentCommonJSModule - fn to grab a Node-friendly module output from a given file path
+ * @property {import('vite').ViteDevServer | null} server
  *
  * @returns {ViteSSR} viteSSR
  */
@@ -73,6 +74,7 @@ module.exports = async function toViteSSR({ environment, dir }) {
           ...viteOutput,
         }
       },
+      server,
     }
   } else {
     /**
@@ -119,6 +121,7 @@ module.exports = async function toViteSSR({ environment, dir }) {
         }
         return probablyInefficientCache[filePath]
       },
+      server: null,
     }
   }
 }

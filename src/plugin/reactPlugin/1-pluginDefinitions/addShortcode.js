@@ -19,7 +19,7 @@ const argsArrayToPropsObj = function ({ vargs = [], errorMsg = '' }) {
 /**
  * @param {object} eleventyConfig
  * @typedef AddShortcodeParams
- * @property {import('../2-pageTransform/componentAttrStore').ComponentAttrStore} componentAttrStore
+ * @property {import('../../componentAttrStore').ComponentAttrStore} componentAttrStore
  * @property {import('../../index').PluginOptions['dir']} dir
  * @property {import('../../../cli/toViteSSR').ViteSSR} viteSSR
  * @param {AddShortcodeParams}

@@ -2,6 +2,8 @@
 const Eleventy = require('@11ty/eleventy/src/Eleventy')
 const EleventyErrorHandler = require('@11ty/eleventy/src/EleventyErrorHandler')
 const UserConfig = require('@11ty/eleventy/src/UserConfig')
+const slinkityConfig = require('../plugin')
+const toViteSSR = require('./toViteSSR')
 const { resolve } = require('path')
 
 function toUserConfig(configPath = '') {
@@ -56,7 +58,8 @@ function applyUserConfigDir(dir = {}) {
       errorHandler.warn(promise, 'A promise rejection was handled asynchronously')
     })
 
-    const config = await require('./slinkityConfig')({ dir })
+    const viteSSR = await toViteSSR({ dir, environment: options.watch ? 'dev' : 'prod' })
+    const config = slinkityConfig({ dir, viteSSR })
 
     let elev = new Eleventy(dir.input, dir.output, {
       quietMode: options.quiet,
@@ -74,6 +77,7 @@ function applyUserConfigDir(dir = {}) {
     await elev.init()
     if (options.watch) {
       await elev.watch()
+      elev.serve('3000')
     } else {
       await elev.write()
     }
