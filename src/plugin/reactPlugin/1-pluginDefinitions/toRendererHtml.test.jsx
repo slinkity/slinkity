@@ -1,4 +1,4 @@
-const toRendererHtml = require('./toRendererHtml')
+const { toRendererHtml } = require('./toRendererHtml')
 const React = require('react')
 
 describe('toRendererHtml', () => {

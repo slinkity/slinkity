@@ -12,6 +12,10 @@
 const reactPlugin = require('./reactPlugin')
 const toSlashesTrimmed = require('../utils/toSlashesTrimmed')
 const { toComponentAttrStore } = require('./componentAttrStore')
+const { parse } = require('node-html-parser')
+const { SLINKITY_ATTRS } = require('../utils/consts')
+const { toRendererHtml } = require('./reactPlugin/1-pluginDefinitions/toRendererHtml')
+const { join } = require('path')
 
 /**
  * @param {PluginOptions} - all Slinkity plugin options
@@ -30,8 +34,23 @@ module.exports = function slinkityConfig({ dir, viteSSR }) {
             const page = urlToCompiledHtmlMap[toSlashesTrimmed(req.originalUrl)]
             if (page) {
               const { content, outputPath } = page
-              console.log({ outputPath })
-              res.write(await viteSSR.server.transformIndexHtml(outputPath, content))
+              const root = parse(content)
+              const mountPointsToSSR = root.querySelectorAll(`[${SLINKITY_ATTRS.ssr}="true"]`)
+              for (const mountPointToSSR of mountPointsToSSR) {
+                const id = mountPointToSSR.getAttribute(SLINKITY_ATTRS.id)
+                if (id) {
+                  const { path: componentPath, props, hydrate } = componentAttrStore.get(id)
+                  const { default: Component } = await viteSSR.toComponentCommonJSModule(
+                    join(dir.input, componentPath),
+                  )
+                  mountPointToSSR.innerHTML = toRendererHtml({
+                    Component,
+                    props,
+                    hydrate,
+                  })
+                }
+              }
+              res.write(await viteSSR.server.transformIndexHtml(outputPath, root.outerHTML))
               res.end()
             } else {
               next()

@@ -8,14 +8,13 @@ const toBasicMinified = (str = '') => str.replace(/\n/g, '').trim()
  * with a hydration mount point + attributes applied when necessary
  * @param {{
  *  Component: () => void,
- *  render: 'eager' | 'lazy' | 'static',
- *  id: string,
+ *  hydrate: 'eager' | 'lazy' | 'static',
  *  props?: Object.<string, Any>,
  *  innerHTML?: string
  * }} params Component to process with all related attributes
  * @returns {string} Mount point with parameters + children applied
  */
-module.exports = function toRendererHtml({ Component, render, id, props = {}, innerHTML = '' }) {
+function toRendererHtml({ Component, hydrate, props = {}, innerHTML = '' }) {
   // only import these dependencies when triggered
   // this prevents "cannot find module react*"
   // when running slinkity without react and react-dom installed
@@ -27,17 +26,25 @@ module.exports = function toRendererHtml({ Component, render, id, props = {}, in
     parseHtmlToReact(innerHTML || ''),
   )
 
-  if (render === 'static') {
-    const elementAsHTMLString = renderToStaticMarkup(reactElement)
-    const minified = toBasicMinified(elementAsHTMLString)
-    return minified
+  const elementAsHTMLString =
+    hydrate === 'static' ? renderToStaticMarkup(reactElement) : renderToString(reactElement)
+  return toBasicMinified(elementAsHTMLString)
+}
+
+function toMountPoint({ id, hydrate }) {
+  const attrs = toHtmlAttrString({
+    [SLINKITY_ATTRS.id]: id,
+    [SLINKITY_ATTRS.ssr]: true,
+  })
+  const friendlyCommentForDevs = '<!--Vite will render your component here!-->'
+  if (hydrate === 'static') {
+    return `<div ${attrs}>${friendlyCommentForDevs}</div>`
   } else {
-    const elementAsHTMLString = renderToString(reactElement)
-    const attrs = toHtmlAttrString({
-      [SLINKITY_ATTRS.id]: id,
-    })
-    const mountPointApplied = `<${SLINKITY_REACT_MOUNT_POINT} ${attrs}>${elementAsHTMLString}</${SLINKITY_REACT_MOUNT_POINT}>`
-    const minified = toBasicMinified(mountPointApplied)
-    return minified
+    return `<${SLINKITY_REACT_MOUNT_POINT} ${attrs}>${friendlyCommentForDevs}</${SLINKITY_REACT_MOUNT_POINT}>`
   }
+}
+
+module.exports = {
+  toMountPoint,
+  toRendererHtml,
 }

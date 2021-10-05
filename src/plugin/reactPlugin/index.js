@@ -20,7 +20,7 @@ module.exports = function reactPlugin(
   eleventyConfig.addPassthroughCopy(join(dir.input, dir.includes, 'components'))
 
   addPageExtension(eleventyConfig, { componentAttrStore, dir, viteSSR })
-  addShortcode(eleventyConfig, { componentAttrStore, dir, viteSSR })
+  addShortcode(eleventyConfig, { componentAttrStore, dir })
 
   eleventyConfig.addTransform(
     'apply-react-hydration-loaders',

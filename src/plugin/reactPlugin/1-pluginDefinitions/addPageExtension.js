@@ -1,4 +1,4 @@
-const toRendererHtml = require('./toRendererHtml')
+const { toMountPoint } = require('./toRendererHtml')
 const toFormattedDataForProps = require('./toFormattedDataForProps')
 const { relative } = require('path')
 
@@ -21,12 +21,7 @@ module.exports = function addPageExtension(eleventyConfig, { componentAttrStore,
       async function (data) {
         const jsxImportPath = relative(dir.input, inputPath)
 
-        const {
-          default: Component,
-          getProps,
-          frontMatter,
-          __stylesGenerated,
-        } = await viteSSR.toComponentCommonJSModule(inputPath)
+        const { getProps, frontMatter } = await viteSSR.toComponentCommonJSModule(inputPath)
 
         const props = await getProps(
           toFormattedDataForProps({
@@ -38,19 +33,12 @@ module.exports = function addPageExtension(eleventyConfig, { componentAttrStore,
         const id = componentAttrStore.push({
           path: jsxImportPath,
           props,
-          styleToFilePathMap: __stylesGenerated,
+          styleToFilePathMap: {},
           hydrate,
           pageInputPath: inputPath,
         })
 
-        return toRendererHtml({
-          Component,
-          componentPath: jsxImportPath,
-          props,
-          id,
-          render: hydrate,
-          innerHTML: data.content,
-        })
+        return toMountPoint({ id, hydrate })
       },
   })
 }
