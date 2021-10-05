@@ -36,13 +36,14 @@ module.exports = function slinkityConfig({ dir, viteSSR }) {
               const { content, outputPath } = page
               const root = parse(content)
               const mountPointsToSSR = root.querySelectorAll(`[${SLINKITY_ATTRS.ssr}="true"]`)
+              const pageStyles = {}
               for (const mountPointToSSR of mountPointsToSSR) {
                 const id = mountPointToSSR.getAttribute(SLINKITY_ATTRS.id)
                 if (id) {
                   const { path: componentPath, props, hydrate } = componentAttrStore.get(id)
-                  const { default: Component } = await viteSSR.toComponentCommonJSModule(
-                    join(dir.input, componentPath),
-                  )
+                  const { default: Component, __stylesGenerated } =
+                    await viteSSR.toComponentCommonJSModule(join(dir.output, componentPath))
+                  Object.assign(pageStyles, __stylesGenerated)
                   mountPointToSSR.innerHTML = toRendererHtml({
                     Component,
                     props,
@@ -50,6 +51,12 @@ module.exports = function slinkityConfig({ dir, viteSSR }) {
                   })
                 }
               }
+              root
+                .querySelector('body')
+                .insertAdjacentHTML(
+                  'beforeend',
+                  `<style>${Object.values(pageStyles).join('\n')}</style>`,
+                )
               res.write(await viteSSR.server.transformIndexHtml(outputPath, root.outerHTML))
               res.end()
             } else {
@@ -62,13 +69,6 @@ module.exports = function slinkityConfig({ dir, viteSSR }) {
       eleventyConfig.on('beforeBuild', () => {
         componentAttrStore.clear()
       })
-
-      // if (viteSSR.server) {
-      //   console.log({ path: relative(dir.output, outputPath), output: dir.output, outputPath })
-      //   return await viteSSR.server.transformIndexHtml('/index.html', withHydrationLoadersApplied)
-      // } else {
-      //   return withHydrationLoadersApplied
-      // }
     }
 
     eleventyConfig.addPlugin(reactPlugin, {
