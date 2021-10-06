@@ -16,6 +16,7 @@ const { parse } = require('node-html-parser')
 const { SLINKITY_ATTRS } = require('../utils/consts')
 const { toRendererHtml } = require('./reactPlugin/1-pluginDefinitions/toRendererHtml')
 const { join } = require('path')
+const { stringify } = require('javascript-stringify')
 
 /**
  * @param {PluginOptions} - all Slinkity plugin options
@@ -29,7 +30,6 @@ module.exports = function slinkityConfig({ dir, viteSSR }) {
     if (viteSSR.server) {
       eleventyConfig.setBrowserSyncConfig({
         middleware: [
-          viteSSR.server.middlewares,
           async function applyViteHtmlTransform(req, res, next) {
             const page = urlToCompiledHtmlMap[toSlashesTrimmed(req.originalUrl)]
             if (page) {
@@ -42,7 +42,7 @@ module.exports = function slinkityConfig({ dir, viteSSR }) {
                 if (id) {
                   const { path: componentPath, props, hydrate } = componentAttrStore.get(id)
                   const { default: Component, __stylesGenerated } =
-                    await viteSSR.toComponentCommonJSModule(join(dir.output, componentPath))
+                    await viteSSR.toComponentCommonJSModule(componentPath)
                   Object.assign(pageStyles, __stylesGenerated)
                   mountPointToSSR.innerHTML = toRendererHtml({
                     Component,
@@ -63,6 +63,7 @@ module.exports = function slinkityConfig({ dir, viteSSR }) {
               next()
             }
           },
+          viteSSR.server.middlewares,
         ],
       })
 

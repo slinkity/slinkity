@@ -1,6 +1,7 @@
 const { createServer, build } = require('vite')
 const requireFromString = require('require-from-string')
 const logger = require('../utils/logger')
+const { resolve } = require('path')
 
 /**
  * @typedef {import('./reactPlugin/2-pageTransform/componentAttrStore').ComponentAttrs['styleToFilePathMap']} StyleToFilePathMap
@@ -65,7 +66,11 @@ module.exports = async function toViteSSR({ environment, dir }) {
     })
     return {
       async toComponentCommonJSModule(filePath) {
-        const viteOutput = await server.ssrLoadModule(filePath)
+        console.log({
+          graph: server.moduleGraph.idToModuleMap.keys(),
+          path: resolve(dir.output, filePath),
+        })
+        const viteOutput = await server.ssrLoadModule(resolve(dir.output, filePath))
         return {
           default: () => null,
           getProps: () => ({}),

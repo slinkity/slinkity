@@ -44,7 +44,6 @@ module.exports = function reactPlugin(
         outputPath: '/' + toSlashesTrimmed(relative(dir.output, outputPath)),
         content: withHydrationLoadersApplied,
       }
-      console.log({ formattedAsUrl })
       return withHydrationLoadersApplied
     },
   )
