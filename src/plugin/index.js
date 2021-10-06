@@ -32,6 +32,7 @@ module.exports = function slinkityConfig({ dir, viteSSR, browserSyncOptions, env
    * @typedef ApplyViteHtmlTransformParams
    * @property {string} content - the original HTML content to transform
    * @property {string} outputPath - the output path this HTML content will be written to
+   * @param {ApplyViteHtmlTransformParams}
    * @returns {string} - HTML with statically rendered content and Vite transforms applied
    */
   async function applyViteHtmlTransform({ content, outputPath }) {
@@ -115,10 +116,10 @@ module.exports = function slinkityConfig({ dir, viteSSR, browserSyncOptions, env
       eleventyConfig.addTransform(
         'update-url-to-compiled-html-map',
         function (content, outputPath) {
-          const relativePath = toSlashesTrimmed(relative(dir.output, outputPath))
+          const relativePath = relative(dir.output, outputPath)
           const formattedAsUrl = relativePath.replace(/.html$/, '').replace(/index$/, '')
-          urlToOutputHtmlMap[formattedAsUrl] = {
-            outputPath: '/' + relativePath,
+          urlToOutputHtmlMap[toSlashesTrimmed(formattedAsUrl)] = {
+            outputPath: '/' + toSlashesTrimmed(relativePath),
             content,
           }
           return content

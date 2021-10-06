@@ -4,7 +4,7 @@ const { promisify } = require('util')
 const glob = promisify(require('glob'))
 const { readFile } = require('fs').promises
 
-export async function getConfigFile() {
+async function getConfigFile() {
   for (const ext of ['js', 'mjs', 'ts']) {
     try {
       const path = resolve(`vite.config.${ext}`)
@@ -58,4 +58,4 @@ async function build({ input, output }) {
   }
 }
 
-module.exports = { serve, build }
+module.exports = { serve, build, getConfigFile }
