@@ -74,6 +74,7 @@ function toComponentAttrStore() {
    */
   function clear() {
     componentAttrStore = []
+    pageToComponentIndicesMap = {}
   }
 
   return {
