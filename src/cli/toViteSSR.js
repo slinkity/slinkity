@@ -2,6 +2,7 @@ const { createServer, build } = require('vite')
 const requireFromString = require('require-from-string')
 const logger = require('../utils/logger')
 const { resolve } = require('path')
+const { getConfigFile } = require('./vite')
 
 /**
  * @typedef {import('./reactPlugin/2-pageTransform/componentAttrStore').ComponentAttrs['styleToFilePathMap']} StyleToFilePathMap
@@ -68,6 +69,7 @@ module.exports = async function toViteSSR({ environment, dir }) {
     const server = await createServer({
       root: dir.output,
       plugins: [generatedStyles.plugin],
+      configFile: await getConfigFile(),
       server: {
         middlewareMode: 'ssr',
       },
@@ -99,6 +101,7 @@ module.exports = async function toViteSSR({ environment, dir }) {
         const { output } = await build({
           root: dir.output,
           plugins: [generatedStyles.plugin],
+          configFile: await getConfigFile(),
           build: {
             ssr: true,
             write: false,
