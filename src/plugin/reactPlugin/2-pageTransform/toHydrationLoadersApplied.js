@@ -14,19 +14,6 @@ const webComponentLoader = `
   window.customElements.define("${SLINKITY_REACT_MOUNT_POINT}", MountPoint);
 </script>`
 
-/**
- * @param {import('../../componentAttrStore').ComponentAttrs['styleToFilePathMap']} styleToFilePathMap
- * @return {string} styles as stringified module with import statements
- */
-function toStyleTag(styleToFilePathMap) {
-  const styles = Object.values(styleToFilePathMap)
-  return styles.length
-    ? `<style>
-  ${Object.values(styleToFilePathMap).join('\n')}
-</style>`
-    : ''
-}
-
 const errorMessage = ({
   inputPath,
   stacktrace,
@@ -60,13 +47,10 @@ async function toHydrationLoadersApplied({ content, componentAttrs, dir, isDryRu
   applyHtmlWrapper(root)
 
   try {
-    // 1. Get the attributes for all components that need hydration
-    const componentAttrsWithHydration = componentAttrs.filter(({ hydrate }) => hydrate !== 'static')
-
     // 2. Copy the associated component file to the output dir
     if (!isDryRun && dir) {
       await Promise.all(
-        componentAttrsWithHydration.map(async ({ path: componentPath }) => {
+        componentAttrs.map(async ({ path: componentPath }) => {
           const jsxInputPath = join(dir.input, componentPath)
           const jsxOutputPath = join(dir.output, componentPath)
           await writeFileRec(jsxOutputPath, await readFile(jsxInputPath))
@@ -75,7 +59,7 @@ async function toHydrationLoadersApplied({ content, componentAttrs, dir, isDryRu
     }
 
     // 3. Generate scripts to hydrate those components
-    const scripts = componentAttrsWithHydration.map(({ path: componentPath, hydrate, id, props }) =>
+    const scripts = componentAttrs.map(({ path: componentPath, hydrate, id, props }) =>
       toLoaderScript({
         componentPath,
         hydrate,
@@ -84,26 +68,11 @@ async function toHydrationLoadersApplied({ content, componentAttrs, dir, isDryRu
       }),
     )
 
-    // 4. Generate a `<style>` for all component CSS imported as ES modules (ex. CSS modules)
-    // Here, we flatten each component's generated styles into a single map for the page
-    const stylesStringified = toStyleTag(
-      componentAttrs.reduce((styleMap, { styleToFilePathMap }) => {
-        for (const [key, content] of Object.entries(styleToFilePathMap)) {
-          styleMap[key] = content
-        }
-        return styleMap
-      }, {}),
-    )
-
     root
       .querySelector('body')
       .insertAdjacentHTML(
         'beforeend',
-        [
-          ...(componentAttrsWithHydration.length ? [webComponentLoader] : []),
-          ...scripts,
-          stylesStringified,
-        ].join('\n'),
+        [...(componentAttrs.length ? [webComponentLoader] : []), ...scripts].join('\n'),
       )
   } catch (e) {
     // we silently fail so our error logs aren't buried by 11ty's

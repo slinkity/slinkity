@@ -55,6 +55,15 @@ function gimmeCSSPlugin() {
 module.exports = async function toViteSSR({ environment, dir }) {
   const generatedStyles = gimmeCSSPlugin()
 
+  /**
+   * Resolve filePath relative to the output directory
+   * @param {string} filePath - relative path
+   * @returns {string}
+   */
+  function toResolved(filePath) {
+    return resolve(dir.output, filePath)
+  }
+
   if (environment === 'dev') {
     const server = await createServer({
       root: dir.output,
@@ -66,7 +75,7 @@ module.exports = async function toViteSSR({ environment, dir }) {
     })
     return {
       async toComponentCommonJSModule(filePath) {
-        const viteOutput = await server.ssrLoadModule(resolve(dir.output, filePath))
+        const viteOutput = await server.ssrLoadModule(toResolved(filePath))
         return {
           default: () => null,
           getProps: () => ({}),
@@ -84,7 +93,8 @@ module.exports = async function toViteSSR({ environment, dir }) {
     const probablyInefficientCache = {}
     return {
       async toComponentCommonJSModule(filePath) {
-        if (probablyInefficientCache[filePath]) return probablyInefficientCache[filePath]
+        const resolvedPath = toResolved(filePath)
+        if (probablyInefficientCache[resolvedPath]) return probablyInefficientCache[resolvedPath]
 
         const { output } = await build({
           root: dir.output,
@@ -93,7 +103,7 @@ module.exports = async function toViteSSR({ environment, dir }) {
             ssr: true,
             write: false,
             rollupOptions: {
-              input: filePath,
+              input: resolvedPath,
             },
           },
         })
@@ -109,18 +119,18 @@ module.exports = async function toViteSSR({ environment, dir }) {
         if (!output?.length) {
           logger.log({
             type: 'error',
-            message: `Module ${filePath} didn't have any output. Is this file blank?`,
+            message: `Module ${resolvedPath} didn't have any output. Is this file blank?`,
           })
           return mod
         }
-        probablyInefficientCache[filePath] = {
+        probablyInefficientCache[resolvedPath] = {
           ...mod,
           // converts our stringified JS to a CommonJS module in memory
           // saves reading / writing to disk!
           // TODO: check performance impact
           ...requireFromString(output[0].code),
         }
-        return probablyInefficientCache[filePath]
+        return probablyInefficientCache[resolvedPath]
       },
       server: null,
     }
