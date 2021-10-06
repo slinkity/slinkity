@@ -5,6 +5,7 @@ const { emptyDir, mkdtemp, remove } = require('fs-extra')
 const { startEleventy, toEleventyConfigDir } = require('./eleventy')
 const meta = require('../../package.json')
 const { build: viteBuild, serve: viteServe } = require('./vite')
+const logger = require('../utils/logger')
 
 const eleventyArgs = {
   input: {
@@ -104,6 +105,14 @@ const userConfigDir = toEleventyConfigDir({
     await viteServe({
       input: resolve(eleventyDir.output),
       port: options.port,
+    })
+    logger.log({
+      type: 'info',
+      message: 'Now serving on port 3000 🚀',
+    })
+    logger.log({
+      type: 'info',
+      message: 'Visit http://localhost:3000 in your favorite browser (that isn\'t IE 😉)',
     })
     await startEleventy(eleventyDir)(toEleventyOptions(options))
   } else {
