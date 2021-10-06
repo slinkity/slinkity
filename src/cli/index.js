@@ -4,8 +4,7 @@ const { relative, resolve, sep } = require('path')
 const { emptyDir, mkdtemp, remove } = require('fs-extra')
 const { startEleventy, toEleventyConfigDir } = require('./eleventy')
 const meta = require('../../package.json')
-const { build: viteBuild, serve: viteServe } = require('./vite')
-const logger = require('../utils/logger')
+const { build: viteBuild } = require('./vite')
 
 const eleventyArgs = {
   input: {

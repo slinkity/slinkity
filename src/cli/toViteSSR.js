@@ -35,8 +35,8 @@ function gimmeCSSPlugin() {
 
 /**
  * @typedef ViteSSRParams
- * @property {'dev' | 'prod'} environment - whether we want a dev server or a production build
- * @property {import('./index').PluginOptions['dir']} dir
+ * @property {import('../plugin').PluginOptions['environment']} environment
+ * @property {import('../plugin').PluginOptions['dir']} dir
  * @param {ViteSSRParams}
  *
  * @typedef {{
@@ -66,10 +66,6 @@ module.exports = async function toViteSSR({ environment, dir }) {
     })
     return {
       async toComponentCommonJSModule(filePath) {
-        console.log({
-          graph: server.moduleGraph.idToModuleMap.keys(),
-          path: resolve(dir.output, filePath),
-        })
         const viteOutput = await server.ssrLoadModule(resolve(dir.output, filePath))
         return {
           default: () => null,
