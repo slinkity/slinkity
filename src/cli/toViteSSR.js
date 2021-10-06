@@ -36,8 +36,8 @@ function gimmeCSSPlugin() {
 
 /**
  * @typedef ViteSSRParams
- * @property {import('../plugin').PluginOptions['environment']} environment
- * @property {import('../plugin').PluginOptions['dir']} dir
+ * @property {import('../plugin').SlinkityConfigOptions['environment']} environment
+ * @property {import('../plugin').SlinkityConfigOptions['dir']} dir
  * @param {ViteSSRParams}
  *
  * @typedef {{

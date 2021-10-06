@@ -36,7 +36,7 @@ ${stacktrace}`
  * @typedef HydrationLoadersAppliedParams
  * @property {string} content - markup template content passed by 11ty's HTML transform
  * @property {import('../../componentAttrStore').ComponentAttrsWithId[]} componentAttrs - all component attributes used for rendering and hydration
- * @property {import('../../index').PluginOptions['dir']} dir - input and output directories
+ * @property {import('../../index').SlinkityConfigOptions['dir']} dir - input and output directories
  * @property {boolean?} isDryRun - whether to write components to output directory. When isDryRun = true, no file system actions will occur
  *
  * @param {HydrationLoadersAppliedParams}

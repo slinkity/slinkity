@@ -20,7 +20,7 @@ const argsArrayToPropsObj = function ({ vargs = [], errorMsg = '' }) {
  * @param {object} eleventyConfig
  * @typedef AddShortcodeParams
  * @property {import('../../componentAttrStore').ComponentAttrStore} componentAttrStore
- * @property {import('../../index').PluginOptions['dir']} dir
+ * @property {import('../../index').SlinkityConfigOptions['dir']} dir
  * @param {AddShortcodeParams}
  */
 module.exports = function addShortcode(eleventyConfig, { componentAttrStore, dir }) {

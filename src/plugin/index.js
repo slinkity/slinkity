@@ -1,5 +1,5 @@
 /**
- * @typedef PluginOptions
+ * @typedef SlinkityConfigOptions
  * @property {{
  *  input: string;
  *  output: string;
@@ -22,7 +22,7 @@ const { relative } = require('path')
 const { toHydrationLoadersApplied } = require('./reactPlugin/2-pageTransform')
 
 /**
- * @param {PluginOptions} - all Slinkity plugin options
+ * @param {SlinkityConfigOptions} - all Slinkity plugin options
  * @returns (eleventyConfig: Object) => Object - config we'll apply to the Eleventy object
  */
 module.exports = function slinkityConfig({ dir, viteSSR, browserSyncOptions, environment }) {

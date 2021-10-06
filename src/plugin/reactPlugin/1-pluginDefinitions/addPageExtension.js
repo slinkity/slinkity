@@ -6,7 +6,7 @@ const { relative } = require('path')
  * @param {object} eleventyConfig
  * @typedef AddPageExtParams
  * @property {import('../../componentAttrStore').ComponentAttrStore} componentAttrStore
- * @property {import('../../index').PluginOptions['dir']} dir
+ * @property {import('../../index').SlinkityConfigOptions['dir']} dir
  * @property {import('../../../cli/toViteSSR').ViteSSR} viteSSR
  * @param {AddPageExtParams}
  */
