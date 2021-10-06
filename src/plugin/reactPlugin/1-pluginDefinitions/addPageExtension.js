@@ -14,14 +14,14 @@ module.exports = function addPageExtension(eleventyConfig, { componentAttrStore,
   eleventyConfig.addExtension('jsx', {
     read: false,
     getData: async (inputPath) => {
-      const { frontMatter } = await viteSSR.toComponentCommonJSModule(inputPath)
+      const relativePath = relative(dir.input, inputPath)
+      const { frontMatter } = await viteSSR.toComponentCommonJSModule(relativePath)
       return frontMatter
     },
     compile: (_, inputPath) =>
       async function (data) {
-        const jsxImportPath = relative(dir.input, inputPath)
-
-        const { getProps, frontMatter } = await viteSSR.toComponentCommonJSModule(inputPath)
+        const relativePath = relative(dir.input, inputPath)
+        const { getProps, frontMatter } = await viteSSR.toComponentCommonJSModule(relativePath)
 
         const props = await getProps(
           toFormattedDataForProps({
@@ -31,7 +31,7 @@ module.exports = function addPageExtension(eleventyConfig, { componentAttrStore,
         )
         const hydrate = frontMatter.render ?? 'eager'
         const id = componentAttrStore.push({
-          path: jsxImportPath,
+          path: relativePath,
           props,
           styleToFilePathMap: {},
           hydrate,
