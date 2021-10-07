@@ -49,7 +49,6 @@
   },
   "bugs": "https://github.com/slinkity/slinkity/issues",
   "dependencies": {
-    "@vitejs/plugin-react": "^1.0.2",
     "commander": "^5.1.0",
     "esbuild": "^0.12.17",
     "esbuild-css-modules-plugin": "^2.0.7",
