@@ -24,10 +24,10 @@ All you need is an empty directory to get started! But if you prefer a starter p
 First, install Slinkity + the latest 11ty into your project repo like so:
 
 ```bash
-npm i --save-dev slinkity @11ty/eleventy@1.0.0-canary.41
+npm i --save-dev slinkity @11ty/eleventy@beta
 ```
 
-> Slinkity relies on 11ty's [latest 1.0 canary build](https://www.npmjs.com/package/@11ty/eleventy/v/1.0.0-canary.41) to work properly. Yes, this could involve some gotchas with existing 11ty plugins! If anything unexpected happens, let us know on our [GitHub issues page](https://github.com/slinkity/slinkity/issues).
+> Slinkity relies on 11ty's [latest 1.0 beta build](https://www.npmjs.com/package/@11ty/eleventy/v/beta) to work properly. Yes, this could involve some gotchas with existing 11ty plugins! If anything unexpected happens, let us know on our [GitHub issues page](https://github.com/slinkity/slinkity/issues).
 
 ...and run our CLI command to spin up the dev server:
 
