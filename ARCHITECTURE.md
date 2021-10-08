@@ -14,6 +14,8 @@ All args are passed directly to Eleventy with 2 exceptions:
 
 ### When using the dev server
 
+![Diagram of 4 step rendering process](assets/architecture-diagram.jpg)
+
 We start 2 dev servers in parallel here: an Eleventy server to build your templates and watch for file changes, and a Vite server for resource bundling and debugging in your browser.
 
 3. **Start the Vite server pointing to your Eleventy output directory.** If that directory doesn't exist yet, fear not! Vite patiently waits for the directory to get written 😁 - `src/cli/vite.js`
