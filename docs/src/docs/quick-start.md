@@ -90,7 +90,7 @@ _**Note:** Make sure this file is under `_includes/components`. Slinkity will co
 Next, go ahead and install `react` and `react-dom` as project dependencies. This will help your Vite server compile your component.
 
 ```bash
-npm i --save-dev react react-dom
+npm i react react-dom
 ```
 
 Now how do we use this component on our `index.html` page? Let's reach for a [shortcode](https://www.11ty.dev/docs/shortcodes/):
