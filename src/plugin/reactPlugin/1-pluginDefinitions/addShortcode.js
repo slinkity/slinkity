@@ -1,4 +1,4 @@
-const { toMountPoint } = require('./toRendererHtml')
+const { toMountPoint } = require('./toMountPoint')
 const { join, extname } = require('path')
 const { log } = require('../../../utils/logger')
 

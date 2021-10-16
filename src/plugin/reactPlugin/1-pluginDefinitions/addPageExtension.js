@@ -1,4 +1,4 @@
-const { toMountPoint } = require('./toRendererHtml')
+const { toMountPoint } = require('./toMountPoint')
 const toFormattedDataForProps = require('./toFormattedDataForProps')
 const { relative } = require('path')
 

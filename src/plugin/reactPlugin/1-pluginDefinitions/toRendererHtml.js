@@ -1,6 +1,3 @@
-const { SLINKITY_ATTRS, SLINKITY_REACT_MOUNT_POINT } = require('../../../utils/consts')
-const toHtmlAttrString = require('../../../utils/toHtmlAttrString')
-
 const toBasicMinified = (str = '') => str.replace(/\n/g, '').trim()
 
 /**
@@ -31,19 +28,6 @@ function toRendererHtml({ Component, hydrate, props = {}, innerHTML = '' }) {
   return toBasicMinified(elementAsHTMLString)
 }
 
-function toMountPoint({ id, hydrate }) {
-  const attrs = toHtmlAttrString({
-    [SLINKITY_ATTRS.id]: id,
-    [SLINKITY_ATTRS.ssr]: true,
-  })
-  if (hydrate === 'static') {
-    return `<div ${attrs}></div>`
-  } else {
-    return `<${SLINKITY_REACT_MOUNT_POINT} ${attrs}></${SLINKITY_REACT_MOUNT_POINT}>`
-  }
-}
-
 module.exports = {
-  toMountPoint,
   toRendererHtml,
 }
