@@ -3,7 +3,7 @@ const React = require('react')
 
 describe('toRendererHtml', () => {
   describe('render: static', () => {
-    it('should generate HTML without a mount point', () => {
+    it('should generate HTML', () => {
       const Component = () => (
         <>
           <h2>This test file is:</h2>
@@ -18,19 +18,6 @@ describe('toRendererHtml', () => {
     })
   })
   describe('render: eager or lazy', () => {
-    it('should wrap HTML in mount point', () => {
-      const Component = () => (
-        <section>
-          <h2>Our eager hydration</h2>
-          <p>Is extremely useful</p>
-          <p>
-            Learn more about it <a href="https://slinkity.dev/docs/partial-hydration/">here</a>
-          </p>
-        </section>
-      )
-
-      expect(toRendererHtml({ Component, render: 'eager', id: 27 })).toMatchSnapshot()
-    })
     it('should apply props to the component', () => {
       const Component = ({ logo, links }) => (
         <nav>
