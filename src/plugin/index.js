@@ -47,6 +47,8 @@ module.exports = function slinkityConfig({ dir, viteSSR, browserSyncOptions, env
           componentPath,
         )
         Object.assign(pageStyles, __stylesGenerated)
+        // TODO: abstract renderer imports to be framework-agnostic
+        // (importing directly from the React plugin right now)
         mountPointToSSR.innerHTML = toRendererHtml({
           Component,
           props,
