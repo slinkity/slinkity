@@ -5,7 +5,7 @@ const { SLINKITY_REACT_MOUNT_POINT } = require('../../../utils/consts')
 const fileHelpers = require('../../../utils/fileHelpers')
 const applyHtmlWrapper = require('./applyHtmlWrapper')
 const { toHydrationLoadersApplied, webComponentLoader } = require('./toHydrationLoadersApplied')
-const { toComponentAttrStore } = require('./componentAttrStore')
+const { toComponentAttrStore } = require('../../componentAttrStore')
 
 const READ_FILE_CALLED = 'readFile called'
 
