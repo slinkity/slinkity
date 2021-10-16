@@ -36,11 +36,10 @@ function toMountPoint({ id, hydrate }) {
     [SLINKITY_ATTRS.id]: id,
     [SLINKITY_ATTRS.ssr]: true,
   })
-  const friendlyCommentForDevs = '<!--Vite will render your component here!-->'
   if (hydrate === 'static') {
-    return `<div ${attrs}>${friendlyCommentForDevs}</div>`
+    return `<div ${attrs}></div>`
   } else {
-    return `<${SLINKITY_REACT_MOUNT_POINT} ${attrs}>${friendlyCommentForDevs}</${SLINKITY_REACT_MOUNT_POINT}>`
+    return `<${SLINKITY_REACT_MOUNT_POINT} ${attrs}></${SLINKITY_REACT_MOUNT_POINT}>`
   }
 }
 
