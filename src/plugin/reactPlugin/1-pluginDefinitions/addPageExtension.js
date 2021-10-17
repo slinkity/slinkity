@@ -1,6 +1,8 @@
 const { toMountPoint } = require('./toMountPoint')
 const toFormattedDataForProps = require('./toFormattedDataForProps')
-const { relative } = require('path')
+const { relative, join } = require('path')
+const { writeFileRec } = require('../../../utils/fileHelpers')
+const { readFile } = require('fs/promises')
 
 /**
  * @param {object} eleventyConfig
@@ -14,7 +16,10 @@ module.exports = function addPageExtension(eleventyConfig, { componentAttrStore,
   eleventyConfig.addExtension('jsx', {
     read: false,
     getData: async (inputPath) => {
+      // TODO: ditch the passthrough copy to output and read directly from input
       const relativePath = relative(dir.input, inputPath)
+      const outputPath = join(dir.output, relativePath)
+      await writeFileRec(outputPath, await readFile(inputPath))
       const { frontMatter } = await viteSSR.toComponentCommonJSModule(relativePath)
       return frontMatter
     },
