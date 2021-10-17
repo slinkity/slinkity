@@ -11,11 +11,10 @@ function toAbsImport(inputPath) {
  * @param {object} eleventyConfig
  * @typedef AddPageExtParams
  * @property {import('../../componentAttrStore').ComponentAttrStore} componentAttrStore
- * @property {import('../../index').SlinkityConfigOptions['dir']} dir
  * @property {import('../../../cli/toViteSSR').ViteSSR} viteSSR
  * @param {AddPageExtParams}
  */
-module.exports = function addPageExtension(eleventyConfig, { componentAttrStore, dir, viteSSR }) {
+module.exports = function addPageExtension(eleventyConfig, { componentAttrStore, viteSSR }) {
   eleventyConfig.addExtension('jsx', {
     read: false,
     getData: async (inputPath) => {

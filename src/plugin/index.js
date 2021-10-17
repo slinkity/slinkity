@@ -70,7 +70,6 @@ module.exports = function slinkityConfig({ dir, viteSSR, browserSyncOptions, env
 
   return function (eleventyConfig) {
     eleventyConfig.addPlugin(reactPlugin, {
-      dir,
       viteSSR,
       componentAttrStore,
     })
