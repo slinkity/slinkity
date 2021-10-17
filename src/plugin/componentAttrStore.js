@@ -1,71 +1,54 @@
 /**
  * The componentAttrStore is the bridge between page + shortcode components
  * and our HTML transform that *hydrates* those components.
- * - component mount points are ID'd by their index in the DOM (first, second, etc)
- * - by passing in an index, you'll receive all values necessary to hydrate that mount point (see ComponentAttrs type def)
+ * - component mount points are ID'd by their index in the DOM for a given page (first, second, etc)
+ * - by passing in an id, you'll receive all values necessary to hydrate that mount point (see ComponentAttrs type def)
  *
+ * @typedef {string} ID
  * @typedef ComponentAttrs
  * @property {Record<string, string>} styleToFilePathMap - map of all files imported by a
  * given component as ES modules (ex. all CSS module imports)
  * @property {string} path - the component's file path
  * @property {Record<string, any>} props - all props passed to the component
  * @property {'eager' | 'lazy' | 'static'} hydrate - mode to use when hydrating the component
- * @property {string} pageInputPath - the page where this component lives, based on 11ty's inputPath property (ex. src/index.html)
- *
- * @typedef {ComponentAttrs & {id: number}} ComponentAttrsWithId
+ * @property {string} pageOutputPath - the page where this component lives, based on 11ty's inputPath property (ex. src/index.html)
+ * @property {ID} id - a unique identifier for later retrieval from the store
  *
  * @typedef {{
- *  getAllByPage: (pageInputPath: string) => ComponentAttrsWithId[];
+ *  getAllByPage: (pageOutputPath: string) => ComponentAttrsWithId[];
  *  push: (componentAttrs: ComponentAttrs) => number;
- *  get: (index: number) => ComponentAttrs;
  *  clear: () => void;
  * }} ComponentAttrStore
  * @returns {ComponentAttrStore}
  */
 function toComponentAttrStore() {
   /**
-   * @type {ComponentAttrs[]}
+   * @type {Record<string, ComponentAttrs[]>}
    */
-  let componentAttrStore = []
-  /**
-   * @type {Record<string, number>[]}
-   */
-  let pageToComponentIndicesMap = {}
+  let componentAttrStore = {}
 
   /**
    * Add a new item to the store, and receive an index used for later get() calls
-   * @param {ComponentAttrs} componentAttrs
-   * @returns {number} the index used to get() whatever was pushed
+   * @param {Omit<ComponentAttrs, 'id'>} componentAttrs
+   * @returns {string} the id of the new componentAttrs entry
    */
   function push(componentAttrs) {
-    const currentIndex = componentAttrStore.length
-    componentAttrStore.push(componentAttrs)
-    const componentIndicesForPage = pageToComponentIndicesMap[componentAttrs.pageInputPath] ?? []
-    pageToComponentIndicesMap[componentAttrs.pageInputPath] = [
-      ...componentIndicesForPage,
-      currentIndex,
-    ]
-    return currentIndex
-  }
-
-  /**
-   * Get an item from the store by index
-   * @param {number} index
-   */
-  function get(index) {
-    return componentAttrStore[index]
+    const { pageOutputPath } = componentAttrs
+    if (!componentAttrStore[pageOutputPath]) {
+      componentAttrStore[pageOutputPath] = []
+    }
+    const id = `${componentAttrStore[pageOutputPath].length}`
+    componentAttrStore[pageOutputPath].push({ ...componentAttrs, id })
+    return id
   }
 
   /**
    * Get attributes for all components on a given page
-   * @param {string} pageInputPath - the page where these components live, based on 11ty's inputPath property (ex. src/index.html)
-   * @returns {ComponentAttrsWithId[]} list of attributes (including the component's ID) for all components
+   * @param {string} pageOutputPath - the page where these components live, based on 11ty's outputPath property (ex. _site/index.html)
+   * @returns {ComponentAttrs[]} list of attributes for all components on the page
    */
-  function getAllByPage(pageInputPath) {
-    return (pageToComponentIndicesMap[pageInputPath] ?? []).map((index) => ({
-      ...get(index),
-      id: index,
-    }))
+  function getAllByPage(pageOutputPath) {
+    return componentAttrStore[pageOutputPath] ?? []
   }
 
   /**
@@ -73,13 +56,11 @@ function toComponentAttrStore() {
    * Should be used to reset between builds
    */
   function clear() {
-    componentAttrStore = []
-    pageToComponentIndicesMap = {}
+    componentAttrStore = {}
   }
 
   return {
     push,
-    get,
     getAllByPage,
     clear,
   }

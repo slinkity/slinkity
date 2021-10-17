@@ -38,10 +38,11 @@ module.exports = function slinkityConfig({ dir, viteSSR, browserSyncOptions, env
   async function applyViteHtmlTransform({ content, outputPath }) {
     const root = parse(content)
     const mountPointsToSSR = root.querySelectorAll(`[${SLINKITY_ATTRS.ssr}="true"]`)
+    const allComponentAttrsForPage = componentAttrStore.getAllByPage(outputPath)
     const pageStyles = {}
     for (const mountPointToSSR of mountPointsToSSR) {
       const id = mountPointToSSR.getAttribute(SLINKITY_ATTRS.id)
-      const componentAttrs = componentAttrStore.get(id)
+      const componentAttrs = allComponentAttrsForPage[id]
       if (componentAttrs) {
         const { path: componentPath, props, hydrate } = componentAttrs
         const { default: Component, __stylesGenerated } = await viteSSR.toComponentCommonJSModule(
@@ -61,8 +62,9 @@ module.exports = function slinkityConfig({ dir, viteSSR, browserSyncOptions, env
       .querySelector('body')
       .insertAdjacentHTML('beforeend', `<style>${Object.values(pageStyles).join('\n')}</style>`)
 
+    const routePath = '/' + toSlashesTrimmed(relative(dir.output, outputPath))
     return environment === 'dev'
-      ? viteSSR.server.transformIndexHtml(outputPath, root.outerHTML)
+      ? viteSSR.server.transformIndexHtml(routePath, root.outerHTML)
       : root.outerHTML
   }
 
@@ -79,7 +81,7 @@ module.exports = function slinkityConfig({ dir, viteSSR, browserSyncOptions, env
         if (!outputPath.endsWith('.html')) return content
 
         const componentAttrs = componentAttrStore
-          .getAllByPage(this.inputPath)
+          .getAllByPage(outputPath)
           // only get components that need hydration loaders
           .filter(({ hydrate }) => hydrate !== 'static')
 
@@ -120,9 +122,11 @@ module.exports = function slinkityConfig({ dir, viteSSR, browserSyncOptions, env
         'update-url-to-compiled-html-map',
         function (content, outputPath) {
           const relativePath = relative(dir.output, outputPath)
-          const formattedAsUrl = relativePath.replace(/.html$/, '').replace(/index$/, '')
-          urlToOutputHtmlMap[toSlashesTrimmed(formattedAsUrl)] = {
-            outputPath: '/' + toSlashesTrimmed(relativePath),
+          const formattedAsUrl = toSlashesTrimmed(
+            relativePath.replace(/.html$/, '').replace(/index$/, ''),
+          )
+          urlToOutputHtmlMap[formattedAsUrl] = {
+            outputPath,
             content,
           }
           return content
@@ -135,7 +139,6 @@ module.exports = function slinkityConfig({ dir, viteSSR, browserSyncOptions, env
         return await applyViteHtmlTransform({ content, outputPath })
       })
     }
-
     return {}
   }
 }

@@ -35,7 +35,7 @@ module.exports = function addPageExtension(eleventyConfig, { componentAttrStore,
           props,
           styleToFilePathMap: {},
           hydrate,
-          pageInputPath: inputPath,
+          pageOutputPath: data.page.outputPath,
         })
 
         return toMountPoint({ id, hydrate })

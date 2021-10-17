@@ -41,7 +41,7 @@ in file "${this.page.inputPath}"`,
       props,
       hydrate: render,
       styleToFilePathMap: {},
-      pageInputPath: this.page.inputPath,
+      pageOutputPath: this.page.outputPath,
     })
 
     const html = toMountPoint({ id, hydrate: render })
