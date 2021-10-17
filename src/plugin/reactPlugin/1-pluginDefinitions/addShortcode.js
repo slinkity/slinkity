@@ -1,6 +1,7 @@
 const { toMountPoint } = require('./toMountPoint')
 const { join, extname } = require('path')
 const { log } = require('../../../utils/logger')
+const { IMPORT_ALIASES } = require('../../../utils/consts')
 
 const argsArrayToPropsObj = function ({ vargs = [], errorMsg = '' }) {
   if (vargs.length % 2 !== 0) {
@@ -25,8 +26,9 @@ const argsArrayToPropsObj = function ({ vargs = [], errorMsg = '' }) {
  */
 module.exports = function addShortcode(eleventyConfig, { componentAttrStore, dir }) {
   eleventyConfig.addShortcode('react', function (componentPath, ...vargs) {
-    const relComponentPath =
-      join(dir.includes, componentPath) + (componentPath.endsWith('.jsx') ? '' : '.jsx')
+    const absComponentPath =
+      join(IMPORT_ALIASES.input, dir.includes, componentPath) +
+      (componentPath.endsWith('.jsx') ? '' : '.jsx')
 
     const props = argsArrayToPropsObj({
       vargs,
@@ -37,7 +39,7 @@ in file "${this.page.inputPath}"`,
 
     const { render = 'eager' } = props
     const id = componentAttrStore.push({
-      path: relComponentPath,
+      path: absComponentPath,
       props,
       hydrate: render,
       styleToFilePathMap: {},
