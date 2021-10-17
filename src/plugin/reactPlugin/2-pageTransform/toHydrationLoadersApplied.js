@@ -34,12 +34,11 @@ ${stacktrace}`
  * @property {string} content - markup template content passed by 11ty's HTML transform
  * @property {import('../../componentAttrStore').ComponentAttrsWithId[]} componentAttrs - all component attributes used for rendering and hydration
  * @property {import('../../index').SlinkityConfigOptions['dir']} dir - input and output directories
- * @property {boolean?} isDryRun - whether to write components to output directory. When isDryRun = true, no file system actions will occur
  *
  * @param {HydrationLoadersAppliedParams}
  * @returns {string} output markup with every component's inline styles and hydration scripts applied
  */
-async function toHydrationLoadersApplied({ content, componentAttrs, dir, isDryRun = false }) {
+async function toHydrationLoadersApplied({ content, componentAttrs, dir }) {
   const root = parse(content)
   applyHtmlWrapper(root)
 

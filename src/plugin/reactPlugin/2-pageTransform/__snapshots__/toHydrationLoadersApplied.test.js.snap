@@ -26,7 +26,7 @@ exports[`toHydrationLoadersApplied with hydrated components should apply correct
   window.customElements.define(\\"slinkity-react-mount-point\\", MountPoint);
 </script>
 <script type=\\"module\\">
-    import Component from \\"/not-important.jsx\\";
+    import Component from \\"not-important.jsx\\";
     import eagerLoader from \\"slinkity/lib/plugin/reactPlugin/_client/_eager-loader.js\\";
   
     eagerLoader({ 
@@ -36,7 +36,7 @@ exports[`toHydrationLoadersApplied with hydrated components should apply correct
     });
   </script>
 <script type=\\"module\\">
-    import Component from \\"/not-important.jsx\\";
+    import Component from \\"not-important.jsx\\";
     import eagerLoader from \\"slinkity/lib/plugin/reactPlugin/_client/_eager-loader.js\\";
   
     eagerLoader({ 
@@ -46,7 +46,7 @@ exports[`toHydrationLoadersApplied with hydrated components should apply correct
     });
   </script>
 <script type=\\"module\\">
-    import Component from \\"/not-important.jsx\\";
+    import Component from \\"not-important.jsx\\";
     import eagerLoader from \\"slinkity/lib/plugin/reactPlugin/_client/_eager-loader.js\\";
   
     eagerLoader({ 
@@ -88,7 +88,7 @@ exports[`toHydrationLoadersApplied with hydrated components should apply correct
   
     lazyLoader({ 
       id: \\"0\\",
-      componentImporter: async () => await import(\\"/not-important.jsx\\"),
+      componentImporter: async () => await import(\\"not-important.jsx\\"),
       props: {},
     });
   </script>
@@ -97,7 +97,7 @@ exports[`toHydrationLoadersApplied with hydrated components should apply correct
   
     lazyLoader({ 
       id: \\"1\\",
-      componentImporter: async () => await import(\\"/not-important.jsx\\"),
+      componentImporter: async () => await import(\\"not-important.jsx\\"),
       props: {},
     });
   </script>
@@ -106,7 +106,7 @@ exports[`toHydrationLoadersApplied with hydrated components should apply correct
   
     lazyLoader({ 
       id: \\"2\\",
-      componentImporter: async () => await import(\\"/not-important.jsx\\"),
+      componentImporter: async () => await import(\\"not-important.jsx\\"),
       props: {},
     });
   </script></body>
@@ -139,7 +139,7 @@ exports[`toHydrationLoadersApplied with hydrated components should apply correct
   window.customElements.define(\\"slinkity-react-mount-point\\", MountPoint);
 </script>
 <script type=\\"module\\">
-    import Component from \\"/nav.jsx\\";
+    import Component from \\"nav.jsx\\";
     import eagerLoader from \\"slinkity/lib/plugin/reactPlugin/_client/_eager-loader.js\\";
   
     eagerLoader({ 
@@ -155,7 +155,7 @@ exports[`toHydrationLoadersApplied with hydrated components should apply correct
   
     lazyLoader({ 
       id: \\"1\\",
-      componentImporter: async () => await import(\\"/nested/Heading.jsx\\"),
+      componentImporter: async () => await import(\\"nested/Heading.jsx\\"),
       props: {text:{weight:'bold',content:'Welcome to the site'}},
     });
   </script>
@@ -164,7 +164,7 @@ exports[`toHydrationLoadersApplied with hydrated components should apply correct
   
     lazyLoader({ 
       id: \\"2\\",
-      componentImporter: async () => await import(\\"/index.jsx\\"),
+      componentImporter: async () => await import(\\"index.jsx\\"),
       props: {list:['Have a nice day world']},
     });
   </script></body>
