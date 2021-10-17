@@ -1,5 +1,3 @@
-const hash = require('object-hash')
-
 /**
  * The componentAttrStore is the bridge between page + shortcode components
  * and our HTML transform that *hydrates* those components.
@@ -14,57 +12,48 @@ const hash = require('object-hash')
  * @property {'eager' | 'lazy' | 'static'} hydrate - mode to use when hydrating the component
  * @property {string} pageInputPath - the page where this component lives, based on 11ty's inputPath property (ex. src/index.html)
  *
- * @typedef {ComponentAttrs & {id: string}} ComponentAttrsWithId
+ * @typedef {ComponentAttrs & {id: number}} ComponentAttrsWithId
  *
  * @typedef {{
  *  getAllByPage: (pageInputPath: string) => ComponentAttrsWithId[];
- *  push: (componentAttrs: ComponentAttrs) => string;
- *  get: (id: string) => ComponentAttrs;
+ *  push: (componentAttrs: ComponentAttrs) => number;
+ *  get: (index: number) => ComponentAttrs;
  *  clear: () => void;
  * }} ComponentAttrStore
  * @returns {ComponentAttrStore}
  */
 function toComponentAttrStore() {
   /**
-   * Generate a unique identifier based on component attrs
-   * @param {ComponentAttrs} componentAttrs
-   * @returns {string}
+   * @type {ComponentAttrs[]}
    */
-  function toHash(componentAttrs) {
-    // md5 sited as faster (but less secure) compared to sha1
-    // https://www.geeksforgeeks.org/difference-between-md5-and-sha1/
-    return hash.MD5(componentAttrs)
-  }
-
+  let componentAttrStore = []
   /**
-   * @type {Record<string, ComponentAttrs>}
+   * @type {Record<string, number>[]}
    */
-  let componentAttrStore = {}
-  /**
-   * @type {Record<string, string>[]}
-   */
-  let pageToIdMap = {}
+  let pageToComponentIndicesMap = {}
 
   /**
    * Add a new item to the store, and receive an index used for later get() calls
    * @param {ComponentAttrs} componentAttrs
-   * @returns {string} the index used to get() whatever was pushed
+   * @returns {number} the index used to get() whatever was pushed
    */
   function push(componentAttrs) {
-    const id = toHash(componentAttrs)
-    componentAttrStore[id] = componentAttrs
-    const idsForPage = pageToIdMap[componentAttrs.pageInputPath] ?? []
-    pageToIdMap[componentAttrs.pageInputPath] = [...idsForPage, id]
-    return id
+    const currentIndex = componentAttrStore.length
+    componentAttrStore.push(componentAttrs)
+    const componentIndicesForPage = pageToComponentIndicesMap[componentAttrs.pageInputPath] ?? []
+    pageToComponentIndicesMap[componentAttrs.pageInputPath] = [
+      ...componentIndicesForPage,
+      currentIndex,
+    ]
+    return currentIndex
   }
 
   /**
    * Get an item from the store by index
-   * @param {string} id
-   * @return {ComponentAttrs | undefined}
+   * @param {number} index
    */
-  function get(id) {
-    return componentAttrStore[id]
+  function get(index) {
+    return componentAttrStore[index]
   }
 
   /**
@@ -73,7 +62,7 @@ function toComponentAttrStore() {
    * @returns {ComponentAttrsWithId[]} list of attributes (including the component's ID) for all components
    */
   function getAllByPage(pageInputPath) {
-    return (pageToIdMap[pageInputPath] ?? []).map((index) => ({
+    return (pageToComponentIndicesMap[pageInputPath] ?? []).map((index) => ({
       ...get(index),
       id: index,
     }))
@@ -85,7 +74,7 @@ function toComponentAttrStore() {
    */
   function clear() {
     componentAttrStore = []
-    pageToIdMap = {}
+    pageToComponentIndicesMap = {}
   }
 
   return {
