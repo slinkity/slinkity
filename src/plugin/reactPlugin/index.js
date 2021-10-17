@@ -1,4 +1,3 @@
-const { join } = require('path')
 const { addPageExtension, addShortcode } = require('./1-pluginDefinitions')
 
 /**
@@ -12,7 +11,6 @@ const { addPageExtension, addShortcode } = require('./1-pluginDefinitions')
  */
 module.exports = function reactPlugin(eleventyConfig, { dir, viteSSR, componentAttrStore }) {
   eleventyConfig.addTemplateFormats('jsx')
-  eleventyConfig.addPassthroughCopy(join(dir.input, dir.includes, 'components'))
 
   addPageExtension(eleventyConfig, { componentAttrStore, dir, viteSSR })
   addShortcode(eleventyConfig, { componentAttrStore, dir })

@@ -1,9 +1,6 @@
 const { parse } = require('node-html-parser')
-const { join } = require('path')
-const { readFile } = require('fs').promises
 const applyHtmlWrapper = require('./applyHtmlWrapper')
 const { SLINKITY_REACT_MOUNT_POINT } = require('../../../utils/consts')
-const { writeFileRec } = require('../../../utils/fileHelpers')
 const toLoaderScript = require('./toLoaderScript')
 const toClientImportStatement = require('./toClientImportStatement')
 const { log } = require('../../../utils/logger')
@@ -47,18 +44,7 @@ async function toHydrationLoadersApplied({ content, componentAttrs, dir, isDryRu
   applyHtmlWrapper(root)
 
   try {
-    // 2. Copy the associated component file to the output dir
-    if (!isDryRun && dir) {
-      await Promise.all(
-        componentAttrs.map(async ({ path: componentPath }) => {
-          const jsxInputPath = join(dir.input, componentPath)
-          const jsxOutputPath = join(dir.output, componentPath)
-          await writeFileRec(jsxOutputPath, await readFile(jsxInputPath))
-        }),
-      )
-    }
-
-    // 3. Generate scripts to hydrate those components
+    // Generate scripts to hydrate those components
     const scripts = componentAttrs.map(({ path: componentPath, hydrate, id, props }) =>
       toLoaderScript({
         componentPath,
