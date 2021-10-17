@@ -1,4 +1,3 @@
-import { SLINKITY_REACT_MOUNT_POINT, SLINKITY_ATTRS } from '../../../utils/consts'
 import { toMountPointById } from './toMountPointById'
 
 const options = {
