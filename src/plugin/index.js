@@ -41,8 +41,9 @@ module.exports = function slinkityConfig({ dir, viteSSR, browserSyncOptions, env
     const pageStyles = {}
     for (const mountPointToSSR of mountPointsToSSR) {
       const id = mountPointToSSR.getAttribute(SLINKITY_ATTRS.id)
-      if (id) {
-        const { path: componentPath, props, hydrate } = componentAttrStore.get(id)
+      const componentAttrs = componentAttrStore.get(id)
+      if (componentAttrs) {
+        const { path: componentPath, props, hydrate } = componentAttrs
         const { default: Component, __stylesGenerated } = await viteSSR.toComponentCommonJSModule(
           componentPath,
         )
