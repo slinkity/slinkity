@@ -1,8 +1,8 @@
 const { argsArrayToPropsObj } = require('./addShortcode')
 const { random, datatype } = require('faker')
-const logger = require('../../utils/logger')
+const logger = require('../../../utils/logger')
 
-jest.mock('../../utils/logger')
+jest.mock('../../../utils/logger')
 
 describe('argsArrayToPropsObj', () => {
   it('should generate an empty object for empty arrays', () => {

@@ -2,6 +2,8 @@
 const Eleventy = require('@11ty/eleventy/src/Eleventy')
 const EleventyErrorHandler = require('@11ty/eleventy/src/EleventyErrorHandler')
 const UserConfig = require('@11ty/eleventy/src/UserConfig')
+const slinkityConfig = require('../plugin')
+const toViteSSR = require('./toViteSSR')
 const { resolve } = require('path')
 
 function toUserConfig(configPath = '') {
@@ -39,6 +41,27 @@ function toEleventyConfigDir({ configPath = '', input = null, output = null }) {
   }
 }
 
+/**
+ * @typedef BrowserSyncOptions
+ * @property {string} outputDir - dir to serve from
+ * @property {number} port - port to serve from
+ * @returns {import('browser-sync').Options}
+ */
+function toBrowserSyncOptions({ outputDir, port }) {
+  return {
+    server: outputDir,
+    port: port || 8080,
+    // mirror 11ty defaults before we migrate to their Browsersync server
+    ignore: ['node_modules'],
+    watch: false,
+    open: false,
+    notify: false,
+    ui: false,
+    ghostMode: false,
+    index: 'index.html',
+  }
+}
+
 function applyUserConfigDir(dir = {}) {
   return async function startEleventy(options = {}) {
     if (process.env.DEBUG) {
@@ -56,7 +79,14 @@ function applyUserConfigDir(dir = {}) {
       errorHandler.warn(promise, 'A promise rejection was handled asynchronously')
     })
 
-    const config = await require('./slinkityConfig')({ dir })
+    const environment = options.watch ? 'dev' : 'prod'
+    const viteSSR = await toViteSSR({ dir, environment })
+    const config = slinkityConfig({
+      dir,
+      viteSSR,
+      environment,
+      browserSyncOptions: toBrowserSyncOptions({ port: options.port, outputDir: dir.output }),
+    })
 
     let elev = new Eleventy(dir.input, dir.output, {
       quietMode: options.quiet,

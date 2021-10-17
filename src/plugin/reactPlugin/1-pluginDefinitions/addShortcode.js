@@ -1,6 +1,6 @@
-const toRendererHtml = require('./toRendererHtml')
+const { toMountPoint } = require('./toMountPoint')
 const { join, extname } = require('path')
-const { log } = require('../../utils/logger')
+const { log } = require('../../../utils/logger')
 
 const argsArrayToPropsObj = function ({ vargs = [], errorMsg = '' }) {
   if (vargs.length % 2 !== 0) {
@@ -19,13 +19,12 @@ const argsArrayToPropsObj = function ({ vargs = [], errorMsg = '' }) {
 /**
  * @param {object} eleventyConfig
  * @typedef AddShortcodeParams
- * @property {import('./componentAttrStore').ComponentAttrStore} componentAttrStore
- * @property {import('../index').PluginOptions['dir']} dir
- * @property {import('../toViteSSR').ViteSSR} viteSSR
+ * @property {import('../../componentAttrStore').ComponentAttrStore} componentAttrStore
+ * @property {import('../../index').SlinkityConfigOptions['dir']} dir
  * @param {AddShortcodeParams}
  */
-module.exports = function addShortcode(eleventyConfig, { componentAttrStore, dir, viteSSR }) {
-  eleventyConfig.addAsyncShortcode('react', async function (componentPath, ...vargs) {
+module.exports = function addShortcode(eleventyConfig, { componentAttrStore, dir }) {
+  eleventyConfig.addShortcode('react', function (componentPath, ...vargs) {
     const relComponentPath =
       join(dir.includes, componentPath) + (componentPath.endsWith('.jsx') ? '' : '.jsx')
 
@@ -36,30 +35,21 @@ Check your props on react shortcode "${componentPath}"
 in file "${this.page.inputPath}"`,
     })
 
-    const { default: Component, __stylesGenerated } = await viteSSR.toComponentCommonJSModule(
-      join(dir.input, relComponentPath),
-    )
-
     const { render = 'eager' } = props
     const id = componentAttrStore.push({
       path: relComponentPath,
       props,
       hydrate: render,
-      styleToFilePathMap: __stylesGenerated,
-      pageInputPath: this.page.inputPath,
+      styleToFilePathMap: {},
+      pageOutputPath: this.page.outputPath,
     })
 
-    const html = toRendererHtml({
-      id,
-      Component,
-      props,
-      render,
-    })
+    const html = toMountPoint({ id, hydrate: render })
 
     // Fixes https://github.com/slinkity/slinkity/issues/15
     // To prevent 11ty's markdown parser from wrapping components in <p> tags,
     // We need to wrap our custom element in some recognizable block (like a <div>)
-    if (extname(this.page.inputPath) === '.md') {
+    if (extname(this.page.inputPath) === '.md' && render !== 'static') {
       return `<div>${html}</div>`
     } else {
       return html

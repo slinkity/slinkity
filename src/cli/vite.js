@@ -58,4 +58,4 @@ async function build({ input, output }) {
   }
 }
 
-module.exports = { serve, build }
+module.exports = { serve, build, getConfigFile }

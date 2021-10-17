@@ -1,20 +1,15 @@
 const { stringify } = require('javascript-stringify')
 const toClientImportStatement = require('./toClientImportStatement')
-const toUnixPath = require('../../utils/toUnixPath')
+const toUnixPath = require('../../../utils/toUnixPath')
 
 /**
  * Generate the `<script>` necessary to load a Component into a given mount point
- * On the client, this script should:
- * - import the Component from the correct path
- * - import the correct loader based on the `hydrate` mode
- * - apply the `props` correctly stringified
- * - call the loader at the correct time
- * @param {{
- *   componentPath: string,
- *   hydrate: 'eager' | 'lazy',
- *   id: number,
- *   props: Object.<string, any>
- * }} params
+ * @typedef LoaderScriptParams
+ * @property {string} componentPath - path to the component itself, used for the import statement
+ * @property {string} id - the unique id for a given mount point
+ * @property {'eager' | 'lazy'} hydrate - which hydration loader to use
+ * @property {Record<string, any>} props - data used when hydrating the component
+ * @param {LoaderScriptParams}
  * @returns {string} String of HTML to run loader in the client
  */
 module.exports = function toLoaderScript({ componentPath, hydrate, id, props = {} }) {

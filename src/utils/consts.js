@@ -1,10 +1,16 @@
 /**
  * Slinkity-specific data attributes
  * Applied to mount points and associated scripts
- * id: Unique identifier used to hydrate the component
+ *
+ * @typedef SlinkityAttrs
+ * @property {string} id - ID to identify mount points in the DOM for hydration
+ * @property {string} ssr - true / false flag to identify mount points that need SSR on server request / on production build
+ 
+ * @type {SlinkityAttrs}
  */
 const SLINKITY_ATTRS = {
   id: 'data-s-id',
+  ssr: 'data-s-needs-ssr',
 }
 
 /**
