@@ -2,7 +2,7 @@ const { parse } = require('node-html-parser')
 const { join } = require('path')
 const { readFile } = require('fs').promises
 const applyHtmlWrapper = require('./applyHtmlWrapper')
-const { SLINKITY_REACT_MOUNT_POINT, SLINKITY_ATTRS } = require('../../../utils/consts')
+const { SLINKITY_REACT_MOUNT_POINT } = require('../../../utils/consts')
 const { writeFileRec } = require('../../../utils/fileHelpers')
 const toLoaderScript = require('./toLoaderScript')
 const toClientImportStatement = require('./toClientImportStatement')
@@ -59,23 +59,14 @@ async function toHydrationLoadersApplied({ content, componentAttrs, dir, isDryRu
     }
 
     // 3. Generate scripts to hydrate those components
-    const alreadyAdded = new Set()
-    const scripts = componentAttrs
-      .map(({ path: componentPath, hydrate, id, props }) => {
-        if (alreadyAdded.has(id)) return
-        alreadyAdded.add(id)
-        const mountPoints = root.querySelectorAll(`[${SLINKITY_ATTRS.id}="${id}"]`)
-        return mountPoints.map((_, index) =>
-          toLoaderScript({
-            componentPath,
-            hydrate,
-            index,
-            id,
-            props,
-          }),
-        )
-      })
-      .flat()
+    const scripts = componentAttrs.map(({ path: componentPath, hydrate, id, props }) =>
+      toLoaderScript({
+        componentPath,
+        hydrate,
+        id,
+        props,
+      }),
+    )
 
     root
       .querySelector('body')
