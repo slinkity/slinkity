@@ -1,6 +1,4 @@
-// md5 + md4 sited as faster (but less secure) compared to sha1
-// https://www.geeksforgeeks.org/difference-between-md5-and-sha1/
-const { hash } = require('node-object-hash')({ alg: 'md4' })
+const hash = require('object-hash')
 
 /**
  * The componentAttrStore is the bridge between page + shortcode components
@@ -33,7 +31,9 @@ function toComponentAttrStore() {
    * @returns {string}
    */
   function toHash(componentAttrs) {
-    return hash(componentAttrs)
+    // md5 sited as faster (but less secure) compared to sha1
+    // https://www.geeksforgeeks.org/difference-between-md5-and-sha1/
+    return hash.MD5(componentAttrs)
   }
 
   /**
