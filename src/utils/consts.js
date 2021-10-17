@@ -14,6 +14,18 @@ const SLINKITY_ATTRS = {
 }
 
 /**
+ * @typedef ImportAliases
+ * @property {string} root - alias for importing resources from the project root (`process.cwd()`)
+ * @property {string} input - alias for importing from the project input directory, as specified in 11ty's dir.input
+ */
+const IMPORT_ALIASES = {
+  root: '/@root/',
+  input: '/@input/',
+  includes: '/@includes/',
+  layouts: '/@layouts/',
+}
+
+/**
  * Name for the web component used to mount React
  */
 const SLINKITY_REACT_MOUNT_POINT = 'slinkity-react-mount-point'
@@ -21,4 +33,5 @@ const SLINKITY_REACT_MOUNT_POINT = 'slinkity-react-mount-point'
 module.exports = {
   SLINKITY_ATTRS,
   SLINKITY_REACT_MOUNT_POINT,
+  IMPORT_ALIASES,
 }

@@ -1,8 +1,9 @@
-const { createServer, build } = require('vite')
+const { createServer, build, defineConfig } = require('vite')
 const requireFromString = require('require-from-string')
 const logger = require('../utils/logger')
-const { resolve } = require('path')
+const { resolve, join } = require('path')
 const { getConfigFile } = require('./vite')
+const { IMPORT_ALIASES } = require('../utils/consts')
 
 /**
  * @typedef {import('./reactPlugin/2-pageTransform/componentAttrStore').ComponentAttrs['styleToFilePathMap']} StyleToFilePathMap
@@ -65,15 +66,33 @@ module.exports = async function toViteSSR({ environment, dir }) {
     return resolve(dir.output, filePath)
   }
 
-  if (environment === 'dev') {
-    const server = await createServer({
+  /**
+   * Get Vite config shared by dev and production
+   * @returns {import('vite').UserConfigExport}
+   */
+  async function sharedConfig() {
+    return defineConfig({
       root: dir.output,
       plugins: [generatedStyles.plugin],
+      clearScreen: false,
       configFile: await getConfigFile(),
+      resolve: {
+        alias: {
+          [IMPORT_ALIASES.root]: join(process.cwd(), '/'),
+          [IMPORT_ALIASES.input]: join(process.cwd(), dir.input, '/'),
+          [IMPORT_ALIASES.includes]: join(process.cwd(), dir.input, dir.includes, '/'),
+          [IMPORT_ALIASES.layouts]: join(process.cwd(), dir.input, dir.layouts, '/'),
+        },
+      },
+    })
+  }
+
+  if (environment === 'dev') {
+    const server = await createServer({
+      ...(await sharedConfig()),
       server: {
         middlewareMode: 'ssr',
       },
-      clearScreen: false,
     })
     return {
       async toComponentCommonJSModule(filePath) {
@@ -99,9 +118,7 @@ module.exports = async function toViteSSR({ environment, dir }) {
         if (probablyInefficientCache[resolvedPath]) return probablyInefficientCache[resolvedPath]
 
         const { output } = await build({
-          root: dir.output,
-          plugins: [generatedStyles.plugin],
-          configFile: await getConfigFile(),
+          ...(await sharedConfig()),
           build: {
             ssr: true,
             write: false,
