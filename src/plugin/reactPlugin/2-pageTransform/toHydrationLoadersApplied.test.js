@@ -26,18 +26,18 @@ jest.mock('../../../utils/fileHelpers', () => ({
  */
 function toComponentAttrsWithDefaults(...componentAttrs) {
   const componentAttrStore = toComponentAttrStore()
-  const pageInputPath = 'index.html'
+  const pageOutputPath = 'index.html'
   for (const componentAttr of componentAttrs) {
     componentAttrStore.push({
       path: 'not-important.jsx',
       hydrate: 'eager',
       props: {},
       styleToFilePathMap: {},
-      pageInputPath,
+      pageOutputPath,
       ...componentAttr,
     })
   }
-  return componentAttrStore.getAllByPage(pageInputPath)
+  return componentAttrStore.getAllByPage(pageOutputPath)
 }
 
 function toIdAttr(id) {
