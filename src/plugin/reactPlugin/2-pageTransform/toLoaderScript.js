@@ -4,20 +4,17 @@ const toUnixPath = require('../../../utils/toUnixPath')
 
 /**
  * Generate the `<script>` necessary to load a Component into a given mount point
- * On the client, this script should:
- * - import the Component from the correct path
- * - import the correct loader based on the `hydrate` mode
- * - apply the `props` correctly stringified
- * - call the loader at the correct time
- * @param {{
- *   componentPath: string,
- *   hydrate: 'eager' | 'lazy',
- *   id: number,
- *   props: Object.<string, any>
- * }} params
+ * Note: id + index = unique pairing of a mount point to its hydration loader
+ * @typedef LoaderScriptParams
+ * @property {string} componentPath - path to the component itself, used for the import statement
+ * @property {string} id - the id for a given mount point (note: must be paired with the "index" to yield a unique match!)
+ * @property {number} index - the associated mount point's index in the DOM, used for de-duping (i.e. the first, second, third, etc for a given id)
+ * @property {'eager' | 'lazy'} hydrate - which hydration loader to use
+ * @property {Record<string, any>} props - data used when hydrating the component
+ * @param {LoaderScriptParams}
  * @returns {string} String of HTML to run loader in the client
  */
-module.exports = function toLoaderScript({ componentPath, hydrate, id, props = {} }) {
+module.exports = function toLoaderScript({ componentPath, hydrate, id, index, props = {} }) {
   // TODO: abstract "props" to some other file, instead of stringifying in-place
   // We could be generating identical, large prop blobs
   const componentImportStatement = JSON.stringify('/' + toUnixPath(componentPath))
@@ -28,6 +25,7 @@ module.exports = function toLoaderScript({ componentPath, hydrate, id, props = {
   
     eagerLoader({ 
       id: "${id}",
+      index: "${index}",
       Component,
       props: ${stringify(props)},
     });
@@ -38,6 +36,7 @@ module.exports = function toLoaderScript({ componentPath, hydrate, id, props = {
   
     lazyLoader({ 
       id: "${id}",
+      index: "${index}",
       componentImporter: async () => await import(${componentImportStatement}),
       props: ${stringify(props)},
     });
