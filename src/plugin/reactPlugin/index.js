@@ -9,8 +9,6 @@ const { addPageExtension, addShortcode } = require('./1-pluginDefinitions')
  * @param {ReactPluginOptions} options - all React plugin options
  */
 module.exports = function reactPlugin(eleventyConfig, { viteSSR, componentAttrStore }) {
-  eleventyConfig.addTemplateFormats('jsx')
-
   addPageExtension(eleventyConfig, { componentAttrStore, viteSSR })
   addShortcode(eleventyConfig, { componentAttrStore })
 }
