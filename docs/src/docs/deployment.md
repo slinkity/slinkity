@@ -2,9 +2,9 @@
 title: Deployment
 ---
 
-Slinkity projects can be hosted on any of the common Jamstack hosting providers such as Netlify and Vercel.
+Slinkity projects can be hosted on any of the common Jamstack hosting providers such as [Netlify](https://netlify.com/) and [Vercel](https://vercel.com/).
 
-### `netlify.toml`
+## `netlify.toml`
 
 Create a `netlify.toml` file.
 
