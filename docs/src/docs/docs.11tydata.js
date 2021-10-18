@@ -7,6 +7,7 @@ const navSlugSortOrder = [
   'component-shortcodes',
   'component-pages-layouts',
   'partial-hydration',
+  'deployment',
 ]
 
 const trimSlashes = (s) => s.replace(/^\/|\/$/g, '')
