@@ -1,8 +1,9 @@
-const { createServer, build } = require('vite')
+const { createServer, build, defineConfig } = require('vite')
 const requireFromString = require('require-from-string')
 const logger = require('../utils/logger')
-const { resolve } = require('path')
+const { join } = require('path')
 const { getConfigFile } = require('./vite')
+const { IMPORT_ALIASES } = require('../utils/consts')
 
 /**
  * @typedef {import('./reactPlugin/2-pageTransform/componentAttrStore').ComponentAttrs['styleToFilePathMap']} StyleToFilePathMap
@@ -57,27 +58,36 @@ module.exports = async function toViteSSR({ environment, dir }) {
   const generatedStyles = gimmeCSSPlugin()
 
   /**
-   * Resolve filePath relative to the output directory
-   * @param {string} filePath - relative path
-   * @returns {string}
+   * Get Vite config shared by dev and production
+   * @returns {import('vite').UserConfigExport}
    */
-  function toResolved(filePath) {
-    return resolve(dir.output, filePath)
+  async function sharedConfig() {
+    return defineConfig({
+      root: dir.output,
+      plugins: [generatedStyles.plugin],
+      clearScreen: false,
+      configFile: await getConfigFile(),
+      resolve: {
+        alias: {
+          [IMPORT_ALIASES.root]: join(process.cwd(), '/'),
+          [IMPORT_ALIASES.input]: join(process.cwd(), dir.input, '/'),
+          [IMPORT_ALIASES.includes]: join(process.cwd(), dir.input, dir.includes, '/'),
+          [IMPORT_ALIASES.layouts]: join(process.cwd(), dir.input, dir.layouts, '/'),
+        },
+      },
+    })
   }
 
   if (environment === 'dev') {
     const server = await createServer({
-      root: dir.output,
-      plugins: [generatedStyles.plugin],
-      configFile: await getConfigFile(),
+      ...(await sharedConfig()),
       server: {
         middlewareMode: 'ssr',
       },
-      clearScreen: false,
     })
     return {
       async toComponentCommonJSModule(filePath) {
-        const viteOutput = await server.ssrLoadModule(toResolved(filePath))
+        const viteOutput = await server.ssrLoadModule(filePath)
         return {
           default: () => null,
           getProps: () => ({}),
@@ -95,18 +105,15 @@ module.exports = async function toViteSSR({ environment, dir }) {
     const probablyInefficientCache = {}
     return {
       async toComponentCommonJSModule(filePath) {
-        const resolvedPath = toResolved(filePath)
-        if (probablyInefficientCache[resolvedPath]) return probablyInefficientCache[resolvedPath]
+        if (probablyInefficientCache[filePath]) return probablyInefficientCache[filePath]
 
         const { output } = await build({
-          root: dir.output,
-          plugins: [generatedStyles.plugin],
-          configFile: await getConfigFile(),
+          ...(await sharedConfig()),
           build: {
             ssr: true,
             write: false,
             rollupOptions: {
-              input: resolvedPath,
+              input: filePath,
             },
           },
         })
@@ -122,18 +129,18 @@ module.exports = async function toViteSSR({ environment, dir }) {
         if (!output?.length) {
           logger.log({
             type: 'error',
-            message: `Module ${resolvedPath} didn't have any output. Is this file blank?`,
+            message: `Module ${filePath} didn't have any output. Is this file blank?`,
           })
           return mod
         }
-        probablyInefficientCache[resolvedPath] = {
+        probablyInefficientCache[filePath] = {
           ...mod,
           // converts our stringified JS to a CommonJS module in memory
           // saves reading / writing to disk!
           // TODO: check performance impact
           ...requireFromString(output[0].code),
         }
-        return probablyInefficientCache[resolvedPath]
+        return probablyInefficientCache[filePath]
       },
       server: null,
     }

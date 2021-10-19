@@ -1,25 +1,11 @@
 const { parse } = require('node-html-parser')
-const fsPromises = require('fs').promises
-const { join } = require('path')
 const { SLINKITY_REACT_MOUNT_POINT, SLINKITY_ATTRS } = require('../../../utils/consts')
-const fileHelpers = require('../../../utils/fileHelpers')
 const applyHtmlWrapper = require('./applyHtmlWrapper')
 const { toHydrationLoadersApplied, webComponentLoader } = require('./toHydrationLoadersApplied')
 const { toComponentAttrStore } = require('../../componentAttrStore')
 const toHtmlAttrString = require('../../../utils/toHtmlAttrString')
 
-const READ_FILE_CALLED = 'readFile called'
-
 const hydrationModes = ['eager', 'lazy']
-
-jest.mock('fs', () => ({
-  promises: {
-    readFile: jest.fn().mockReturnValue(READ_FILE_CALLED),
-  },
-}))
-jest.mock('../../../utils/fileHelpers', () => ({
-  writeFileRec: jest.fn().mockResolvedValue(),
-}))
 
 /**
  * @param {Partial<import('./componentAttrStore').ComponentAttrs>[]} componentAttrs
@@ -58,7 +44,6 @@ describe('toHydrationLoadersApplied', () => {
       const actual = await toHydrationLoadersApplied({
         content,
         componentAttrs: [],
-        isDryRun: true,
       })
       expect(actual).toEqual(content)
     })
@@ -67,7 +52,6 @@ describe('toHydrationLoadersApplied', () => {
       const actual = await toHydrationLoadersApplied({
         content,
         componentAttrs: [],
-        isDryRun: true,
       })
       const expectedRoot = parse(actual)
       applyHtmlWrapper(expectedRoot)
@@ -91,7 +75,6 @@ describe('toHydrationLoadersApplied', () => {
       const actual = await toHydrationLoadersApplied({
         content,
         componentAttrs,
-        isDryRun: true,
       })
       expect(actual).not.toContain(webComponentLoader)
     })
@@ -115,7 +98,6 @@ describe('toHydrationLoadersApplied', () => {
           path: 'very-cool-component.jsx',
           hydrate: 'eager',
         }),
-        isDryRun: true,
       })
       expect(actual).toContain(webComponentLoader)
     })
@@ -148,7 +130,6 @@ describe('toHydrationLoadersApplied', () => {
         const actual = await toHydrationLoadersApplied({
           content,
           componentAttrs: toComponentAttrsWithDefaults({ hydrate }, { hydrate }, { hydrate }),
-          isDryRun: true,
         })
         expect(actual).toMatchSnapshot()
       },
@@ -210,106 +191,8 @@ describe('toHydrationLoadersApplied', () => {
       const actual = await toHydrationLoadersApplied({
         content,
         componentAttrs,
-        isDryRun: true,
       })
       expect(actual).toMatchSnapshot()
-    })
-  })
-  describe('with dry run disabled', () => {
-    afterEach(() => {
-      jest.clearAllMocks()
-    })
-    it('should read the JSX file from the correct path', async () => {
-      const componentAttrs = toComponentAttrsWithDefaults(
-        {
-          path: 'nav.jsx',
-          hydrate: 'eager',
-        },
-        {
-          path: 'nested/Heading.jsx',
-          hydrate: 'eager',
-        },
-      )
-      const dir = {
-        input: 'src',
-        output: '_site',
-      }
-      const toRelativeInput = (componentPath) => join(dir.input, componentPath)
-      const content = `<html>
-<head>
-  <title>It's hydration time</title>
-</head>
-<body>
-  <${SLINKITY_REACT_MOUNT_POINT} ${toIdAttr(componentAttrs[0].id)}>
-  <nav>
-    <a href="/home">Home</a>
-    <a href="/about">About</a>
-    <a href="/contact">Contact</a>
-  </nav>
-  </${SLINKITY_REACT_MOUNT_POINT}>
-  <${SLINKITY_REACT_MOUNT_POINT} ${toIdAttr(componentAttrs[1].id)}>
-    <h2>Welcome to the site</h2>
-  </${SLINKITY_REACT_MOUNT_POINT}>
-</body>
-</html>`
-
-      await toHydrationLoadersApplied({
-        content,
-        componentAttrs,
-        dir,
-        isDryRun: false,
-      })
-      expect(fsPromises.readFile).toHaveBeenCalledTimes(2)
-      expect(fsPromises.readFile.mock.calls).toEqual([
-        [toRelativeInput('nav.jsx')],
-        [toRelativeInput('nested/Heading.jsx')],
-      ])
-    })
-    it('should write the JSX file from the correct path', async () => {
-      const componentAttrs = toComponentAttrsWithDefaults(
-        {
-          path: 'nav.jsx',
-          hydrate: 'eager',
-        },
-        {
-          path: 'nested/Heading.jsx',
-          hydrate: 'eager',
-        },
-      )
-      const dir = {
-        input: 'src',
-        output: '_site',
-      }
-      const toRelativeOutput = (componentPath) => join(dir.output, componentPath)
-      const content = `<html>
-<head>
-  <title>It's hydration time</title>
-</head>
-<body>
-  <${SLINKITY_REACT_MOUNT_POINT} ${toIdAttr(componentAttrs[0].id)}>
-  <nav>
-    <a href="/home">Home</a>
-    <a href="/about">About</a>
-    <a href="/contact">Contact</a>
-  </nav>
-  </${SLINKITY_REACT_MOUNT_POINT}>
-  <${SLINKITY_REACT_MOUNT_POINT} ${toIdAttr(componentAttrs[1].id)}>
-    <h2>Welcome to the site</h2>
-  </${SLINKITY_REACT_MOUNT_POINT}>
-</body>
-</html>`
-
-      await toHydrationLoadersApplied({
-        content,
-        componentAttrs,
-        dir,
-        isDryRun: false,
-      })
-      expect(fileHelpers.writeFileRec).toHaveBeenCalledTimes(2)
-      expect(fileHelpers.writeFileRec.mock.calls).toEqual([
-        [toRelativeOutput('nav.jsx'), READ_FILE_CALLED],
-        [toRelativeOutput('nested/Heading.jsx'), READ_FILE_CALLED],
-      ])
     })
   })
 })
