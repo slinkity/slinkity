@@ -15,9 +15,29 @@ const reactPlugin = require('./reactPlugin')
 const toSlashesTrimmed = require('../utils/toSlashesTrimmed')
 const { toComponentAttrStore } = require('./componentAttrStore')
 const browserSync = require('browser-sync')
-const { relative } = require('path')
+const { relative, join } = require('path')
 const { toHydrationLoadersApplied } = require('./reactPlugin/2-pageTransform')
 const { applyViteHtmlTransform } = require('./applyViteHtmlTransform')
+
+// TODO: abstract based on renderer plugins configured
+// https://github.com/slinkity/slinkity/issues/55
+const extensions = [
+  {
+    extension: 'jsx',
+    isTemplateFormat: true,
+    isIgnoredFromIncludes: true,
+  },
+  {
+    extension: 'css',
+    isTemplateFormat: false,
+    isIgnoredFromIncludes: true,
+  },
+  {
+    extension: 'scss',
+    isTemplateFormat: false,
+    isIgnoredFromIncludes: true,
+  },
+]
 
 /**
  * @param {SlinkityConfigOptions} options - all Slinkity plugin options
@@ -28,8 +48,18 @@ module.exports = function slinkityConfig(options) {
   const componentAttrStore = toComponentAttrStore()
 
   return function (eleventyConfig) {
+    eleventyConfig.addTemplateFormats(
+      extensions.filter((ext) => ext.isTemplateFormat).map((ext) => ext.extension),
+    )
+    extensions
+      .filter((ext) => ext.isIgnoredFromIncludes)
+      .forEach(({ extension }) => {
+        const ignore = join(dir.input, dir.includes, `**/*.${extension}`)
+        console.log({ ignore })
+        eleventyConfig.ignores.add(ignore)
+      })
+
     eleventyConfig.addPlugin(reactPlugin, {
-      dir,
       viteSSR,
       componentAttrStore,
     })

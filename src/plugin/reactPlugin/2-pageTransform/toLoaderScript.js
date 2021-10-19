@@ -15,7 +15,7 @@ const toUnixPath = require('../../../utils/toUnixPath')
 module.exports = function toLoaderScript({ componentPath, hydrate, id, props = {} }) {
   // TODO: abstract "props" to some other file, instead of stringifying in-place
   // We could be generating identical, large prop blobs
-  const componentImportStatement = JSON.stringify('/' + toUnixPath(componentPath))
+  const componentImportStatement = JSON.stringify(toUnixPath(componentPath))
   if (hydrate === 'eager') {
     return `<script type="module">
     import Component from ${componentImportStatement};
