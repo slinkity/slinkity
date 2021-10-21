@@ -30,8 +30,14 @@ const IMPORT_ALIASES = {
  */
 const SLINKITY_REACT_MOUNT_POINT = 'slinkity-react-mount-point'
 
+/**
+ * File name for user slinkity config files
+ */
+const SLINKITY_CONFIG_FILE_NAME = 'slinkity.config'
+
 module.exports = {
   SLINKITY_ATTRS,
+  SLINKITY_CONFIG_FILE_NAME,
   SLINKITY_REACT_MOUNT_POINT,
   IMPORT_ALIASES,
 }
