@@ -2,20 +2,10 @@ const vite = require('vite')
 const { resolve } = require('path')
 const { promisify } = require('util')
 const glob = promisify(require('glob'))
-const { readFile } = require('fs').promises
+const { resolveConfigFilePath } = require('../utils/resolveConfigFilePath')
 
-async function getConfigFile() {
-  for (const ext of ['js', 'mjs', 'ts']) {
-    try {
-      const path = resolve(`vite.config.${ext}`)
-      await readFile(path)
-      return path
-    } catch {
-      /* if this fails, try the next ext */
-    }
-  }
-
-  return false
+function getConfigFile() {
+  return resolveConfigFilePath(['js', 'mjs', 'ts'].map((ext) => `vite.config.${ext}`))
 }
 
 async function serve({ input, port }) {
