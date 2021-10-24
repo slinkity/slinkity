@@ -3,7 +3,8 @@
   "description": "To 11ty and beyond! The all-in-one tool for templates where you want them, component frameworks where you need them",
   "version": "0.2.0",
   "license": "MIT",
-  "main": "./lib/plugin/index.js",
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
   "homepage": "https://slinkity.dev",
   "author": {
     "name": "Ben Holmes",
@@ -77,12 +78,16 @@
     "eslint-plugin-react": "^7.24.0",
     "faker": "^5.5.3",
     "jest": "^27.0.6",
+    "npm-run-all": "^4.1.5",
     "prettier": "^2.3.2",
     "react": "^17.0.2",
-    "react-dom": "^17.0.2"
+    "react-dom": "^17.0.2",
+    "typescript": "^4.4.4"
   },
   "scripts": {
-    "build": "babel src -d lib",
+    "build:src": "babel src -d lib",
+    "build:types": "tsc",
+    "build": "run-s build:src build:types",
     "prepare": "npm run build",
     "watch": "babel src -d lib -w",
     "lint": "eslint \"src/**/*.{js,jsx,mjs}\"",
