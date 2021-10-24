@@ -1,1 +1,1 @@
-export { defineConfig, SlinkityUserConfig } from './defineConfig'
+export { defineConfig, UserSlinkityConfig } from './defineConfig'
