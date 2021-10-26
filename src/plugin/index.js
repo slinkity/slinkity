@@ -110,7 +110,6 @@ module.exports = function slinkityConfig({
       extensions.filter((ext) => ext.isTemplateFormat).map((ext) => ext.extension),
     )
     for (const ignored of eleventyIgnored) {
-      console.log({ ignored })
       eleventyConfig.ignores.add(ignored)
     }
 
