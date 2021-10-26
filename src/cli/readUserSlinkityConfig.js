@@ -5,7 +5,7 @@ const { build } = require('esbuild')
 const logger = require('../utils/logger')
 const { defineConfig } = require('../main/defineConfig')
 
-// We only support CommonJS at the moment due to 11ty's Node version
+// Can cause a gotcha for ESM configs that use packages _without_ a CommonJS fallback
 // See https://github.com/11ty/eleventy/issues/836
 // TODO: explore rewriting Slinkity to ESM, and use esbuild to bundle our 11ty plugins to CommonJS
 const supportedExts = ['js', 'ts']
@@ -17,7 +17,7 @@ async function readUserSlinkityConfig() {
 
   if (!configFile) return defineConfig()
 
-  // we're using esbuild to process `ts` as cheaply as possible
+  // we're using esbuild to process `ts` and ESM as cheaply as possible
   const { outputFiles } = await build({
     format: 'cjs',
     entryPoints: [configFile],
@@ -25,6 +25,7 @@ async function readUserSlinkityConfig() {
     write: false,
   })
   let config = requireFromString(outputFiles[0].text)
+  // fixes ESM-based exports
   if (config?.default) {
     config = config.default
   }
