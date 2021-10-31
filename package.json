@@ -1,7 +1,7 @@
 {
   "name": "slinkity",
   "description": "To 11ty and beyond! The all-in-one tool for templates where you want them, component frameworks where you need them",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "license": "MIT",
   "main": "./lib/plugin/index.js",
   "homepage": "https://slinkity.dev",
@@ -56,7 +56,7 @@
     "glob": "^7.1.7",
     "html-react-parser": "^1.2.7",
     "javascript-stringify": "^2.1.0",
-    "node-html-parser": "^4.1.3",
+    "node-html-parser": "^5.1.0",
     "require-from-string": "^2.0.2",
     "sass": "^1.36.0",
     "vite": "^2.4.4"
