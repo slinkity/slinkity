@@ -43,13 +43,7 @@ ${stacktrace}`
  * @returns {string} output markup with every component's inline styles and hydration scripts applied
  */
 async function toHydrationLoadersApplied({ content, componentAttrs, dir, isDryRun = false }) {
-  let root;
-  try {
-    root = parse(content)
-  } catch (e) {
-    // TODO: Log error in DEBUG mode.
-    return content;
-  }
+  const root = parse(content)
   applyHtmlWrapper(root)
 
   try {
