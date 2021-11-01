@@ -1,39 +1,60 @@
 const vite = require('vite')
-const { resolve } = require('path')
+const { join } = require('path')
 const { promisify } = require('util')
 const glob = promisify(require('glob'))
 const { resolveConfigFilePath } = require('../utils/resolveConfigFilePath')
+const { IMPORT_ALIASES } = require('../utils/consts')
 
 function getConfigFile() {
   return resolveConfigFilePath(['js', 'mjs', 'ts'].map((ext) => `vite.config.${ext}`))
 }
 
-async function serve({ input, port }) {
-  // TODO: allow user vite.config to override these settings
-  // Currently *our* settings override any *user* settings
-  const configFile = await getConfigFile()
-
-  const options = {
-    configFile: configFile,
-    root: resolve(input),
-    clearScreen: false,
+/**
+ * @typedef {import('../utils/consts').ImportAliases} ImportAliases
+ * @typedef {Record<keyof import('../utils/consts').ImportAliases, string>} ResolvedImportAliases
+ * @param {import('../plugin/index').SlinkityConfigOptions['dir']} dir
+ * @returns {ResolvedImportAliases}
+ */
+function getResolvedAliases(dir) {
+  return {
+    root: join(process.cwd()),
+    input: join(process.cwd(), dir.input),
+    includes: join(process.cwd(), dir.input, dir.includes),
+    layouts: join(process.cwd(), dir.input, dir.layouts),
   }
-  if (port) {
-    options.port = port
-  }
-
-  const server = await vite.createServer(options)
-  await server.listen()
 }
 
-async function build({ input, output }) {
-  const inputFiles = await glob(`${input}/**/*.html`, { absolute: true })
+/**
+ * Get Vite config shared by dev and production
+ * @param {import('../plugin/index').SlinkityConfigOptions['dir']} dir
+ * @returns {import('vite').UserConfigExport}
+ */
+async function getSharedConfig(dir) {
+  const importAliasesToResolvedPath = Object.entries(getResolvedAliases(dir)).map(
+    ([key, value]) => [IMPORT_ALIASES[key], value],
+  )
+  return vite.defineConfig({
+    clearScreen: false,
+    configFile: await getConfigFile(),
+    resolve: {
+      alias: Object.fromEntries(importAliasesToResolvedPath),
+    },
+  })
+}
+
+/**
+ * Build production bundle
+ * @param {import('../plugin/index').SlinkityConfigOptions['dir']} dir
+ */
+async function build(dir) {
+  const inputFiles = await glob(`${dir.input}/**/*.html`, { absolute: true })
+
   if (inputFiles.length) {
     await vite.build({
-      root: input,
-      configFile: await getConfigFile(),
+      ...(await getSharedConfig(dir)),
+      root: dir.input,
       build: {
-        outDir: output,
+        outDir: dir.output,
         emptyOutDir: true,
         rollupOptions: {
           input: inputFiles,
@@ -48,4 +69,4 @@ async function build({ input, output }) {
   }
 }
 
-module.exports = { serve, build, getConfigFile }
+module.exports = { build, getConfigFile, getSharedConfig, getResolvedAliases }

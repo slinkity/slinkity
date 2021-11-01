@@ -12,11 +12,12 @@
  * @property {'dev' | 'prod'} environment - whether we want a dev server or a production build
  */
 
-const reactPlugin = require('./reactPlugin')
-const toSlashesTrimmed = require('../utils/toSlashesTrimmed')
-const { toComponentAttrStore } = require('./componentAttrStore')
 const browserSync = require('browser-sync')
 const { relative, join } = require('path')
+const reactPlugin = require('./reactPlugin')
+const toSlashesTrimmed = require('../utils/toSlashesTrimmed')
+const { getResolvedAliases } = require('../cli/vite')
+const { toComponentAttrStore } = require('./componentAttrStore')
 const { toHydrationLoadersApplied } = require('./reactPlugin/2-pageTransform')
 const { applyViteHtmlTransform } = require('./applyViteHtmlTransform')
 
@@ -69,6 +70,7 @@ module.exports = function slinkityConfig({ userSlinkityConfig, ...options }) {
     eleventyConfig.addPlugin(reactPlugin, {
       viteSSR,
       componentAttrStore,
+      resolvedImportAliases: getResolvedAliases(dir),
     })
 
     eleventyConfig.addTransform(

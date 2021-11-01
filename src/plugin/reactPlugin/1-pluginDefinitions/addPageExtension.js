@@ -1,29 +1,29 @@
 const { toMountPoint } = require('./toMountPoint')
 const toFormattedDataForProps = require('./toFormattedDataForProps')
 const { join } = require('path')
-const { IMPORT_ALIASES } = require('../../../utils/consts')
-
-function toAbsImport(inputPath) {
-  return join(IMPORT_ALIASES.root, inputPath)
-}
 
 /**
  * @param {object} eleventyConfig
  * @typedef AddPageExtParams
  * @property {import('../../componentAttrStore').ComponentAttrStore} componentAttrStore
  * @property {import('../../../cli/toViteSSR').ViteSSR} viteSSR
+ * @property {import('../../../cli/vite').ResolvedImportAliases} resolvedImportAliases
  * @param {AddPageExtParams}
  */
-module.exports = function addPageExtension(eleventyConfig, { componentAttrStore, viteSSR }) {
+module.exports = function addPageExtension(
+  eleventyConfig,
+  { componentAttrStore, viteSSR, resolvedImportAliases },
+) {
   eleventyConfig.addExtension('jsx', {
     read: false,
     getData: async (inputPath) => {
-      const { frontMatter } = await viteSSR.toComponentCommonJSModule(toAbsImport(inputPath))
+      const absInputPath = join(resolvedImportAliases.root, inputPath)
+      const { frontMatter } = await viteSSR.toComponentCommonJSModule(absInputPath)
       return frontMatter
     },
     compile: (_, inputPath) =>
       async function (data) {
-        const absInputPath = toAbsImport(inputPath)
+        const absInputPath = join(resolvedImportAliases.root, inputPath)
         const { getProps, frontMatter } = await viteSSR.toComponentCommonJSModule(absInputPath)
 
         const props = await getProps(
