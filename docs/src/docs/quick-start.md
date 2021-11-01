@@ -14,7 +14,7 @@ npm init -y
 
 Then, install Slinkity + the latest 11ty into your project:
 
-> Slinkity requires Node 14+. So check `node -v` shows a major version of 14 or higher before installing slinkity.
+> Slinkity requires Node v14 and up. You can check your version by running `node -v` in your terminal before trying Slinkity.
 
 ```bash
 npm i --save-dev slinkity @11ty/eleventy@beta
