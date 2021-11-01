@@ -4,6 +4,7 @@ const { join } = require('path')
 const navSlugSortOrder = [
   '',
   'quick-start',
+  'config',
   'component-shortcodes',
   'component-pages-layouts',
   'partial-hydration',
@@ -20,9 +21,7 @@ module.exports = {
   eleventyComputed: {
     navLinksSorted: ({ collections: { docs } }) => {
       return navSlugSortOrder.map((slug) => {
-        const matchingDocInfo = docs.find(
-          (doc) => trimSlashes(doc.data.page.url) === toUrl(slug)
-        )
+        const matchingDocInfo = docs.find((doc) => trimSlashes(doc.data.page.url) === toUrl(slug))
 
         return {
           href: matchingDocInfo && matchingDocInfo.data.page.url,

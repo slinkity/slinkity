@@ -3,7 +3,8 @@
   "description": "To 11ty and beyond! The all-in-one tool for templates where you want them, component frameworks where you need them",
   "version": "0.2.0",
   "license": "MIT",
-  "main": "./lib/plugin/index.js",
+  "main": "./lib/main/index.js",
+  "types": "./lib/main/index.d.ts",
   "homepage": "https://slinkity.dev",
   "author": {
     "name": "Ben Holmes",
@@ -50,7 +51,7 @@
   "bugs": "https://github.com/slinkity/slinkity/issues",
   "dependencies": {
     "commander": "^5.1.0",
-    "esbuild": "^0.12.17",
+    "esbuild": "^0.12.29",
     "esbuild-css-modules-plugin": "^2.0.7",
     "fs-extra": "^10.0.0",
     "glob": "^7.1.7",
@@ -69,6 +70,7 @@
     "@babel/core": "^7.15.0",
     "@babel/preset-env": "^7.15.0",
     "@babel/preset-react": "^7.14.5",
+    "@babel/preset-typescript": "^7.15.0",
     "babel-jest": "^27.1.0",
     "browser-sync": "^2.27.5",
     "eslint": "^7.32.0",
@@ -77,12 +79,16 @@
     "eslint-plugin-react": "^7.24.0",
     "faker": "^5.5.3",
     "jest": "^27.0.6",
+    "npm-run-all": "^4.1.5",
     "prettier": "^2.3.2",
     "react": "^17.0.2",
-    "react-dom": "^17.0.2"
+    "react-dom": "^17.0.2",
+    "typescript": "^4.4.4"
   },
   "scripts": {
-    "build": "babel src -d lib",
+    "build:src": "babel src -d lib && babel src -d lib  --extensions \".ts\"",
+    "build:types": "tsc",
+    "build": "run-s build:src build:types",
     "prepare": "npm run build",
     "watch": "babel src -d lib -w",
     "lint": "eslint \"src/**/*.{js,jsx,mjs}\"",
