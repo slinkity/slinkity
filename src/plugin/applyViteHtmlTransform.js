@@ -13,11 +13,12 @@ const { relative } = require('path')
  * @param {import('.').SlinkityConfigOptions}
  * @returns {string} - HTML with statically rendered content and Vite transforms applied
  */
-async function applyViteHtmlTransform({ content, outputPath, componentAttrStore }, { dir, viteSSR, environment }) {
+async function applyViteHtmlTransform(
+  { content, outputPath, componentAttrStore },
+  { dir, viteSSR, environment },
+) {
   if (!outputPath.endsWith('.html')) {
-    return environment === 'dev'
-      ? viteSSR.server.transformIndexHtml(routePath, content)
-      : content
+    return environment === 'dev' ? viteSSR.server.transformIndexHtml(routePath, content) : content
   }
 
   const root = parse(content)
