@@ -89,5 +89,8 @@
     "lint:fix": "eslint --fix \"src/**/*.{js,jsx,mjs}\"",
     "test": "jest ./src",
     "test:watch": "jest ./src --watch"
+  },
+  "volta": {
+    "node": "14.18.1"
   }
 }
