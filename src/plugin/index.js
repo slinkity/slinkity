@@ -12,14 +12,15 @@
  * @property {'dev' | 'prod'} environment - whether we want a dev server or a production build
  */
 
-const reactPlugin = require('./reactPlugin')
-const toSlashesTrimmed = require('../utils/toSlashesTrimmed')
-const { toComponentAttrStore } = require('./componentAttrStore')
-const { parse } = require('node-html-parser')
-const { SLINKITY_ATTRS } = require('../utils/consts')
-const { toRendererHtml } = require('./reactPlugin/1-pluginDefinitions/toRendererHtml')
 const browserSync = require('browser-sync')
 const { relative, join } = require('path')
+const { parse } = require('node-html-parser')
+const reactPlugin = require('./reactPlugin')
+const { SLINKITY_ATTRS } = require('../utils/consts')
+const toSlashesTrimmed = require('../utils/toSlashesTrimmed')
+const { getResolvedAliases } = require('../cli/vite')
+const { toComponentAttrStore } = require('./componentAttrStore')
+const { toRendererHtml } = require('./reactPlugin/1-pluginDefinitions/toRendererHtml')
 const { toHydrationLoadersApplied } = require('./reactPlugin/2-pageTransform')
 
 // TODO: abstract based on renderer plugins configured
@@ -116,6 +117,7 @@ module.exports = function slinkityConfig({
     eleventyConfig.addPlugin(reactPlugin, {
       viteSSR,
       componentAttrStore,
+      resolvedImportAliases: getResolvedAliases(dir),
     })
 
     eleventyConfig.addTransform(

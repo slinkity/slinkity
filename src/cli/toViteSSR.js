@@ -1,9 +1,7 @@
 const { createServer, build, defineConfig } = require('vite')
 const requireFromString = require('require-from-string')
 const logger = require('../utils/logger')
-const { join } = require('path')
-const { getConfigFile } = require('./vite')
-const { IMPORT_ALIASES } = require('../utils/consts')
+const { getSharedConfig } = require('./vite')
 
 /**
  * @typedef {import('./reactPlugin/2-pageTransform/componentAttrStore').ComponentAttrs['styleToFilePathMap']} StyleToFilePathMap
@@ -56,31 +54,15 @@ function gimmeCSSPlugin() {
  */
 module.exports = async function toViteSSR({ environment, dir }) {
   const generatedStyles = gimmeCSSPlugin()
-
-  /**
-   * Get Vite config shared by dev and production
-   * @returns {import('vite').UserConfigExport}
-   */
-  async function sharedConfig() {
-    return defineConfig({
-      root: dir.output,
-      plugins: [generatedStyles.plugin],
-      clearScreen: false,
-      configFile: await getConfigFile(),
-      resolve: {
-        alias: {
-          [IMPORT_ALIASES.root]: join(process.cwd(), '/'),
-          [IMPORT_ALIASES.input]: join(process.cwd(), dir.input, '/'),
-          [IMPORT_ALIASES.includes]: join(process.cwd(), dir.input, dir.includes, '/'),
-          [IMPORT_ALIASES.layouts]: join(process.cwd(), dir.input, dir.layouts, '/'),
-        },
-      },
-    })
-  }
+  const ssrViteConfig = defineConfig({
+    root: dir.output,
+    plugins: [generatedStyles.plugin],
+  })
 
   if (environment === 'dev') {
     const server = await createServer({
-      ...(await sharedConfig()),
+      ...ssrViteConfig,
+      ...(await getSharedConfig(dir)),
       server: {
         middlewareMode: 'ssr',
       },
@@ -106,9 +88,9 @@ module.exports = async function toViteSSR({ environment, dir }) {
     return {
       async toComponentCommonJSModule(filePath) {
         if (probablyInefficientCache[filePath]) return probablyInefficientCache[filePath]
-
         const { output } = await build({
-          ...(await sharedConfig()),
+          ...ssrViteConfig,
+          ...(await getSharedConfig(dir)),
           build: {
             ssr: true,
             write: false,

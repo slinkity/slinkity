@@ -6,9 +6,13 @@ const { addPageExtension, addShortcode } = require('./1-pluginDefinitions')
  * @property {import('..').SlinkityConfigOptions['viteSSR']} viteSSR
  * @property {Record<string, Object>} urlToCompiledHtmlMap
  * @property {import('../componentAttrStore').ComponentAttrStore} componentAttrStore
+ * @property {import('../../cli/vite').ResolvedImportAliases} resolvedImportAliases
  * @param {ReactPluginOptions} options - all React plugin options
  */
-module.exports = function reactPlugin(eleventyConfig, { viteSSR, componentAttrStore }) {
-  addPageExtension(eleventyConfig, { componentAttrStore, viteSSR })
-  addShortcode(eleventyConfig, { componentAttrStore })
+module.exports = function reactPlugin(
+  eleventyConfig,
+  { viteSSR, componentAttrStore, resolvedImportAliases },
+) {
+  addPageExtension(eleventyConfig, { componentAttrStore, viteSSR, resolvedImportAliases })
+  addShortcode(eleventyConfig, { componentAttrStore, resolvedImportAliases })
 }
