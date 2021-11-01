@@ -18,7 +18,7 @@ async function applyViteHtmlTransform(
   { dir, viteSSR, environment },
 ) {
   if (!outputPath.endsWith('.html')) {
-    return environment === 'dev' ? viteSSR.server.transformIndexHtml(routePath, content) : content
+    return content
   }
 
   const root = parse(content)

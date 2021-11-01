@@ -20,7 +20,7 @@ const { toHydrationLoadersApplied } = require('./reactPlugin/2-pageTransform')
 const { applyViteHtmlTransform } = require('./applyViteHtmlTransform')
 
 /**
- * @param {SlinkityConfigOptions} - all Slinkity plugin options
+ * @param {SlinkityConfigOptions} options - all Slinkity plugin options
  * @returns (eleventyConfig: Object) => Object - config we'll apply to the Eleventy object
  */
 module.exports = function slinkityConfig(options) {
