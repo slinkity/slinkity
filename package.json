@@ -87,7 +87,10 @@
     "watch": "babel src -d lib -w",
     "lint": "eslint \"src/**/*.{js,jsx,mjs}\"",
     "lint:fix": "eslint --fix \"src/**/*.{js,jsx,mjs}\"",
-    "test": "jest ./src",
-    "test:watch": "jest ./src --watch"
+    "test": "jest",
+    "test:watch": "jest --watch"
+  },
+  "jest": {
+    "roots": ["<rootDir>/src/"]
   }
 }
