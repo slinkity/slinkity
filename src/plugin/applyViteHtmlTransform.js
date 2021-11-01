@@ -1,12 +1,24 @@
+const { parse } = require('node-html-parser')
+const { SLINKITY_ATTRS } = require('../utils/consts')
+const { toRendererHtml } = require('./reactPlugin/1-pluginDefinitions/toRendererHtml')
+const toSlashesTrimmed = require('../utils/toSlashesTrimmed')
+const { relative } = require('path')
+
 /**
  * @typedef ApplyViteHtmlTransformParams
  * @property {string} content - the original HTML content to transform
  * @property {string} outputPath - the output path this HTML content will be written to
+ * @property {ComponentAttri} componentAttrStore
  * @param {ApplyViteHtmlTransformParams}
+ * @param {import('.').SlinkityConfigOptions}
  * @returns {string} - HTML with statically rendered content and Vite transforms applied
  */
-async function applyViteHtmlTransform({ content, outputPath, componentAttrStore }) {
-  if (!outputPath.endsWith('.html')) return content
+async function applyViteHtmlTransform({ content, outputPath, componentAttrStore }, { dir, viteSSR, environment }) {
+  if (!outputPath.endsWith('.html')) {
+    return environment === 'dev'
+      ? viteSSR.server.transformIndexHtml(routePath, content)
+      : content
+  }
 
   const root = parse(content)
   const mountPointsToSSR = root.querySelectorAll(`[${SLINKITY_ATTRS.ssr}="true"]`)

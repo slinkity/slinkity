@@ -14,9 +14,6 @@
 const reactPlugin = require('./reactPlugin')
 const toSlashesTrimmed = require('../utils/toSlashesTrimmed')
 const { toComponentAttrStore } = require('./componentAttrStore')
-const { parse } = require('node-html-parser')
-const { SLINKITY_ATTRS } = require('../utils/consts')
-const { toRendererHtml } = require('./reactPlugin/1-pluginDefinitions/toRendererHtml')
 const browserSync = require('browser-sync')
 const { relative } = require('path')
 const { toHydrationLoadersApplied } = require('./reactPlugin/2-pageTransform')
@@ -26,7 +23,8 @@ const { applyViteHtmlTransform } = require('./applyViteHtmlTransform');
  * @param {SlinkityConfigOptions} - all Slinkity plugin options
  * @returns (eleventyConfig: Object) => Object - config we'll apply to the Eleventy object
  */
-module.exports = function slinkityConfig({ dir, viteSSR, browserSyncOptions, environment }) {
+module.exports = function slinkityConfig(options) {
+  const { dir, viteSSR, browserSyncOptions, environment } = options;
   const componentAttrStore = toComponentAttrStore()
 
   return function (eleventyConfig) {
@@ -65,7 +63,7 @@ module.exports = function slinkityConfig({ dir, viteSSR, browserSyncOptions, env
             const page = urlToOutputHtmlMap[toSlashesTrimmed(req.originalUrl)]
             if (page) {
               const { content, outputPath } = page
-              res.write(await applyViteHtmlTransform({ content, outputPath, componentAttrStore }))
+              res.write(await applyViteHtmlTransform({ content, outputPath, componentAttrStore }, options))
               res.end()
             } else {
               next()
@@ -97,7 +95,7 @@ module.exports = function slinkityConfig({ dir, viteSSR, browserSyncOptions, env
 
     if (environment === 'prod') {
       eleventyConfig.addTransform('apply-vite', async function (content, outputPath) {
-        return await applyViteHtmlTransform({ content, outputPath, componentAttrStore })
+        return await applyViteHtmlTransform({ content, outputPath, componentAttrStore }, options)
       })
     }
     return {}

@@ -9,6 +9,9 @@ describe('reactPlugin', () => {
       content,
       outputPath: 'feed.xml',
       componentAttrStore,
+    },
+    {
+      environment: 'prod'
     })
     expect(actual).toBe(content)
   })
