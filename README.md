@@ -23,6 +23,8 @@ All you need is an empty directory to get started! But if you prefer a starter p
 
 First, install Slinkity + the latest 11ty into your project repo like so:
 
+> Slinkity requires Node v14 and up. You can check your version by running `node -v` in your terminal before trying Slinkity.
+
 ```bash
 npm i --save-dev slinkity @11ty/eleventy@beta
 ```

@@ -1,7 +1,7 @@
 {
   "name": "slinkity",
   "description": "To 11ty and beyond! The all-in-one tool for templates where you want them, component frameworks where you need them",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "license": "MIT",
   "main": "./lib/plugin/index.js",
   "homepage": "https://slinkity.dev",
@@ -14,7 +14,7 @@
     "slinkity": "./lib/cli/index.js"
   },
   "engines": {
-    "node": ">=12"
+    "node": ">=14"
   },
   "keywords": [
     "static-site-generator",
@@ -92,5 +92,8 @@
   },
   "jest": {
     "roots": ["<rootDir>/src/"]
+  },
+  "volta": {
+    "node": "14.18.1"
   }
 }
