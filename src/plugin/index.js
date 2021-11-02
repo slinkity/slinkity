@@ -14,59 +14,18 @@
 const reactPlugin = require('./reactPlugin')
 const toSlashesTrimmed = require('../utils/toSlashesTrimmed')
 const { toComponentAttrStore } = require('./componentAttrStore')
-const { parse } = require('node-html-parser')
-const { SLINKITY_ATTRS } = require('../utils/consts')
-const { toRendererHtml } = require('./reactPlugin/1-pluginDefinitions/toRendererHtml')
 const browserSync = require('browser-sync')
 const { relative } = require('path')
 const { toHydrationLoadersApplied } = require('./reactPlugin/2-pageTransform')
+const { applyViteHtmlTransform } = require('./applyViteHtmlTransform')
 
 /**
- * @param {SlinkityConfigOptions} - all Slinkity plugin options
+ * @param {SlinkityConfigOptions} options - all Slinkity plugin options
  * @returns (eleventyConfig: Object) => Object - config we'll apply to the Eleventy object
  */
-module.exports = function slinkityConfig({ dir, viteSSR, browserSyncOptions, environment }) {
+module.exports = function slinkityConfig(options) {
+  const { dir, viteSSR, browserSyncOptions, environment } = options
   const componentAttrStore = toComponentAttrStore()
-
-  /**
-   * @typedef ApplyViteHtmlTransformParams
-   * @property {string} content - the original HTML content to transform
-   * @property {string} outputPath - the output path this HTML content will be written to
-   * @param {ApplyViteHtmlTransformParams}
-   * @returns {string} - HTML with statically rendered content and Vite transforms applied
-   */
-  async function applyViteHtmlTransform({ content, outputPath }) {
-    const root = parse(content)
-    const mountPointsToSSR = root.querySelectorAll(`[${SLINKITY_ATTRS.ssr}="true"]`)
-    const allComponentAttrsForPage = componentAttrStore.getAllByPage(outputPath)
-    const pageStyles = {}
-    for (const mountPointToSSR of mountPointsToSSR) {
-      const id = mountPointToSSR.getAttribute(SLINKITY_ATTRS.id)
-      const componentAttrs = allComponentAttrsForPage[id]
-      if (componentAttrs) {
-        const { path: componentPath, props, hydrate } = componentAttrs
-        const { default: Component, __stylesGenerated } = await viteSSR.toComponentCommonJSModule(
-          componentPath,
-        )
-        Object.assign(pageStyles, __stylesGenerated)
-        // TODO: abstract renderer imports to be framework-agnostic
-        // (importing directly from the React plugin right now)
-        mountPointToSSR.innerHTML = toRendererHtml({
-          Component,
-          props,
-          hydrate,
-        })
-      }
-    }
-    root
-      .querySelector('body')
-      .insertAdjacentHTML('beforeend', `<style>${Object.values(pageStyles).join('\n')}</style>`)
-
-    const routePath = '/' + toSlashesTrimmed(relative(dir.output, outputPath))
-    return environment === 'dev'
-      ? viteSSR.server.transformIndexHtml(routePath, root.outerHTML)
-      : root.outerHTML
-  }
 
   return function (eleventyConfig) {
     eleventyConfig.addPlugin(reactPlugin, {
@@ -104,7 +63,9 @@ module.exports = function slinkityConfig({ dir, viteSSR, browserSyncOptions, env
             const page = urlToOutputHtmlMap[toSlashesTrimmed(req.originalUrl)]
             if (page) {
               const { content, outputPath } = page
-              res.write(await applyViteHtmlTransform({ content, outputPath }))
+              res.write(
+                await applyViteHtmlTransform({ content, outputPath, componentAttrStore }, options),
+              )
               res.end()
             } else {
               next()
@@ -136,7 +97,7 @@ module.exports = function slinkityConfig({ dir, viteSSR, browserSyncOptions, env
 
     if (environment === 'prod') {
       eleventyConfig.addTransform('apply-vite', async function (content, outputPath) {
-        return await applyViteHtmlTransform({ content, outputPath })
+        return await applyViteHtmlTransform({ content, outputPath, componentAttrStore }, options)
       })
     }
     return {}
