@@ -20,13 +20,17 @@ const argsArrayToPropsObj = function ({ vargs = [], errorMsg = '' }) {
  * @param {object} eleventyConfig
  * @typedef AddShortcodeParams
  * @property {import('../../componentAttrStore').ComponentAttrStore} componentAttrStore
- * @property {import('../../index').SlinkityConfigOptions['dir']} dir
+ * @property {import('../../../cli/vite').ResolvedImportAliases} resolvedImportAliases
  * @param {AddShortcodeParams}
  */
-module.exports = function addShortcode(eleventyConfig, { componentAttrStore, dir }) {
+module.exports = function addShortcode(
+  eleventyConfig,
+  { componentAttrStore, resolvedImportAliases },
+) {
   eleventyConfig.addShortcode('react', function (componentPath, ...vargs) {
-    const relComponentPath =
-      join(dir.includes, componentPath) + (componentPath.endsWith('.jsx') ? '' : '.jsx')
+    const absComponentPath =
+      join(resolvedImportAliases.includes, componentPath) +
+      (componentPath.endsWith('.jsx') ? '' : '.jsx')
 
     const props = argsArrayToPropsObj({
       vargs,
@@ -37,7 +41,7 @@ in file "${this.page.inputPath}"`,
 
     const { render = 'eager' } = props
     const id = componentAttrStore.push({
-      path: relComponentPath,
+      path: absComponentPath,
       props,
       hydrate: render,
       styleToFilePathMap: {},

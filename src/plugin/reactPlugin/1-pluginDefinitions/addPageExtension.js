@@ -1,32 +1,30 @@
 const { toMountPoint } = require('./toMountPoint')
 const toFormattedDataForProps = require('./toFormattedDataForProps')
-const { relative, join } = require('path')
-const { writeFileRec } = require('../../../utils/fileHelpers')
-const { readFile } = require('fs/promises')
+const { join } = require('path')
 
 /**
  * @param {object} eleventyConfig
  * @typedef AddPageExtParams
  * @property {import('../../componentAttrStore').ComponentAttrStore} componentAttrStore
- * @property {import('../../index').SlinkityConfigOptions['dir']} dir
  * @property {import('../../../cli/toViteSSR').ViteSSR} viteSSR
+ * @property {import('../../../cli/vite').ResolvedImportAliases} resolvedImportAliases
  * @param {AddPageExtParams}
  */
-module.exports = function addPageExtension(eleventyConfig, { componentAttrStore, dir, viteSSR }) {
+module.exports = function addPageExtension(
+  eleventyConfig,
+  { componentAttrStore, viteSSR, resolvedImportAliases },
+) {
   eleventyConfig.addExtension('jsx', {
     read: false,
     getData: async (inputPath) => {
-      // TODO: ditch the passthrough copy to output and read directly from input
-      const relativePath = relative(dir.input, inputPath)
-      const outputPath = join(dir.output, relativePath)
-      await writeFileRec(outputPath, await readFile(inputPath))
-      const { frontMatter } = await viteSSR.toComponentCommonJSModule(relativePath)
+      const absInputPath = join(resolvedImportAliases.root, inputPath)
+      const { frontMatter } = await viteSSR.toComponentCommonJSModule(absInputPath)
       return frontMatter
     },
     compile: (_, inputPath) =>
       async function (data) {
-        const relativePath = relative(dir.input, inputPath)
-        const { getProps, frontMatter } = await viteSSR.toComponentCommonJSModule(relativePath)
+        const absInputPath = join(resolvedImportAliases.root, inputPath)
+        const { getProps, frontMatter } = await viteSSR.toComponentCommonJSModule(absInputPath)
 
         const props = await getProps(
           toFormattedDataForProps({
@@ -36,7 +34,7 @@ module.exports = function addPageExtension(eleventyConfig, { componentAttrStore,
         )
         const hydrate = frontMatter.render ?? 'eager'
         const id = componentAttrStore.push({
-          path: relativePath,
+          path: absInputPath,
           props,
           styleToFilePathMap: {},
           hydrate,

@@ -2,9 +2,10 @@
 const Eleventy = require('@11ty/eleventy/src/Eleventy')
 const EleventyErrorHandler = require('@11ty/eleventy/src/EleventyErrorHandler')
 const UserConfig = require('@11ty/eleventy/src/UserConfig')
-const slinkityConfig = require('../plugin')
-const toViteSSR = require('./toViteSSR')
 const { resolve } = require('path')
+const toViteSSR = require('./toViteSSR')
+const { readUserSlinkityConfig } = require('./readUserSlinkityConfig')
+const slinkityConfig = require('../plugin')
 
 function toUserConfig(configPath = '') {
   let userConfig
@@ -80,11 +81,11 @@ function applyUserConfigDir(dir = {}) {
     })
 
     const environment = options.watch ? 'dev' : 'prod'
-    const viteSSR = await toViteSSR({ dir, environment })
     const config = slinkityConfig({
       dir,
-      viteSSR,
       environment,
+      viteSSR: await toViteSSR({ dir, environment }),
+      userSlinkityConfig: await readUserSlinkityConfig(),
       browserSyncOptions: toBrowserSyncOptions({ port: options.port, outputDir: dir.output }),
     })
 
