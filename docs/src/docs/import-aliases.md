@@ -78,7 +78,7 @@ However, this can cause a problem for nested dependencies! Say we have a few `sc
 @use './import2.scss';
 ```
 
-Uh oh, guess we'll need to copy `import1` and `import2` to the output directory for these imports to resolve. Heck, at this point, we'll probably copy our entire `styles` directory of unprocessed styles to the output. I don't know about you, but copying directories of _unbundled_ resources to the "final" build directory doesn't sit well with me 😕
+These are relative to the `styles` directory, so we'll need to copy `import1` and `import2` to the output directory for these imports to resolve. Heck, we'll probably copy our entire `styles` directory to be safe. I don't know about you, but copying directories of _unprocessed_ resources to the "final" build directory doesn't sit well with me 😕
 
 ### Enter import aliases
 
