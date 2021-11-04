@@ -84,6 +84,7 @@ async function viteBuild({ dir, ssrViteConfig, filePath, environment, generatedS
  * @typedef ViteSSRParams
  * @property {import('../plugin').SlinkityConfigOptions['environment']} environment
  * @property {import('../plugin').SlinkityConfigOptions['dir']} dir
+ * @property {import('../main/defineConfig').UserSlinkityConfig} userSlinkityConfig
  * @param {ViteSSRParams}
  *
  * @typedef {{
@@ -103,11 +104,19 @@ async function viteBuild({ dir, ssrViteConfig, filePath, environment, generatedS
  *
  * @returns {ViteSSR} viteSSR
  */
-module.exports = async function toViteSSR({ environment, dir }) {
+module.exports = async function toViteSSR({ environment, dir, userSlinkityConfig }) {
+  /**
+   * @type {import('vite').Plugin[]}
+   */
+  const rendererPlugins = userSlinkityConfig.renderers.map((renderer) => ({
+    name: `@slinkity/renderer-${renderer.name}`,
+    config: renderer.viteConfig ?? {},
+  }))
+
   const generatedStyles = gimmeCSSPlugin()
   const ssrViteConfig = defineConfig({
     root: dir.output,
-    plugins: [generatedStyles.plugin],
+    plugins: [generatedStyles.plugin, ...rendererPlugins],
   })
   /**
    * @type {Record<string, FormattedModule>}
