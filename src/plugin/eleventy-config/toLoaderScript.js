@@ -1,30 +1,45 @@
 const { stringify } = require('javascript-stringify')
-const toClientImportStatement = require('./toClientImportStatement')
-const toUnixPath = require('../../../utils/toUnixPath')
+const { resolve } = require('path')
+const toUnixPath = require('../../utils/toUnixPath')
+
+function toClientImportStatement(relativePath) {
+  // TODO: make this a true absolute path from the base of this module's build output
+  return JSON.stringify(toUnixPath(resolve('../_client', relativePath)))
+}
 
 /**
  * Generate the `<script>` necessary to load a Component into a given mount point
  * @typedef LoaderScriptParams
  * @property {string} componentPath - path to the component itself, used for the import statement
+ * @property {string} rendererPath - path to the component's render, as specified by the renderer.client
  * @property {string} id - the unique id for a given mount point
  * @property {'eager' | 'lazy'} hydrate - which hydration loader to use
  * @property {Record<string, any>} props - data used when hydrating the component
  * @param {LoaderScriptParams}
  * @returns {string} String of HTML to run loader in the client
  */
-module.exports = function toLoaderScript({ componentPath, hydrate, id, props = {} }) {
+module.exports.toLoaderScript = function ({
+  componentPath,
+  rendererPath,
+  hydrate,
+  id,
+  props = {},
+}) {
   // TODO: abstract "props" to some other file, instead of stringifying in-place
   // We could be generating identical, large prop blobs
-  const componentImportStatement = JSON.stringify(toUnixPath(componentPath))
+  const componentImportPath = JSON.stringify(toUnixPath(componentPath))
+  const rendererImportPath = JSON.stringify(toUnixPath(rendererPath))
   if (hydrate === 'eager') {
     return `<script type="module">
-    import Component${id} from ${componentImportStatement};
+    import loadedModule${id} from ${componentImportPath};
     import eagerLoader${id} from ${toClientImportStatement('_eager-loader.js')};
+    import renderer${id} from ${rendererImportPath}
   
     eagerLoader${id}({ 
       id: "${id}",
-      Component: Component${id},
       props: ${stringify(props)},
+      loadedModule: loadedModule${id},
+      renderer: renderer${id},
     });
   </script>`
   } else if (hydrate === 'lazy') {
@@ -33,8 +48,9 @@ module.exports = function toLoaderScript({ componentPath, hydrate, id, props = {
   
     lazyLoader${id}({ 
       id: "${id}",
-      componentImporter: async () => await import(${componentImportStatement}),
       props: ${stringify(props)},
+      toLoadedModule: async () => await import(${componentImportPath}),
+      toRenderer: async () => await import(${rendererImportPath}),
     });
   </script>`
   } else {

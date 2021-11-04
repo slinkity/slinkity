@@ -5,7 +5,7 @@
  * - (If missing) A <head> with emmett-based defaults
  * @param { import('node-html-parser').HTMLElement } rootElement
  */
-module.exports = function applyHtmlWrapper(rootElement) {
+module.exports.applyHtmlWrapper = function (rootElement) {
   let content = rootElement.innerHTML
   const hasHtmlTag = Boolean(rootElement.querySelector('html'))
   const hasHead = Boolean(rootElement.querySelector('head'))

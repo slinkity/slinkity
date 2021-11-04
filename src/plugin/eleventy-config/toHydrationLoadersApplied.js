@@ -1,15 +1,10 @@
 const { parse } = require('node-html-parser')
-const applyHtmlWrapper = require('./applyHtmlWrapper')
-const { SLINKITY_REACT_MOUNT_POINT } = require('../../../utils/consts')
-const toLoaderScript = require('./toLoaderScript')
-const toClientImportStatement = require('./toClientImportStatement')
+const { applyHtmlWrapper } = require('./applyHtmlWrapper')
+const { toLoaderScript } = require('./toLoaderScript')
 const { log } = require('../../../utils/logger')
 
-const webComponentLoader = `
-<script type="module">
-  import MountPoint from ${toClientImportStatement('_mount-point.js')};
-  window.customElements.define("${SLINKITY_REACT_MOUNT_POINT}", MountPoint);
-</script>`
+// TODO: remove this (or remove everything React-specific)
+const webComponentLoader = ''
 
 const errorMessage = ({
   inputPath,
@@ -32,33 +27,31 @@ ${stacktrace}`
  *
  * @typedef HydrationLoadersAppliedParams
  * @property {string} content - markup template content passed by 11ty's HTML transform
- * @property {import('../../componentAttrStore').ComponentAttrsWithId[]} componentAttrs - all component attributes used for rendering and hydration
+ * @property {import('../../componentAttrStore').ComponentAttrs[]} componentAttrs - all component attributes used for rendering and hydration
+ * @property {Record<string, import('../../../main/defineConfig').Renderer>} rendererMap - map of renderer names to definitions
  * @property {import('../../index').SlinkityConfigOptions['dir']} dir - input and output directories
  *
  * @param {HydrationLoadersAppliedParams}
  * @returns {string} output markup with every component's inline styles and hydration scripts applied
  */
-async function toHydrationLoadersApplied({ content, componentAttrs, dir }) {
+async function toHydrationLoadersApplied({ content, componentAttrs, dir, rendererMap }) {
   const root = parse(content)
   applyHtmlWrapper(root)
 
   try {
     // Generate scripts to hydrate those components
-    const scripts = componentAttrs.map(({ path: componentPath, hydrate, id, props }) =>
-      toLoaderScript({
-        componentPath,
-        hydrate,
-        id,
-        props,
-      }),
+    const scripts = componentAttrs.map(
+      ({ path: componentPath, hydrate, id, props, rendererName }) =>
+        toLoaderScript({
+          componentPath,
+          rendererPath: rendererMap[rendererName].client,
+          hydrate,
+          id,
+          props,
+        }),
     )
 
-    root
-      .querySelector('body')
-      .insertAdjacentHTML(
-        'beforeend',
-        [...(componentAttrs.length ? [webComponentLoader] : []), ...scripts].join('\n'),
-      )
+    root.querySelector('body').insertAdjacentHTML('beforeend', scripts.join('\n'))
   } catch (e) {
     // we silently fail so our error logs aren't buried by 11ty's
     // TODO: handle Slinkity-specific exceptions at the CLI level

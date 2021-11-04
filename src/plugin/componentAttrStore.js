@@ -13,9 +13,10 @@
  * @property {'eager' | 'lazy' | 'static'} hydrate - mode to use when hydrating the component
  * @property {string} pageOutputPath - the page where this component lives, based on 11ty's inputPath property (ex. src/index.html)
  * @property {ID} id - a unique identifier for later retrieval from the store
+ * @property {string} rendererName - name of renderer to use for SSR and clientside hydration
  *
  * @typedef {{
- *  getAllByPage: (pageOutputPath: string) => ComponentAttrsWithId[];
+ *  getAllByPage: (pageOutputPath: string) => ComponentAttrs[];
  *  push: (componentAttrs: ComponentAttrs) => number;
  *  clear: () => void;
  * }} ComponentAttrStore

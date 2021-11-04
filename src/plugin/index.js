@@ -14,12 +14,12 @@
 
 const browserSync = require('browser-sync')
 const { relative, join } = require('path')
-const reactPlugin = require('./reactPlugin')
 const toSlashesTrimmed = require('../utils/toSlashesTrimmed')
 const { getResolvedAliases } = require('../cli/vite')
 const { toComponentAttrStore } = require('./componentAttrStore')
-const { toHydrationLoadersApplied } = require('./reactPlugin/2-pageTransform')
-const { applyViteHtmlTransform } = require('./applyViteHtmlTransform')
+const { toHydrationLoadersApplied } = require('./eleventy-config/toHydrationLoadersApplied')
+const { applyViteHtmlTransform } = require('./vite-middleware/applyViteHtmlTransform')
+const { applyEleventyConfig } = require('./eleventy-config')
 
 // TODO: abstract based on renderer plugins configured
 // https://github.com/slinkity/slinkity/issues/55
@@ -56,20 +56,27 @@ function toEleventyIgnored(userEleventyIgnores, dir) {
  */
 module.exports = function slinkityConfig({ userSlinkityConfig, ...options }) {
   const { dir, viteSSR, browserSyncOptions, environment } = options
+  // TODO: ignore based on renderers (ex. ignore 'jsx' if the React renderer is applied)
   const eleventyIgnored = toEleventyIgnored(userSlinkityConfig.eleventyIgnores, dir)
   const componentAttrStore = toComponentAttrStore()
+  const rendererMap = Object.fromEntries(
+    userSlinkityConfig.renderers.map((renderer) => [renderer.name, renderer]),
+  )
 
   return function (eleventyConfig) {
+    // TODO: abstract this to "applyEleventyConfig"
     eleventyConfig.addTemplateFormats(
       extensions.filter((ext) => ext.isTemplateFormat).map((ext) => ext.extension),
     )
     for (const ignored of eleventyIgnored) {
       eleventyConfig.ignores.add(ignored)
     }
+    // -------------------------------------------
 
-    eleventyConfig.addPlugin(reactPlugin, {
+    applyEleventyConfig(eleventyConfig, {
       viteSSR,
       componentAttrStore,
+      renderers: userSlinkityConfig.renderers,
       resolvedImportAliases: getResolvedAliases(dir),
     })
 
@@ -86,6 +93,7 @@ module.exports = function slinkityConfig({ userSlinkityConfig, ...options }) {
         return await toHydrationLoadersApplied({
           content,
           componentAttrs,
+          rendererMap,
           dir,
         })
       },
@@ -112,7 +120,7 @@ module.exports = function slinkityConfig({ userSlinkityConfig, ...options }) {
                   const { content, outputPath } = page
                   res.write(
                     await applyViteHtmlTransform(
-                      { content, outputPath, componentAttrStore },
+                      { content, outputPath, componentAttrStore, rendererMap },
                       options,
                     ),
                   )
@@ -145,7 +153,10 @@ module.exports = function slinkityConfig({ userSlinkityConfig, ...options }) {
 
     if (environment === 'prod') {
       eleventyConfig.addTransform('apply-vite', async function (content, outputPath) {
-        return await applyViteHtmlTransform({ content, outputPath, componentAttrStore }, options)
+        return await applyViteHtmlTransform(
+          { content, outputPath, componentAttrStore, rendererMap },
+          options,
+        )
       })
     }
     return {}

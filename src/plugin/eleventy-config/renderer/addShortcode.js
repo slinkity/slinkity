@@ -21,16 +21,16 @@ const argsArrayToPropsObj = function ({ vargs = [], errorMsg = '' }) {
  * @typedef AddShortcodeParams
  * @property {import('../../componentAttrStore').ComponentAttrStore} componentAttrStore
  * @property {import('../../../cli/vite').ResolvedImportAliases} resolvedImportAliases
+ * @property {import('../../../main/defineConfig').Renderer} renderer
  * @param {AddShortcodeParams}
  */
-module.exports = function addShortcode(
+module.exports.addShortcode = function (
   eleventyConfig,
-  { componentAttrStore, resolvedImportAliases },
+  { componentAttrStore, resolvedImportAliases, renderer },
 ) {
-  eleventyConfig.addShortcode('react', function (componentPath, ...vargs) {
-    const absComponentPath =
-      join(resolvedImportAliases.includes, componentPath) +
-      (componentPath.endsWith('.jsx') ? '' : '.jsx')
+  eleventyConfig.addShortcode(renderer.name, function (componentPath, ...vargs) {
+    // TODO: check that dropping the default extension (ex. jsx) doesn't break things
+    const absComponentPath = join(resolvedImportAliases.includes, componentPath)
 
     let props = {}
 
@@ -52,6 +52,7 @@ module.exports = function addShortcode(
       hydrate: render,
       styleToFilePathMap: {},
       pageOutputPath: this.page.outputPath,
+      rendererName: renderer.name,
     })
 
     const html = toMountPoint({ id, hydrate: render })
@@ -66,4 +67,5 @@ module.exports = function addShortcode(
     }
   })
 }
+
 module.exports.argsArrayToPropsObj = argsArrayToPropsObj

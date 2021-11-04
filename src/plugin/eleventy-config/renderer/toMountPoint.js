@@ -9,7 +9,7 @@ const toHtmlAttrString = require('../../../utils/toHtmlAttrString')
  * @param {MountPointParams}
  * @returns {string} Stringified HTML
  */
-function toMountPoint({ id, hydrate }) {
+module.exports.toMountPoint = function ({ id, hydrate }) {
   const attrs = toHtmlAttrString({
     [SLINKITY_ATTRS.id]: id,
     [SLINKITY_ATTRS.ssr]: true,
@@ -20,5 +20,3 @@ function toMountPoint({ id, hydrate }) {
     return `<${SLINKITY_REACT_MOUNT_POINT} ${attrs}></${SLINKITY_REACT_MOUNT_POINT}>`
   }
 }
-
-module.exports = { toMountPoint }
