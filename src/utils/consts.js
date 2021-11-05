@@ -8,7 +8,7 @@
  
  * @type {SlinkityAttrs}
  */
-const SLINKITY_ATTRS = {
+module.exports.SLINKITY_ATTRS = {
   id: 'data-s-id',
   ssr: 'data-s-needs-ssr',
 }
@@ -20,7 +20,7 @@ const SLINKITY_ATTRS = {
  * @property {string} includes - alias for importing from the project includes directory, as specified in 11ty's dir.includes
  * @property {string} layouts - alias for importing from the project layouts directory, as specified in 11ty's dir.layouts
  */
-const IMPORT_ALIASES = {
+module.exports.IMPORT_ALIASES = {
   root: '/@root',
   input: '/@input',
   includes: '/@includes',
@@ -30,16 +30,9 @@ const IMPORT_ALIASES = {
 /**
  * Name for the web component used to mount React
  */
-const SLINKITY_REACT_MOUNT_POINT = 'slinkity-react-mount-point'
+module.exports.SLINKITY_REACT_MOUNT_POINT = 'slinkity-mount-point'
 
 /**
  * File name for user slinkity config files
  */
-const SLINKITY_CONFIG_FILE_NAME = 'slinkity.config'
-
-module.exports = {
-  SLINKITY_ATTRS,
-  SLINKITY_CONFIG_FILE_NAME,
-  SLINKITY_REACT_MOUNT_POINT,
-  IMPORT_ALIASES,
-}
+module.exports.SLINKITY_CONFIG_FILE_NAME = 'slinkity.config'
