@@ -1,6 +1,6 @@
 const { parse } = require('node-html-parser')
-const { SLINKITY_ATTRS } = require('../utils/consts')
-const toSlashesTrimmed = require('../utils/toSlashesTrimmed')
+const { SLINKITY_ATTRS } = require('../../utils/consts')
+const toSlashesTrimmed = require('../../utils/toSlashesTrimmed')
 const { relative, extname } = require('path')
 
 /**

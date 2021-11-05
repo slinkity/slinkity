@@ -1,7 +1,7 @@
 const { parse } = require('node-html-parser')
 const { applyHtmlWrapper } = require('./applyHtmlWrapper')
 const { toLoaderScript } = require('./toLoaderScript')
-const { log } = require('../../../utils/logger')
+const { log } = require('../../utils/logger')
 
 // TODO: remove this (or remove everything React-specific)
 const webComponentLoader = ''
