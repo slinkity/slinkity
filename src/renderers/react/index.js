@@ -2,13 +2,14 @@ const { defineConfig } = require('vite')
 const parseHtmlToReact = require('html-react-parser')
 const { renderToString, renderToStaticMarkup } = require('react-dom/server')
 const { createElement } = require('react')
-const { resolve, join } = require('path')
+const { join } = require('path')
 
 module.exports = {
   name: 'react',
   extensions: ['jsx', 'tsx'],
   // path to ES module for clientside use (can't import into Node)
-  client: resolve('_client.js'),
+  client: join(__dirname, '_client.js'),
+  // TODO: should reference a file path for vite to process the module directly
   server({ loadedModule, hydrate, props = {}, innerHTMLString = '', extension }) {
     const { default: Component } = loadedModule
     const reactElement = createElement(Component, props, parseHtmlToReact(innerHTMLString || ''))
@@ -59,13 +60,13 @@ module.exports = {
       join(resolvedImportAliases.includes, '**', 'module.scss'),
     ]
   },
-  // TODO
+  // Adds polyfills to Node's global object *yikes*
   polyfills: null,
+  // List of imports to add as scripts on the client
   hydrationPolyfills: null,
 
-  // TO DISCUSS (should be covered by the Vite config imo)
-  knownEntrypoints: null,
-  external: null,
+  // Later TODO
+  // https://github.com/snowpackjs/astro/blob/main/packages/astro/src/vite-plugin-jsx/index.ts
   jsxImportSource: null,
   jsxTransformOptions: null,
 }

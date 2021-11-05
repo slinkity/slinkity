@@ -4,7 +4,7 @@ const toUnixPath = require('../../utils/toUnixPath')
 
 function toClientImportStatement(relativePath) {
   // TODO: make this a true absolute path from the base of this module's build output
-  return JSON.stringify(toUnixPath(resolve('../_client', relativePath)))
+  return JSON.stringify(toUnixPath(resolve(__dirname, '../_client', relativePath)))
 }
 
 /**
