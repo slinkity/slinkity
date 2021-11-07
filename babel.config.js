@@ -7,4 +7,5 @@ module.exports = {
 
   // don't process files starting with underscores
   exclude: [/\/_[^\/]*$/],
+  ignore: ['src/renderers'],
 }
