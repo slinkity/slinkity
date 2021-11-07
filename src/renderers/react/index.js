@@ -1,27 +1,27 @@
 const { defineConfig } = require('vite')
-const parseHtmlToReact = require('html-react-parser')
-const { renderToString, renderToStaticMarkup } = require('react-dom/server')
-const { createElement } = require('react')
 const { join } = require('path')
+const packageMeta = require('./package.json')
+
+const client = join(packageMeta.name, 'client')
+const server = join(packageMeta.name, 'server')
 
 module.exports = {
   name: 'react',
   extensions: ['jsx', 'tsx'],
-  // path to ES module for clientside use (can't import into Node)
-  client: join(__dirname, '_client.js'),
-  // TODO: should reference a file path for vite to process the module directly
-  server({ loadedModule, hydrate, props = {}, innerHTMLString = '', extension }) {
-    const { default: Component } = loadedModule
-    const reactElement = createElement(Component, props, parseHtmlToReact(innerHTMLString || ''))
-
-    if (hydrate === 'static') {
-      return renderToStaticMarkup(reactElement)
-    } else {
-      return renderToString(reactElement)
-    }
-  },
+  client,
+  server,
   viteConfig() {
     return defineConfig({
+      optimizeDeps: {
+        include: [client, 'react', 'react/jsx-runtime', 'react/jsx-dev-runtime', 'react-dom'],
+        exclude: [server],
+      },
+      resolve: {
+        dedupe: ['react', 'react-dom'],
+      },
+      ssr: {
+        external: ['react-dom/server.js'],
+      },
       build: {
         rollupOptions: {
           output: {
@@ -43,7 +43,6 @@ module.exports = {
         return data.hydrate
       },
       // whether to format collections for better clientside parsing
-      // see src/plugin/reactPlugin/1-pluginDefinitions/toFormattedDataForProps.js
       useFormatted11tyData: true,
       async getProps(data) {
         const { getProps } = loadedModule
