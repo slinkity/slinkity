@@ -94,28 +94,37 @@ module.exports = function slinkityConfig({ userSlinkityConfig, ...options }) {
     if (environment === 'dev') {
       const urlToOutputHtmlMap = {}
 
-      browserSync.create()
-      browserSync.init({
-        ...browserSyncOptions,
-        middleware: [
-          async function viteTransformMiddleware(req, res, next) {
-            const page = urlToOutputHtmlMap[toSlashesTrimmed(req.originalUrl)]
-            if (page) {
-              const { content, outputPath } = page
-              res.write(
-                await applyViteHtmlTransform({ content, outputPath, componentAttrStore }, options),
-              )
-              res.end()
-            } else {
-              next()
-            }
-          },
-          viteSSR.server.middlewares,
-        ],
-      })
-
       eleventyConfig.on('beforeBuild', () => {
         componentAttrStore.clear()
+      })
+
+      eleventyConfig.on('afterBuild', async () => {
+        let server = viteSSR.getServer()
+        if (!server) {
+          server = await viteSSR.createServer()
+          browserSync.create()
+          browserSync.init({
+            ...browserSyncOptions,
+            middleware: [
+              async function viteTransformMiddleware(req, res, next) {
+                const page = urlToOutputHtmlMap[toSlashesTrimmed(req.originalUrl)]
+                if (page) {
+                  const { content, outputPath } = page
+                  res.write(
+                    await applyViteHtmlTransform(
+                      { content, outputPath, componentAttrStore },
+                      options,
+                    ),
+                  )
+                  res.end()
+                } else {
+                  next()
+                }
+              },
+              server.middlewares,
+            ],
+          })
+        }
       })
 
       eleventyConfig.addTransform(

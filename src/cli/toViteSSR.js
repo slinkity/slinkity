@@ -5,10 +5,10 @@ const { getSharedConfig } = require('./vite')
 
 /**
  * @typedef {import('./reactPlugin/2-pageTransform/componentAttrStore').ComponentAttrs['styleToFilePathMap']} StyleToFilePathMap
- * @returns {{
- *   getCSS: () => StyleToFilePathMap;
- *   plugin: import('vite').PluginOption;
- * }}
+ * @typedef GimmeCSSPluginReturn
+ * @property {() => StyleToFilePathMap} getCSS
+ * @property {import('vite').PluginOption}
+ * @returns {GimmeCSSPluginReturn}
  */
 function gimmeCSSPlugin() {
   /**
@@ -34,6 +34,53 @@ function gimmeCSSPlugin() {
 }
 
 /**
+ * Production-style build using Vite's build CLI
+ * @param {ViteSSRParams & {
+ *  ssrViteConfig: import('vite').UserConfigExport;
+ *  filePath: string;
+ *  generatedStyles: GimmeCSSPluginReturn;
+ * }} params
+ * @returns {FormattedModule}
+ */
+async function viteBuild({ dir, ssrViteConfig, filePath, environment, generatedStyles }) {
+  const { output } = await build({
+    ...ssrViteConfig,
+    ...(await getSharedConfig(dir)),
+    mode: environment,
+    build: {
+      ssr: true,
+      write: false,
+      rollupOptions: {
+        input: filePath,
+      },
+    },
+  })
+  /**
+   * @type {FormattedModule}
+   */
+  const mod = {
+    default: () => null,
+    getProps: () => ({}),
+    frontMatter: {},
+    __stylesGenerated: generatedStyles.getCSS(),
+  }
+  if (!output?.length) {
+    logger.log({
+      type: 'error',
+      message: `Module ${filePath} didn't have any output. Is this file blank?`,
+    })
+    return mod
+  }
+  return {
+    ...mod,
+    // converts our stringified JS to a CommonJS module in memory
+    // saves reading / writing to disk!
+    // TODO: check performance impact
+    ...requireFromString(output[0].code),
+  }
+}
+
+/**
  * @typedef ViteSSRParams
  * @property {import('../plugin').SlinkityConfigOptions['environment']} environment
  * @property {import('../plugin').SlinkityConfigOptions['dir']} dir
@@ -46,9 +93,13 @@ function gimmeCSSPlugin() {
  *  __stylesGenerated: Record<string, string>;
  * }} FormattedModule - expected keys from a given component module
  *
+ * @typedef ToCommonJSModuleOptions
+ * @property {boolean} useCache Whether to (attempt to) use the in-memory cache for fetching a build result. Defaults to true in production
+ *
  * @typedef ViteSSR - available fns for module conversion
- * @property {(filePath: string) => Promise<FormattedModule>} toCommonJSModule - fn to grab a Node-friendly module output from a given file path
- * @property {import('vite').ViteDevServer | null} server
+ * @property {(filePath: string, options?: ToCommonJSModuleOptions) => Promise<FormattedModule>} toCommonJSModule - fn to grab a Node-friendly module output from a given file path
+ * @property {() => (import('vite').ViteDevServer | null)} getServer Get instance of the Vite development server (always null for production envs)
+ * @property {() => Promise<void>} createServer Starts the Vite development server (has no effect for production envs)
  *
  * @returns {ViteSSR} viteSSR
  */
@@ -58,73 +109,79 @@ module.exports = async function toViteSSR({ environment, dir }) {
     root: dir.output,
     plugins: [generatedStyles.plugin],
   })
+  /**
+   * @type {Record<string, FormattedModule>}
+   */
+  const probablyInefficientCache = {}
 
   if (environment === 'dev') {
-    const server = await createServer({
-      ...ssrViteConfig,
-      ...(await getSharedConfig(dir)),
-      server: {
-        middlewareMode: 'ssr',
-      },
-    })
-    return {
-      async toCommonJSModule(filePath) {
-        const viteOutput = await server.ssrLoadModule(filePath)
-        return {
-          default: () => null,
-          getProps: () => ({}),
-          frontMatter: {},
-          __stylesGenerated: generatedStyles.getCSS(),
-          ...viteOutput,
-        }
-      },
-      server,
-    }
-  } else {
     /**
-     * @type {Record<string, FormattedModule>}
+     * @type {import('vite').ViteDevServer}
      */
-    const probablyInefficientCache = {}
+    let server = null
     return {
-      async toCommonJSModule(filePath) {
-        if (probablyInefficientCache[filePath]) return probablyInefficientCache[filePath]
-        const { output } = await build({
-          ...ssrViteConfig,
-          ...(await getSharedConfig(dir)),
-          build: {
-            ssr: true,
-            write: false,
-            rollupOptions: {
-              input: filePath,
-            },
-          },
-        })
+      async toCommonJSModule(filePath, options = { useCache: false }) {
+        if (options.useCache && probablyInefficientCache[filePath]) {
+          return probablyInefficientCache[filePath]
+        }
         /**
          * @type {FormattedModule}
          */
-        const mod = {
-          default: () => null,
-          getProps: () => ({}),
-          frontMatter: {},
-          __stylesGenerated: generatedStyles.getCSS(),
-        }
-        if (!output?.length) {
-          logger.log({
-            type: 'error',
-            message: `Module ${filePath} didn't have any output. Is this file blank?`,
+        let viteOutput
+        if (server) {
+          viteOutput = {
+            default: () => null,
+            getProps: () => ({}),
+            frontMatter: {},
+            __stylesGenerated: generatedStyles.getCSS(),
+            ...(await server.ssrLoadModule(filePath)),
+          }
+        } else {
+          viteOutput = await viteBuild({
+            dir,
+            filePath,
+            ssrViteConfig,
+            generatedStyles,
+            environment,
           })
-          return mod
         }
-        probablyInefficientCache[filePath] = {
-          ...mod,
-          // converts our stringified JS to a CommonJS module in memory
-          // saves reading / writing to disk!
-          // TODO: check performance impact
-          ...requireFromString(output[0].code),
-        }
-        return probablyInefficientCache[filePath]
+        probablyInefficientCache[filePath] = viteOutput
+        return viteOutput
       },
-      server: null,
+      getServer() {
+        return server
+      },
+      async createServer() {
+        server = await createServer({
+          ...ssrViteConfig,
+          ...(await getSharedConfig(dir)),
+          server: {
+            middlewareMode: 'ssr',
+          },
+        })
+        return server
+      },
+    }
+  } else {
+    return {
+      async toCommonJSModule(filePath, options = { useCache: true }) {
+        if (options.useCache && probablyInefficientCache[filePath]) {
+          return probablyInefficientCache[filePath]
+        }
+        const viteOutput = await viteBuild({
+          dir,
+          filePath,
+          generatedStyles,
+          ssrViteConfig,
+          environment,
+        })
+        probablyInefficientCache[filePath] = viteOutput
+        return viteOutput
+      },
+      getServer() {
+        return null
+      },
+      createServer() {},
     }
   }
 }

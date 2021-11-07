@@ -48,8 +48,9 @@ async function applyViteHtmlTransform(
     ?.insertAdjacentHTML('beforeend', `<style>${Object.values(pageStyles).join('\n')}</style>`)
 
   const routePath = '/' + toSlashesTrimmed(relative(dir.output, outputPath))
-  return environment === 'dev'
-    ? viteSSR.server.transformIndexHtml(routePath, root.outerHTML)
+  const server = viteSSR.getServer()
+  return environment === 'dev' && server
+    ? server.transformIndexHtml(routePath, root.outerHTML)
     : root.outerHTML
 }
 
