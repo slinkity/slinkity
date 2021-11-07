@@ -30,7 +30,7 @@ async function applyViteHtmlTransform(
     const componentAttrs = allComponentAttrsForPage[id]
     if (componentAttrs) {
       const { path: componentPath, props, hydrate } = componentAttrs
-      const { default: Component, __stylesGenerated } = await viteSSR.toComponentCommonJSModule(
+      const { default: Component, __stylesGenerated } = await viteSSR.toCommonJSModule(
         componentPath,
       )
       Object.assign(pageStyles, __stylesGenerated)
@@ -48,8 +48,9 @@ async function applyViteHtmlTransform(
     ?.insertAdjacentHTML('beforeend', `<style>${Object.values(pageStyles).join('\n')}</style>`)
 
   const routePath = '/' + toSlashesTrimmed(relative(dir.output, outputPath))
-  return environment === 'dev'
-    ? viteSSR.server.transformIndexHtml(routePath, root.outerHTML)
+  const server = viteSSR.getServer()
+  return environment === 'dev' && server
+    ? server.transformIndexHtml(routePath, root.outerHTML)
     : root.outerHTML
 }
 
