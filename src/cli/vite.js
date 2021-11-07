@@ -33,6 +33,16 @@ async function getSharedConfig(dir) {
   const importAliasesToResolvedPath = Object.entries(getResolvedAliases(dir)).map(
     ([key, value]) => [IMPORT_ALIASES[key], value],
   )
+  let optimizeDeps = {}
+  try {
+    require('react')
+    require('react-dom')
+    optimizeDeps = {
+      include: ['react', 'react/jsx-runtime', 'react/jsx-dev-runtime', 'react-dom'],
+    }
+  } catch {
+    // no-op
+  }
   return vite.defineConfig({
     clearScreen: false,
     configFile: await getConfigFile(),
@@ -40,9 +50,7 @@ async function getSharedConfig(dir) {
       alias: Object.fromEntries(importAliasesToResolvedPath),
       dedupe: ['react', 'react-dom'],
     },
-    optimizeDeps: {
-      include: ['react', 'react/jsx-runtime', 'react/jsx-dev-runtime', 'react-dom'],
-    },
+    optimizeDeps,
   })
 }
 
