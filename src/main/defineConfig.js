@@ -1,9 +1,20 @@
 /**
+ * @typedef {'eager' | 'lazy' | 'static'} HydrationMode
+ *
+ * @typedef RenderToStaticMarkupParams
+ * @property {any} Component ESM component module to render
+ * @property {Record<string, any>} props Collection of key / value props
+ * @property {HydrationMode} hydrate Mode Slinkity uses for clientside hydration
+ * @property {string} children HTML string to be used as Component children
+ *
+ * @typedef ServerRenderer
+ * @property {(params: RenderToStaticMarkupParams) => { html: string; css: string; }} renderToStaticMarkup
+ *
  * @typedef Renderer
  * @property {string} name
  * @property {string[]} extensions
  * @property {string} client
- * @property {(any) => any} server
+ * @property {string} server
  * @property {import('vite').UserConfigExport} viteConfig
  * @property {(any) => any} page
  * @property {(resolvedImportAliases: import('../utils/consts').ImportAliases) => string[]} eleventyIgnores
