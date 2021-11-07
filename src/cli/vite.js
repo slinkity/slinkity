@@ -38,6 +38,10 @@ async function getSharedConfig(dir) {
     configFile: await getConfigFile(),
     resolve: {
       alias: Object.fromEntries(importAliasesToResolvedPath),
+      dedupe: ['react', 'react-dom'],
+    },
+    optimizeDeps: {
+      include: ['react', 'react/jsx-runtime', 'react/jsx-dev-runtime', 'react-dom'],
     },
   })
 }
