@@ -109,7 +109,7 @@ module.exports = async function toViteSSR({ environment, dir, userSlinkityConfig
    * @type {import('vite').Plugin[]}
    */
   const rendererPlugins = userSlinkityConfig.renderers.map((renderer) => ({
-    name: `@slinkity/renderer-${renderer.name}`,
+    name: `@slinkity/renderer-vite-plugin-${renderer.name}`,
     config: renderer.viteConfig ?? {},
   }))
 
