@@ -18,13 +18,13 @@ module.exports = function addPageExtension(
     read: false,
     getData: async (inputPath) => {
       const absInputPath = join(resolvedImportAliases.root, inputPath)
-      const { frontMatter } = await viteSSR.toComponentCommonJSModule(absInputPath)
+      const { frontMatter } = await viteSSR.toCommonJSModule(absInputPath)
       return frontMatter
     },
     compile: (_, inputPath) =>
       async function (data) {
         const absInputPath = join(resolvedImportAliases.root, inputPath)
-        const { getProps, frontMatter } = await viteSSR.toComponentCommonJSModule(absInputPath)
+        const { getProps, frontMatter } = await viteSSR.toCommonJSModule(absInputPath)
 
         const props = await getProps(
           toFormattedDataForProps({

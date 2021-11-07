@@ -30,7 +30,7 @@ async function applyViteHtmlTransform(
     const componentAttrs = allComponentAttrsForPage[id]
     if (componentAttrs) {
       const { path: componentPath, props, hydrate } = componentAttrs
-      const { default: Component, __stylesGenerated } = await viteSSR.toComponentCommonJSModule(
+      const { default: Component, __stylesGenerated } = await viteSSR.toCommonJSModule(
         componentPath,
       )
       Object.assign(pageStyles, __stylesGenerated)
