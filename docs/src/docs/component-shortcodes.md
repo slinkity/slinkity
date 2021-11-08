@@ -58,6 +58,7 @@ Let's say you have a date component that wants to use [11ty's supplied `date` ob
 ...Where "date" is the key, and `page.date` is the value passed by 11ty. We can access our prop inside `components/Date.jsx` like so:
 
 ```jsx
+// _includes/components/Date.jsx
 import React from 'react'
 
 function ViewDate({ date }) {
