@@ -31,14 +31,14 @@ module.exports.toLoaderScript = function ({
   const rendererImportPath = JSON.stringify(toUnixPath(rendererPath))
   if (hydrate === 'eager') {
     return `<script type="module">
-    import loadedModule${id} from ${componentImportPath};
+    import Component${id} from ${componentImportPath};
     import eagerLoader${id} from ${toClientImportStatement('_eager-loader.js')};
     import renderer${id} from ${rendererImportPath}
   
     eagerLoader${id}({ 
       id: "${id}",
       props: ${stringify(props)},
-      loadedModule: loadedModule${id},
+      Component: Component${id},
       renderer: renderer${id},
     });
   </script>`
@@ -49,7 +49,7 @@ module.exports.toLoaderScript = function ({
     lazyLoader${id}({ 
       id: "${id}",
       props: ${stringify(props)},
-      toLoadedModule: async () => await import(${componentImportPath}),
+      toComponent: async () => await import(${componentImportPath}),
       toRenderer: async () => await import(${rendererImportPath}),
     });
   </script>`

@@ -1,10 +1,10 @@
 import { toMountPointById } from './_to-mount-point-by-id'
 
-export default async function eagerLoader({ id, loadedModule, props, renderer }) {
-  const mountPoint = toMountPointById(id)
+export default async function eagerLoader({ id, Component, props, renderer }) {
+  const target = toMountPointById(id)
   renderer({
-    loadedModule,
-    mountPoint,
+    Component,
+    target,
     props,
   })
 }
