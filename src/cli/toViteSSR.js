@@ -1,4 +1,4 @@
-const { createServer, build, defineConfig } = require('vite')
+const { createServer, build, defineConfig, mergeConfig: viteMergeConfig } = require('vite')
 const requireFromString = require('require-from-string')
 const logger = require('../utils/logger')
 const { getSharedConfig } = require('./vite')
@@ -106,18 +106,26 @@ async function viteBuild({ dir, ssrViteConfig, filePath, environment, generatedS
  */
 module.exports = async function toViteSSR({ environment, dir, userSlinkityConfig }) {
   /**
-   * @type {import('vite').Plugin[]}
+   * @type {import('vite').UserConfigExport[]}
    */
-  const rendererPlugins = userSlinkityConfig.renderers.map((renderer) => ({
-    name: `@slinkity/renderer-vite-plugin-${renderer.name}`,
-    config: renderer.viteConfig ?? {},
-  }))
+  const rendererConfigs = (
+    await Promise.all(userSlinkityConfig.renderers.map((renderer) => renderer.viteConfig?.()))
+  ).filter((config) => config != null)
+
+  const mergedRendererConfig = rendererConfigs.reduce((acc, config) => {
+    return viteMergeConfig(acc, config)
+  }, {})
 
   const generatedStyles = gimmeCSSPlugin()
-  const ssrViteConfig = defineConfig({
-    root: dir.output,
-    plugins: [generatedStyles.plugin, ...rendererPlugins],
-  })
+  const ssrViteConfig = defineConfig(
+    viteMergeConfig(
+      defineConfig({
+        root: dir.output,
+        plugins: [generatedStyles.plugin],
+      }),
+      mergedRendererConfig,
+    ),
+  )
   /**
    * @type {Record<string, FormattedModule>}
    */
