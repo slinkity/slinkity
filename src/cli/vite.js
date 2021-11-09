@@ -33,40 +33,13 @@ async function getSharedConfig(eleventyDir) {
   const importAliasesToResolvedPath = Object.entries(getResolvedAliases(eleventyDir)).map(
     ([key, value]) => [IMPORT_ALIASES[key], value],
   )
-  let reactConfig = vite.defineConfig()
-  try {
-    require('react')
-    require('react-dom')
-    reactConfig = vite.defineConfig({
-      resolve: {
-        dedupe: ['react', 'react-dom'],
-      },
-      optimizeDeps: {
-        include: ['react', 'react/jsx-runtime', 'react/jsx-dev-runtime', 'react-dom'],
-      },
-      build: {
-        rollupOptions: {
-          output: {
-            manualChunks: {
-              react: ['react'],
-            },
-          },
-        },
-      },
-    })
-  } catch {
-    // no-op
-  }
-  return vite.mergeConfig(
-    vite.defineConfig({
-      clearScreen: false,
-      configFile: await getConfigFile(),
-      resolve: {
-        alias: Object.fromEntries(importAliasesToResolvedPath),
-      },
-    }),
-    reactConfig,
-  )
+  return vite.defineConfig({
+    clearScreen: false,
+    configFile: await getConfigFile(),
+    resolve: {
+      alias: Object.fromEntries(importAliasesToResolvedPath),
+    },
+  })
 }
 
 /**
