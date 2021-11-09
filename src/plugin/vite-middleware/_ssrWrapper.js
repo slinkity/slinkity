@@ -42,7 +42,6 @@ export async function ssrWrapper({ server, extensions, componentPath }) {
   }
   return {
     async renderToStaticMarkup(props) {
-      console.log({ Component })
       const result = await renderToStaticMarkup({ Component, ...props })
       return {
         html: result.html ?? '',

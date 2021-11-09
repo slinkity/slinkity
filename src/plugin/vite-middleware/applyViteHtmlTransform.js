@@ -32,7 +32,6 @@ module.exports.applyViteHtmlTransform = async function (
     if (componentAttrs) {
       const { path: componentPath, props, hydrate, rendererName } = componentAttrs
       const { ssrWrapper } = await viteSSR.toCommonJSModule(resolve(__dirname, '_ssrWrapper.js'))
-      console.log({ ssrWrapper, componentPath })
       const server = await viteSSR.toCommonJSModule(rendererMap[rendererName].server)
       /**
        * @type {import('./_ssrWrapper').SSRWrapperReturn}
