@@ -112,7 +112,7 @@ const userConfigDir = toEleventyConfigDir({
       output: intermediateDir.split(sep).join('/'),
     })(toEleventyOptions(options))
     await viteBuild({
-      ...userConfigDir,
+      eleventyDir: userConfigDir,
       input: intermediateDir,
       output: outputDir,
     })
