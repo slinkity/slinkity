@@ -22,15 +22,6 @@ module.exports = {
       ssr: {
         external: ['react-dom/server.js'],
       },
-      build: {
-        rollupOptions: {
-          output: {
-            manualChunks: {
-              react: 'react',
-            },
-          },
-        },
-      },
     })
   },
   page({ loadedModule, eleventyConfig, extension }) {

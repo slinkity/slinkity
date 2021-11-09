@@ -1,18 +1,18 @@
 const { parse } = require('node-html-parser')
 const { SLINKITY_ATTRS } = require('../../utils/consts')
 const toSlashesTrimmed = require('../../utils/toSlashesTrimmed')
-const { relative, extname } = require('path')
+const { relative, resolve } = require('path')
 
 /**
  * @typedef ApplyViteHtmlTransformParams
- * @property {string} content - the original HTML content to transform
- * @property {string} outputPath - the output path this HTML content will be written to
- * @property {import('./componentAttrStore').ComponentAttrStore} componentAttrStore
- * @property {Record<string, import('../main/defineConfig').Renderer>} rendererMap
+ * @property {string} content The original HTML content to transform
+ * @property {string} outputPath The output path this HTML content will be written to
+ * @property {import('../componentAttrStore').ComponentAttrStore} componentAttrStore
+ * @property {Record<string, import('../../main/defineConfig').Renderer>} rendererMap
  * @param {ApplyViteHtmlTransformParams}
  *
- * @param {import('.').SlinkityConfigOptions}
- * @returns {string} - HTML with statically rendered content and Vite transforms applied
+ * @param {import('../').SlinkityConfigOptions}
+ * @returns {string} HTML with statically rendered content and Vite transforms applied
  */
 module.exports.applyViteHtmlTransform = async function (
   { content, outputPath, componentAttrStore, rendererMap },
@@ -31,17 +31,24 @@ module.exports.applyViteHtmlTransform = async function (
     const componentAttrs = allComponentAttrsForPage[parseInt(id)]
     if (componentAttrs) {
       const { path: componentPath, props, hydrate, rendererName } = componentAttrs
-      const { __stylesGenerated, ...loadedModule } = await viteSSR.toCommonJSModule(componentPath)
-      Object.assign(pageStyles, __stylesGenerated)
-      // TODO: abstract renderer imports to be framework-agnostic
-      // (importing directly from the React plugin right now)
-      mountPointToSSR.innerHTML = rendererMap[rendererName].server({
-        loadedModule,
-        hydrate,
-        props,
-        innerHTMLString: '',
-        extension: extname(componentPath),
+      const { ssrWrapper } = await viteSSR.toCommonJSModule(resolve(__dirname, '_ssrWrapper.js'))
+      console.log({ ssrWrapper, componentPath })
+      const server = await viteSSR.toCommonJSModule(rendererMap[rendererName].server)
+      /**
+       * @type {import('./_ssrWrapper').SSRWrapperReturn}
+       */
+      const { renderToStaticMarkup } = await ssrWrapper({
+        componentPath,
+        extensions: rendererMap[rendererName].extensions,
+        server,
       })
+      // TODO: handle "css" output from server renderer
+      const markup = await renderToStaticMarkup({
+        props,
+        children: '',
+        hydrate,
+      })
+      mountPointToSSR.innerHTML = markup.html
     }
   }
   root
