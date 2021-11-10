@@ -32,12 +32,18 @@ module.exports = function addShortcode(
       join(resolvedImportAliases.includes, componentPath) +
       (componentPath.endsWith('.jsx') ? '' : '.jsx')
 
-    const props = argsArrayToPropsObj({
-      vargs,
-      errorMsg: `Looks like you passed a "prop" key without a corresponding value.
-Check your props on react shortcode "${componentPath}"
-in file "${this.page.inputPath}"`,
-    })
+    let props = {}
+
+    if (typeof vargs[0] === 'object') {
+      props = vargs[0]
+    } else {
+      props = argsArrayToPropsObj({
+        vargs,
+        errorMsg: `Looks like you passed a "prop" key without a corresponding value.
+  Check your props on react shortcode "${componentPath}"
+  in file "${this.page.inputPath}"`,
+      })
+    }
 
     const { render = 'eager' } = props
     const id = componentAttrStore.push({
