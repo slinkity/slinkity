@@ -40,22 +40,24 @@ Note that `_includes` and `.jsx` are optional in our shortcode. Passing {% raw %
 
 ## Passing props to shortcodes
 
-You can also pass data to your components as key / value pairs. Shortcode syntax doesn't accept objects, so we've dreamed up a slightly different syntax.
+You can also pass data to your components as key / value pairs.
 
 Let's say you have a date component that wants to use [11ty's supplied `date` object](https://www.11ty.dev/docs/data-eleventy-supplied/). You can pass this "date" prop like so:
 
 ```html
-<!--for liquid templates -->
-{% raw %}{% react 'components/Date' 'date' page.date %}{% endraw %}
+<!--for nunjucks templates -->
+{% raw %}{% react 'components/Date', date=page.date %}{% endraw %}
 
-<!--for nunjucks templates (use commas!) -->
-{% raw %}{% react 'components/Date', 'date', page.date %}{% endraw %}
+<!--for liquid templates (note we can't use the "=" sign here!) -->
+{% raw %}{% react 'components/Date' 'date' page.date %}{% endraw %}
 
 <!--for handlebars templates --> 
 {% raw %}{{{ react 'components/Date', 'date', page.date }}}{% endraw %}
 ```
 
-...Where "date" is the key, and `page.date` is the value passed by 11ty. We can access our prop inside `components/Date.jsx` like so:
+> If you prefer the syntax available in nunjucks templates, we do too! We recommend configuring nunjucks as the default templating language for HTML and markdown files to access this syntax everywhere. [Head to our configuration docs](/docs/config/#11ty's-.eleventy.js) for more details.
+
+"date" is the key for our prop here, and `page.date` is the value passed by 11ty. We can access our prop inside `components/Date.jsx` like so:
 
 ```jsx
 import React from 'react'
@@ -74,7 +76,11 @@ export default ViewDate
 You're free to pass as many key / value pairs as you want! The names and ordering of your keys shouldn't matter.
 
 ```html
-<!--liquid template example-->
+<!--for nunjucks templates-->
+{% raw %}{% react 'components/DisplayAllTheThings', date=page.date,
+url=page.url, fileSlug=page.fileSlug %}{% endraw %}
+
+<!--for liquid templates-->
 {% raw %}{% react 'components/DisplayAllTheThings' 'date' page.date
 'url' page.url 'fileSlug' page.fileSlug %}{% endraw %}
 ```
