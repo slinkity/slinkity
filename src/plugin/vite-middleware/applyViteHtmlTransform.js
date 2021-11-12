@@ -48,6 +48,7 @@ module.exports.applyViteHtmlTransform = async function (
         hydrate,
       })
       mountPointToSSR.innerHTML = markup.html
+      pageStyles[componentPath] = markup.css
     }
   }
   root
