@@ -12,7 +12,7 @@ export default function lazyLoader({ id, props, toComponent, toRenderer }) {
         const target = toMountPointById(id)
         if (!target.getAttribute('data-s-is-hydrated')) {
           const { default: renderer } = await toRenderer()
-          const Component = await toComponent()
+          const { default: Component } = await toComponent()
           renderer({ Component, target, props })
           target.setAttribute('data-s-is-hydrated', true)
         }
