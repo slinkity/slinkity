@@ -122,6 +122,9 @@ module.exports = async function toViteSSR({ environment, dir, userSlinkityConfig
       defineConfig({
         root: dir.output,
         plugins: [generatedStyles.plugin],
+        optimizeDeps: {
+          include: userSlinkityConfig.renderers.map((renderer) => renderer.client).filter(Boolean),
+        },
       }),
       mergedRendererConfig,
     ),
