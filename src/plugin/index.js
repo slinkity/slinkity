@@ -76,7 +76,7 @@ module.exports = function slinkityConfig({ userSlinkityConfig, ...options }) {
     eleventyConfig.addTransform(
       'apply-react-hydration-loaders',
       async function (content, outputPath) {
-        if (!outputPath.endsWith('.html')) return content
+        if (!outputPath || !outputPath.endsWith('.html')) return content
 
         const componentAttrs = componentAttrStore
           .getAllByPage(outputPath)
