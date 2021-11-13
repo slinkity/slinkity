@@ -17,6 +17,7 @@ Read the rest of this doc for all options available to you! In our experience th
 2. **Specify an input directory** for 11ty to work from. 11ty defaults to the base of your project directory, which could cause 11ty to accidentally process config files, your `README.md`, etc (unless you [update your 11ty ignores](https://www.11ty.dev/docs/ignores/)). You can do so using the `--input="[dir]"` CLI flag, or [by exporting a `dir` from your `.eleventy.js` config](https://www.11ty.dev/docs/config/):
 
 ```js
+// .eleventy.js
 module.exports = function(eleventyConfig) {
   return { dir: { input: '[dir]' } }
 }
@@ -25,6 +26,7 @@ module.exports = function(eleventyConfig) {
 3. **Inject the React import** when using React in your project. This prevents you from having to import React by hand in every component, in keeping with React's [new JSX transform](https://reactjs.org/blog/2020/09/22/introducing-the-new-jsx-transform.html). You can do so [using the `jsxInject` property](https://vitejs.dev/config/#esbuild) in a `vite.config.js`:
 
 ```js
+// vite.config.js
 import { defineConfig } from 'vite'
 
 export default defineConfig({
@@ -81,6 +83,7 @@ You'll configure everything relating to 11ty ↔️ Vite communication here. The
 We closely mirror [Vite's config file](https://vitejs.dev/config/) format. You can write your config in any flavor of JS you want, including ESM:
 
 ```js
+// slinkity.config.js
 // export either an object
 export default {
   ...config,
@@ -96,6 +99,7 @@ export default async function() {
 or CommonJS:
 
 ```js
+// slinkity.config.js
 // either an object
 module.exports = {
   ...config,
@@ -158,6 +162,7 @@ By default, Slinkity will [ask 11ty to ignore](https://www.11ty.dev/docs/ignores
 The full list of ignores will vary as we add more renderers beyond React. So to make configuration easier, we expose all our ignores using a helper function like so:
 
 ```js
+// slinkity.config.js
 module.exports = defineConfig({
   eleventyIgnores(ignores) {
     // to check which ignores are applied
