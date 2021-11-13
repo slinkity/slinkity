@@ -17,7 +17,7 @@ async function applyViteHtmlTransform(
   { content, outputPath, componentAttrStore },
   { dir, viteSSR, environment },
 ) {
-  if (!outputPath.endsWith('.html')) {
+  if (!outputPath || !outputPath.endsWith('.html')) {
     return content
   }
 
