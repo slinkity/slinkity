@@ -60,6 +60,7 @@
     "node-html-parser": "^5.1.0",
     "require-from-string": "^2.0.2",
     "sass": "^1.36.0",
+    "uuid": "^8.3.2",
     "vite": "^2.4.4"
   },
   "peerDependencies": {
