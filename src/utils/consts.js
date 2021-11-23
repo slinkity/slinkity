@@ -1,16 +1,16 @@
+const { v4: uuidv4 } = require('uuid')
+
 /**
  * Slinkity-specific data attributes
  * Applied to mount points and associated scripts
  *
  * @typedef SlinkityAttrs
  * @property {string} id - ID to identify mount points in the DOM for hydration
- * @property {string} ssr - true / false flag to identify mount points that need SSR on server request / on production build
  
  * @type {SlinkityAttrs}
  */
 const SLINKITY_ATTRS = {
   id: 'data-s-id',
-  ssr: 'data-s-needs-ssr',
 }
 
 /**
@@ -37,9 +37,17 @@ const SLINKITY_REACT_MOUNT_POINT = 'slinkity-react-mount-point'
  */
 const SLINKITY_CONFIG_FILE_NAME = 'slinkity.config'
 
+const BUILD_HASH = uuidv4()
+
+function toSSRComment(id) {
+  return `<!--slinkity-ssr ${BUILD_HASH} ${id}-->`
+}
+
 module.exports = {
   SLINKITY_ATTRS,
   SLINKITY_CONFIG_FILE_NAME,
   SLINKITY_REACT_MOUNT_POINT,
   IMPORT_ALIASES,
+  BUILD_HASH,
+  toSSRComment,
 }

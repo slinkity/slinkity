@@ -1,4 +1,5 @@
 const { toMountPoint } = require('./toMountPoint')
+const toLoaderScript = require('../2-pageTransform/toLoaderScript')
 const { join, extname } = require('path')
 const { log } = require('../../../utils/logger')
 
@@ -54,7 +55,12 @@ module.exports = function addShortcode(
       pageOutputPath: this.page.outputPath,
     })
 
-    const html = toMountPoint({ id, hydrate: render })
+    const html = `${toMountPoint({ id, hydrate: render })}${toLoaderScript({
+      componentPath,
+      hydrate: render,
+      id,
+      props,
+    })}`
 
     // Fixes https://github.com/slinkity/slinkity/issues/15
     // To prevent 11ty's markdown parser from wrapping components in <p> tags,
