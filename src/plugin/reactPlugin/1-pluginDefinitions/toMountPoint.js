@@ -1,4 +1,8 @@
-const { SLINKITY_ATTRS, SLINKITY_REACT_MOUNT_POINT } = require('../../../utils/consts')
+const {
+  SLINKITY_ATTRS,
+  SLINKITY_REACT_MOUNT_POINT,
+  toSSRComment,
+} = require('../../../utils/consts')
 const toHtmlAttrString = require('../../../utils/toHtmlAttrString')
 
 /**
@@ -12,12 +16,15 @@ const toHtmlAttrString = require('../../../utils/toHtmlAttrString')
 function toMountPoint({ id, hydrate }) {
   const attrs = toHtmlAttrString({
     [SLINKITY_ATTRS.id]: id,
-    [SLINKITY_ATTRS.ssr]: true,
   })
   if (hydrate === 'static') {
-    return `<div ${attrs}></div>`
+    return `<div ${attrs}>
+  ${toSSRComment(id)}
+</div>`
   } else {
-    return `<${SLINKITY_REACT_MOUNT_POINT} ${attrs}></${SLINKITY_REACT_MOUNT_POINT}>`
+    return `<${SLINKITY_REACT_MOUNT_POINT} ${attrs}>
+  ${toSSRComment(id)}
+</${SLINKITY_REACT_MOUNT_POINT}>`
   }
 }
 

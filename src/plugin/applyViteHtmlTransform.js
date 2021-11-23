@@ -1,9 +1,11 @@
 const { normalizePath } = require('vite')
 const { relative } = require('path')
 const { parse } = require('node-html-parser')
-const { SLINKITY_ATTRS } = require('../utils/consts')
+const { SLINKITY_ATTRS, toSSRComment } = require('../utils/consts')
 const { toRendererHtml } = require('./reactPlugin/1-pluginDefinitions/toRendererHtml')
 const toSlashesTrimmed = require('../utils/toSlashesTrimmed')
+
+const ssrRegex = RegExp(toSSRComment('([0-9]+)'), 'g')
 
 /**
  * @typedef ApplyViteHtmlTransformParams
@@ -21,6 +23,24 @@ async function applyViteHtmlTransform(
   if (!outputPath || !outputPath.endsWith('.html')) {
     return content
   }
+
+  const allComponentAttrs = componentAttrStore.getAllByPage(outputPath)
+  const componentIdsOnPage = [...content.matchAll(ssrRegex)].map(([, id]) => id)
+  const html = componentIdsOnPage.reduce(function (html, componentId) {
+    const componentAttrs = allComponentAttrs[componentId]
+    if (componentAttrs) {
+      const { path: componentPath, props, hydrate } = componentAttrs
+      // TODO: actually render lol
+    }
+  })
+
+  for (const [, id] of content.matchAll(ssrRegex)) {
+
+  }
+
+  const html = componentAttrStore.getAllByPage(outputPath).reduce((html, componentAttrs) => {
+    html.replace(toSSRComment(id))
+  }, content)
 
   const root = parse(content)
   const mountPointsToSSR = root.querySelectorAll(`[${SLINKITY_ATTRS.ssr}="true"]`)
