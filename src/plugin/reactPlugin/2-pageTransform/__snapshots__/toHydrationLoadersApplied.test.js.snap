@@ -26,32 +26,32 @@ exports[`toHydrationLoadersApplied with hydrated components should apply correct
   window.customElements.define(\\"slinkity-react-mount-point\\", MountPoint);
 </script>
 <script type=\\"module\\">
-    import Component from \\"not-important.jsx\\";
-    import eagerLoader from \\"slinkity/lib/plugin/reactPlugin/_client/_eager-loader.js\\";
+    import Component0 from \\"not-important.jsx\\";
+    import eagerLoader0 from \\"slinkity/lib/plugin/reactPlugin/_client/_eager-loader.js\\";
   
-    eagerLoader({ 
+    eagerLoader0({ 
       id: \\"0\\",
-      Component,
+      Component: Component0,
       props: {},
     });
   </script>
 <script type=\\"module\\">
-    import Component from \\"not-important.jsx\\";
-    import eagerLoader from \\"slinkity/lib/plugin/reactPlugin/_client/_eager-loader.js\\";
+    import Component1 from \\"not-important.jsx\\";
+    import eagerLoader1 from \\"slinkity/lib/plugin/reactPlugin/_client/_eager-loader.js\\";
   
-    eagerLoader({ 
+    eagerLoader1({ 
       id: \\"1\\",
-      Component,
+      Component: Component1,
       props: {},
     });
   </script>
 <script type=\\"module\\">
-    import Component from \\"not-important.jsx\\";
-    import eagerLoader from \\"slinkity/lib/plugin/reactPlugin/_client/_eager-loader.js\\";
+    import Component2 from \\"not-important.jsx\\";
+    import eagerLoader2 from \\"slinkity/lib/plugin/reactPlugin/_client/_eager-loader.js\\";
   
-    eagerLoader({ 
+    eagerLoader2({ 
       id: \\"2\\",
-      Component,
+      Component: Component2,
       props: {},
     });
   </script></body>
@@ -84,27 +84,27 @@ exports[`toHydrationLoadersApplied with hydrated components should apply correct
   window.customElements.define(\\"slinkity-react-mount-point\\", MountPoint);
 </script>
 <script type=\\"module\\">
-    import lazyLoader from \\"slinkity/lib/plugin/reactPlugin/_client/_lazy-loader.js\\";
+    import lazyLoader0 from \\"slinkity/lib/plugin/reactPlugin/_client/_lazy-loader.js\\";
   
-    lazyLoader({ 
+    lazyLoader0({ 
       id: \\"0\\",
       componentImporter: async () => await import(\\"not-important.jsx\\"),
       props: {},
     });
   </script>
 <script type=\\"module\\">
-    import lazyLoader from \\"slinkity/lib/plugin/reactPlugin/_client/_lazy-loader.js\\";
+    import lazyLoader1 from \\"slinkity/lib/plugin/reactPlugin/_client/_lazy-loader.js\\";
   
-    lazyLoader({ 
+    lazyLoader1({ 
       id: \\"1\\",
       componentImporter: async () => await import(\\"not-important.jsx\\"),
       props: {},
     });
   </script>
 <script type=\\"module\\">
-    import lazyLoader from \\"slinkity/lib/plugin/reactPlugin/_client/_lazy-loader.js\\";
+    import lazyLoader2 from \\"slinkity/lib/plugin/reactPlugin/_client/_lazy-loader.js\\";
   
-    lazyLoader({ 
+    lazyLoader2({ 
       id: \\"2\\",
       componentImporter: async () => await import(\\"not-important.jsx\\"),
       props: {},
@@ -139,30 +139,30 @@ exports[`toHydrationLoadersApplied with hydrated components should apply correct
   window.customElements.define(\\"slinkity-react-mount-point\\", MountPoint);
 </script>
 <script type=\\"module\\">
-    import Component from \\"nav.jsx\\";
-    import eagerLoader from \\"slinkity/lib/plugin/reactPlugin/_client/_eager-loader.js\\";
+    import Component0 from \\"nav.jsx\\";
+    import eagerLoader0 from \\"slinkity/lib/plugin/reactPlugin/_client/_eager-loader.js\\";
   
-    eagerLoader({ 
+    eagerLoader0({ 
       id: \\"0\\",
-      Component,
+      Component: Component0,
       props: {firstProp:'nice',secondProp:42,thirdProp:false,helper() {
   return 'Testing non-JSON properties';
 }},
     });
   </script>
 <script type=\\"module\\">
-    import lazyLoader from \\"slinkity/lib/plugin/reactPlugin/_client/_lazy-loader.js\\";
+    import lazyLoader1 from \\"slinkity/lib/plugin/reactPlugin/_client/_lazy-loader.js\\";
   
-    lazyLoader({ 
+    lazyLoader1({ 
       id: \\"1\\",
       componentImporter: async () => await import(\\"nested/Heading.jsx\\"),
       props: {text:{weight:'bold',content:'Welcome to the site'}},
     });
   </script>
 <script type=\\"module\\">
-    import lazyLoader from \\"slinkity/lib/plugin/reactPlugin/_client/_lazy-loader.js\\";
+    import lazyLoader2 from \\"slinkity/lib/plugin/reactPlugin/_client/_lazy-loader.js\\";
   
-    lazyLoader({ 
+    lazyLoader2({ 
       id: \\"2\\",
       componentImporter: async () => await import(\\"index.jsx\\"),
       props: {list:['Have a nice day world']},
