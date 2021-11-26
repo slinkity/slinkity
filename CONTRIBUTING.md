@@ -23,7 +23,7 @@ Glad to see you here. We're open to contributions of all kinds, including:
 
 We ask that you follow this little pre-flight checklist:
 
-1. **Have I checked the [community discord](https://discord.gg/AfZMRCg8) and [existing issue logs](https://github.com/slinkity/slinkity/issues) first?** We've built strong communication channels to help our userbase. Sparking a discussion on Discord or sharing in issues threads related to your problem is a great starting point!
+1. **Have I checked the [community discord](https://discord.gg/GBkBy9u#plugin-slinkity) and [existing issue logs](https://github.com/slinkity/slinkity/issues) first?** We've built strong communication channels to help our userbase. Sparking a discussion on Discord or sharing in issues threads related to your problem is a great starting point!
 2. **Have I reviewed [the existing documentation](https://slinkity.dev/docs/)?** You may find your problem or feature request already nestled in our existing featureset. And if you're contributing to the docs themselves, it's good to get a lay of the land first.
 3. **Is my problem or feature request [documented as an issue](https://github.com/slinkity/slinkity/issues) before I start working?** We love to see pull requests that immediately resolve whatever issue you're having. But before you get to work, we ask that you grab one of our lovely issue templates to explain what you're looking to do. You can tag this issue in your PR later using the "Resolves #[issue-number]" description.
 
