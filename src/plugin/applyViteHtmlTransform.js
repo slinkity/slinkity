@@ -26,26 +26,19 @@ async function applyViteHtmlTransform(
   const allComponentAttrs = componentAttrStore.getAllByPage(outputPath)
   const componentIdsOnPage = [...content.matchAll(ssrRegex)].map(([, id]) => id)
   const html = componentIdsOnPage.reduce(function (html, componentId) {
+    console.log({ componentId })
     const componentAttrs = allComponentAttrs[componentId]
     if (componentAttrs) {
       const { path: componentPath, props, hydrate } = componentAttrs
-      // TODO: actually render lol
+      // TODO: actually render
     }
   })
-
-  for (const [, id] of content.matchAll(ssrRegex)) {
-
-  }
-
-  const html = componentAttrStore.getAllByPage(outputPath).reduce((html, componentAttrs) => {
-    html.replace(toSSRComment(id))
-  }, content)
 
   const root = parse(content)
   const mountPointsToSSR = root.querySelectorAll(`[${SLINKITY_ATTRS.ssr}="true"]`)
   const allComponentAttrsForPage = componentAttrStore.getAllByPage(outputPath)
   const pageStyles = {}
-  for (const componentAttrs of mountPointsToSSR) {
+  for (const mountPointToSSR of mountPointsToSSR) {
     const id = mountPointToSSR.getAttribute(SLINKITY_ATTRS.id)
     const componentAttrs = allComponentAttrsForPage[id]
     if (componentAttrs) {
