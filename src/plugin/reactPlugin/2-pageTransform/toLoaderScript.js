@@ -18,25 +18,25 @@ module.exports = function toLoaderScript({ componentPath, hydrate, id, props = {
   const componentImportStatement = JSON.stringify(toUnixPath(componentPath))
   if (hydrate === 'eager') {
     return `<script type="module">
-    import Component from ${componentImportStatement};
-    import eagerLoader from ${toClientImportStatement('_eager-loader.js')};
-  
-    eagerLoader({ 
-      id: "${id}",
-      Component,
-      props: ${stringify(props)},
-    });
-  </script>`
+  import Component from ${componentImportStatement};
+  import eagerLoader from ${toClientImportStatement('_eager-loader.js')};
+
+  eagerLoader({ 
+    id: "${id}",
+    Component,
+    props: ${stringify(props)},
+  });
+</script>`
   } else if (hydrate === 'lazy') {
     return `<script type="module">
-    import lazyLoader from ${toClientImportStatement('_lazy-loader.js')};
-  
-    lazyLoader({ 
-      id: "${id}",
-      componentImporter: async () => await import(${componentImportStatement}),
-      props: ${stringify(props)},
-    });
-  </script>`
+  import lazyLoader from ${toClientImportStatement('_lazy-loader.js')};
+
+  lazyLoader({ 
+    id: "${id}",
+    componentImporter: async () => await import(${componentImportStatement}),
+    props: ${stringify(props)},
+  });
+</script>`
   } else {
     throw 'Unsupported loader'
   }
