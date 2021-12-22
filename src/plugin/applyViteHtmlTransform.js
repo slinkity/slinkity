@@ -1,4 +1,3 @@
-// const { parse } = require('node-html-parser')
 const { toSSRComment, SLINKITY_REACT_MOUNT_POINT, SLINKITY_ATTRS } = require('../utils/consts')
 const { toRendererHtml } = require('./reactPlugin/1-pluginDefinitions/toRendererHtml')
 const toSlashesTrimmed = require('../utils/toSlashesTrimmed')
@@ -30,6 +29,7 @@ async function applyViteHtmlTransform(
     allComponentAttrs.map(async (componentAttrs) => {
       const { path: componentPath, props, hydrate } = componentAttrs
       const { default: Component } = await viteSSR.toCommonJSModule(componentPath)
+      // TODO: re-implement page styles.
       // Object.assign(pageStyles, __stylesGenerated)
       // TODO: abstract renderer imports to be framework-agnostic
       // (importing directly from the React plugin right now)
