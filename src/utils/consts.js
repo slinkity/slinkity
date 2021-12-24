@@ -27,6 +27,10 @@ const IMPORT_ALIASES = {
   layouts: '/@layouts',
 }
 
+const PACKAGES = {
+  client: 'slinkity/client',
+}
+
 /**
  * Name for the web component used to mount React
  */
@@ -42,4 +46,5 @@ module.exports = {
   SLINKITY_CONFIG_FILE_NAME,
   SLINKITY_REACT_MOUNT_POINT,
   IMPORT_ALIASES,
+  PACKAGES,
 }
