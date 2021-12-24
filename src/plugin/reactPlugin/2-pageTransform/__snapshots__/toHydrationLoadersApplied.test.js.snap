@@ -22,12 +22,12 @@ exports[`toHydrationLoadersApplied with hydrated components should apply correct
   </slinkity-react-mount-point>
 
 <script type=\\"module\\">
-  import MountPoint from \\"slinkity/lib/plugin/reactPlugin/_client/_mount-point.js\\";
+  import { MountPoint } from \\"slinkity/client\\";
   window.customElements.define(\\"slinkity-react-mount-point\\", MountPoint);
 </script>
 <script type=\\"module\\">
     import Component0 from \\"not-important.jsx\\";
-    import eagerLoader0 from \\"slinkity/lib/plugin/reactPlugin/_client/_eager-loader.js\\";
+    import { eagerLoader as eagerLoader0 } from \\"slinkity/client\\";
   
     eagerLoader0({ 
       id: \\"0\\",
@@ -37,7 +37,7 @@ exports[`toHydrationLoadersApplied with hydrated components should apply correct
   </script>
 <script type=\\"module\\">
     import Component1 from \\"not-important.jsx\\";
-    import eagerLoader1 from \\"slinkity/lib/plugin/reactPlugin/_client/_eager-loader.js\\";
+    import { eagerLoader as eagerLoader1 } from \\"slinkity/client\\";
   
     eagerLoader1({ 
       id: \\"1\\",
@@ -47,7 +47,7 @@ exports[`toHydrationLoadersApplied with hydrated components should apply correct
   </script>
 <script type=\\"module\\">
     import Component2 from \\"not-important.jsx\\";
-    import eagerLoader2 from \\"slinkity/lib/plugin/reactPlugin/_client/_eager-loader.js\\";
+    import { eagerLoader as eagerLoader2 } from \\"slinkity/client\\";
   
     eagerLoader2({ 
       id: \\"2\\",
@@ -80,11 +80,11 @@ exports[`toHydrationLoadersApplied with hydrated components should apply correct
   </slinkity-react-mount-point>
 
 <script type=\\"module\\">
-  import MountPoint from \\"slinkity/lib/plugin/reactPlugin/_client/_mount-point.js\\";
+  import { MountPoint } from \\"slinkity/client\\";
   window.customElements.define(\\"slinkity-react-mount-point\\", MountPoint);
 </script>
 <script type=\\"module\\">
-    import lazyLoader0 from \\"slinkity/lib/plugin/reactPlugin/_client/_lazy-loader.js\\";
+    import { lazyLoader as lazyLoader0 } from \\"slinkity/client\\";
   
     lazyLoader0({ 
       id: \\"0\\",
@@ -93,7 +93,7 @@ exports[`toHydrationLoadersApplied with hydrated components should apply correct
     });
   </script>
 <script type=\\"module\\">
-    import lazyLoader1 from \\"slinkity/lib/plugin/reactPlugin/_client/_lazy-loader.js\\";
+    import { lazyLoader as lazyLoader1 } from \\"slinkity/client\\";
   
     lazyLoader1({ 
       id: \\"1\\",
@@ -102,7 +102,7 @@ exports[`toHydrationLoadersApplied with hydrated components should apply correct
     });
   </script>
 <script type=\\"module\\">
-    import lazyLoader2 from \\"slinkity/lib/plugin/reactPlugin/_client/_lazy-loader.js\\";
+    import { lazyLoader as lazyLoader2 } from \\"slinkity/client\\";
   
     lazyLoader2({ 
       id: \\"2\\",
@@ -135,12 +135,12 @@ exports[`toHydrationLoadersApplied with hydrated components should apply correct
   </slinkity-react-mount-point>
 
 <script type=\\"module\\">
-  import MountPoint from \\"slinkity/lib/plugin/reactPlugin/_client/_mount-point.js\\";
+  import { MountPoint } from \\"slinkity/client\\";
   window.customElements.define(\\"slinkity-react-mount-point\\", MountPoint);
 </script>
 <script type=\\"module\\">
     import Component0 from \\"nav.jsx\\";
-    import eagerLoader0 from \\"slinkity/lib/plugin/reactPlugin/_client/_eager-loader.js\\";
+    import { eagerLoader as eagerLoader0 } from \\"slinkity/client\\";
   
     eagerLoader0({ 
       id: \\"0\\",
@@ -151,7 +151,7 @@ exports[`toHydrationLoadersApplied with hydrated components should apply correct
     });
   </script>
 <script type=\\"module\\">
-    import lazyLoader1 from \\"slinkity/lib/plugin/reactPlugin/_client/_lazy-loader.js\\";
+    import { lazyLoader as lazyLoader1 } from \\"slinkity/client\\";
   
     lazyLoader1({ 
       id: \\"1\\",
@@ -160,7 +160,7 @@ exports[`toHydrationLoadersApplied with hydrated components should apply correct
     });
   </script>
 <script type=\\"module\\">
-    import lazyLoader2 from \\"slinkity/lib/plugin/reactPlugin/_client/_lazy-loader.js\\";
+    import { lazyLoader as lazyLoader2 } from \\"slinkity/client\\";
   
     lazyLoader2({ 
       id: \\"2\\",
