@@ -1,7 +1,6 @@
-const { toMountPoint } = require('./toMountPoint')
-const toLoaderScript = require('../2-pageTransform/toLoaderScript')
-const { join, extname } = require('path')
+const { join } = require('path')
 const { log } = require('../../../utils/logger')
+const { toSSRComment } = require('../../../utils/consts')
 
 const argsArrayToPropsObj = function ({ vargs = [], errorMsg = '' }) {
   if (vargs.length % 2 !== 0) {
@@ -55,21 +54,7 @@ module.exports = function addShortcode(
       pageOutputPath: this.page.outputPath,
     })
 
-    const html = `${toMountPoint({ id, hydrate: render })}${toLoaderScript({
-      componentPath,
-      hydrate: render,
-      id,
-      props,
-    })}`
-
-    // Fixes https://github.com/slinkity/slinkity/issues/15
-    // To prevent 11ty's markdown parser from wrapping components in <p> tags,
-    // We need to wrap our custom element in some recognizable block (like a <div>)
-    if (extname(this.page.inputPath) === '.md' && render !== 'static') {
-      return `<div>${html}</div>`
-    } else {
-      return html
-    }
+    return toSSRComment(id)
   })
 }
 module.exports.argsArrayToPropsObj = argsArrayToPropsObj

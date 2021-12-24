@@ -1,9 +1,10 @@
 const { normalizePath } = require('vite')
 const { relative } = require('path')
-const { parse } = require('node-html-parser')
-const { SLINKITY_ATTRS, toSSRComment } = require('../utils/consts')
+const { SLINKITY_ATTRS, SLINKITY_REACT_MOUNT_POINT, toSSRComment } = require('../utils/consts')
 const { toRendererHtml } = require('./reactPlugin/1-pluginDefinitions/toRendererHtml')
 const toSlashesTrimmed = require('../utils/toSlashesTrimmed')
+const toLoaderScript = require('./reactPlugin/2-pageTransform/toLoaderScript')
+const toHtmlAttrString = require('../utils/toHtmlAttrString')
 
 const ssrRegex = RegExp(toSSRComment('([0-9]+)'), 'g')
 
@@ -11,70 +12,54 @@ const ssrRegex = RegExp(toSSRComment('([0-9]+)'), 'g')
  * @typedef ApplyViteHtmlTransformParams
  * @property {string} content - the original HTML content to transform
  * @property {string} outputPath - the output path this HTML content will be written to
- * @property {ComponentAttri} componentAttrStore
+ * @property {import('./componentAttrStore').ComponentAttrStore} componentAttrStore
  * @param {ApplyViteHtmlTransformParams}
  * @param {import('.').SlinkityConfigOptions}
  * @returns {string} - HTML with statically rendered content and Vite transforms applied
  */
 async function applyViteHtmlTransform(
   { content, outputPath, componentAttrStore },
-  { dir, viteSSR, environment },
+  { environment, viteSSR, dir },
 ) {
   if (!outputPath || !outputPath.endsWith('.html')) {
     return content
   }
 
-  const allComponentAttrs = componentAttrStore.getAllByPage(outputPath)
-  const componentIdsOnPage = [...content.matchAll(ssrRegex)].map(([, id]) => id)
-  const html = componentIdsOnPage.reduce(function (html, componentId) {
-    console.log({ componentId })
-    const componentAttrs = allComponentAttrs[componentId]
-    if (componentAttrs) {
-      const { path: componentPath, props, hydrate } = componentAttrs
-      // TODO: actually render
-    }
-  })
-
-  const root = parse(content)
-  const mountPointsToSSR = root.querySelectorAll(`[${SLINKITY_ATTRS.ssr}="true"]`)
-  const allComponentAttrsForPage = componentAttrStore.getAllByPage(outputPath)
   /** @type {Set<string>} */
   const importedStyles = new Set()
-  for (const mountPointToSSR of mountPointsToSSR) {
-    const id = mountPointToSSR.getAttribute(SLINKITY_ATTRS.id)
-    const componentAttrs = allComponentAttrsForPage[id]
-    if (componentAttrs) {
+  // TODO: re-implement page styles.
+  const allComponentAttrs = componentAttrStore.getAllByPage(outputPath)
+  const allComponents = await Promise.all(
+    allComponentAttrs.map(async (componentAttrs) => {
       const { path: componentPath, props, hydrate } = componentAttrs
-      const { default: Component, __importedStyles } = await viteSSR.toCommonJSModule(componentPath)
-      __importedStyles.forEach((importedStyle) => importedStyles.add(importedStyle))
+      const { default: Component } = await viteSSR.toCommonJSModule(componentPath)
+      // TODO: re-implement page styles.
+      // Object.assign(pageStyles, __stylesGenerated)
       // TODO: abstract renderer imports to be framework-agnostic
       // (importing directly from the React plugin right now)
-      mountPointToSSR.innerHTML = toRendererHtml({
+      return toRendererHtml({
         Component,
         props,
         hydrate,
       })
+    }),
+  )
+
+  const html = content.replace(ssrRegex, (_, id) => {
+    const componentAttrs = allComponentAttrs[id]
+    if (componentAttrs) {
+      const { path: componentPath, props, hydrate } = componentAttrs
+      const script = toLoaderScript({ componentPath, props, hydrate, id })
+      const attrs = toHtmlAttrString({ [SLINKITY_ATTRS.id]: id })
+      return `<${SLINKITY_REACT_MOUNT_POINT} ${attrs}>\n\t${allComponents[id]}\n</${SLINKITY_REACT_MOUNT_POINT}>\n${script}`
+    } else {
+      throw `Failed to find component attributes for ${id}`
     }
-  }
-  if (importedStyles.size) {
-    root
-      .querySelector('head')
-      .insertAdjacentHTML(
-        'beforeend',
-        [...importedStyles]
-          .map(
-            (importedStyle) =>
-              `<link rel="stylesheet" href=${JSON.stringify(importedStyle)}></link>`,
-          )
-          .join('\n'),
-      )
-  }
+  })
 
   const server = viteSSR.getServer()
   const routePath = '/' + toSlashesTrimmed(normalizePath(relative(dir.output, outputPath)))
-  return environment === 'dev' && server
-    ? server.transformIndexHtml(routePath, root.outerHTML)
-    : root.outerHTML
+  return environment === 'dev' && server ? server.transformIndexHtml(routePath, html) : html
 }
 
 module.exports = { applyViteHtmlTransform }
