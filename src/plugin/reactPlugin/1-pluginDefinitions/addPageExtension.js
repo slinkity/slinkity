@@ -1,6 +1,6 @@
-const { toMountPoint } = require('./toMountPoint')
 const toFormattedDataForProps = require('./toFormattedDataForProps')
 const { join } = require('path')
+const { toSSRComment } = require('../../../utils/consts')
 
 /**
  * @param {object} eleventyConfig
@@ -45,7 +45,7 @@ module.exports = function addPageExtension(
           pageOutputPath: data.page.outputPath,
         })
 
-        return toMountPoint({ id, hydrate })
+        return toSSRComment(id)
       },
   })
 
