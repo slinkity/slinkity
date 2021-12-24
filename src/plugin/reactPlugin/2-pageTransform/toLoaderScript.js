@@ -18,20 +18,20 @@ module.exports = function toLoaderScript({ componentPath, hydrate, id, props = {
   const componentImportStatement = JSON.stringify(toUnixPath(componentPath))
   if (hydrate === 'eager') {
     return `<script type="module">
-  import Component from ${componentImportStatement};
-  import eagerLoader from ${toClientImportStatement('_eager-loader.js')};
+  import Component${id} from ${componentImportStatement};
+  import eagerLoader${id} from ${toClientImportStatement('_eager-loader.js')};
 
-  eagerLoader({ 
+  eagerLoader${id}({ 
     id: "${id}",
-    Component,
+    Component: Component${id},
     props: ${stringify(props)},
   });
 </script>`
   } else if (hydrate === 'lazy') {
     return `<script type="module">
-  import lazyLoader from ${toClientImportStatement('_lazy-loader.js')};
+  import lazyLoader${id} from ${toClientImportStatement('_lazy-loader.js')};
 
-  lazyLoader({ 
+  lazyLoader${id}({ 
     id: "${id}",
     componentImporter: async () => await import(${componentImportStatement}),
     props: ${stringify(props)},
