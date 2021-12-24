@@ -16,8 +16,14 @@ let watch = false
 if (isWatchEnabled) {
   watch = {
     onRebuild(error) {
-      if (error) console.error('❌ Failed to rebuild', error)
-      else console.log(`🔁 Rebuilt ${entryPoints}`)
+      const date = new Date()
+      const time = date.toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+      })
+      if (error) console.error(`❌ [${time}] Failed to rebuild`, error)
+      else console.log(`🔁 [${time}] Rebuilt ${entryPoints}`)
     },
   }
 }
