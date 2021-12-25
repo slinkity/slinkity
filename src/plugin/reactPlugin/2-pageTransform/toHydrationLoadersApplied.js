@@ -1,13 +1,12 @@
 const { parse } = require('node-html-parser')
 const applyHtmlWrapper = require('./applyHtmlWrapper')
-const { SLINKITY_REACT_MOUNT_POINT } = require('../../../utils/consts')
+const { SLINKITY_REACT_MOUNT_POINT, PACKAGES } = require('../../../utils/consts')
 const toLoaderScript = require('./toLoaderScript')
-const toClientImportStatement = require('./toClientImportStatement')
 const { log } = require('../../../utils/logger')
 
 const webComponentLoader = `
 <script type="module">
-  import MountPoint from ${toClientImportStatement('_mount-point.js')};
+  import { MountPoint } from "${PACKAGES.client}";
   window.customElements.define("${SLINKITY_REACT_MOUNT_POINT}", MountPoint);
 </script>`
 

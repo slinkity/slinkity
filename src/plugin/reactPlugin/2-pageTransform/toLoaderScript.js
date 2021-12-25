@@ -1,6 +1,6 @@
 const { stringify } = require('javascript-stringify')
-const toClientImportStatement = require('./toClientImportStatement')
 const toUnixPath = require('../../../utils/toUnixPath')
+const { PACKAGES } = require('../../../utils/consts')
 
 /**
  * Generate the `<script>` necessary to load a Component into a given mount point
@@ -19,7 +19,7 @@ module.exports = function toLoaderScript({ componentPath, hydrate, id, props = {
   if (hydrate === 'eager') {
     return `<script type="module">
     import Component${id} from ${componentImportStatement};
-    import eagerLoader${id} from ${toClientImportStatement('_eager-loader.js')};
+    import { eagerLoader as eagerLoader${id} } from "${PACKAGES.client}";
   
     eagerLoader${id}({ 
       id: "${id}",
@@ -29,7 +29,7 @@ module.exports = function toLoaderScript({ componentPath, hydrate, id, props = {
   </script>`
   } else if (hydrate === 'lazy') {
     return `<script type="module">
-    import lazyLoader${id} from ${toClientImportStatement('_lazy-loader.js')};
+    import { lazyLoader as lazyLoader${id} } from "${PACKAGES.client}";
   
     lazyLoader${id}({ 
       id: "${id}",

@@ -16,7 +16,8 @@ Glad to see you here. We're open to contributions of all kinds, including:
   - [Architecture](#architecture)
   - [Setting up linters](#setting-up-linters)
   - [Running our test suites](#running-our-test-suites)
-  - [Building and packing the framework](#building-and-packing-the-framework)
+  - [Running the framework against tester projects](#running-the-framework-against-tester-projects)
+    - [Build a production preview](#build-a-production-preview)
 - [Automated test suites](#automated-test-suites)
 
 ## Before diving into the code...
@@ -87,36 +88,59 @@ npm run test -- -t=toRendererHtml -u
 ```
 
 
-### Building and packing the framework
+### Running the framework against tester projects
 
-To bundle this framework into something useable, go ahead and run this at the base directory:
+We think most changes to the core Slinkity framework will be debugged against a local Slinkity project. Don't worry, we've thought about this! If you're looking for a nice test project to debug against, try running `npm init slinkity` to generate a new one.
+
+Next, run this command from your local copy of the Slinkity framework (not your tester project!):
+
+```bash
+npm run dev
+```
+
+This will spin up an [esbuild-powered](https://esbuild.github.io/) process in "watch" mode. Any changes you make to the framework should appear in the `lib/` directory, complete with live reloading.
+
+Now, let's preview these changes in your tester project. We recommend using [pnpm](https://pnpm.io/) for a nicer debugging experience here. Head to their docs for [installation options](https://pnpm.io/installation).
+
+Once that's set up, add an "overrides" entry to your tester project's `package.json`:
+
+```json
+{
+  "pnpm": {
+    "overrides": {
+      "slinkity": "~/path/to/slinkity",
+      "react": "~/path/to/slinkity/node_modules/react"
+    }
+  }
+}
+```
+
+This is similar to an `npm link`, but with a couple added conveniences:
+1. You don't need to run `npm link` from the Slinkity framework
+2. You won't hit any peer dependency issues
+
+Now you're ready to install your project's dependencies using `pnpm`. **Be sure to run this command from your tester project and _not_ the Slinkity framework ⚠️**
+
+```bash
+pnpm install
+```
+
+Now you're free to run any project scripts as normal. Just be sure to use the `pnpm` equivalent (aka `pnpm start` instead of `npm start` or `yarn start`).
+
+Some notes while debugging:
+1. You'll need 2 terminal windows open: one from the Slinkity framework running `npm run dev`, and another from your Slinkity project running your script of choice (ex. `slinkity --serve --incremental`).
+2. You _do not_ need to relaunch the `slinkity --serve` command when editing client-facing files. For instance, `client/eagerLoader.js`. Vite is smart enough to reload for these 😁
+3. You _do_ need to relaunch the `slinkity --serve` command when editing other framework files.
+
+#### Build a production preview
+
+To bundle this framework into a production-ready preview, go ahead and run this at the base directory:
 
 ```bash
 npm pack
 ```
 
-This will build everything in `src/` into a `lib/` folder, and compress the contents into a zip file. If you're on MacOS or Linux, you'll find a generated file named `slinkity-X.X.X.tgz`. Windows should be similar (but with a different file extension)!
-
-Now, you can install this zip file into _any_ existing project using npm. For instance, say I have a Slinkity example project in a neighboring folder to this framework:
-
-```
-/my-repositories
-  /slinkity
-  /my-slinkity-starter
-```
-
-We can run this command to install our zip file:
-
-```bash
-# Enter our project directory
-cd ./my-slinkity-starter
-# Install using a relative file path
-npm i ../slinkity/slinkity-X.X.X.tgz
-```
-
-Now, you can run the `slinkity` CLI command just like a "real" npm package 👍
-
-_**Note:** Yes, this does mean you'll need to rerun `npm pack` + `npm i ../slinkity/slinkity-X.X.X.tgz` any time you tweak framework code. We plan to improve this process with some live reloading!_
+This will build everything in `src/` into a `lib/` folder, and compress the contents into a zip file. If you're on MacOS or Linux, you'll find a generated file named `slinkity-X.X.X.tgz`. Windows should be similar, but with a different file extension.
 
 ## Automated test suites
 
