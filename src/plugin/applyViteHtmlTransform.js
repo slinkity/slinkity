@@ -15,7 +15,7 @@ const ssrRegex = RegExp(toSSRComment('([0-9]+)'), 'g')
  * @property {import('./componentAttrStore').ComponentAttrStore} componentAttrStore
  * @param {ApplyViteHtmlTransformParams}
  * @param {import('.').SlinkityConfigOptions}
- * @returns {string} - HTML with statically rendered content and Vite transforms applied
+ * @returns {Promise<string>} - HTML with statically rendered content and Vite transforms applied
  */
 async function applyViteHtmlTransform(
   { content, outputPath, componentAttrStore },
@@ -27,23 +27,23 @@ async function applyViteHtmlTransform(
 
   /** @type {Set<string>} */
   const importedStyles = new Set()
-  // TODO: re-implement page styles.
+  // TODO: apply importedStyles as `<link>` tags in `<head>` via indexHtmlTransform
   const allComponentAttrs = componentAttrStore.getAllByPage(outputPath)
-  const allComponents = await Promise.all(
-    allComponentAttrs.map(async (componentAttrs) => {
-      const { path: componentPath, props, hydrate } = componentAttrs
-      const { default: Component } = await viteSSR.toCommonJSModule(componentPath)
-      // TODO: re-implement page styles.
-      // Object.assign(pageStyles, __stylesGenerated)
-      // TODO: abstract renderer imports to be framework-agnostic
-      // (importing directly from the React plugin right now)
-      return toRendererHtml({
+  const allComponents = []
+  for (const componentAttrs of allComponentAttrs) {
+    const { path: componentPath, props, hydrate } = componentAttrs
+    const { default: Component, __importedStyles } = await viteSSR.toCommonJSModule(componentPath)
+    __importedStyles.forEach((importedStyle) => importedStyles.add(importedStyle))
+    // TODO: abstract renderer imports to be framework-agnostic
+    // (importing directly from the React plugin right now)
+    allComponents.push(
+      toRendererHtml({
         Component,
         props,
         hydrate,
-      })
-    }),
-  )
+      }),
+    )
+  }
 
   const html = content.replace(ssrRegex, (_, id) => {
     const componentAttrs = allComponentAttrs[id]
