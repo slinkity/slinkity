@@ -7,11 +7,15 @@ extends:
   - "eslint:recommended"
   - "plugin:react/recommended"
   - "prettier"
+  - "plugin:jsdoc/recommended"
 settings:
   react:
     version: detect
+  jsdoc:
+    mode: typescript
 plugins:
   - "prettier"
+  - "jsdoc"
 parserOptions:
   ecmaVersion: 2020
   sourceType: module

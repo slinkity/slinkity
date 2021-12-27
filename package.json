@@ -57,6 +57,7 @@
     "commander": "^5.1.0",
     "esbuild": "^0.12.29",
     "esbuild-css-modules-plugin": "^2.0.7",
+    "eslint-plugin-jsdoc": "^37.4.0",
     "fs-extra": "^10.0.0",
     "glob": "^7.1.7",
     "html-react-parser": "^1.2.7",
