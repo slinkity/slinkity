@@ -14,7 +14,7 @@ const ssrRegex = RegExp(toSSRComment('([0-9]+)'), 'g')
  * @property {import('./componentAttrStore').ComponentAttrStore} componentAttrStore
  * @param {ApplyViteHtmlTransformParams}
  * @param {import('.').SlinkityConfigOptions}
- * @returns {string} - HTML with statically rendered content and Vite transforms applied
+ * @returns {Promise<string>} - HTML with statically rendered content and Vite transforms applied
  */
 async function applyViteHtmlTransform(
   { content, outputPath, componentAttrStore },
