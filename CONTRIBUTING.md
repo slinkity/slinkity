@@ -1,6 +1,7 @@
 # Hey there fellow contributor 👋
 
 Glad to see you here. We're open to contributions of all kinds, including:
+
 - Improvements to our docs (new tutorials, phrasing, CSS styling, etc)
 - Core bug fixes
 - Core features and performance enhancements
@@ -61,7 +62,7 @@ You can learn more about how Slinkity _really_ works under-the-hood on our ARCHI
 
 We use [ESLlint](https://eslint.org/) alongside their [Prettier](https://prettier.io/) plugin to format our code. You'll also notice we don't use semicolons around here. If that scares you... too bad 😈
 
-And if you use VS Code, **we highly recommend following Wes Bos' setup guide [over here](https://github.com/wesbos/eslint-config-wesbos#with-vs-code)**. This will save you a lot of hassle wrestling with `formatOnSave` 😁 We also recommend installing an [ESLint extension](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) if you haven't already.
+And if you use VS Code, **we include a settings.json based on Wes Bos' setup guide [over here](https://github.com/wesbos/eslint-config-wesbos#with-vs-code)**. This will save you a lot of hassle wrestling with `formatOnSave` 😁 We also recommend installing an [ESLint extension](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) if you haven't already.
 
 You can also validate and fix lint errors by running either of these commands:
 
@@ -87,7 +88,6 @@ npm run test -- -u
 npm run test -- -t=toRendererHtml -u
 ```
 
-
 ### Running the framework against tester projects
 
 We think most changes to the core Slinkity framework will be debugged against a local Slinkity project. Don't worry, we've thought about this! If you're looking for a nice test project to debug against, try running `npm init slinkity` to generate a new one.
@@ -109,13 +109,15 @@ Once that's set up, add an "overrides" entry to your tester project's `package.j
   "pnpm": {
     "overrides": {
       "slinkity": "~/path/to/slinkity",
-      "react": "~/path/to/slinkity/node_modules/react"
+      "react": "~/path/to/slinkity/node_modules/react",
+      "react-dom": "~/path/to/slinkity/node_modules/react-dom"
     }
   }
 }
 ```
 
 This is similar to an `npm link`, but with a couple added conveniences:
+
 1. You don't need to run `npm link` from the Slinkity framework
 2. You won't hit any peer dependency issues
 
@@ -128,6 +130,7 @@ pnpm install
 Now you're free to run any project scripts as normal. Just be sure to use the `pnpm` equivalent (aka `pnpm start` instead of `npm start` or `yarn start`).
 
 Some notes while debugging:
+
 1. You'll need 2 terminal windows open: one from the Slinkity framework running `npm run dev`, and another from your Slinkity project running your script of choice (ex. `slinkity --serve --incremental`).
 2. You _do not_ need to relaunch the `slinkity --serve` command when editing client-facing files. For instance, `client/eagerLoader.js`. Vite is smart enough to reload for these 😁
 3. You _do_ need to relaunch the `slinkity --serve` command when editing other framework files.
@@ -145,6 +148,7 @@ This will build everything in `src/` into a `lib/` folder, and compress the cont
 ## Automated test suites
 
 All PRs need to pass these tests before they're ready to merge.
+
 1. **Does the project build?** We'll just run our `npm run build` command to ensure everything bundles without errors.
 2. **Are there any lint errors?** We'll use the same `npm run lint` command detailed in the [linter setup section](#setting-up-linters).
 3. **Do all our tests pass?** We'll run `npm run test` over all tests found in `src`, as detailed in the [test suite section](#running-our-test-suites).

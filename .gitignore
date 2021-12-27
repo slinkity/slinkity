@@ -1,5 +1,3 @@
-.vscode/
-!.vscode/extensions.json
 node_modules
 *.DS_Store
 *.tgz
