@@ -109,7 +109,8 @@ Once that's set up, add an "overrides" entry to your tester project's `package.j
   "pnpm": {
     "overrides": {
       "slinkity": "~/path/to/slinkity",
-      "react": "~/path/to/slinkity/node_modules/react"
+      "react": "~/path/to/slinkity/node_modules/react",
+      "react-dom": "~/path/to/slinkity/node_modules/react-dom"
     }
   }
 }
