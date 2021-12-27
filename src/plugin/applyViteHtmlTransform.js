@@ -26,22 +26,21 @@ async function applyViteHtmlTransform(
 
   const allComponentAttrs = componentAttrStore.getAllByPage(outputPath)
   const pageStyles = {}
-  const allComponents = await Promise.all(
-    allComponentAttrs.map(async (componentAttrs) => {
-      const { path: componentPath, props, hydrate } = componentAttrs
-      const { default: Component, __stylesGenerated } = await viteSSR.toCommonJSModule(
-        componentPath,
-      )
-      Object.assign(pageStyles, __stylesGenerated)
-      // TODO: abstract renderer imports to be framework-agnostic
-      // (importing directly from the React plugin right now)
-      return toRendererHtml({
+  const allComponents = []
+  for (const componentAttrs of allComponentAttrs) {
+    const { path: componentPath, props, hydrate } = componentAttrs
+    const { default: Component, __stylesGenerated } = await viteSSR.toCommonJSModule(componentPath)
+    Object.assign(pageStyles, __stylesGenerated)
+    // TODO: abstract renderer imports to be framework-agnostic
+    // (importing directly from the React plugin right now)
+    allComponents.push(
+      toRendererHtml({
         Component,
         props,
         hydrate,
-      })
-    }),
-  )
+      }),
+    )
+  }
 
   const cssValues = Object.values(pageStyles)
   const styles = cssValues.length ? `<style>${cssValues.join('\n')}</style>\n` : ''
