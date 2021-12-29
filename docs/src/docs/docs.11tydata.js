@@ -16,7 +16,7 @@ const trimSlashes = (s) => s.replace(/^\/|\/$/g, '')
 const toUrl = (slug) => trimSlashes(join('docs/', slug))
 
 module.exports = {
-  layout: 'docs/layout',
+  layout: 'docs',
   title: 'Docs',
   tags: 'docs',
   eleventyComputed: {
