@@ -12,7 +12,7 @@
     width: 100%;
     align-items: flex-start;
     margin: auto;
-    padding: 0 20px;
+    padding: 0 1rem;
     gap: var(--site-gap);
   
     @media (min-width: breakpoint(tablet)) {
@@ -63,14 +63,23 @@
     font-weight: bold;
     font-size: 32px;
     margin-right: auto;
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+
+    svg {
+      height: 1.1em;
+      width: auto;
+      align-self: flex-start;
+    }
   }
 
 
   &__side-nav {
     list-style: none;
-    padding: 16px 0;
+    padding: 1rem 0;
     background: var(--grey-100);
-    border-radius: 10px;
+    border-radius: 0.5rem;
     position: sticky;
     top: var(--site-gap);
   
@@ -88,7 +97,7 @@
     a, a:visited {
       --bg: var(--grey-100);
       display: block;
-      padding: 10px 20px;
+      padding: 0.5rem 1rem;
       text-decoration: none;
       color: var(--white);
   
@@ -96,7 +105,7 @@
         color: var(--pink);
       }
   
-      &:hover {
+      &:where(:hover, :focus) {
         color: var(--black);
       }
     }
