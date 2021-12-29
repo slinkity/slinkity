@@ -30,7 +30,6 @@ module.exports = function config(eleventyConfig) {
 
   eleventyConfig.setLibrary('md', markdownConfigured)
   eleventyConfig.addPassthroughCopy('public')
-  eleventyConfig.addPassthroughCopy('styles')
   eleventyConfig.addDataExtension('yaml', (contents) => yaml.load(contents))
   eleventyConfig.addPlugin(syntaxHighlight)
 
@@ -38,6 +37,7 @@ module.exports = function config(eleventyConfig) {
     htmlTemplateEngine: 'njk',
     dir: {
       input: 'src',
+      layouts: '_layouts',
     },
   }
 }
