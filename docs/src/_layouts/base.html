@@ -16,6 +16,9 @@
   <link rel="stylesheet" href="/@root/styles/styles.scss">
   <link rel="stylesheet" href="/@root/styles/fonts.scss" media="print" onload="this.media='all'">
   <link rel="stylesheet" href="/@root/styles/prism-synthwave-84.css">
+  {% for style in styles %}
+  <link rel="stylesheet" href={{style}}>
+  {% endfor %}
   <link rel="icon" type="img/png" href="/assets/favicon.png" />
   <link rel="canonical" href="https://slinkity.dev" />
   <title>{{title or 'Slinkity'}}</title>
