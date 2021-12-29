@@ -1,0 +1,11 @@
+.center-content {
+  display: grid;
+  place-content: center;
+}
+
+.flex-row {
+  display: flex;
+  flex-wrap: wrap;
+  max-width: var(--max-width, unset);
+  gap: var(--gap, 2rem);
+}

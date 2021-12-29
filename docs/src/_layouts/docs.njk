@@ -1,0 +1,36 @@
+---
+layout: base
+styles:
+  - '/@root/styles/docs.scss'
+---
+
+<div class="docs">
+  <nav class="docs__primary-nav">
+    <div class="docs__primary-nav__content flex-row">
+      <a class="docs__primary-nav__home" href="/docs">
+        {% include 'slinkity-simplified-logo.svg' %}
+        Slinkity <span style="color: var(--pink)">docs</span>
+      </a>
+      <a href="/">Homepage</a>
+      <a href="https://github.com/slinkity/slinkity">
+        GitHub
+        <span class="docs__external-link-icon">
+          {% include 'icons/external-link.svg' %}
+        </span>
+      </a>
+    </div>
+  </nav>
+  <main class="docs__container">
+    <ul class="docs__side-nav">
+      {%- for navLink in navLinksSorted -%}
+      <li>
+        <a href="{{navLink.href}}" class="{{'active' if navLink.href === page.url else ''}}">{{navLink.title}}</a>
+      </li>
+      {%- endfor -%}
+    </ul>
+    <article class="docs__content">
+      <h1>{{ title }}</h1>
+      {{ content | safe }}
+    </article>
+  </main>
+</div>
