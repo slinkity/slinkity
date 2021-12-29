@@ -7,3 +7,31 @@
         @error "[fn] breakpoint: The breakpoint '#{$_breakpointName}' does not exist in $breakpoints!";
     }
 }
+
+@mixin gradient-link {
+    color: var(--primary);
+    padding: 2px;
+    transition-property: background-position-x, color, opacity;
+    transition-duration: 0.2s;
+    transition-timing-function: linear;
+    background: linear-gradient(
+        80deg,
+        var(--bg, var(--black)) 33%,
+        var(--primary),
+        var(--secondary)
+    );
+    background-size: 300% 100%;
+    background-position-x: 0;
+
+    &:where(:hover, :focus) {
+        background-position-x: 100%;
+        color: var(--black);
+        text-decoration: none;
+    }
+}
+
+@mixin gradient-links {
+    a, a:visited {
+        @include gradient-link;
+    }
+}

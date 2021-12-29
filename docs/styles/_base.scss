@@ -1,5 +1,7 @@
+@use 'tools' as *;
+
 body {
-    margin: 60px 0;
+    margin: 0;
     color: white;
     line-height: 1.4;
     background: var(--black);
@@ -25,26 +27,12 @@ body {
     }
 }
 
-a, a:visited {
-    color: var(--primary);
-    padding: 2px;
-    transition-property: background-position-x, color, opacity;
-    transition-duration: 0.2s;
-    transition-timing-function: linear;
-    background: linear-gradient(
-        80deg,
-        var(--bg, var(--black)) 33%,
-        var(--primary),
-        var(--secondary)
-    );
-    background-size: 300% 100%;
-    background-position-x: 0;
+main {
+    margin: 1rem 0;
+}
 
-    &:hover {
-        background-position-x: 100%;
-        color: var(--black);
-        text-decoration: none;
-    }
+article {
+    @include gradient-links;
 }
 
 :is(ul, ol) > li {

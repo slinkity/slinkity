@@ -1,6 +1,8 @@
 @use '../tools';
 
 .twitter-cta {
+    @include tools.gradient-links;
+
     text-align: center;
     font-size: 1.2rem;
 

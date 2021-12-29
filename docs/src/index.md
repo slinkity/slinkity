@@ -1,5 +1,5 @@
 ---
-layout: home/layout
+layout: home
 ---
 
 > **Slinkity is now available as an early alpha!** No, it's not ready for production use. But if you want to have some fun and don't mind logging bugs, head to the [quick start guide](/docs/quick-start/) :)
