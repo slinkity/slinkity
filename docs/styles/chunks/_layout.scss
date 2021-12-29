@@ -1,3 +1,5 @@
+@use '../tools' as *;
+
 .center-content {
   display: grid;
   place-content: center;
@@ -8,4 +10,17 @@
   flex-wrap: wrap;
   max-width: var(--max-width, unset);
   gap: var(--gap, 2rem);
+}
+
+.hide {
+  &__mobile {
+    @media(max-width: breakpoint(mobile)) {
+      display: none;
+    }
+  }
+  &__tablet {
+    @media(max-width: breakpoint(tablet)) {
+      display: none;
+    }
+  }
 }

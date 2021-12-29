@@ -7,14 +7,14 @@ styles:
 <div class="docs">
   <nav class="docs__primary-nav">
     <div class="docs__primary-nav__content flex-row">
-      <a class="docs__primary-nav__home" href="/docs">
+      <a class="docs__home-link" href="/docs">
         {% include 'slinkity-simplified-logo.svg' %}
-        Slinkity <span style="color: var(--pink)">docs</span>
+        <span class="hide__tablet">Slinkity <span style="color: var(--pink)">docs</span></span>
       </a>
-      <a href="/">Homepage</a>
-      <a href="https://github.com/slinkity/slinkity">
+      <a class="hide__tablet" href="/">Homepage</a>
+      <a class="external-link" href="https://github.com/slinkity/slinkity">
         GitHub
-        <span class="docs__external-link-icon">
+        <span class="external-link__icon">
           {% include 'icons/external-link.svg' %}
         </span>
       </a>
@@ -28,7 +28,7 @@ styles:
       </li>
       {%- endfor -%}
     </ul>
-    <article class="docs__content">
+    <article class="docs__container__content">
       <h1>{{ title }}</h1>
       {{ content | safe }}
     </article>
