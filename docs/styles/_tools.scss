@@ -23,7 +23,7 @@
     background-size: 300% 100%;
     background-position-x: 0;
 
-    &:hover {
+    &:where(:hover, :focus) {
         background-position-x: 100%;
         color: var(--black);
         text-decoration: none;
