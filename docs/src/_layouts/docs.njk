@@ -21,7 +21,7 @@ styles:
     </div>
   </nav>
   <main class="docs__container">
-    <ul class="docs__side-nav">
+    <ul class="docs__side-nav" role="list">
       {%- for navLink in navLinksSorted -%}
       <li>
         <a href="{{navLink.href}}" class="{{'active' if navLink.href === page.url else ''}}">{{navLink.title}}</a>
