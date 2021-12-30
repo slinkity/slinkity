@@ -1,0 +1,40 @@
+const Cache = require('@11ty/eleventy-cache-assets')
+
+function toTitle(username) {
+  if (username === 'Holben888') {
+    return 'Supreme Slinkity Stan'
+  } else {
+    return 'Contributor'
+  }
+}
+
+module.exports = async function contributors() {
+  // note: failure to fetch *will* throw and stop the build
+  const rawContributors = await Cache(
+    'https://api.github.com/repos/slinkity/slinkity/contributors',
+    {
+      duration: '1d',
+      type: 'json',
+    },
+  )
+  /**
+   * @typedef Contributor
+   * @property {string} username
+   * @property {string} url
+   * @property {string} imageUrl
+   * @property {string} title
+   * @property {number} numContributions
+   */
+
+  /** @type {Contributor[]} */
+  const contributors = rawContributors
+    .map((contributor) => ({
+      username: contributor.login ?? '',
+      url: contributor.html_url ?? '',
+      imageUrl: contributor.avatar_url ?? '',
+      title: toTitle(contributor.login),
+      numContributions: contributor.contributions ?? 0,
+    }))
+    .sort((contributor) => contributor.numContributions)
+  return contributors
+}
