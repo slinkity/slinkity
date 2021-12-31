@@ -1,0 +1,29 @@
+.contributor {
+    &__container {
+        flex-basis: 170px;
+    }
+
+    &__image {
+        max-width: 150px;
+        height: auto;
+        border-radius: 100%;
+        overflow: hidden;
+    }
+    
+    &__username {
+        text-align: center;
+    }
+    
+    &__title {
+        position: absolute;
+        top: 140px;
+        right: 0px;
+        background: var(--primary);
+        text-transform: uppercase;
+        color: var(--black);
+        font-size: 0.7rem;
+        padding: 5px 10px;
+        background: linear-gradient(80deg, var(--primary), var(--secondary));
+        font-family: var(--pro-hacker-font);
+    }
+}
