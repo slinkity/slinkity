@@ -14,7 +14,7 @@ Slinkity is the simplest way to handle styles and component frameworks on your 1
 - 💧 **Hydrates these components** when and how you want. Use component frameworks as a static template to start, and opt-in to shipping JS as needed with our [partial hydration helpers](/docs/partial-hydration).
 - 💅 **Bundles all your resources** with the power of Vite. Use your favorite CSS preprocessor, JS minifier, and more with minimal config.
 
-### [📣 Find our full announcement post here →](/)
+### [📣 Find our full announcement post here →](https://slinkity.dev)
 
 ## Technologies used
 
@@ -29,7 +29,7 @@ Use our handy CLI command to spin up a Slinkity site: `npm init slinkity`. This 
 
 To learn more, and explore adding Slinkity to _existing_ 11ty projects...
 
-### [🐣 See our "quick start" guide →](/docs/quick-start)
+### [🐣 See our "quick start" guide →](https://slinkity.dev/docs/quick-start)
 
 ## Feature set
 
