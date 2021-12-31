@@ -2,38 +2,50 @@
 title: Quick start
 ---
 
-All you need is an empty directory to get started! But if you prefer a starter project with some pre-populated content, you can use the lovely guide + community resources [over on the 11ty docs](https://www.11ty.dev/docs/getting-started/).
+{% include 'npm-init-slinkity-snippet.md' %}
 
-## Installation
+It includes:
+- a React component embedded into a static `.md` template → [more on component shortcodes here](/docs/component-shortcodes/)
+- a route built using a component framework as a templating language → [more on component pages here](/docs/component-pages-layouts/)
+- a `netlify.toml` configured to deploy in a flash → [more on deployment here](/docs/deployment/)
+- an eleventy config with a few recommended defualts → [more on config here](/docs/config/#recommended-config-options)
 
-If you're starting from a new directory, be sure to create a new `package.json` like so:
+## Add to your existing 11ty project
 
-```bash
-npm init -y
-```
+Want to bring Slinkity to your current 11ty project? No sweat! Slinkity is built to slot into your existing workflow 😁
 
-Then, install Slinkity + the latest 11ty into your project:
+### Installation
 
-> Slinkity requires Node v14 and up. You can check your version by running `node -v` in your terminal before trying Slinkity.
+First, install Slinkity + the latest 11ty into your project:
 
 ```bash
 npm i --save-dev slinkity @11ty/eleventy@beta
 ```
 
-> Slinkity relies on 11ty's [latest 1.0 beta build](https://www.npmjs.com/package/@11ty/eleventy/v/beta) to work properly. Yes, this could involve some gotchas with existing 11ty plugins! If anything unexpected happens, let us know on our [GitHub issues page](https://github.com/slinkity/slinkity/issues).
+> Slinkity requires Node v14 and up. You can check your version by running `node -v` in your terminal before trying Slinkity.
 
-...and run our CLI command to spin up the dev server:
+> Slinkity also relies on 11ty's [latest 1.0 beta build](https://www.npmjs.com/package/@11ty/eleventy/v/beta) to work properly. Yes, this could involve some gotchas with existing 11ty plugins! If anything unexpected happens, let us know on our [GitHub issues page](https://github.com/slinkity/slinkity/issues).
+
+### Using the `slinkity` CLI
+
+We supply our own CLI in place of `eleventy`. This spins up Vite and 11ty in a single command, while using the _exact same CLI flags_ you would use with `eleventy` today. So if you have any `"scripts"` in your `package.json`, [feel free to find-and-replace](https://twitter.com/slinkitydotdev/status/1431371307036336128) `eleventy` with `slinkity`.
+
+Let's spin up a dev server for example. This uses the same set of flags as eleventy:
 
 ```bash
-npx slinkity --serve
-# Also consider the --incremental flag
+npx slinkity --serve --incremental
+# we recommend the --incremental flag
 # for faster builds during development
 ```
 
-Now you're off to the races! This command will:
+This command will:
 
 1. Start up [11ty in `--watch` mode](https://www.11ty.dev/docs/usage/#re-run-eleventy-when-you-save) to listen for file changes
-2. Start up [a Vite server](https://vitejs.dev/guide/#index-html-and-project-root) pointed at your 11ty build. This helps us process all sorts of file types, including SASS styles, React components, and more 🚀
+2. Start up [a Vite server](https://vitejs.dev/guide/#index-html-and-project-root) pointed at your 11ty build. This helps us process all sorts of file types, including SCSS styles, React components, and more.
+
+[See our `slinkity` CLI docs](http://localhost:8080/docs/config/#the-slinkity-cli) for more details on how flags are processed.
+
+### Production builds
 
 When you're ready for a production build, just run:
 
@@ -43,11 +55,11 @@ npx slinkity
 
 ...and your shiny new site will appear in the `_site` folder (or [wherever you tell 11ty to build your site](https://www.11ty.dev/docs/config/#output-directory)).
 
-But wait, you might not have any templates to build yet! Let's change that.
+But wait, we haven't tried any of Slinkity's features yet! Let's change that.
 
-## Adding your first component shortcode
+### Adding your first component shortcode
 
-Alright, now let's do something... Slinkity-ish. Say you have a project directory with just 1 file: `index.html`. That file might look like this:
+Say you have a project directory with just 1 file: `index.html`. That file might look like this:
 
 ```html
 <!DOCTYPE html>
@@ -64,12 +76,12 @@ Alright, now let's do something... Slinkity-ish. Say you have a project director
 </html>
 ```
 
-If you run this using the `slinkity --serve` command, you'll just see the gloriously static text "Look ma, it's Slinkity!"
+If you run this using the `slinkity --serve --incremental` command, you'll just see the gloriously static text "Look ma, it's Slinkity!"
 
-Now, let's add something _interactive._ Say we're keeping track of how many glasses of water we've had today (because [hydration is important](https://www.gatsbyjs.com/docs/conceptual/react-hydration/)!). If we know a little [ReactJS](https://reactjs.org/docs/getting-started.html), we can whip up a counter component under the `_includes/components/` directory like so:
+But what if we want something... interactive? For instance, say we're tracking how many glasses of water we've had today (because [hydration is important](https://www.gatsbyjs.com/docs/conceptual/react-hydration/)!). If we know a little [ReactJS](https://reactjs.org/docs/getting-started.html), we can whip up a counter component under the `_includes/` directory like so:
 
 ```jsx
-// _includes/components/GlassCounter.jsx
+// _includes/GlassCounter.jsx
 import React, { useState } from 'react'
 
 function GlassCounter() {
@@ -87,29 +99,29 @@ function GlassCounter() {
 export default GlassCounter
 ```
 
-_**Note:** Make sure this file is under `_includes/components`. Slinkity will copy this directory over to your build._
+_**Note:** Make sure this file is under `_includes`. This is where our component shortcode will look for `GlassCounter` in a moment._
 
-Next, go ahead and install `react` and `react-dom` as project dependencies. This will help your Vite server compile your component.
+Next, install `react` and `react-dom` as project dependencies. You might need to stop and restart your dev server if it's running:
 
 ```bash
 npm i react react-dom
 ```
 
-Now how do we use this component on our `index.html` page? Let's reach for a [shortcode](https://www.11ty.dev/docs/shortcodes/):
+Finally, let's place this component on our `index.html` with a [component shortcode](/docs/component-shortcodes):
 
 ```html
 ...
 <body>
   <h1>Look ma, it's Slinkity!</h1>
-  {% raw %}{% react 'components/GlassCounter' %}{% endraw %}
+  {% raw %}{% react 'GlassCounter' %}{% endraw %}
 </body>
 ```
 
 This will do a few things:
-1. Go find `_includes/component/GlassCounter.jsx` (notice the `_includes` and `.jsx` are optional)
-2. "Statically" render the component and insert it as HTML. This means you'll always see your component, even when disabling JS in your browser ([go try it!](https://developer.chrome.com/docs/devtools/javascript/disable/)).
+1. Go find `_includes/GlassCounter.jsx` (notice the `.jsx` is optional)
+2. Prerender the component at build time and insert it as HTML. This means you'll always see your component, even when disabling JS in your browser ([try it!](https://developer.chrome.com/docs/devtools/javascript/disable/)).
 3. ["Hydrate"](/docs/partial-hydration/) that HTML we just rendered with our JavaScript component
 
-Now in your browser preview, clicking the button should increase your counter 🎉
+Now in your browser preview, clicking "Add one" should increase your counter 🎉
 
 ### [Learn more about component shortcodes →](/docs/component-shortcodes)
