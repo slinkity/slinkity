@@ -2,10 +2,6 @@
 layout: home
 ---
 
-> **Slinkity is now available as an early alpha!** No, it's not ready for production use. But if you want to have some fun and don't mind logging bugs, head to the [quick start guide](/docs/quick-start/) :)
-
-{% include 'home/heading-links.html' %}
-
 ## What is it?
 
 {% include 'value-props.md' %}
@@ -38,4 +34,4 @@ This project is still _heavily_ under development in an early alpha phase. But i
 
 For future updates, release milestones, project showcases, and more, expect updates on Twitter from these lovely accounts:
 
-{% include 'home/twitter-links.html' %}
+{% include 'contributors.njk' %}
