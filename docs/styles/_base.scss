@@ -23,7 +23,7 @@ body {
         font-family: var(--pro-hacker-font);
         font-size: 0.8em;
         background: #333;
-        padding: 2px;
+        padding: .1rem;
     }
 }
 
@@ -67,7 +67,7 @@ blockquote {
     --gradient-accent-width: 0.5rem;
     margin-inline: 0;
     background: var(--bg);
-    border-radius: 0 5px 5px 0;
+    border-radius: 0 .25rem .25rem 0;
     position: relative;
     padding: 1rem;
     padding-inline-start: calc(1rem + var(--gradient-accent-width));
@@ -88,7 +88,7 @@ article {
 
     max-width: var(--content-max-width);
     margin: auto;
-    padding: 20px;
+    padding: 1rem;
     background: linear-gradient(
         transparent,
         var(--black) 30px,
