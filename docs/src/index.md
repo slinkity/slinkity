@@ -8,7 +8,7 @@ layout: home
 
 Let's see Slinkity in action ✨
 
-{% include 'demo-embed.html' %}
+{% include 'demo-embed.njk' %}
 
 ## Our philosophy
 
