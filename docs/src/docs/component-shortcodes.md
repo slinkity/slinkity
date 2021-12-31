@@ -14,29 +14,49 @@ npm i react react-dom --save-dev
 
 With this in place, your Vite server can find any necessary React dependencies.
 
-## Shortcode syntax
+## Basic usage
 
-Using the `react` [shortcode](https://www.11ty.dev/docs/shortcodes/), you can insert components into any static template that 11ty supports. You'll just need to pass the path to your component like so:
+Using the `react` [shortcode](https://www.11ty.dev/docs/shortcodes/), you can insert components into any static template that 11ty supports. First, ensure your component is:
+- **located in your includes directory** - defaults to `_includes`, but you can [override this from your eleventy config](https://www.11ty.dev/docs/config/#directory-for-includes)
+- **exports your component as a default export** (aka `export default ComponentName`) - named exports currently aren't supported
+
+Now, you can add a component shortcode to your template of choice:
 
 ```html
 <!--for nunjucks and liquid templates -->
-{% raw %}{% react 'components/path/to/Component' %}{% endraw %}
+{% raw %}{% react 'path/to/Component' %}{% endraw %}
 
 <!--for handlebars templates --> 
-{% raw %}{{{ react 'components/path/to/Component' }}}{% endraw %}
+{% raw %}{{{ react 'path/to/Component' }}}{% endraw %}
 ```
 
-Let's say we're using `_includes` as our includes folder (yes, you can [override this here](https://www.11ty.dev/docs/config/#directory-for-includes)). Using this path, Slinkity will go fetch the React component found at:
+This will do a few things:
+1. Find `_includes/path/to/Component.jsx` (notice the file extension is optional)
+2. [Prerender](https://jamstack.org/glossary/pre-render/) your component at build time. This means you'll always see your component, even when disabling JS in your browser ([try it!](https://developer.chrome.com/docs/devtools/javascript/disable/)).
+3. ["Hydrate"](/docs/partial-hydration/) that prerendered component with JavaScript
 
+## Choose how and when to hydrate
+
+Slinkity assumes you'll hydrate your component by default. In other words, we ship your component as a JavaScript bundle to ensure your stateful variables work on the client. But what if you _don't_ need to ship any interactivity?
+
+To opt-out of shipping JS, you can render your component as "static" HTML and CSS like so:
+
+```html
+{% raw %}
+<!--for nunjucks templates -->
+{% react 'components/Date', render="static" %}
+
+<!--for liquid templates (note we can't use the "=" sign here!) -->
+{% react 'components/Date' 'render' 'static' %}
+
+<!--for handlebars templates --> 
+{{{ react 'components/Date', 'render', 'static' }}}
+{% endraw %}
 ```
-_includes/components/path/to/Component.jsx
-```
 
-Note that `_includes` and `.jsx` are optional in our shortcode. Passing {% raw %}`{% react '_includes/components/path/to/Component.jsx' %}`{% endraw %} works just as well!
+For a full list of options to fine-tune how and when JavaScript is loaded on the client...
 
-### Where your components should live
-
-> ⚠️ You may have noticed we're using a `components` directory inside our "includes." **This is where all your imported components should live.** Slinkity will always copy the contents of `_includes/components/` to the build for Vite to pick up. If you place your components anywhere outside of here, Vite won't be able to find them!
+### [💧 Learn more about partial hydration →](/docs/partial-hydration)
 
 ## Passing props to shortcodes
 
@@ -60,7 +80,7 @@ Let's say you have a date component that wants to use [11ty's supplied `date` ob
 "date" is the key for our prop here, and `page.date` is the value passed by 11ty. We can access our prop inside `components/Date.jsx` like so:
 
 ```jsx
-// _includes/components/Date.jsx
+// _includes/Date.jsx
 import React from 'react'
 
 function ViewDate({ date }) {
@@ -85,5 +105,7 @@ url=page.url, fileSlug=page.fileSlug %}{% endraw %}
 {% raw %}{% react 'components/DisplayAllTheThings' 'date' page.date
 'url' page.url 'fileSlug' page.fileSlug %}{% endraw %}
 ```
+
+Injecting components into templates is nice... but what if we want to build the entire route using a component framework?
 
 ### [Learn about page-level components →](/docs/component-pages-layouts)
