@@ -35,6 +35,29 @@ This will do a few things:
 2. [Prerender](https://jamstack.org/glossary/pre-render/) your component at build time. This means you'll always see your component, even when disabling JS in your browser ([try it!](https://developer.chrome.com/docs/devtools/javascript/disable/)).
 3. ["Hydrate"](/docs/partial-hydration/) that prerendered component with JavaScript
 
+## Choose how and when to hydrate
+
+Slinkity assumes you'll hydrate your component by default. In other words, we ship your component as a JavaScript bundle to ensure your stateful variables work on the client. But what if you _don't_ need to ship any interactivity?
+
+To opt-out of shipping JS, you can render your component as "static" HTML and CSS like so:
+
+```html
+{% raw %}
+<!--for nunjucks templates -->
+{% react 'components/Date', render="static" %}
+
+<!--for liquid templates (note we can't use the "=" sign here!) -->
+{% react 'components/Date' 'render' 'static' %}
+
+<!--for handlebars templates --> 
+{{{ react 'components/Date', 'render', 'static' }}}
+{% endraw %}
+```
+
+For a full list of options to fine-tune how and when JavaScript is loaded on the client...
+
+### [💧 Learn more about partial hydration →](/docs/partial-hydration)
+
 ## Passing props to shortcodes
 
 You can also pass data to your components as key / value pairs.
