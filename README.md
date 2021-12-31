@@ -7,77 +7,54 @@
 
 > 🚧 **This project is heavily under construction!** 🚧 As excited as you may be, we don't recommend this early alpha for production use. Still, give it a try if you want to have some fun and don't mind [logging bugs](https://github.com/slinkity/slinkity/issues) along the way :)
 
-Slinkity is a tool for bringing dynamic, clientside interactions to your static 11ty site. Once installed, this:
+Slinkity is the simplest way to handle styles and component frameworks on your 11ty site. Once installed, this:
 
-- 🚀 **Unlocks component frameworks** (like React) for writing page templates and layout templates. So, you can turn an existing `.html` or `.liquid` file into a `.jsx` file, and immediately start building routes using React.
-- 🔖 **Includes powerful shortcodes** to insert components into existing pages. Add a line like this to your markdown, HTML, Nunjucks, etc, and watch the magic happen: `{% react './path/to/component.jsx' %}`
-- 💧 **Hydrates these component-driven pages** on the client. In other words, all your dynamic state management will work in development and production with 0 extra setup.
+- 🚀 **Unlocks component frameworks** like React for writing page templates and layout templates. Turn an existing `.html` or `.liquid` file into a `.jsx` file, and you're off to the componentized races.
+- 🔖 **Includes powerful shortcodes** to insert components into existing pages. Add a line like this to your markdown, HTML, Nunjucks, etc, and watch the magic happen: {% raw %}`{% react 'path/to/component' %}`{% endraw %}
+- 💧 **Hydrates these components** when and how you want. Use component frameworks as a static template to start, and opt-in to shipping JS as needed with our [partial hydration helpers](/docs/partial-hydration).
+- 💅 **Bundles all your resources** with the power of Vite. Use your favorite CSS preprocessor, JS minifier, and more with minimal config.
 
-### [📣 Find our full announcement post here →](https://slinkity.dev/)
+### [📣 Find our full announcement post here →](https://slinkity.dev)
 
-## Quick start
+## Technologies used
 
-All you need is an empty directory to get started! But if you prefer a starter project with some pre-populated content, you can use the lovely guide + community resources [over on the 11ty docs](https://www.11ty.dev/docs/getting-started/).
+Slinkity stands on the shoulders of giants. You can think of Slinkity as the "glue" binding 2 tools together:
 
-### Installation
+1. [**Eleventy:**](https://www.11ty.dev) a static site generator with a rich feature set for fetching data, composing layouts, and inserting content with "shortcodes."
+2. [**Vite:**](https://vitejs.dev) a bundler that takes the boilerplate out of your set up. It'll compile JS component frameworks, handle CSS preprocessors with little-to-no config (say, SCSS and PostCSS), and show dev changes on-the-fly using [hot module replacement (HMR)](https://vitejs.dev/guide/features.html#hot-module-replacement).
 
-First, install Slinkity + the latest 11ty into your project repo like so:
+## Getting started
 
-> Slinkity requires Node v14 and up. You can check your version by running `node -v` in your terminal before trying Slinkity.
+Use our handy CLI command to spin up a Slinkity site: `npm init slinkity`. This demos our core functionality while staying as lean as possible, making it the perfect launchpad for new projects 🚀
 
-```bash
-npm i --save-dev slinkity @11ty/eleventy@beta
-```
+To learn more, and explore adding Slinkity to _existing_ 11ty projects...
 
-> Slinkity relies on 11ty's [latest 1.0 beta build](https://www.npmjs.com/package/@11ty/eleventy/v/beta) to work properly. Yes, this could involve some gotchas with existing 11ty plugins! If anything unexpected happens, let us know on our [GitHub issues page](https://github.com/slinkity/slinkity/issues).
-
-...and run our CLI command to spin up the dev server:
-
-```bash
-npx slinkity --serve
-# Also consider the --incremental flag
-# for faster builds during development
-```
-
-Now you're off to the races! This command will:
-
-1. Start up [11ty in `--watch` mode](https://www.11ty.dev/docs/usage/#re-run-eleventy-when-you-save) to listen for file changes
-2. Start up [a Vite server](https://vitejs.dev/guide/#index-html-and-project-root) pointed at your 11ty build. This helps us process all sorts of file types, including SASS styles, React components, and more 🚀
-
-When you're ready for a production build, just run:
-
-```bash
-npx slinkity
-```
-
-...and your shiny new site will appear in the `_site` folder (or [wherever you tell 11ty to build your site](https://www.11ty.dev/docs/config/#output-directory)).
-
-### [📚 Dive in to the docs here →](https://slinkity.dev/docs/quick-start/)
+### [🐣 See our "quick start" guide →](https://slinkity.dev/docs/quick-start)
 
 ## Feature set
 
-This project is still in early alpha, so we have many features soon to come! [This demo](https://twitter.com/BHolmesDev/status/1404427102032740353?s=20) covers a majority of features we plan to support. For reference, here's our tentative roadmap to version 1.0:
+This project is still in early alpha, so we have many features soon to come! [This demo](https://www.youtube.com/watch?v=X_zp6CodHjc&t=493s) covers a majority of features we support today. For reference, here's our complete roadmap of current and upcoming features:
 
-| Feature                                         | Status |
-| ----------------------------------------------- | ------ |
-| CLI to run 11ty and Vite simultaneously         | ✅ | 
-| React component pages & layouts                 | ✅ | 
-| React component shortcodes                      | ✅ |
-| SASS support                                    | ✅ |
-| CSS module support*                             | ⏺ |
-| First-class page transition library             | ⏳ |
-| Single page app capabilities                    | ⏳ |
-| Vue component pages, layouts and shortcodes     | ❌ |
-| Svelte component pages, layouts and shortcodes  | ❌ |
-| Tailwind support                                | ❌ |
-| Styled components & Emotion support             | ❌ |
+| Feature                                                | Status |
+| ------------------------------------------------------ | ------ |
+| CLI to run 11ty and Vite simultaneously                | ✅      |
+| React component pages & layouts                        | ✅      |
+| React component shortcodes                             | ✅      |
+| SCSS and SASS                                          | ✅      |
+| PostCSS config (ex. Tailwind)                          | ✅      |
+| CSS imports via ESM (including CSS modules) *          | ⏺      |
+| Plugin ecosystem for your favorite component framework |
+| (Vue, Svelte, Solid, etc)                              | ⏳      |
+| Eleventy serverless compatibility                      | ❌      |
+| Shared state between component shortcodes              | ❌      |
+| Styled components & Emotion                            | ❌      |
 
-_*CSS modules **will** work with JavaScript enabled. However, disabling JavaScript or rendering your components as "static" will break this behavior._
+_*CSS imports will work today, but with one caveat: stylesheets will bleed to other routes on your site. We're actively working on a fix!_
 
 - ✅ = Ready to use
 - ⏺ = Partial support
 - ⏳ = In progress
-- ❌ = Not started (but on roadmap)
+- ❌ = Not started, but on roadmap
 
 ## Have an idea? Notice a bug?
 
