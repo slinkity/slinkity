@@ -118,9 +118,9 @@ Finally, let's place this component on our `index.html` with a [component shortc
 ```
 
 This will do a few things:
-1. Go find `_includes/GlassCounter.jsx` (notice the `.jsx` is optional)
-2. Prerender the component at build time and insert it as HTML. This means you'll always see your component, even when disabling JS in your browser ([try it!](https://developer.chrome.com/docs/devtools/javascript/disable/)).
-3. ["Hydrate"](/docs/partial-hydration/) that HTML we just rendered with our JavaScript component
+1. Find `_includes/GlassCounter.jsx` (notice the `.jsx` is optional)
+2. [Prerender](https://jamstack.org/glossary/pre-render/) your component at build time. This means you'll always see your component, even when disabling JS in your browser ([try it!](https://developer.chrome.com/docs/devtools/javascript/disable/)).
+3. ["Hydrate"](/docs/partial-hydration/) that prerendered component with JavaScript
 
 Now in your browser preview, clicking "Add one" should increase your counter 🎉
 
