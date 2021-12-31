@@ -1,11 +1,13 @@
 const Cache = require('@11ty/eleventy-cache-assets')
 
-function toTitle(username) {
-  if (username === 'Holben888') {
-    return 'Supreme Slinkity Stan'
-  } else {
-    return 'Contributor'
-  }
+const usernameToCustomTitleMap = {
+  Holben888: 'Supreme Slinkity Stan',
+  ajcwebdev: 'Maintainer',
+  nachtfunke: 'Cascading Style Slinky',
+}
+
+function toTitleByUsername(username) {
+  return usernameToCustomTitleMap[username] ?? 'Contributor'
 }
 
 module.exports = async function contributors() {
@@ -32,7 +34,7 @@ module.exports = async function contributors() {
       username: contributor.login ?? '',
       url: contributor.html_url ?? '',
       imageUrl: contributor.avatar_url ?? '',
-      title: toTitle(contributor.login),
+      title: toTitleByUsername(contributor.login),
       numContributions: contributor.contributions ?? 0,
     }))
     .sort((contributor) => contributor.numContributions)
