@@ -67,7 +67,7 @@ async function viteBuild({ dir, ssrViteConfig, filePath, environment }) {
     })
     return defaultMod
   }
-  const __importedStyles = Object.keys(output[0].modules ?? {}).filter(isStyleImport)
+  const __importedStyles = new Set(Object.keys(output[0].modules ?? {}).filter(isStyleImport))
   return {
     ...defaultMod,
     __importedStyles,
