@@ -26,10 +26,11 @@ function collectCSS(mod, collectedCSSModUrls, visitedModUrls = new Set()) {
   visitedModUrls.add(mod.url)
   if (isStyleImport(mod.url)) {
     collectedCSSModUrls.add(mod.url)
+  } else {
+    mod.importedModules.forEach((subMod) => {
+      collectCSS(subMod, collectedCSSModUrls, visitedModUrls)
+    })
   }
-  mod.importedModules.forEach((subMod) => {
-    collectCSS(subMod, collectedCSSModUrls, visitedModUrls)
-  })
 }
 
 /**
