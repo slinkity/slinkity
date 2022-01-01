@@ -10,7 +10,7 @@ const { getSharedConfig } = require('./vite')
  * @returns Whether this import ends with an expected CSS file extension
  */
 function isStyleImport(imp) {
-  return /\.(css|scss|sass|less|stylus)$/.test(imp)
+  return /\.(css|scss|sass|less|stylus)($|\?*)/.test(imp)
 }
 
 /**
