@@ -28,10 +28,12 @@ This is what **Slinkity** is built for. With our approach, you can:
 
 So start in the first camp, with zero cost of switching to the second.
 
-## How can I try it?
+## How can I jump in?
 
-This project is still _heavily_ under development in an early alpha phase. But if you're brave enough, head to our [quick start guide](/docs/quick-start/) to try for yourself! 🚀
+This project is still _heavily_ under development in an early alpha phase. But if you're excited to try it out, head to our [quick start guide](/docs/quick-start/)!
 
-For future updates, release milestones, project showcases, and more, expect updates on Twitter from these lovely accounts:
+We don't want to stay alpha forever though. For those with feature requests, bug reports, and a love for open source, now's a great time to get involved. Head to [our CONTRIBUTING guide](https://github.com/slinkity/slinkity/blob/main/CONTRIBUTING.md) to learn more ❤️
+
+### Contributors
 
 {% include 'contributors.njk' %}
