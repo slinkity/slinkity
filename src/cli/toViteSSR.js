@@ -53,23 +53,24 @@ async function viteBuild({ dir, ssrViteConfig, filePath, environment }) {
       },
     },
   })
-  const __importedStyles = Object.keys(output[0].modules).filter(isStyleImport)
   /** @type {FormattedModule} */
-  const mod = {
+  const defaultMod = {
     default: () => null,
     getProps: () => ({}),
     frontMatter: {},
-    __importedStyles,
+    __importedStyles: new Set(),
   }
   if (!output?.length) {
     logger.log({
       type: 'error',
       message: `Module ${filePath} didn't have any output. Is this file blank?`,
     })
-    return mod
+    return defaultMod
   }
+  const __importedStyles = Object.keys(output[0].modules ?? {}).filter(isStyleImport)
   return {
-    ...mod,
+    ...defaultMod,
+    __importedStyles,
     // converts our stringified JS to a CommonJS module in memory
     // saves reading / writing to disk!
     // TODO: check performance impact
