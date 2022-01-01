@@ -2,4 +2,10 @@
 @use 'tools' as *;
 @use 'generic';
 @use 'base';
-@use 'chunks';
+@use 'chunks/layout';
+@use 'chunks/demo-embed';
+@use 'chunks/contributor';
+@use 'chunks/sr-only';
+@use 'chunks/heading-wrapper';
+@use 'chunks/external-link';
+@use 'chunks/site-footer';

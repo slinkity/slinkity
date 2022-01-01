@@ -1,0 +1,9 @@
+<div class="contributor__container flex-row">
+  {% for contributor in contributors %}
+  <article class="contributor">
+    <img class="contributor__image" src="{{contributor.imageUrl}}" alt="{{contributor.username}}">
+    <h3 class="contributor__username"><a href=" {{contributor.url}}">{{contributor.username}}</a></h3>
+    <p class="contributor__title">{{contributor.title}}</p>
+  </article>
+  {% endfor %}
+</div>

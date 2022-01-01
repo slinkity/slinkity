@@ -112,27 +112,3 @@
   }
 }
 
-
-.external-link {
-  display: flex;
-  gap: 0.5rem;
-
-  &__icon > svg {
-    height: 0.8em;
-    width: 0.8em;
-  }
-}
-
-.heading-wrapper {
-  display: flex;
-  gap: 1em;
-  align-items: center;
-
-  &:is(:hover, :focus-within) .header-anchor {
-    opacity: 1;
-  }
-
-  .header-anchor {
-    opacity: 0;
-  }
-}

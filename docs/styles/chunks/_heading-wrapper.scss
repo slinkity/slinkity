@@ -1,0 +1,13 @@
+.heading-wrapper {
+  display: flex;
+  gap: 1em;
+  align-items: center;
+
+  &:is(:hover, :focus-within) .header-anchor {
+    opacity: 1;
+  }
+
+  .header-anchor {
+    opacity: 0;
+  }
+}

@@ -1,0 +1,25 @@
+@use '../tools' as *;
+
+.home__heading-link {
+  @include gradient-link;
+  --bg: #2a2038;
+  padding: 8px 14px;
+  text-decoration: none;
+
+  &:first-child {
+    --bg: var(--pink);
+    color: var(--black);
+    font-weight: bold;
+  }
+
+  &__container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+  
+    @media (max-width: 550px) {
+      flex-direction: column;
+      text-align: center;
+    }
+  }
+}

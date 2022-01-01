@@ -23,16 +23,12 @@ body {
         font-family: var(--pro-hacker-font);
         font-size: 0.8em;
         background: #333;
-        padding: 2px;
+        padding: .1rem;
     }
 }
 
 main {
     margin: 1rem 0;
-}
-
-article {
-    @include gradient-links;
 }
 
 :is(ul, ol) > li {
@@ -66,43 +62,37 @@ h2 {
 }
 
 blockquote {
+    @include gradient-links;
     --bg: var(--grey-100);
-    display: flex;
-    margin-left: 0;
-    margin-right: 0;
-    padding-right: 20px;
+    --gradient-accent-width: 0.5rem;
+    margin-inline: 0;
     background: var(--bg);
-    border-radius: 0 5px 5px 0;
+    border-radius: 0 .25rem .25rem 0;
+    position: relative;
+    padding: 1rem;
+    padding-inline-start: calc(1rem + var(--gradient-accent-width));
 
     &::before {
         content: '';
-        display: inline-block;
-        width: 14px;
-        margin-right: 20px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: var(--gradient-accent-width);
         background: linear-gradient(var(--pink), var(--yellow));
     }
 }
 
 article {
+    @include gradient-links;
+
     max-width: var(--content-max-width);
     margin: auto;
-    padding: 20px;
+    padding: 1rem;
     background: linear-gradient(
         transparent,
         var(--black) 30px,
         var(--black) calc(100% - 30px),
         transparent
     );
-}
-
-footer {
-    padding: 10px;
-
-    p {
-        text-align: center;
-        font-style: italic;
-        font-size: 0.8rem;
-        margin: auto;
-        max-width: var(--content-max-width);
-    }
 }

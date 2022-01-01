@@ -1,9 +1,0 @@
-<div class="twitter-profile__container">
-  {% for account in twitterAccounts %}
-  <article class="twitter-profile">
-    <img src={{account.image}} alt={{account.name}}>
-    <h3><a href="https://twitter.com/{{account.handle}}">{{account.name}}</a></h3>
-    <p class="twitter-profile__title">{{ account.title }}</p>
-  </article>
-  {% endfor %}
-</div>
