@@ -28,7 +28,7 @@ function collectCSS(mod, collectedCSSModUrls, visitedModUrls = new Set()) {
     collectedCSSModUrls.add(mod.url)
   }
   mod.importedModules.forEach((subMod) => {
-    collectCSS(subMod, visitedModUrls, collectedCSSModUrls)
+    collectCSS(subMod, collectedCSSModUrls, visitedModUrls)
   })
 }
 
