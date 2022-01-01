@@ -24,16 +24,15 @@ async function applyViteHtmlTransform(
   const root = parse(content)
   const mountPointsToSSR = root.querySelectorAll(`[${SLINKITY_ATTRS.ssr}="true"]`)
   const allComponentAttrsForPage = componentAttrStore.getAllByPage(outputPath)
-  const pageStyles = {}
+  /** @type {Set<string>} */
+  const importedStyles = new Set()
   for (const mountPointToSSR of mountPointsToSSR) {
     const id = mountPointToSSR.getAttribute(SLINKITY_ATTRS.id)
     const componentAttrs = allComponentAttrsForPage[id]
     if (componentAttrs) {
       const { path: componentPath, props, hydrate } = componentAttrs
-      const { default: Component, __stylesGenerated } = await viteSSR.toCommonJSModule(
-        componentPath,
-      )
-      Object.assign(pageStyles, __stylesGenerated)
+      const { default: Component, __importedStyles } = await viteSSR.toCommonJSModule(componentPath)
+      __importedStyles.forEach((importedStyle) => importedStyles.add(importedStyle))
       // TODO: abstract renderer imports to be framework-agnostic
       // (importing directly from the React plugin right now)
       mountPointToSSR.innerHTML = toRendererHtml({
@@ -43,9 +42,12 @@ async function applyViteHtmlTransform(
       })
     }
   }
-  root
-    .querySelector('body')
-    ?.insertAdjacentHTML('beforeend', `<style>${Object.values(pageStyles).join('\n')}</style>`)
+  root.querySelector('head')?.insertAdjacentHTML(
+    'beforeend',
+    `<script type="module">
+${[...importedStyles].map((importedStyle) => `import ${JSON.stringify(importedStyle)};\n`)}
+</script>`,
+  )
 
   const routePath = '/' + toSlashesTrimmed(relative(dir.output, outputPath))
   const server = viteSSR.getServer()
