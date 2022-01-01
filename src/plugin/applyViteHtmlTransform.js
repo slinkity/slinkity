@@ -42,12 +42,19 @@ async function applyViteHtmlTransform(
       })
     }
   }
-  root.querySelector('head')?.insertAdjacentHTML(
-    'beforeend',
-    `<script type="module">
-${[...importedStyles].map((importedStyle) => `import ${JSON.stringify(importedStyle)};\n`)}
-</script>`,
-  )
+  if (importedStyles.size) {
+    root
+      .querySelector('head')
+      .insertAdjacentHTML(
+        'beforeend',
+        [...importedStyles]
+          .map(
+            (importedStyle) =>
+              `<link rel="stylesheet" href=${JSON.stringify(importedStyle)}></link>`,
+          )
+          .join('\n'),
+      )
+  }
 
   const routePath = '/' + toSlashesTrimmed(relative(dir.output, outputPath))
   const server = viteSSR.getServer()
