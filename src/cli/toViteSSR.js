@@ -35,6 +35,8 @@ function collectCSS(mod, collectedCSSModUrls, visitedModUrls = new Set()) {
   }
 }
 
+module.exports.collectCSS = collectCSS
+
 /**
  * Production-style build using Vite's build CLI
  * @param {ViteSSRParams & {
