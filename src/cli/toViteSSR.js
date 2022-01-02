@@ -4,45 +4,48 @@ const logger = require('../utils/logger')
 const { getSharedConfig } = require('./vite')
 
 /**
- * @typedef {import('./reactPlugin/2-pageTransform/componentAttrStore').ComponentAttrs['styleToFilePathMap']} StyleToFilePathMap
- * @typedef GimmeCSSPluginReturn
- * @property {() => StyleToFilePathMap} getCSS
- * @property {import('vite').PluginOption}
- * @returns {GimmeCSSPluginReturn}
+ * Regex of hard-coded stylesheet extensions
+ * TODO: generate regex from applied Vite plugins
+ * @param {string} imp Import to test
+ * @returns Whether this import ends with an expected CSS file extension
  */
-function gimmeCSSPlugin() {
-  /**
-   * @type {StyleToFilePathMap}
-   */
-  const styleToFilePathMap = {}
+function isStyleImport(imp) {
+  return /\.(css|scss|sass|less|stylus)($|\?*)/.test(imp)
+}
 
-  return {
-    getCSS() {
-      return styleToFilePathMap
-    },
-    plugin: {
-      name: 'gimme-css-plugin',
-      transform(code, id) {
-        if (/\.(css|scss|sass|less|stylus)$/.test(id)) {
-          styleToFilePathMap[id] = code
-          return { code: '' }
-        }
-        return null
-      },
-    },
+module.exports.isStyleImport = isStyleImport
+
+/**
+ * Recursively walks through all nested imports for a given module,
+ * Searching for any CSS imported via ESM
+ * @param {import('vite').ModuleNode | undefined} mod The module node to collect CSS from
+ * @param {Set<string>} collectedCSSModUrls All CSS imports found
+ * @param {Set<string>} visitedModUrls All modules recursively crawled
+ */
+function collectCSS(mod, collectedCSSModUrls, visitedModUrls = new Set()) {
+  if (!mod || !mod.url || visitedModUrls.has(mod.url)) return
+
+  visitedModUrls.add(mod.url)
+  if (isStyleImport(mod.url)) {
+    collectedCSSModUrls.add(mod.url)
+  } else {
+    mod.importedModules.forEach((subMod) => {
+      collectCSS(subMod, collectedCSSModUrls, visitedModUrls)
+    })
   }
 }
+
+module.exports.collectCSS = collectCSS
 
 /**
  * Production-style build using Vite's build CLI
  * @param {ViteSSRParams & {
  *  ssrViteConfig: import('vite').UserConfigExport;
  *  filePath: string;
- *  generatedStyles: GimmeCSSPluginReturn;
  * }} params
  * @returns {FormattedModule}
  */
-async function viteBuild({ dir, ssrViteConfig, filePath, environment, generatedStyles }) {
+async function viteBuild({ dir, ssrViteConfig, filePath, environment }) {
   const { output } = await build({
     ...ssrViteConfig,
     ...(await getSharedConfig(dir)),
@@ -55,24 +58,24 @@ async function viteBuild({ dir, ssrViteConfig, filePath, environment, generatedS
       },
     },
   })
-  /**
-   * @type {FormattedModule}
-   */
-  const mod = {
+  /** @type {FormattedModule} */
+  const defaultMod = {
     default: () => null,
     getProps: () => ({}),
     frontMatter: {},
-    __stylesGenerated: generatedStyles.getCSS(),
+    __importedStyles: new Set(),
   }
   if (!output?.length) {
     logger.log({
       type: 'error',
       message: `Module ${filePath} didn't have any output. Is this file blank?`,
     })
-    return mod
+    return defaultMod
   }
+  const __importedStyles = new Set(Object.keys(output[0].modules ?? {}).filter(isStyleImport))
   return {
-    ...mod,
+    ...defaultMod,
+    __importedStyles,
     // converts our stringified JS to a CommonJS module in memory
     // saves reading / writing to disk!
     // TODO: check performance impact
@@ -86,12 +89,11 @@ async function viteBuild({ dir, ssrViteConfig, filePath, environment, generatedS
  * @property {import('../plugin').SlinkityConfigOptions['dir']} dir
  * @param {ViteSSRParams}
  *
- * @typedef {{
- *  default: () => any;
- *  getProps: (eleventyData: any) => any;
- *  frontMatter: Record<string, any>;
- *  __stylesGenerated: Record<string, string>;
- * }} FormattedModule - expected keys from a given component module
+ * @typedef FormattedModule
+ * @property {() => any} default
+ * @property {(eleventyData: any) => any} getProps
+ * @property {Record<string, any>} frontMatter
+ * @property {Set<string>} __importedStyles
  *
  * @typedef ToCommonJSModuleOptions
  * @property {boolean} useCache Whether to (attempt to) use the in-memory cache for fetching a build result. Defaults to true in production
@@ -103,45 +105,39 @@ async function viteBuild({ dir, ssrViteConfig, filePath, environment, generatedS
  *
  * @returns {ViteSSR} viteSSR
  */
-module.exports = async function toViteSSR({ environment, dir }) {
-  const generatedStyles = gimmeCSSPlugin()
-  const ssrViteConfig = defineConfig({
-    root: dir.output,
-    plugins: [generatedStyles.plugin],
-  })
-  /**
-   * @type {Record<string, FormattedModule>}
-   */
+async function toViteSSR({ environment, dir }) {
+  const ssrViteConfig = defineConfig({ root: dir.output })
+  /** @type {Record<string, FormattedModule>} */
   const probablyInefficientCache = {}
 
   if (environment === 'dev') {
-    /**
-     * @type {import('vite').ViteDevServer}
-     */
+    /** @type {import('vite').ViteDevServer} */
     let server = null
     return {
       async toCommonJSModule(filePath, options = { useCache: false }) {
         if (options.useCache && probablyInefficientCache[filePath]) {
           return probablyInefficientCache[filePath]
         }
-        /**
-         * @type {FormattedModule}
-         */
+        /** @type {FormattedModule} */
         let viteOutput
         if (server) {
+          const ssrModule = await server.ssrLoadModule(filePath)
+          const moduleGraph = await server.moduleGraph.getModuleByUrl(filePath)
+          /** @type {Set<string>} */
+          const __importedStyles = new Set()
+          collectCSS(moduleGraph, __importedStyles)
           viteOutput = {
             default: () => null,
             getProps: () => ({}),
             frontMatter: {},
-            __stylesGenerated: generatedStyles.getCSS(),
-            ...(await server.ssrLoadModule(filePath)),
+            __importedStyles,
+            ...ssrModule,
           }
         } else {
           viteOutput = await viteBuild({
             dir,
             filePath,
             ssrViteConfig,
-            generatedStyles,
             environment,
           })
         }
@@ -171,7 +167,6 @@ module.exports = async function toViteSSR({ environment, dir }) {
         const viteOutput = await viteBuild({
           dir,
           filePath,
-          generatedStyles,
           ssrViteConfig,
           environment,
         })
@@ -185,3 +180,5 @@ module.exports = async function toViteSSR({ environment, dir }) {
     }
   }
 }
+
+module.exports.toViteSSR = toViteSSR
