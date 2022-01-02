@@ -20,6 +20,7 @@ const toSlashesTrimmed = require('../utils/toSlashesTrimmed')
 const { getResolvedAliases } = require('../cli/vite')
 const { toComponentAttrStore } = require('./componentAttrStore')
 const { applyViteHtmlTransform } = require('./applyViteHtmlTransform')
+const { toViteSSR } = require('../cli/toViteSSR')
 
 // TODO: abstract based on renderer plugins configured
 // https://github.com/slinkity/slinkity/issues/55
@@ -54,10 +55,15 @@ function toEleventyIgnored(userEleventyIgnores, dir) {
  * @param {SlinkityConfigOptions} options - all Slinkity plugin options
  * @returns (eleventyConfig: Object) => Object - config we'll apply to the Eleventy object
  */
-module.exports = function slinkityConfig({ userSlinkityConfig, ...options }) {
-  const { dir, viteSSR, browserSyncOptions, environment } = options
+module.exports = async function slinkityConfig({
+  userSlinkityConfig,
+  dir,
+  browserSyncOptions,
+  environment,
+}) {
   const eleventyIgnored = toEleventyIgnored(userSlinkityConfig.eleventyIgnores, dir)
   const componentAttrStore = toComponentAttrStore()
+  const viteSSR = await toViteSSR({ environment, dir, componentAttrStore })
 
   return function (eleventyConfig) {
     eleventyConfig.addTemplateFormats(
@@ -95,7 +101,7 @@ module.exports = function slinkityConfig({ userSlinkityConfig, ...options }) {
                   res.write(
                     await applyViteHtmlTransform(
                       { content, outputPath, componentAttrStore },
-                      options,
+                      { viteSSR, dir, environment },
                     ),
                   )
                   res.end()
@@ -129,7 +135,10 @@ module.exports = function slinkityConfig({ userSlinkityConfig, ...options }) {
 
     if (environment === 'prod') {
       eleventyConfig.addTransform('apply-vite', async function (content, outputPath) {
-        return await applyViteHtmlTransform({ content, outputPath, componentAttrStore }, options)
+        return await applyViteHtmlTransform(
+          { content, outputPath, componentAttrStore },
+          { viteSSR, dir, environment },
+        )
       })
     }
     return {}
