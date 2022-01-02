@@ -105,7 +105,7 @@ async function viteBuild({ dir, ssrViteConfig, filePath, environment }) {
  *
  * @returns {ViteSSR} viteSSR
  */
-module.exports.default = async function toViteSSR({ environment, dir }) {
+async function toViteSSR({ environment, dir }) {
   const ssrViteConfig = defineConfig({ root: dir.output })
   /** @type {Record<string, FormattedModule>} */
   const probablyInefficientCache = {}
@@ -180,3 +180,5 @@ module.exports.default = async function toViteSSR({ environment, dir }) {
     }
   }
 }
+
+module.exports.toViteSSR = toViteSSR

@@ -3,7 +3,7 @@ const Eleventy = require('@11ty/eleventy/src/Eleventy')
 const EleventyErrorHandler = require('@11ty/eleventy/src/EleventyErrorHandler')
 const UserConfig = require('@11ty/eleventy/src/UserConfig')
 const { resolve } = require('path')
-const toViteSSR = require('./toViteSSR')
+const { toViteSSR } = require('./toViteSSR')
 const { readUserSlinkityConfig } = require('./readUserSlinkityConfig')
 const slinkityConfig = require('../plugin')
 
