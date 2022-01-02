@@ -13,6 +13,8 @@ function isStyleImport(imp) {
   return /\.(css|scss|sass|less|stylus)($|\?*)/.test(imp)
 }
 
+module.exports.isStyleImport = isStyleImport
+
 /**
  * Recursively walks through all nested imports for a given module,
  * Searching for any CSS imported via ESM
@@ -101,7 +103,7 @@ async function viteBuild({ dir, ssrViteConfig, filePath, environment }) {
  *
  * @returns {ViteSSR} viteSSR
  */
-module.exports = async function toViteSSR({ environment, dir }) {
+module.exports.default = async function toViteSSR({ environment, dir }) {
   const ssrViteConfig = defineConfig({ root: dir.output })
   /** @type {Record<string, FormattedModule>} */
   const probablyInefficientCache = {}
