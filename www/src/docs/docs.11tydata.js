@@ -11,6 +11,7 @@ const navSlugSortOrder = [
   'styling',
   'import-aliases',
   'deployment',
+  'migration-gotchas',
 ]
 
 const trimSlashes = (s) => s.replace(/^\/|\/$/g, '')
