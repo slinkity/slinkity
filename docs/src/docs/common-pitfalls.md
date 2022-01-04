@@ -1,10 +1,10 @@
 ---
-title: Common pitfalls when migrating from 11ty
+title: Common pitfalls
 ---
 
 For the most part, you should be able to seamlessly migrate your site from 11ty to Slinkity with minimal reconfiguration. But there are a few changes that may catch you off guard. These gotchas are summarized below.
 
-## Multi-Step Processing and Vite's `public` Folder
+## Certain files disappeared from my production build output folder
 
 In an 11ty site, you are free for the most part to structure your project however you like. You can put your static assets in a `public` folder outside your [11ty input directory]((https://www.11ty.dev/docs/config/#input-directory)) and pass-through copy them, but you don't need to—you could also store all of your assets inside your 11ty input directory. It doesn't matter which approach you take, so long as you configure your 11ty project accordingly and write your files to the correct locations. However, you need to take a slightly different approach in Slinkity due to the standards enforced by Vite.
 
@@ -25,7 +25,7 @@ Below are some scenarios where you may encounter this pitfall:
 
 Let's look at an example.
 
-### The Old Approach (11ty)
+### The old approach (11ty)
 
 Suppose you're using 11ty to auto-generate a `sitemap.xml` for your site. In 11ty, you'd create this file using your chosen templating language extension and set a permalink in its front matter relative to the output directory, like so:
 
@@ -42,7 +42,7 @@ When 11ty builds your site, it'll process this template file and spit out a file
 
 Unfortunately, this won't work in Slinkity. In the first step, the sitemap will get written to `.11ty-build-DcNVBN/sitemap.xml`. In the follow-up steps, Vite will process this temporary build directory, see that `sitemap.xml` is not referenced by any other file and isn't in the dedicated `public` folder, and exclude it from the final output that it writes to `_site`.
 
-### The New Approach (Slinkity)
+### The new approach (Slinkity)
 
 To fix this problem, you need to prefix the static file's permalink with `/public`.
 
