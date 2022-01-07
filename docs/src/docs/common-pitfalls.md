@@ -30,14 +30,12 @@ Let's look at an example.
 
 Suppose you're using 11ty to auto-generate a `sitemap.xml` for your site. In 11ty, you'd create this file using your chosen templating language extension and set a permalink in its front matter relative to the output directory, like so:
 
-{% raw %}
 ```liquid
-{% comment %}src/sitemap.liquid{% endcomment %}
+<!-- src/sitemap.liquid -->
 ---
 permalink: /sitemap.xml
 ---
 ```
-{% endraw %}
 
 When 11ty builds your site, it'll process this template file and spit out a file named `_site/sitemap.xml`.
 
@@ -47,14 +45,12 @@ Unfortunately, this won't work in Slinkity. In the first step, the sitemap will 
 
 To fix this problem, you need to prefix the static file's permalink with `/public`, like this:
 
-{% raw %}
 ```liquid
-{% comment %}src/sitemap.liquid{% endcomment %}
+<!-- src/sitemap.liquid -->
 ---
 permalink: /public/sitemap.xml
 ---
 ```
-{% endraw %}
 
 Now, this happens:
 
