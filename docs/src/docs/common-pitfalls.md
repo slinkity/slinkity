@@ -45,20 +45,7 @@ Unfortunately, this won't work in Slinkity. In the first step, the sitemap will 
 
 ### The new approach (Slinkity)
 
-To fix this problem, you need to prefix the static file's permalink with `/public`.
-
-So instead of this:
-
-{% raw %}
-```liquid
-{% comment %}src/sitemap.liquid{% endcomment %}
----
-permalink: /sitemap.xml
----
-```
-{% endraw %}
-
-You would do this:
+To fix this problem, you need to prefix the static file's permalink with `/public`, like this:
 
 {% raw %}
 ```liquid
