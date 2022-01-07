@@ -1,8 +1,9 @@
+const { normalizePath } = require('vite')
+const { relative } = require('path')
 const { parse } = require('node-html-parser')
 const { SLINKITY_ATTRS } = require('../utils/consts')
 const { toRendererHtml } = require('./reactPlugin/1-pluginDefinitions/toRendererHtml')
 const toSlashesTrimmed = require('../utils/toSlashesTrimmed')
-const { relative } = require('path')
 
 /**
  * @typedef ApplyViteHtmlTransformParams
@@ -56,8 +57,8 @@ async function applyViteHtmlTransform(
       )
   }
 
-  const routePath = '/' + toSlashesTrimmed(relative(dir.output, outputPath))
   const server = viteSSR.getServer()
+  const routePath = '/' + toSlashesTrimmed(normalizePath(relative(dir.output, outputPath)))
   return environment === 'dev' && server
     ? server.transformIndexHtml(routePath, root.outerHTML)
     : root.outerHTML

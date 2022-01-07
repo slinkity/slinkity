@@ -13,6 +13,7 @@
  */
 
 const browserSync = require('browser-sync')
+const { normalizePath } = require('vite')
 const { relative, join } = require('path')
 const reactPlugin = require('./reactPlugin')
 const toSlashesTrimmed = require('../utils/toSlashesTrimmed')
@@ -132,7 +133,9 @@ module.exports = function slinkityConfig({ userSlinkityConfig, ...options }) {
         function (content, outputPath) {
           const relativePath = relative(dir.output, outputPath)
           const formattedAsUrl = toSlashesTrimmed(
-            relativePath.replace(/.html$/, '').replace(/index$/, ''),
+            normalizePath(relativePath)
+              .replace(/.html$/, '')
+              .replace(/index$/, ''),
           )
           urlToOutputHtmlMap[formattedAsUrl] = {
             outputPath,
