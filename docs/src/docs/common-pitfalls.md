@@ -9,12 +9,12 @@ For the most part, you should be able to seamlessly migrate your site from 11ty 
 In an 11ty site, you are free to structure your project however you like. You can put your static assets in a `public` folder outside your [11ty input directory]((https://www.11ty.dev/docs/config/#input-directory)), an `assets` folder in your input directory, a `banana` folder in your `_includes`... you get the idea. But now that Slinkity brings [Vite](https://vitejs.dev/) into the equation, there are a couple "gotchas" to consider.
 ### How Slinkity production builds work
 
-First, we need to understand that a Slinkity build consists of multiple steps:
+In a typical Slinkity build, we:
 
-1. Processing your site with 11ty and dumping the result into a temporary build folder (e.g., `.11ty-build-DcNVBN`).
-2. Processing the temporary build folder with Vite to bundle assets on the pages that reference them.
-3. Writing the temporary build folder to your 11ty output directory (e.g., `_site`)
-4. Deleting the temporary build folder.
+1. Process your site with 11ty and dumping the result into a temporary build folder (e.g., `.11ty-build-DcNVBN`).
+2. Process the temporary build folder with Vite to bundle assets on the pages that reference them.
+3. Write the temporary build folder to your 11ty output directory (e.g., `_site`)
+4. Delete the temporary build folder.
 
 Vite is very strict about where it wants you to place your static assets—in a [dedicated `public` folder](https://vitejs.dev/guide/assets.html#the-public-directory). This allows it to distinguish static assets from ones that are referenced by your pages (like stylesheets) and to bundle the referenced assets while leaving the static ones alone. Any static asset that isn't referenced by a page and isn't in the `public` directory will be removed from the final build output. For this reason, you may find that certain files disappear from production builds, even though they were technically processed correctly by 11ty.
 
