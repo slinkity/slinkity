@@ -7,6 +7,7 @@ For the most part, you should be able to seamlessly migrate your site from 11ty 
 ## Certain files disappeared from my production build output folder
 
 In an 11ty site, you are free for the most part to structure your project however you like. You can put your static assets in a `public` folder outside your [11ty input directory]((https://www.11ty.dev/docs/config/#input-directory)) and pass-through copy them, but you don't need to—you could also store all of your assets inside your 11ty input directory. It doesn't matter which approach you take, so long as you configure your 11ty project accordingly and write your files to the correct locations. However, you need to take a slightly different approach in Slinkity due to the standards enforced by Vite.
+### How Slinkity production builds work
 
 First, we need to understand that a Slinkity build consists of multiple steps:
 
