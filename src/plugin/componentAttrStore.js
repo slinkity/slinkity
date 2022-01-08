@@ -15,7 +15,7 @@
  * @property {ID} id - a unique identifier for later retrieval from the store
  *
  * @typedef {{
- *  getAllByPage: (pageOutputPath: string) => ComponentAttrsWithId[];
+ *  getAllByPage: (pageOutputPath: string) => ComponentAttrs[];
  *  push: (componentAttrs: ComponentAttrs) => number;
  *  clear: () => void;
  * }} ComponentAttrStore
