@@ -20,6 +20,7 @@ const toSlashesTrimmed = require('../utils/toSlashesTrimmed')
 const { getResolvedAliases } = require('../cli/vite')
 const { toComponentAttrStore } = require('./componentAttrStore')
 const { applyViteHtmlTransform } = require('./applyViteHtmlTransform')
+const { SLINKITY_HEAD_STYLES, SLINKITY_HEAD_SCRIPTS } = require('../utils/consts')
 
 // TODO: abstract based on renderer plugins configured
 // https://github.com/slinkity/slinkity/issues/55
@@ -66,6 +67,10 @@ module.exports = function slinkityConfig({ userSlinkityConfig, ...options }) {
     for (const ignored of eleventyIgnored) {
       eleventyConfig.ignores.add(ignored)
     }
+
+    eleventyConfig.addGlobalData('__slinkity', {
+      head: `${SLINKITY_HEAD_STYLES}\n${SLINKITY_HEAD_SCRIPTS}`,
+    })
 
     eleventyConfig.addPlugin(reactPlugin, {
       viteSSR,

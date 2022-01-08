@@ -47,11 +47,16 @@ function toSSRComment(id) {
   return `<!--slinkity-ssr ${BUILD_HASH} ${id}-->`
 }
 
+const SLINKITY_HEAD_STYLES = toSSRComment('styles')
+const SLINKITY_HEAD_SCRIPTS = toSSRComment('scripts')
+
 module.exports = {
   SLINKITY_ATTRS,
   SLINKITY_CONFIG_FILE_NAME,
   SLINKITY_REACT_MOUNT_POINT,
   IMPORT_ALIASES,
+  SLINKITY_HEAD_STYLES,
+  SLINKITY_HEAD_SCRIPTS,
   PACKAGES,
   BUILD_HASH,
   toSSRComment,
