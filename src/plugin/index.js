@@ -20,7 +20,6 @@ const toSlashesTrimmed = require('../utils/toSlashesTrimmed')
 const { getResolvedAliases } = require('../cli/vite')
 const { toComponentAttrStore } = require('./componentAttrStore')
 const { applyViteHtmlTransform } = require('./applyViteHtmlTransform')
-const { toViteSSR } = require('../cli/toViteSSR')
 
 // TODO: abstract based on renderer plugins configured
 // https://github.com/slinkity/slinkity/issues/55
@@ -55,15 +54,10 @@ function toEleventyIgnored(userEleventyIgnores, dir) {
  * @param {SlinkityConfigOptions} options - all Slinkity plugin options
  * @returns (eleventyConfig: Object) => Object - config we'll apply to the Eleventy object
  */
-module.exports = async function slinkityConfig({
-  userSlinkityConfig,
-  dir,
-  browserSyncOptions,
-  environment,
-}) {
+module.exports = function slinkityConfig({ userSlinkityConfig, ...options }) {
+  const { dir, viteSSR, browserSyncOptions, environment } = options
   const eleventyIgnored = toEleventyIgnored(userSlinkityConfig.eleventyIgnores, dir)
   const componentAttrStore = toComponentAttrStore()
-  const viteSSR = await toViteSSR({ environment, dir, componentAttrStore })
 
   return function (eleventyConfig) {
     eleventyConfig.addTemplateFormats(
@@ -101,7 +95,7 @@ module.exports = async function slinkityConfig({
                   res.write(
                     await applyViteHtmlTransform(
                       { content, outputPath, componentAttrStore },
-                      { viteSSR, dir, environment },
+                      options,
                     ),
                   )
                   res.end()
@@ -135,10 +129,7 @@ module.exports = async function slinkityConfig({
 
     if (environment === 'prod') {
       eleventyConfig.addTransform('apply-vite', async function (content, outputPath) {
-        return await applyViteHtmlTransform(
-          { content, outputPath, componentAttrStore },
-          { viteSSR, dir, environment },
-        )
+        return await applyViteHtmlTransform({ content, outputPath, componentAttrStore }, options)
       })
     }
     return {}
