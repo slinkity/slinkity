@@ -1,6 +1,12 @@
 const { normalizePath } = require('vite')
 const { relative } = require('path')
-const { SLINKITY_ATTRS, SLINKITY_REACT_MOUNT_POINT, toSSRComment } = require('../utils/consts')
+const {
+  SLINKITY_ATTRS,
+  SLINKITY_REACT_MOUNT_POINT,
+  SLINKITY_HEAD_STYLES,
+  toSSRComment,
+  SLINKITY_HEAD_SCRIPTS,
+} = require('../utils/consts')
 const { toRendererHtml } = require('./reactPlugin/1-pluginDefinitions/toRendererHtml')
 const toSlashesTrimmed = require('../utils/toSlashesTrimmed')
 const toLoaderScript = require('./reactPlugin/2-pageTransform/toLoaderScript')
@@ -27,16 +33,15 @@ async function applyViteHtmlTransform(
 
   /** @type {Set<string>} */
   const importedStyles = new Set()
-  // TODO: apply importedStyles as `<link>` tags in `<head>` via indexHtmlTransform
   const allComponentAttrs = componentAttrStore.getAllByPage(outputPath)
-  const allComponents = []
+  const serverRenderedComponents = []
   for (const componentAttrs of allComponentAttrs) {
     const { path: componentPath, props, hydrate } = componentAttrs
     const { default: Component, __importedStyles } = await viteSSR.toCommonJSModule(componentPath)
     __importedStyles.forEach((importedStyle) => importedStyles.add(importedStyle))
     // TODO: abstract renderer imports to be framework-agnostic
     // (importing directly from the React plugin right now)
-    allComponents.push(
+    serverRenderedComponents.push(
       toRendererHtml({
         Component,
         props,
@@ -45,17 +50,34 @@ async function applyViteHtmlTransform(
     )
   }
 
-  const html = content.replace(ssrRegex, (_, id) => {
-    const componentAttrs = allComponentAttrs[id]
-    if (componentAttrs) {
-      const { path: componentPath, props, hydrate } = componentAttrs
-      const script = toLoaderScript({ componentPath, props, hydrate, id })
+  const html = content
+    // server render each component
+    .replace(ssrRegex, (_, id) => {
       const attrs = toHtmlAttrString({ [SLINKITY_ATTRS.id]: id })
-      return `<${SLINKITY_REACT_MOUNT_POINT} ${attrs}>\n\t${allComponents[id]}\n</${SLINKITY_REACT_MOUNT_POINT}>\n${script}`
-    } else {
-      throw `Failed to find component attributes for ${id}`
-    }
-  })
+      return `<${SLINKITY_REACT_MOUNT_POINT} ${attrs}>\n\t${serverRenderedComponents[id]}\n</${SLINKITY_REACT_MOUNT_POINT}>`
+    })
+    // inject component styles into head
+    .replace(
+      SLINKITY_HEAD_STYLES,
+      [...importedStyles]
+        .map(
+          (importedStyle) =>
+            `<link ${toHtmlAttrString({
+              rel: 'stylesheet',
+              href: importedStyle,
+            })}>`,
+        )
+        .join('\n'),
+    )
+    // inject component scripts into head
+    .replace(
+      SLINKITY_HEAD_SCRIPTS,
+      allComponentAttrs
+        .map(({ id, path: componentPath, props, hydrate }) =>
+          toLoaderScript({ componentPath, props, hydrate, id }),
+        )
+        .join('\n'),
+    )
 
   const server = viteSSR.getServer()
   const routePath = '/' + toSlashesTrimmed(normalizePath(relative(dir.output, outputPath)))
