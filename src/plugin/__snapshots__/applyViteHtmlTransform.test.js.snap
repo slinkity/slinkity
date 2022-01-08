@@ -1,46 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`applyViteHtmlTransform handleSSRComments should inject scripts into head 1`] = `
-"
-<html>
-<head>
-  <title>It's hydration time</title>
-  <script type=\\"module\\">
-    import Component0 from \\"nice.jsx\\";
-    import { eagerLoader as eagerLoader0 } from \\"slinkity/client\\";
-  
-    eagerLoader0({ 
-      id: \\"0\\",
-      Component: Component0,
-      props: {},
-    });
-  </script>
-<script type=\\"module\\">
-    import Component1 from \\"cool.svelte\\";
-    import { eagerLoader as eagerLoader1 } from \\"slinkity/client\\";
-  
-    eagerLoader1({ 
-      id: \\"1\\",
-      Component: Component1,
-      props: {},
-    });
-  </script>
-<script type=\\"module\\">
-    import Component2 from \\"neat.vue\\";
-    import { eagerLoader as eagerLoader2 } from \\"slinkity/client\\";
-  
-    eagerLoader2({ 
-      id: \\"2\\",
-      Component: Component2,
-      props: {},
-    });
-  </script>
-</head>
-<body>
-</body>
-</html>"
-`;
-
 exports[`applyViteHtmlTransform handleSSRComments should inject styles into head 1`] = `
 "
 <html>
@@ -62,12 +21,12 @@ exports[`applyViteHtmlTransform handleSSRComments should replace SSR comments wi
 <html>
 <head>
   <title>It's hydration time</title>
-  <link rel=\\"stylesheet\\" href=\\"/@fs/Users/person/project/styles.scss\\">
-<link rel=\\"stylesheet\\" href=\\"/@fs/Users/person/project/more-styles.scss\\">
-<link rel=\\"stylesheet\\" href=\\"/@fs/Users/person/project/nested/global.module.scss\\">
-<link rel=\\"stylesheet\\" href=\\"/@fs/Users/person/project/excellent.css\\">
-<link rel=\\"stylesheet\\" href=\\"/@fs/Users/person/project/neato.stylus\\">
-  <script type=\\"module\\">
+</head>
+<body>
+  <slinkity-react-mount-point data-s-id=\\"0\\">
+	
+</slinkity-react-mount-point>
+<script type=\\"module\\">
     import Component0 from \\"nice.jsx\\";
     import { eagerLoader as eagerLoader0 } from \\"slinkity/client\\";
   
@@ -77,6 +36,9 @@ exports[`applyViteHtmlTransform handleSSRComments should replace SSR comments wi
       props: {},
     });
   </script>
+<slinkity-react-mount-point data-s-id=\\"1\\">
+	
+</slinkity-react-mount-point>
 <script type=\\"module\\">
     import Component1 from \\"cool.svelte\\";
     import { eagerLoader as eagerLoader1 } from \\"slinkity/client\\";
@@ -87,6 +49,9 @@ exports[`applyViteHtmlTransform handleSSRComments should replace SSR comments wi
       props: {},
     });
   </script>
+<slinkity-react-mount-point data-s-id=\\"2\\">
+	
+</slinkity-react-mount-point>
 <script type=\\"module\\">
     import Component2 from \\"neat.vue\\";
     import { eagerLoader as eagerLoader2 } from \\"slinkity/client\\";
@@ -97,17 +62,6 @@ exports[`applyViteHtmlTransform handleSSRComments should replace SSR comments wi
       props: {},
     });
   </script>
-</head>
-<body>
-  <slinkity-react-mount-point data-s-id=\\"0\\">
-	
-</slinkity-react-mount-point>
-<slinkity-react-mount-point data-s-id=\\"1\\">
-	
-</slinkity-react-mount-point>
-<slinkity-react-mount-point data-s-id=\\"2\\">
-	
-</slinkity-react-mount-point>
 </body>
 </html>"
 `;

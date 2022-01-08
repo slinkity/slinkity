@@ -48,7 +48,6 @@ function toSSRComment(id) {
 }
 
 const SLINKITY_HEAD_STYLES = toSSRComment('styles')
-const SLINKITY_HEAD_SCRIPTS = toSSRComment('scripts')
 
 module.exports = {
   SLINKITY_ATTRS,
@@ -56,7 +55,6 @@ module.exports = {
   SLINKITY_REACT_MOUNT_POINT,
   IMPORT_ALIASES,
   SLINKITY_HEAD_STYLES,
-  SLINKITY_HEAD_SCRIPTS,
   PACKAGES,
   BUILD_HASH,
   toSSRComment,

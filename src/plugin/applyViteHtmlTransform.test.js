@@ -1,7 +1,7 @@
 const { applyViteHtmlTransform, handleSSRComments } = require('./applyViteHtmlTransform')
 const { toComponentAttrStore } = require('./componentAttrStore')
 const nodeHtmlParser = require('node-html-parser')
-const { SLINKITY_HEAD_SCRIPTS, SLINKITY_HEAD_STYLES, toSSRComment } = require('../utils/consts')
+const { SLINKITY_HEAD_STYLES, toSSRComment } = require('../utils/consts')
 
 const nodeHtmlParserSpy = jest.spyOn(nodeHtmlParser, 'default')
 
@@ -86,32 +86,11 @@ describe('applyViteHtmlTransform', () => {
       expect(actual).toMatchSnapshot()
     })
 
-    it('should inject scripts into head', async () => {
-      const content = `
-<html>
-<head>
-  <title>It's hydration time</title>
-  ${SLINKITY_HEAD_SCRIPTS}
-</head>
-<body>
-</body>
-</html>`
-      const actual = await handleSSRComments({
-        content,
-        outputPath,
-        componentAttrStore,
-        viteSSR,
-      })
-      expect(actual).toMatchSnapshot()
-    })
-
     it('should replace SSR comments with server rendered content', async () => {
       const content = `
 <html>
 <head>
   <title>It's hydration time</title>
-  ${SLINKITY_HEAD_STYLES}
-  ${SLINKITY_HEAD_SCRIPTS}
 </head>
 <body>
   ${componentAttrStore
