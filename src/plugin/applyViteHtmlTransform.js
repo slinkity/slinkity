@@ -15,22 +15,17 @@ const toHtmlAttrString = require('../utils/toHtmlAttrString')
 const ssrRegex = RegExp(toSSRComment('([0-9]+)'), 'g')
 
 /**
- * @typedef ApplyViteHtmlTransformParams
+ * Process all SSR comments - server render components, inject styles and scripts into head
+ * Extracted from applyViteHtmlTransform for unit testing!
+ * @typedef HandleSSRCommentsParams
  * @property {string} content - the original HTML content to transform
  * @property {string} outputPath - the output path this HTML content will be written to
  * @property {import('./componentAttrStore').ComponentAttrStore} componentAttrStore
- * @param {ApplyViteHtmlTransformParams}
- * @param {import('.').SlinkityConfigOptions}
+ * @property {import('.').SlinkityConfigOptions['viteSSR']} viteSSR
+ * @param {HandleSSRCommentsParams}
  * @returns {Promise<string>} - HTML with statically rendered content and Vite transforms applied
  */
-async function applyViteHtmlTransform(
-  { content, outputPath, componentAttrStore },
-  { environment, viteSSR, dir },
-) {
-  if (!outputPath || !outputPath.endsWith('.html')) {
-    return content
-  }
-
+async function handleSSRComments({ content, outputPath, componentAttrStore, viteSSR }) {
   /** @type {Set<string>} */
   const importedStyles = new Set()
   const allComponentAttrs = componentAttrStore.getAllByPage(outputPath)
@@ -78,10 +73,30 @@ async function applyViteHtmlTransform(
         )
         .join('\n'),
     )
+  return html
+}
 
+/**
+ * @typedef ApplyViteHtmlTransformParams
+ * @property {string} content - the original HTML content to transform
+ * @property {string} outputPath - the output path this HTML content will be written to
+ * @property {import('./componentAttrStore').ComponentAttrStore} componentAttrStore
+ * @param {ApplyViteHtmlTransformParams}
+ * @param {import('.').SlinkityConfigOptions}
+ * @returns {Promise<string>} - HTML with statically rendered content and Vite transforms applied
+ */
+async function applyViteHtmlTransform(
+  { content, outputPath, componentAttrStore },
+  { environment, viteSSR, dir },
+) {
+  if (!outputPath || !outputPath.endsWith('.html')) {
+    return content
+  }
+
+  const html = await handleSSRComments({ content, outputPath, componentAttrStore, viteSSR })
   const server = viteSSR.getServer()
   const routePath = '/' + toSlashesTrimmed(normalizePath(relative(dir.output, outputPath)))
   return environment === 'dev' && server ? server.transformIndexHtml(routePath, html) : html
 }
 
-module.exports = { applyViteHtmlTransform }
+module.exports = { applyViteHtmlTransform, handleSSRComments }
