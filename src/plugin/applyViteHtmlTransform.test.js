@@ -1,9 +1,6 @@
 const { applyViteHtmlTransform, handleSSRComments } = require('./applyViteHtmlTransform')
 const { toComponentAttrStore } = require('./componentAttrStore')
-const nodeHtmlParser = require('node-html-parser')
 const { SLINKITY_HEAD_STYLES, toSSRComment } = require('../utils/consts')
-
-const nodeHtmlParserSpy = jest.spyOn(nodeHtmlParser, 'default')
 
 /** @param {Partial<import('./componentAttrStore').ComponentAttrs>[]} componentAttrs */
 function toComponentAttrsWithDefaults(componentAttrs) {
@@ -41,7 +38,6 @@ describe('applyViteHtmlTransform', () => {
           environment,
         },
       )
-      expect(nodeHtmlParserSpy).not.toHaveBeenCalled()
       expect(actual).toBe(content)
     },
   )
