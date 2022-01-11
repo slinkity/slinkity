@@ -109,7 +109,7 @@ You'll get an output similar to this (using default settings):
 _site
   assets/
     # note: something-imported-by-global.scss was bundled in-line
-    index.[random-hash].css
+    index.[file-hash].css
   index.html
 ```
 
@@ -118,7 +118,7 @@ _site
 ```html
 <html>
 <head>
-  <link rel="stylesheet" href="/assets/index.[random-hash].css">
+  <link rel="stylesheet" href="/assets/index.[file-hash].css">
 </head>
 <body>...</body>
 </html>
