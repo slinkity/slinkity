@@ -67,7 +67,7 @@ Slinkity supports everything Vite supports for PostCSS. You can happily:
 
 ## Dev and production outputs
 
-You might be wondering: what does Vite _actually do_ with my processed stylesheets when I build my site? This will depend on whether your `--serve`ing or building for production.
+You might be wondering: what does Vite _actually do_ with my processed stylesheets when I build my site? This will depend on whether you're `--serve`ing or building for production.
 
 ### Dev server
 
