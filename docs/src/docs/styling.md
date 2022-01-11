@@ -35,7 +35,7 @@ Then, we'll apply our stylesheet using a single `<link>` tag in our document's `
 
 You'll notice 2 interesting pieces here:
 
-1. **We start our `href` with `/@root`.** This is one of several [import aliases](/docs/import-aliases) we include out of the box with Slinkity. These make importing from directories _outside_ your build output as easy as possible. In this case, we're importing from the `styles` directory at the "root" of our project. See our [import alias docs](/docs/import-aliases) for a full list of preincluded import aliases and ways to add our own.
+1. **We start our `href` with `/@root`.** This is one of several [import aliases](/docs/import-aliases) we include out of the box with Slinkity. These make importing from directories _outside_ your build output as easy as possible. In this case, we're importing from the `styles` directory at the "root" of our project. See our [import alias docs](/docs/import-aliases) for a full list of preconfigured import aliases and ways to add our own.
 2. **We keep the `.scss` file extension.** As long as Vite understands a file extension you're trying to use (`scss` works out-of-the-box), it's happy to process that file into something browsers can understand. [See Vite's docs on styling](https://vitejs.dev/guide/features.html#css) for all preprocessors they support, and ways to use your favorite one.
 
 As long as you understand [import aliases](/docs/import-aliases) and keep [Vite's style configuration docs](https://vitejs.dev/guide/features.html#css) bookmarked, you're ready to rock with Slinkity 🎸
@@ -67,7 +67,7 @@ Slinkity supports everything Vite supports for PostCSS. You can happily:
 
 ## Dev and production outputs
 
-You might be wondering: what does Vite _actually do_ with my processed stylesheets when I build my site? This will depend on whether your `--serve`ing or building for production.
+You might be wondering: what does Vite _actually do_ with my processed stylesheets when I build my site? This will depend on whether you're `--serve`ing or building for production.
 
 ### Dev server
 
@@ -109,7 +109,7 @@ You'll get an output similar to this (using default settings):
 _site
   assets/
     # note: something-imported-by-global.scss was bundled in-line
-    index.[random-hash].css
+    index.[file-hash].css
   index.html
 ```
 
@@ -118,7 +118,7 @@ _site
 ```html
 <html>
 <head>
-  <link rel="stylesheet" href="/assets/index.[random-hash].css">
+  <link rel="stylesheet" href="/assets/index.[file-hash].css">
 </head>
 <body>...</body>
 </html>
