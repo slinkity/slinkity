@@ -10,7 +10,7 @@ const makeAllPackagesExternalPlugin = {
   },
 }
 
-const entryPoints = ['./packages/slinkity/cli/index.js']
+const entryPoints = ['cli/index.js']
 const isWatchEnabled = process.argv.includes('--watch')
 let watch = false
 if (isWatchEnabled) {
