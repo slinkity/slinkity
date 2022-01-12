@@ -117,7 +117,6 @@ Once that's set up, add an "overrides" entry to your tester project's `package.j
 ```
 
 This is similar to an `npm link`, but with a couple added conveniences:
-
 1. You don't need to run `npm link` from the Slinkity framework
 2. You won't hit any peer dependency issues
 

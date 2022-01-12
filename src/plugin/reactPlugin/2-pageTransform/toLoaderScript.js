@@ -38,6 +38,6 @@ module.exports = function toLoaderScript({ componentPath, hydrate, id, props = {
     });
   </script>`
   } else {
-    throw 'Unsupported loader'
+    return ''
   }
 }

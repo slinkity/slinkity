@@ -19,8 +19,8 @@ const reactPlugin = require('./reactPlugin')
 const toSlashesTrimmed = require('../utils/toSlashesTrimmed')
 const { getResolvedAliases } = require('../cli/vite')
 const { toComponentAttrStore } = require('./componentAttrStore')
-const { toHydrationLoadersApplied } = require('./reactPlugin/2-pageTransform')
 const { applyViteHtmlTransform } = require('./applyViteHtmlTransform')
+const { SLINKITY_HEAD_STYLES } = require('../utils/consts')
 
 // TODO: abstract based on renderer plugins configured
 // https://github.com/slinkity/slinkity/issues/55
@@ -68,29 +68,15 @@ module.exports = function slinkityConfig({ userSlinkityConfig, ...options }) {
       eleventyConfig.ignores.add(ignored)
     }
 
+    eleventyConfig.addGlobalData('__slinkity', {
+      head: SLINKITY_HEAD_STYLES,
+    })
+
     eleventyConfig.addPlugin(reactPlugin, {
       viteSSR,
       componentAttrStore,
       resolvedImportAliases: getResolvedAliases(dir),
     })
-
-    eleventyConfig.addTransform(
-      'apply-react-hydration-loaders',
-      async function (content, outputPath) {
-        if (!outputPath || !outputPath.endsWith('.html')) return content
-
-        const componentAttrs = componentAttrStore
-          .getAllByPage(outputPath)
-          // only get components that need hydration loaders
-          .filter(({ hydrate }) => hydrate !== 'static')
-
-        return await toHydrationLoadersApplied({
-          content,
-          componentAttrs,
-          dir,
-        })
-      },
-    )
 
     if (environment === 'dev') {
       const urlToOutputHtmlMap = {}

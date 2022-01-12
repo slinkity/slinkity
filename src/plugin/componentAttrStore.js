@@ -6,8 +6,6 @@
  *
  * @typedef {string} ID
  * @typedef ComponentAttrs
- * @property {Record<string, string>} styleToFilePathMap - map of all files imported by a
- * given component as ES modules (ex. all CSS module imports)
  * @property {string} path - the component's file path
  * @property {Record<string, any>} props - all props passed to the component
  * @property {'eager' | 'lazy' | 'static'} hydrate - mode to use when hydrating the component
@@ -15,7 +13,7 @@
  * @property {ID} id - a unique identifier for later retrieval from the store
  *
  * @typedef {{
- *  getAllByPage: (pageOutputPath: string) => ComponentAttrsWithId[];
+ *  getAllByPage: (pageOutputPath: string) => ComponentAttrs[];
  *  push: (componentAttrs: ComponentAttrs) => number;
  *  clear: () => void;
  * }} ComponentAttrStore
