@@ -14,7 +14,7 @@ const toHtmlAttrString = require('../utils/toHtmlAttrString')
 const ssrRegex = RegExp(toSSRComment('([0-9]+)'), 'g')
 
 /**
- * Process all SSR comments - server render components, inject styles and scripts into head
+ * Process all SSR comments - server render components, apply scripts, inject styles into head
  * Extracted from applyViteHtmlTransform for unit testing!
  * @typedef HandleSSRCommentsParams
  * @property {string} content - the original HTML content to transform
@@ -22,7 +22,7 @@ const ssrRegex = RegExp(toSSRComment('([0-9]+)'), 'g')
  * @property {import('./componentAttrStore').ComponentAttrStore} componentAttrStore
  * @property {import('.').SlinkityConfigOptions['viteSSR']} viteSSR
  * @param {HandleSSRCommentsParams}
- * @returns {Promise<string>} - HTML with statically rendered content and Vite transforms applied
+ * @returns {Promise<string>} - HTML with components SSR'd
  */
 async function handleSSRComments({ content, outputPath, componentAttrStore, viteSSR }) {
   /** @type {Set<string>} */
