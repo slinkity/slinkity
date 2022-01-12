@@ -32,8 +32,8 @@ When _plain_ 11ty builds your site, it processes this template file and spits ou
 
 ⚠️ **However, this won't work in Slinkity production builds!** [Since we build to a temporary output](/docs/how-we-build-your-site), the sitemap will get written to `.11ty-build-<hash>/sitemap.xml`. In the follow-up steps, Vite will:
 
-1. Process this temporary build directory
-2. See that a) `sitemap.xml` is not referenced by any other file and b) isn't in the dedicated `public` folder
+1. Process this temporary build directory.
+2. See that a) `sitemap.xml` is not referenced by any other file and b) isn't in the dedicated `public` folder.
 3. Exclude it from the final output that it writes to `_site`.
 
 #### Solution
