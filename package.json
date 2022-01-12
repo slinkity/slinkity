@@ -6,7 +6,7 @@
   "main": "./index.js",
   "types": "./index.d.ts",
   "files": [
-    "src/client",
+    "packages/slinkity/client",
     "client.js"
   ],
   "homepage": "https://slinkity.dev",
@@ -94,14 +94,14 @@
     "dev": "node build.js --watch",
     "prepare": "npm run build",
     "watch": "babel src -d lib -w",
-    "lint": "eslint \"src/**/*.{js,jsx,mjs}\"",
-    "lint:fix": "eslint --fix \"src/**/*.{js,jsx,mjs}\"",
+    "lint": "eslint \"packages/slinkity/**/*.{js,jsx,mjs}\"",
+    "lint:fix": "eslint --fix \"packages/slinkity/**/*.{js,jsx,mjs}\"",
     "test": "jest",
     "test:watch": "jest --watch"
   },
   "jest": {
     "roots": [
-      "<rootDir>/src/"
+      "<rootDir>/packages/slinkity/"
     ]
   },
   "volta": {

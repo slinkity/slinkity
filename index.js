@@ -1,1 +1,1 @@
-export { defineConfig } from './src/main/defineConfig'
+export { defineConfig } from './packages/slinkity/main/defineConfig'

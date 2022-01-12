@@ -1,6 +1,6 @@
 {
   "include": [
-    "./src/main/defineConfig.js"
+    "./packages/slinkity/main/defineConfig.js"
   ],
   "compilerOptions": {
     // Tells TypeScript to read JS files, as
