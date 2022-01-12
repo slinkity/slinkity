@@ -1,0 +1,96 @@
+{
+  "name": "slinkity",
+  "description": "To 11ty and beyond! The all-in-one tool for templates where you want them, component frameworks where you need them",
+  "version": "0.5.0",
+  "license": "MIT",
+  "main": "./index.js",
+  "types": "./index.d.ts",
+  "files": [
+    "src/client",
+    "client.js"
+  ],
+  "homepage": "https://slinkity.dev",
+  "author": {
+    "name": "Ben Holmes",
+    "email": "hey@bholmes.dev",
+    "url": "https://bholmes.dev/"
+  },
+  "bin": {
+    "slinkity": "./lib/cli/index.js"
+  },
+  "engines": {
+    "node": ">=14"
+  },
+  "keywords": [
+    "static-site-generator",
+    "static-site",
+    "ssg",
+    "documentation",
+    "website",
+    "jekyll",
+    "blog",
+    "templates",
+    "generator",
+    "framework",
+    "eleventy",
+    "eleventy-plugin",
+    "11ty",
+    "html",
+    "markdown",
+    "liquid",
+    "nunjucks",
+    "pug",
+    "handlebars",
+    "mustache",
+    "ejs",
+    "haml",
+    "react",
+    "vite",
+    "bundler"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/slinkity/slinkity.git"
+  },
+  "bugs": "https://github.com/slinkity/slinkity/issues",
+  "dependencies": {
+    "commander": "^5.1.0",
+    "esbuild": "^0.12.29",
+    "esbuild-css-modules-plugin": "^2.0.7",
+    "fs-extra": "^10.0.0",
+    "glob": "^7.1.7",
+    "html-react-parser": "^1.2.7",
+    "javascript-stringify": "^2.1.0",
+    "require-from-string": "^2.0.2",
+    "sass": "^1.36.0",
+    "uuid": "^8.3.2",
+    "vite": "^2.7.10"
+  },
+  "peerDependencies": {
+    "@11ty/eleventy": "^1.0.0-beta.3"
+  },
+  "devDependencies": {
+    "browser-sync": "^2.27.5",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
+  },
+  "scripts": {
+    "build:src": "node build.js",
+    "build:types": "tsc",
+    "build": "run-s build:src build:types",
+    "dev": "node build.js --watch",
+    "prepare": "pnpm build",
+    "lint": "eslint \"./**/*.{js,jsx,mjs}\"",
+    "lint:fix": "eslint --fix \"./**/*.{js,jsx,mjs}\"",
+    "test": "jest",
+    "test:watch": "jest --watch"
+  },
+  "jest": {
+    "roots": [
+      "<rootDir>/src/"
+    ]
+  },
+  "volta": {
+    "node": "14.18.1"
+  }
+}

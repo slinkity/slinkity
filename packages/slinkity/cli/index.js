@@ -3,7 +3,7 @@ const { program } = require('commander')
 const { relative, resolve, sep } = require('path')
 const { emptyDir, mkdtemp, remove } = require('fs-extra')
 const { startEleventy, toEleventyConfigDir } = require('./eleventy')
-const meta = require('../../package.json')
+const meta = require('../package.json')
 const { build: viteBuild } = require('./vite')
 
 const eleventyArgs = {

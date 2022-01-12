@@ -3,7 +3,7 @@ const { SLINKITY_CONFIG_FILE_NAME } = require('../utils/consts')
 const requireFromString = require('require-from-string')
 const { build } = require('esbuild')
 const logger = require('../utils/logger')
-const { defineConfig } = require('../main/defineConfig')
+const { defineConfig } = require('../defineConfig')
 
 // Can cause a gotcha for ESM configs that use packages _without_ a CommonJS fallback
 // See https://github.com/11ty/eleventy/issues/836

@@ -1,1 +1,0 @@
-export type { UserSlinkityConfig } from './lib/config/defineConfig'
