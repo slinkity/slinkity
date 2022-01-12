@@ -71,7 +71,7 @@
   },
   "jest": {
     "roots": [
-      "<rootDir>/packages/slinkity/"
+      "<rootDir>/packages/"
     ]
   },
   "volta": {
