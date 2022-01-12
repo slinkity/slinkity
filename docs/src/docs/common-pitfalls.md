@@ -54,7 +54,7 @@ Now, this happens:
 
 ### Resources that are passthrough-copied
 
-A typical 11ty site has many static resources, including fonts, images, and more. Some of these may need to be processed manually using 11ty, but others just need to be [passthrough-copied](https://www.11ty.dev/docs/copy/) to the build output directory. Self-hosted font files are a classic example: Once you've copied the files to your build folder, you can safely reference them in your CSS using root-relative absolute paths, like `/fonts/FontFile.woff2`.
+A typical 11ty site has many static resources, including fonts, images, and more. Some of these (like images) may need to be processed manually using 11ty, but others (like fonts) just need to be copied to the build output directory.
 
 In Slinkity, there are two approaches you can take to ensure that static resources correctly make their way to the final build output:
 
