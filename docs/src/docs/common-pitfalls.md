@@ -50,7 +50,7 @@ permalink: /public/sitemap.xml
 Now, this happens:
 
 1. 11ty processes the template and writes it to a `public` folder nested inside the temporary build folder: `.11ty-build-<hash>/public/sitemap.xml`.
-2. Vite sees the `public` folder and copies it into your final build output directory, giving you `_site/public/sitemap.xml`.
+2. Vite sees the `public` folder and copies it into your final build output directory, giving you `_site/sitemap.xml`. Note that the nested `/public` directory disappears from the final build output!
 
 ### Resources that are passthrough-copied
 
