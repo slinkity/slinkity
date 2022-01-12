@@ -94,8 +94,8 @@
     "dev": "node build.js --watch",
     "prepare": "npm run build",
     "watch": "babel src -d lib -w",
-    "lint": "eslint \"packages/slinkity/**/*.{js,jsx,mjs}\"",
-    "lint:fix": "eslint --fix \"packages/slinkity/**/*.{js,jsx,mjs}\"",
+    "lint": "eslint \"packages/**/*.{js,jsx,mjs}\"",
+    "lint:fix": "eslint --fix \"packages/**/*.{js,jsx,mjs}\"",
     "test": "jest",
     "test:watch": "jest --watch"
   },

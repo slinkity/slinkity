@@ -32,7 +32,7 @@ const PKG = 'package.json'
 
   // Copy all template files to dest
   // TODO: add "plain" starter alongside "react"
-  const templateFilePaths = fs.readdirSync(srcRoot).filter(filePath => filePath !== PKG)
+  const templateFilePaths = fs.readdirSync(srcRoot).filter((filePath) => filePath !== PKG)
   for (const templateFilePath of templateFilePaths) {
     const src = path.join(srcRoot, templateFilePath)
     const dest = path.join(destRoot, templateFilePath)
@@ -50,12 +50,12 @@ yarn start
 })()
 
 /**
-   * Util to copy file or file directory to dest
-   * Inspired by https://github.com/vitejs/vite/blob/main/packages/create-vite/index.js
-   * @param {string} src
-   * @param {string} dest
-   */
- function copy(src, dest) {
+ * Util to copy file or file directory to dest
+ * Inspired by https://github.com/vitejs/vite/blob/main/packages/create-vite/index.js
+ * @param {string} src
+ * @param {string} dest
+ */
+function copy(src, dest) {
   const stat = fs.statSync(src)
   if (stat.isDirectory()) {
     copyDir(src, dest)
@@ -67,8 +67,8 @@ yarn start
 /**
  * Util to copy file directory to test
  * Inspired by https://github.com/vitejs/vite/blob/main/packages/create-vite/index.js
- * @param {string} srcDir 
- * @param {string} destDir 
+ * @param {string} srcDir
+ * @param {string} destDir
  */
 function copyDir(srcDir, destDir) {
   fs.mkdirSync(destDir, { recursive: true })
@@ -82,7 +82,7 @@ function copyDir(srcDir, destDir) {
 /**
  * Util to convert a project name into a valid package name for a package.json
  * Inspired by https://github.com/vitejs/vite/blob/main/packages/create-vite/index.js
- * @param {string} projectName 
+ * @param {string} projectName
  * @returns {string} A valid package name
  */
 function toValidPackageName(projectName) {
