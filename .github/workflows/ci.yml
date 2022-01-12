@@ -34,8 +34,8 @@ jobs:
       - name: Install dependencies
         run: npm i
 
-      - name: Build package
-        run: npm run build
+      - name: Build Slinkity package
+        run: npm run build:slinkity
 
   test:
     runs-on: ubuntu-latest
