@@ -1,0 +1,56 @@
+{
+  "name": "create-slinkity",
+  "version": "1.0.4",
+  "description": "The splendid starter to scaffold your Slinkity site.",
+  "main": "cli.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/slinkity/slinkity-starter.git"
+  },
+  "bin": {
+    "create-slinkity": "./cli.js"
+  },
+  "engines": {
+    "node": ">=14"
+  },
+  "keywords": [
+    "static-site-generator",
+    "static-site",
+    "ssg",
+    "documentation",
+    "website",
+    "jekyll",
+    "blog",
+    "templates",
+    "generator",
+    "framework",
+    "eleventy",
+    "eleventy-plugin",
+    "11ty",
+    "html",
+    "markdown",
+    "liquid",
+    "nunjucks",
+    "pug",
+    "handlebars",
+    "mustache",
+    "ejs",
+    "haml",
+    "react",
+    "vite",
+    "bundler"
+  ],
+  "contributors": [
+    "Ben Holmes (https://bholmes.dev)",
+    "Anthony Campolo (https://twitter.com/ajcwebdev)"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/slinkity/slinkity/issues"
+  },
+  "homepage": "https://github.com/slinkity/slinkity#readme",
+  "dependencies": {
+    "kolorist": "^1.5.1",
+    "prompts": "^2.4.2"
+  }
+}
