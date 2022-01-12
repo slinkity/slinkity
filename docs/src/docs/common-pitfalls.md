@@ -10,13 +10,12 @@ In an 11ty site, you are free to structure your project however you like. You ca
 
 As described in our docs on [how builds work](/how-we-build-your-site/), Vite requires that you place static assets inside a `public` directory if those assets aren't referenced by any other pages (e.g., in `link` tags on a page). Any static asset that isn't referenced by a page and isn't in the `public` directory will be removed from the final build output. For this reason, you may find that certain files disappear from production builds, even though they were technically processed correctly by 11ty.
 
-Below are some scenarios where you may encounter this pitfall:
+There are two situations where you may encounter this pitfall:
 
-- Self-hosted font files.
-- Static images (both processed and passthrough-copied).
-- Miscellaneous static files (`sitemap.xml`, `robots.txt`, and the like).
+- Permalinked static files that aren't HTML (`sitemap.xml`, `robots.txt`, and the like).
+- Resources that are passthrough-copied (fonts, images, etc.).
 
-Let's take a closer look at some of these examples.
+Let's take a closer look at each one.
 
 ### For permalink extensions _other than_ `.html`
 
