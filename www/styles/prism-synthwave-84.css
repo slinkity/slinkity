@@ -36,6 +36,11 @@ pre[class*='language-'] {
   overflow: auto;
 }
 
+/* Plaintext code blocks */
+:is(code,pre)[class='language-plaintext'] {
+  color: #fff5f6;
+}
+
 :not(pre) > code[class*='language-'],
 pre[class*='language-'] {
   background-color: transparent !important;

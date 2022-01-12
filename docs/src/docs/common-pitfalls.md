@@ -67,7 +67,7 @@ In the first approach, we lean on Vite's ability to resolve dependencies and res
 
 For example, suppose you have a project structure that looks like this:
 
-```
+```plaintext
 ├── fonts
 │   └── Atkinson-Hyperlegible-Regular.woff2
 ├── src
@@ -118,7 +118,7 @@ As long as this stylesheet is later referenced somewhere in your layouts, Vite w
 
 In the production build, Vite will generate an `assets` directory containing your font files and CSS, nested in your build output directory:
 
-```
+```plaintext
 _site
 ├── assets
 │   ├── Atkinson-Hyperlegible-Regular.efe52c57.woff2
@@ -143,7 +143,7 @@ Maybe you don't want Vite to static resources for you, and all you want is to du
 
 In this case, your project structure might look like this:
 
-```
+```plaintext
 ├── public
 │   └── fonts
 │       └── Atkinson-Hyperlegible-Regular.woff2
@@ -175,7 +175,7 @@ eleventyConfig.addPassthroughCopy('public')
 
 Once you build your site for production, the final output will contain the passthrough-copied subdirectories (in this case, `fonts`):
 
-```
+```plaintext
 _site
 ├── assets
 │   ├── index.8790d40e.css
