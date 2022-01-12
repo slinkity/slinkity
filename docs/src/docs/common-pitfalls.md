@@ -28,7 +28,7 @@ permalink: /sitemap.xml
 ---
 ```
 
-When _plain_ 11ty builds your site, it would process this template file and spit out a file named `_site/sitemap.xml`.
+When _plain_ 11ty builds your site, it processes this template file and spits out a file named `_site/sitemap.xml`.
 
 ⚠️ **However, this won't work in Slinkity production builds!** [Since we build to a temporary output](/docs/how-we-build-your-site), the sitemap will get written to `.11ty-build-<hash>/sitemap.xml`. In the follow-up steps, Vite will:
 
