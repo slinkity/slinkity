@@ -137,6 +137,8 @@ The production CSS will then correctly reference the font files using root-relat
 }
 ```
 
+> ⚠️ One downside to this approach is that Vite can't resolve relative paths or import aliases from `preload` tags. If you need these on your site, we recommend going with the passthrough-copy approach instead.
+
 #### Approach 2: Passthrough-copying a `public` folder
 
 Maybe you don't want Vite to static resources for you, and all you want is to dump them into your build output folder and reference them statically in your layouts using root-relative paths. In that case, all you need to do is place your static resources in a `public` folder outside your input directory and tell Eleventy to passthrough-copy them.
