@@ -1,16 +1,17 @@
 const esbuild = require('esbuild')
+const path = require('path')
 
 // Avoid bundling node_modules
 // Source: https://github.com/evanw/esbuild/issues/619#issuecomment-751995294
 const makeAllPackagesExternalPlugin = {
   name: 'make-all-packages-external',
   setup(build) {
-    const filter = /^[^.\/]|^\.[^.\/]|^\.\.[^\/]/ // Must not start with "/" or "./" or "../"
+    const filter = /^[^./]|^\.[^./]|^\.\.[^/]/ // Must not start with "/" or "./" or "../"
     build.onResolve({ filter }, (args) => ({ path: args.path, external: true }))
   },
 }
 
-const entryPoints = ['./src/cli/index.js']
+const entryPoints = [path.resolve(__dirname, 'cli/index.js')]
 const isWatchEnabled = process.argv.includes('--watch')
 let watch = false
 if (isWatchEnabled) {
@@ -35,7 +36,7 @@ if (isWatchEnabled) {
     plugins: [makeAllPackagesExternalPlugin],
     platform: 'node',
     target: 'node14',
-    outfile: 'lib/cli/index.js',
+    outfile: path.resolve(__dirname, 'lib/cli/index.js'),
     watch,
   })
   console.log(`✅ Built ${entryPoints}`)

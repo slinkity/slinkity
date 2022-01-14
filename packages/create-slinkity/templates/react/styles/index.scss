@@ -1,0 +1,144 @@
+@font-face {
+  font-family: Atkinson;
+  src: url('/fonts/Atkinson/Atkinson-Hyperlegible-Regular.woff2'),
+      url('/fonts/Atkinson/Atkinson-Hyperlegible-Regular.woff'),
+      url('/fonts/Atkinson/Atkinson-Hyperlegible-Regular.ttf');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: Atkinson;
+  src: url('/fonts/Atkinson/Atkinson-Hyperlegible-Italic.woff2'),
+      url('/fonts/Atkinson/Atkinson-Hyperlegible-Italic.woff'),
+      url('/fonts/Atkinson/Atkinson-Hyperlegible-Italic.ttf');
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: Atkinson;
+  src: url('/fonts/Atkinson/Atkinson-Hyperlegible-Bold.woff2'),
+      url('/fonts/Atkinson/Atkinson-Hyperlegible-Bold.woff'),
+      url('/fonts/Atkinson/Atkinson-Hyperlegible-Bold.ttf');
+  font-weight: bold;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: Atkinson;
+  src: url('/fonts/Atkinson/Atkinson-Hyperlegible-BoldItalic.woff2'),
+      url('/fonts/Atkinson/Atkinson-Hyperlegible-BoldItalic.woff'),
+      url('/fonts/Atkinson/Atkinson-Hyperlegible-BoldItalic.ttf');
+  font-weight: bold;
+  font-style: italic;
+  font-display: swap;
+}
+
+:root {
+  --purple-1: hsl(258, 47%, 2%);
+  --purple-2: hsl(258, 47%, 12%);
+  --purple-3: hsl(258, 47%, 22%);
+  --purple-4: hsl(258, 47%, 62%);
+  
+  --pink: #ff00d6;
+  --yellow: #faff02;
+  --primary: var(--pink); 
+  --secondary: var(--yellow);
+
+  --content-max-width: 700px;
+}
+
+html {
+  font-family: 'Atkinson', 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  line-height: 1.3;
+}
+
+body {
+  box-sizing: border-box;
+  background: var(--purple-1);
+  background-image: linear-gradient(var(--purple-3) 1px, transparent 0),
+    linear-gradient(90deg, var(--purple-3) 1px, transparent 0);
+  background-size: 2rem 2rem;
+
+  color: white;
+  margin: 2rem;
+
+  &::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(transparent 25%, var(--purple-1) 50%);
+    background-size: 100% 200%;
+    animation: fade-in-grid 0.8s linear forwards;
+
+    @keyframes fade-in-grid {
+      from {
+        background-position-y: 100%;
+      }
+      to {
+        background-position-y: 0%;
+      }
+    }
+  }
+}
+
+main {
+  max-width: var(--content-max-width);
+  margin: auto;
+}
+
+a, a:visited, button {
+  transition-property: background-position-x, color, opacity;
+  transition-duration: 0.2s;
+  transition-timing-function: linear;
+  background: linear-gradient(
+      80deg,
+      var(--starting-color, var(--purple-1)) 33%,
+      var(--primary),
+      var(--secondary)
+  );
+  background-size: 300% 100%;
+  background-position-x: 0;
+
+  &:hover {
+      background-position-x: 100%;
+      color: var(--purple-1);
+      text-decoration: none;
+  }
+}
+
+a, a:visited {
+  color: var(--primary);
+  padding: 2px;
+}
+
+button {
+  border: none;
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  cursor: pointer;
+}
+
+details {
+  border: 1px solid var(--purple-3);
+  padding: 0.5rem 1rem;
+  background: var(--purple-2);
+  margin-bottom: 0.5rem;
+  box-shadow: 0 6px 20px 10px var(--purple-1);
+  border-radius: 0.5rem;
+}
+
+.counter {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+
+  button {
+    border: 1px solid var(--pink);
+    border-radius: 0.5rem;
+    padding: 0.2rem 0.6rem;
+    font-weight: 700;
+  }
+}

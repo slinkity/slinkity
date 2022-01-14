@@ -1,22 +1,13 @@
 {
-  "name": "slinkity",
-  "description": "To 11ty and beyond! The all-in-one tool for templates where you want them, component frameworks where you need them",
-  "version": "0.5.0",
+  "name": "slinkity-monorepo",
+  "version": "0.0.0",
   "license": "MIT",
-  "main": "./index.js",
-  "types": "./index.d.ts",
-  "files": [
-    "src/client",
-    "client.js"
-  ],
+  "main": "packages/slinkity/index.js",
   "homepage": "https://slinkity.dev",
   "author": {
     "name": "Ben Holmes",
     "email": "hey@bholmes.dev",
     "url": "https://bholmes.dev/"
-  },
-  "bin": {
-    "slinkity": "./lib/cli/index.js"
   },
   "engines": {
     "node": ">=14"
@@ -53,28 +44,11 @@
     "url": "git://github.com/slinkity/slinkity.git"
   },
   "bugs": "https://github.com/slinkity/slinkity/issues",
-  "dependencies": {
-    "commander": "^5.1.0",
-    "esbuild": "^0.12.29",
-    "esbuild-css-modules-plugin": "^2.0.7",
-    "fs-extra": "^10.0.0",
-    "glob": "^7.1.7",
-    "html-react-parser": "^1.2.7",
-    "javascript-stringify": "^2.1.0",
-    "require-from-string": "^2.0.2",
-    "sass": "^1.36.0",
-    "uuid": "^8.3.2",
-    "vite": "^2.7.10"
-  },
-  "peerDependencies": {
-    "@11ty/eleventy": "^1.0.0-beta.3"
-  },
   "devDependencies": {
     "@babel/core": "^7.15.0",
     "@babel/preset-env": "^7.15.0",
     "@babel/preset-react": "^7.14.5",
     "babel-jest": "^27.1.0",
-    "browser-sync": "^2.27.5",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^3.4.0",
@@ -88,20 +62,16 @@
     "typescript": "^4.4.4"
   },
   "scripts": {
-    "build:src": "node build.js",
-    "build:types": "tsc",
-    "build": "run-s build:src build:types",
-    "dev": "node build.js --watch",
-    "prepare": "npm run build",
-    "watch": "babel src -d lib -w",
-    "lint": "eslint \"src/**/*.{js,jsx,mjs}\"",
-    "lint:fix": "eslint --fix \"src/**/*.{js,jsx,mjs}\"",
+    "build:slinkity": "node packages/slinkity/build.js",
+    "dev:slinkity": "node packages/slinkity/build.js --watch",
+    "lint": "eslint \"packages/**/*.{js,jsx,mjs}\"",
+    "lint:fix": "eslint --fix \"packages/**/*.{js,jsx,mjs}\"",
     "test": "jest",
     "test:watch": "jest --watch"
   },
   "jest": {
     "roots": [
-      "<rootDir>/src/"
+      "<rootDir>/packages/"
     ]
   },
   "volta": {

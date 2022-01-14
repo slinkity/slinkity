@@ -1,0 +1,59 @@
+.slinky__container {
+  display: grid;
+  position: relative;
+  justify-content: center;
+  margin-bottom: 3rem;
+  background: var(--purple-2);
+  padding: 1rem;
+  border-radius: 0.5rem;
+}
+
+.slinky {
+  background: var(--purple-2);
+  width: 400px;
+  max-width: 90vw;
+  height: auto;
+
+  path {
+    animation-duration: 0.6s;
+    animation-fill-mode: forwards;
+    transform-origin: 50% 80%;
+  }
+
+  @for $i from 1 through 7 {
+    &.right > path:nth-child(#{$i}) {
+      animation-name: slinky-right-#{$i};
+      @keyframes slinky-right-#{$i} {
+        0% {
+          transform: rotate(0);
+        }
+        50% {
+          transform: rotate(($i - 1) * 27.5deg);
+        }
+        100% {
+          transform: rotate(165deg);
+        }
+      }
+    }
+    &.left > path:nth-child(#{$i}) {
+      animation-name: slinky-left-#{$i};
+      @keyframes slinky-left-#{$i} {
+        0% {
+          transform: rotate(165deg);
+        }
+        50% {
+          transform: rotate((7 - $i) * 27.5deg);
+        }
+        100% {
+          transform: rotate(0);
+        }
+      }
+    }
+  }
+}
+
+.slinky__button {
+  --starting-color: var(--purple-3);
+  padding: 0.5rem 1rem;
+  border-radius: 0.3rem;
+}

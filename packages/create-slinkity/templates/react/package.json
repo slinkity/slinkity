@@ -1,0 +1,18 @@
+{
+  "name": "my-slinkity-site",
+  "version": "1.0.0",
+  "description": "A splendid starter for my Slinkity site!",
+  "main": ".eleventy.js",
+  "scripts": {
+    "start": "slinkity --serve --incremental",
+    "build": "slinkity"
+  },
+  "dependencies": {
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
+  },
+  "devDependencies": {
+    "@11ty/eleventy": "^1.0.0-beta.8",
+    "slinkity": "^0.4.1"
+  }
+}
