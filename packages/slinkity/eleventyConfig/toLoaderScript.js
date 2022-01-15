@@ -1,6 +1,6 @@
 const { stringify } = require('javascript-stringify')
-const toUnixPath = require('../utils/toUnixPath')
 const { PACKAGES } = require('../utils/consts')
+const { normalizePath } = require('vite')
 
 /**
  * Generate the `<script>` necessary to load a Component into a given mount point
@@ -15,7 +15,7 @@ const { PACKAGES } = require('../utils/consts')
 module.exports = function toLoaderScript({ componentPath, hydrate, id, props = {} }) {
   // TODO: abstract "props" to some other file, instead of stringifying in-place
   // We could be generating identical, large prop blobs
-  const componentImportStatement = JSON.stringify(toUnixPath(componentPath))
+  const componentImportStatement = JSON.stringify(normalizePath(componentPath))
   if (hydrate === 'eager') {
     return `<script type="module">
     import Component${id} from ${componentImportStatement};
