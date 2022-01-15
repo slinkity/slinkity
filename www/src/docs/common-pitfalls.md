@@ -71,11 +71,11 @@ For example, suppose you have a project structure that looks like this:
 ├── fonts
 │   └── Atkinson-Hyperlegible-Regular.woff2
 ├── src
-├── _includes
+│   ├── _includes
 │   │   └── layout.njk
-│   ├── index.md
-├── styles
-│   ├── index.css
+│   └── index.md
+└── styles
+    └── index.css
 ```
 
 In the path resolution approach, you can either use relative paths:
@@ -122,7 +122,7 @@ In the production build, Vite will generate an `assets` directory containing you
 _site
 ├── assets
 │   ├── Atkinson-Hyperlegible-Regular.efe52c57.woff2
-│   ├── index.7edd6dae.css
+│   └── index.7edd6dae.css
 └── index.html
 ```
 
@@ -153,8 +153,8 @@ In this case, your project structure might look like this:
 │   ├── _includes
 │   │   └── layout.njk
 │   └── index.md
-├── styles
-│   └── index.css
+└── styles
+    └── index.css
 ```
 
 Now, instead of using a relative path or an import alias to the font files, your CSS would use a root-relative path to the font files:
@@ -180,7 +180,7 @@ Once you build your site for production, the final output will contain the passt
 ```plaintext
 _site
 ├── assets
-│   ├── index.8790d40e.css
+│   └── index.8790d40e.css
 ├── fonts
 │   └── Atkinson-Hyperlegible-Regular.woff2
 └── index.html
