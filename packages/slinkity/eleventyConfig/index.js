@@ -15,12 +15,14 @@
 const browserSync = require('browser-sync')
 const { normalizePath } = require('vite')
 const { relative, join } = require('path')
-const reactPlugin = require('./reactPlugin')
 const toSlashesTrimmed = require('../utils/toSlashesTrimmed')
 const { getResolvedAliases } = require('../cli/vite')
 const { toComponentAttrStore } = require('./componentAttrStore')
 const { applyViteHtmlTransform } = require('./applyViteHtmlTransform')
+const addComponentPages = require('./addComponentPages')
+const addComponentShortcodes = require('./addComponentShortcodes')
 const { SLINKITY_HEAD_STYLES } = require('../utils/consts')
+const rendererReact = require('../../slinkity-renderer-react')
 
 // TODO: abstract based on renderer plugins configured
 // https://github.com/slinkity/slinkity/issues/55
@@ -41,6 +43,9 @@ const extensions = [
     isIgnoredFromIncludes: true,
   },
 ]
+
+// TODO: source from user's slinkity config
+const renderers = [rendererReact]
 
 function toEleventyIgnored(userEleventyIgnores, dir) {
   const defaultIgnoredExts = extensions
@@ -72,11 +77,24 @@ module.exports = function toEleventyConfig({ userSlinkityConfig, ...options }) {
       head: SLINKITY_HEAD_STYLES,
     })
 
-    eleventyConfig.addPlugin(reactPlugin, {
-      viteSSR,
-      componentAttrStore,
-      resolvedImportAliases: getResolvedAliases(dir),
-    })
+    const resolvedImportAliases = getResolvedAliases(dir)
+    for (const renderer of renderers) {
+      addComponentShortcodes({
+        renderer,
+        eleventyConfig,
+        resolvedImportAliases,
+        componentAttrStore,
+      })
+      if (renderer.page) {
+        addComponentPages({
+          renderer,
+          viteSSR,
+          eleventyConfig,
+          resolvedImportAliases,
+          componentAttrStore,
+        })
+      }
+    }
 
     if (environment === 'dev') {
       const urlToOutputHtmlMap = {}
