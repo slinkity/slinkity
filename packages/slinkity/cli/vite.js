@@ -64,6 +64,9 @@ async function getSharedConfig(eleventyDir) {
       resolve: {
         alias: Object.fromEntries(importAliasesToResolvedPath),
       },
+      optimizeDeps: {
+        include: ['slinkity/client'],
+      },
     }),
     reactConfig,
   )
