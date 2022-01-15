@@ -8,7 +8,7 @@ It includes:
 - a React component embedded into a static `.md` template → [more on component shortcodes here](/docs/component-shortcodes/)
 - a route built using a component framework as a templating language → [more on component pages here](/docs/component-pages-layouts/)
 - a `netlify.toml` configured to deploy in a flash → [more on deployment here](/docs/deployment/)
-- an eleventy config with a few recommended defualts → [more on config here](/docs/config/#recommended-config-options)
+- an eleventy config with a few recommended defaults → [more on config here](/docs/config/#recommended-config-options)
 
 ## Add to your existing 11ty project
 
