@@ -63,6 +63,7 @@
     position: sticky;
     top: var(--site-gap);
     margin-block-start: 0;
+    box-shadow: var(--shadow-heavy);
   
     @include gradient-links;
   
