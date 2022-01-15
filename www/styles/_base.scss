@@ -63,10 +63,9 @@ h2 {
 
 blockquote {
     @include gradient-links;
-    --bg: hsl(0, 0%, 20%);
     --gradient-accent-width: 0.5rem;
     margin-inline: 0;
-    background: var(--bg);
+    background: var(--color-primary-8);
     border-radius: 0 .25rem .25rem 0;
     position: relative;
     padding: 1rem;

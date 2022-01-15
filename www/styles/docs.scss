@@ -82,7 +82,7 @@
 
 
   &__side-nav {
-    --bg: hsl(0, 0%, 20%);
+    --bg: var(--color-primary-8);
     list-style: none;
     padding: 1rem 0;
     background: var(--bg);
