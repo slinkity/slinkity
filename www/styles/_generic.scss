@@ -16,13 +16,11 @@
     --color-hs-pink: 310 100%;
     --color-hs-yellow: 61 100%;
     --color-hs-purple: 258 47%;
-    --color-black: hsl(0, 0%, 7%);
     
     // functional colors
     --color-hs-primary: var(--color-hs-purple);
     --color-hs-accent: var(--color-hs-pink);
     --color-hs-highlight: var(--color-hs-yellow);
-    --color-dark: var(--color-black);
 
     // weighted functional colors
     @for $i from 1 through 9 {
@@ -30,6 +28,10 @@
         --color-accent-#{$i}: hsl(var(--color-hs-accent) var(--color-weight-#{$i}));
         --color-highlight-#{$i}: hsl(var(--color-hs-highlight) var(--color-weight-#{$i}));  
     }
+
+    // common uses
+    --color-dark: var(--color-primary-9);
+    --color-accent: var(--color-accent-4);
 
     // THE gradient™️
     --gradient-slinkity: hsl(var(--color-hs-accent) 50%), hsl(var(--color-hs-highlight) 50%);
