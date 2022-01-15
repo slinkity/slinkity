@@ -73,14 +73,17 @@ async function handleSSRComments({ content, outputPath, componentAttrStore, vite
  * @property {string} content - the original HTML content to transform
  * @property {string} outputPath - the output path this HTML content will be written to
  * @property {import('./componentAttrStore').ComponentAttrStore} componentAttrStore
- * @param {ApplyViteHtmlTransformParams}
- * @param {import('.').SlinkityConfigOptions}
+ * @param {ApplyViteHtmlTransformParams & import('.').SlinkityConfigOptions}
  * @returns {Promise<string>} - HTML with statically rendered content and Vite transforms applied
  */
-async function applyViteHtmlTransform(
-  { content, outputPath, componentAttrStore },
-  { environment, viteSSR, dir },
-) {
+async function applyViteHtmlTransform({
+  content,
+  outputPath,
+  componentAttrStore,
+  environment,
+  viteSSR,
+  dir,
+}) {
   if (!outputPath || !outputPath.endsWith('.html')) {
     return content
   }

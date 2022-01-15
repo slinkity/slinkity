@@ -28,16 +28,12 @@ describe('applyViteHtmlTransform', () => {
     async (environment) => {
       const componentAttrStore = toComponentAttrStore()
       const content = '<?xml version="1.0" encoding="utf-8"?>'
-      const actual = await applyViteHtmlTransform(
-        {
-          content,
-          outputPath: 'feed.xml',
-          componentAttrStore,
-        },
-        {
-          environment,
-        },
-      )
+      const actual = await applyViteHtmlTransform({
+        content,
+        outputPath: 'feed.xml',
+        componentAttrStore,
+        environment,
+      })
       expect(actual).toBe(content)
     },
   )

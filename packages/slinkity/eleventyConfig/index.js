@@ -98,10 +98,12 @@ module.exports = function toEleventyConfig({ userSlinkityConfig, ...options }) {
                 if (page) {
                   const { content, outputPath } = page
                   res.write(
-                    await applyViteHtmlTransform(
-                      { content, outputPath, componentAttrStore },
-                      options,
-                    ),
+                    await applyViteHtmlTransform({
+                      content,
+                      outputPath,
+                      componentAttrStore,
+                      ...options,
+                    }),
                   )
                   res.end()
                 } else {
@@ -134,7 +136,7 @@ module.exports = function toEleventyConfig({ userSlinkityConfig, ...options }) {
 
     if (environment === 'prod') {
       eleventyConfig.addTransform('apply-vite', async function (content, outputPath) {
-        return await applyViteHtmlTransform({ content, outputPath, componentAttrStore }, options)
+        return await applyViteHtmlTransform({ content, outputPath, componentAttrStore, options })
       })
     }
     return {}
