@@ -6,12 +6,18 @@ body {
     color: white;
     line-height: 1.5;
 
-    code,
-    pre {
+    :where(code, pre) {
         font-family: var(--pro-hacker-font);
         font-size: 0.8em;
-        background: #333;
         padding: .1rem;
+        border-radius: 2px;
+        border: 1px solid var(--color-primary-7);
+        background-image: linear-gradient(to bottom right, var(--color-primary-9), transparent);
+        box-shadow: var(--shadow-heavy);
+        color: var(--color-primary-1);
+        text-shadow: 0 0 4px var(--color-primary-4);
+        box-decoration-break: clone;
+        -webkit-box-decoration-break: clone;
     }
 }
 
@@ -54,10 +60,11 @@ h2 {
 }
 
 blockquote {
+    --bg: var(--color-primary-7);
     @include gradient-links;
     --gradient-accent-width: 0.5rem;
     margin-inline: 0;
-    background: var(--color-primary-7);
+    background: var(--bg);
     border-radius: 0 .25rem .25rem 0;
     position: relative;
     padding: 1rem;

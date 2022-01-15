@@ -138,6 +138,22 @@
         font-size: 2.25em;
       }
 
+      :where(pre) {
+        border: 1px solid var(--color-primary-7);
+        border-radius: 2px;
+        background-image: linear-gradient(
+            to bottom right,
+            var(--color-primary-9),
+            transparent
+          ) !important;
+
+        > code {
+          background: none;
+          border: 0;
+          box-shadow: none;
+        }
+      }
+
       :where(table) {
         background-color: var(--color-primary-7);
         width: 100%;

@@ -9,6 +9,10 @@
         max-width: 680px;
         margin-inline: auto;
         padding-inline: 1rem;
+
+        blockquote {
+            --bg: var(--color-primary-8);
+        }
         
         &__tagline {
             font-style: italic;
@@ -32,7 +36,7 @@
 
         &-link {
             @include gradient-link;
-            --bg: #2a2038;
+            --bg: var(--color-primary-8);
             padding: 8px 14px;
             text-decoration: none;
           
