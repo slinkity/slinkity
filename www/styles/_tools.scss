@@ -9,23 +9,23 @@
 }
 
 @mixin gradient-link {
-    color: var(--primary);
+    color: var(--color-accent-4);
     padding: 2px;
     transition-property: background-position-x, color, opacity;
     transition-duration: 0.2s;
     transition-timing-function: linear;
+    border-radius: 2px;
     background: linear-gradient(
         80deg,
-        var(--bg, var(--black)) 33%,
-        var(--primary),
-        var(--secondary)
+        var(--bg, var(--color-primary-8)) 33%,
+        var(--gradient-slinkity)
     );
     background-size: 300% 100%;
     background-position-x: 0;
 
     &:where(:hover, :focus) {
         background-position-x: 100%;
-        color: var(--black);
+        color: var(--color-dark);
         text-decoration: none;
     }
 }
@@ -34,4 +34,48 @@
     a, a:visited {
         @include gradient-link;
     }
+}
+
+@mixin gradient-grid {
+    background: var(--color-primary-9);
+    background-image:
+        linear-gradient(var(--color-primary-7) 1px, transparent 0),
+        linear-gradient(90deg, var(--color-primary-7) 1px, transparent 0);
+    background-size: var(--grid-size, 2rem) var(--grid-size, 2rem);
+
+    &::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+        background: linear-gradient(transparent 25%, var(--color-primary-9) 50%);
+        background-size: 100% 200%;
+        animation: fade-in-grid 0.8s linear forwards;
+    
+        @keyframes fade-in-grid {
+            from {
+                background-position-y: 100%;
+            }
+            to {
+                background-position-y: 0%;
+            }
+        }
+    }
+}
+
+@mixin content-card {
+    max-width: var(--content-max-width);
+    margin: auto;
+    padding: clamp(1em, 5vh, 3em) clamp(1em, 4vw, 2em);
+    border-radius: var(--rounded-corners);
+    box-shadow: var(--shadow-heavy);
+    background-color: var(--color-primary-8);
+
+    > .heading-wrapper:first-child {
+        > * {
+            margin-block-start: 0;
+        }
+    }
+
+    @include gradient-links;
 }

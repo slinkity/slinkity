@@ -1,3 +1,104 @@
-@use 'chunks/home__heading-link';
-@use 'chunks/home__banner-container';
-@use 'chunks/home__heading';
+@use 'tools' as *;
+
+:root {
+    --content-max-width: 740px !important;
+}
+
+.home {
+    &__heading {
+        max-width: 680px;
+        margin-inline: auto;
+        padding-inline: 1rem;
+
+        blockquote {
+            --bg: var(--color-primary-8);
+        }
+        
+        &__tagline {
+            font-style: italic;
+            font-weight: bold;
+            text-align: center;
+            font-size: 1.5rem;
+            margin-block-start: 0;
+            margin-block-end: 2rem;
+        }
+        &__twitter-cta {
+            @include gradient-links;
+
+            text-align: center;
+            font-size: 1.2rem;
+            margin-block-end: 3rem;
+
+            @media (max-width: breakpoint(mobile)) {
+                font-size: 1rem;
+            }
+        }
+
+        &-link {
+            @include gradient-link;
+            --bg: var(--color-primary-8);
+            padding: 8px 14px;
+            text-decoration: none;
+          
+            &:first-child {
+                --bg: var(--color-accent-4);
+                color: var(--color-dark);
+                font-weight: bold;
+            }
+          
+            &__container {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+            
+                @media (max-width: 550px) {
+                    flex-direction: column;
+                    text-align: center;
+                }
+            }
+        }
+    }
+    
+    &__banner-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 2rem;
+    
+        #banner-slinky-accent {
+            animation: saturate 4s ease-out infinite;
+            filter: saturate(2);
+    
+            @for $i from 1 through 9 {
+                & > path:nth-child(#{$i}) {
+                    opacity: 0;
+                    animation: fade-in 0.3s ease-in forwards;
+                    animation-delay: $i * 0.1s;
+                }
+            }
+
+            @keyframes saturate {
+                0%,
+                100% {
+                    opacity: 0.7;
+                }
+                50% {
+                    opacity: 1;
+                }
+            }
+            
+            @keyframes fade-in {
+                from {
+                    opacity: 0;
+                }
+                to {
+                    opacity: 1;
+                }
+            }
+        }
+    }
+
+    &__content {
+        @include content-card();
+        margin-block-start: clamp(2em, 10vh, 64px);
+    }
+}

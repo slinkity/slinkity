@@ -1,6 +1,17 @@
 .contributor {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+
+    & *:not(.contributor__title) {
+        position: static;
+    }
+    
     &__container {
         flex-basis: 170px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(185px, 1fr));
+        gap: 2em;
     }
 
     &__image {
@@ -12,18 +23,27 @@
     
     &__username {
         text-align: center;
+        font-size: 1.17em;
+
+        & > a {
+            &::before {
+                content: '';
+                position: absolute;
+                inset: 0;
+            }
+        }
     }
     
     &__title {
         position: absolute;
-        top: 140px;
-        right: 0px;
-        background: var(--primary);
+        top: 120px;
+        right: 0;
         text-transform: uppercase;
-        color: var(--black);
+        color: var(--color-dark);
         font-size: 0.7rem;
         padding: 5px 10px;
-        background: linear-gradient(80deg, var(--primary), var(--secondary));
+        background: linear-gradient(80deg, var(--gradient-slinkity));
         font-family: var(--pro-hacker-font);
+        border-radius: 2px;
     }
 }

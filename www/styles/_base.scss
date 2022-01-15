@@ -1,29 +1,23 @@
 @use 'tools' as *;
 
 body {
+    @include gradient-grid();
     margin: 0;
     color: white;
-    line-height: 1.4;
-    background: var(--black);
+    line-height: 1.5;
 
-    &:before {
-        content: '';
-        background-image: url('/assets/constellation-background.svg');
-        background-repeat: repeat;
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        max-height: -webkit-fill-available;
-    }
-
-    code,
-    pre {
+    :where(code, pre) {
         font-family: var(--pro-hacker-font);
         font-size: 0.8em;
-        background: #333;
         padding: .1rem;
+        border-radius: 2px;
+        border: 1px solid var(--color-primary-7);
+        background-image: linear-gradient(to bottom right, var(--color-primary-9), var(--bg, var(--color-primary-7)));
+        box-shadow: var(--shadow-heavy);
+        color: var(--color-primary-1);
+        text-shadow: 0 0 4px var(--color-primary-4);
+        box-decoration-break: clone;
+        -webkit-box-decoration-break: clone;
     }
 }
 
@@ -45,32 +39,47 @@ h1 {
 }
 
 h2 {
-    margin-top: 2.4rem;
+    $spacing-top: 1em;
+    $spacing-bottom: 0;
+    margin-block-start: $spacing-top;
+    margin-block-end: $spacing-bottom;
     scroll-margin-top: 1rem;
+    line-height: 1.25;
     
     + .header-anchor {
         font-size: 1.5em;
-        margin-block-start: 2.4rem;
-        margin-block-end: .83em;
+        margin-block-start: $spacing-top;
+        margin-block-end: $spacing-bottom;
         padding-inline: .25em;
 
         @supports not (padding-inline: .25em) {
-        padding-inline-start: .25em;
-        padding-inline-end: .25em;
+            padding-inline-start: .25em;
+            padding-inline-end: .25em;
         }
     }
 }
 
 blockquote {
+    --bg: var(--color-primary-7);
+    --padding: clamp(1rem, 2vmax, 1.5em);
     @include gradient-links;
-    --bg: var(--grey-100);
     --gradient-accent-width: 0.5rem;
     margin-inline: 0;
     background: var(--bg);
     border-radius: 0 .25rem .25rem 0;
     position: relative;
-    padding: 1rem;
-    padding-inline-start: calc(1rem + var(--gradient-accent-width));
+    padding: var(--padding);
+    border-radius: 2px;
+    overflow: hidden;
+    padding-inline-start: calc(var(--padding) + var(--gradient-accent-width));
+
+    > p {
+        margin-block: 0;
+    }
+
+    > * + * {
+        margin-block-start: 0;
+    } 
 
     &::before {
         content: '';
@@ -79,20 +88,9 @@ blockquote {
         left: 0;
         bottom: 0;
         width: var(--gradient-accent-width);
-        background: linear-gradient(var(--pink), var(--yellow));
+        background: linear-gradient(
+            hsl(var(--color-hs-accent) 50%),
+            hsl(var(--color-hs-highlight) 50%)
+        );
     }
-}
-
-article {
-    @include gradient-links;
-
-    max-width: var(--content-max-width);
-    margin: auto;
-    padding: 1rem;
-    background: linear-gradient(
-        transparent,
-        var(--black) 30px,
-        var(--black) calc(100% - 30px),
-        transparent
-    );
 }

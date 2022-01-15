@@ -1,29 +1,58 @@
 @use 'tools' as *;
 
 :root {
-    --content-max-width: 740px;
-    --pink: #ff00d6;
-    --yellow: #faff02;
-    --primary: var(--pink); 
-    --secondary: var(--yellow);
+    // base color-weight scale
+    --color-weight-1: 82%;
+    --color-weight-2: 72%;
+    --color-weight-3: 62%;
+    --color-weight-4: 52%;
+    --color-weight-5: 42%;
+    --color-weight-6: 32%;
+    --color-weight-7: 22%;
+    --color-weight-8: 12%;
+    --color-weight-9: 2%;
+    
+    // base colors
+    --color-hs-pink: 310 100%;
+    --color-hs-yellow: 61 100%;
+    --color-hs-purple: 258 47%;
+    
+    // functional colors
+    --color-hs-primary: var(--color-hs-purple);
+    --color-hs-accent: var(--color-hs-pink);
+    --color-hs-highlight: var(--color-hs-yellow);
 
-    --black: #121212;
-    --grey-100: #333;
+    // weighted functional colors
+    @for $i from 1 through 9 {
+        --color-primary-#{$i}: hsl(var(--color-hs-primary) var(--color-weight-#{$i}));
+        --color-accent-#{$i}: hsl(var(--color-hs-accent) var(--color-weight-#{$i}));
+        --color-highlight-#{$i}: hsl(var(--color-hs-highlight) var(--color-weight-#{$i}));  
+    }
 
+    // common uses
+    --color-dark: var(--color-primary-9);
+    --color-accent: var(--color-accent-4);
+
+    // THE gradient™️
+    --gradient-slinkity: hsl(var(--color-hs-accent) 50%), hsl(var(--color-hs-highlight) 50%);
+
+    // misc
+    --content-max-width: 1024px;
+    --rounded-corners: 5px;
+    --shadow-heavy: 0px 4px 14px #000;
+
+    // font-sizes
     --h1: 64px;
     --h2: 48px;
     --h3: 36px;
     --h4: 24px;
 
+    // font-stacks
     --pro-hacker-font: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
     --base-font: 'Atkinson', 'Open Sans', -apple-system, BlinkMacSystemFont,
     'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue',
     sans-serif;
     font-family: var(--base-font);
-
-    @media (min-width: breakpoint(mobile)) {
-        font-size: 1.1rem;
-    }
 }
 
 * {

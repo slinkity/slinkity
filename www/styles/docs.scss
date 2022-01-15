@@ -1,53 +1,20 @@
 @use 'tools' as *;
 
 .docs {
-  --nav-width: 200px;
-  --site-gap: 40px;
-  --site-max-width: calc(var(--content-max-width) + var(--nav-width));
-
-  &__container {
-    display: grid;
-    grid-template-columns: 1fr;
-    max-width: calc(var(--content-max-width) + var(--nav-width));
-    width: 100%;
-    align-items: flex-start;
-    margin: auto;
-    padding: 0 1rem;
-    gap: var(--site-gap);
+  --nav-width: 240px;
+  --site-gap: clamp(2em, 4.25vmax, 4em);
   
-    @media (min-width: breakpoint(tablet)) {
-      grid-template-columns: [side-start] var(--nav-width) [side-end content-start] 1fr [content-end];
-    }
-    
-    &__content {
-      overflow: auto;
-      max-width: 100%;
-      margin: 0;
-      padding: 0;
-  
-      > h1 {
-        margin-block-start: var(--site-gap);
-      }
-  
-      @media (min-width: breakpoint(tablet)) {
-        grid-column: content-start / content-end;
-      }
-  
-      @include gradient-links;
-    }
-  }
-
+  // Top-Nav
   &__primary-nav {
-    --max-width: var(--site-max-width);
-    height: 4rem;
-    display: grid;
-    align-items: center;
+    background-color: var(--color-primary-8);
 
     &__content {
-      width: 100%;
+      max-width: var(--content-max-width);
+      margin-inline: auto;
+      height: 4rem;
+      display: flex;
       align-items: center;
-      margin: auto;
-      padding: 0 1rem;
+      gap: 2em;
     }
 
     a:not(.docs__home-link) {
@@ -57,7 +24,8 @@
     }
   }
 
-  &__home-link, &__home-link:visited {
+  &__home-link,
+  &__home-link:visited {
     color: white;
     text-decoration: none;
     font-weight: bold;
@@ -66,27 +34,40 @@
     display: flex;
     align-items: baseline;
     gap: 1rem;
+    transform: translateY(.1em);
 
     svg {
       height: 1.1em;
       width: auto;
       align-self: flex-start;
     }
+
+    i {
+      color: var(--color-accent-4);
+      font-style: normal;
+    }
+
+    ~ a {
+      padding-inline: .5em !important;
+      transform: translateX(.5em); // the background is not visible unless hovered. Meaning, it looks misaligned unless hovered. This offsets it.
+    }
   }
 
-
+  // Docs Navigation
   &__side-nav {
+    --bg: var(--color-primary-8);
     list-style: none;
     padding: 1rem 0;
-    background: var(--grey-100);
+    background: var(--bg);
     border-radius: 0.5rem;
     position: sticky;
     top: var(--site-gap);
+    margin-block-start: 0;
+    box-shadow: var(--shadow-heavy);
   
     @include gradient-links;
   
     @media (min-width: breakpoint(tablet)) {
-      margin-block-start: var(--site-gap);
       grid-column: side-start / side-end;
     }
   
@@ -95,18 +76,120 @@
     }
   
     a, a:visited {
-      --bg: var(--grey-100);
       display: block;
       padding: 0.5rem 1rem;
       text-decoration: none;
       color: var(--white);
+      position: relative;
   
       &.active {
-        color: var(--pink);
+        color: var(--color-accent-4);
+
+        &::before {
+          content: '';
+          width: 4px;
+          height: 100%;
+          position: absolute;
+          top: 0;
+          left: 0;
+          background: linear-gradient(to bottom, var(--gradient-slinkity));
+          opacity: 1;
+          transition-property: opacity;
+          transition-duration: inherit;
+          transition-timing-function: inherit;
+        }
+        
+        &:where(:hover, :focus) {
+          color: var(--color-dark);
+
+          &::before {
+            opacity: 0;
+          }
+        }
       }
   
       &:where(:hover, :focus) {
-        color: var(--black);
+        color: var(--color-dark);
+      }
+    }
+  }
+
+  // Docs Page Content
+  &__container {
+    max-width: var(--content-max-width);
+    margin-inline: auto;
+    margin-block-start: var(--site-gap);
+    display: grid;
+    grid-template-columns: 1fr;
+    align-items: flex-start;
+    gap: var(--site-gap);
+  
+    @media (min-width: breakpoint(tablet)) {
+      grid-template-columns: [side-start] var(--nav-width) [side-end content-start] 1fr [content-end];
+    }
+    
+    &__content {
+      @include content-card();
+      overflow: auto;
+      max-width: 100%;
+      margin: 0;
+  
+      :where(h1) {
+        margin-block-start: 0;
+        font-size: 2.25em;
+      }
+
+      :where(pre) {
+        border: 1px solid var(--color-primary-7);
+        border-radius: 2px;
+        background-image: linear-gradient(
+            to bottom right,
+            var(--color-primary-9),
+            transparent
+          ) !important;
+
+        > code {
+          background: none;
+          border: 0;
+          box-shadow: none;
+        }
+      }
+
+      :where(table) {
+        background-color: var(--color-primary-7);
+        width: 100%;
+        border-radius: var(--rounded-corners);
+        margin-block-end: 1.5em;
+        border-collapse: collapse;
+        
+        td, th {
+          padding: .25em 1em;
+          text-align: left;
+
+          &:last-child {
+            text-align: center;
+          }
+        }
+
+        th {
+          padding: 1em;
+        }
+
+        tr:nth-child(even) {
+          td {
+            background-color: hsl(var(--color-hs-primary) calc(var(--color-weight-7) - 4%));
+          }
+        }
+
+        tr:last-child {
+          td {
+            padding-block-end: 1em;
+          }
+        }
+      }
+  
+      @media (min-width: breakpoint(tablet)) {
+        grid-column: content-start / content-end;
       }
     }
   }
