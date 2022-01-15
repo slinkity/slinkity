@@ -37,7 +37,9 @@
     --gradient-slinkity: hsl(var(--color-hs-accent) 50%), hsl(var(--color-hs-highlight) 50%);
 
     // misc
-    --content-max-width: 740px;
+    --content-max-width: 1024px;
+    --rounded-corners: 5px;
+    --shadow-heavy: 0px 4px 14px #000;
 
     // font-sizes
     --h1: 64px;
@@ -51,10 +53,6 @@
     'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue',
     sans-serif;
     font-family: var(--base-font);
-
-    @media (min-width: breakpoint(mobile)) {
-        font-size: 1.1rem;
-    }
 }
 
 * {

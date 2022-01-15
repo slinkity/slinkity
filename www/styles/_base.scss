@@ -4,7 +4,7 @@ body {
     @include gradient-grid();
     margin: 0;
     color: white;
-    line-height: 1.4;
+    line-height: 1.5;
 
     code,
     pre {
@@ -33,18 +33,22 @@ h1 {
 }
 
 h2 {
-    margin-top: 2.4rem;
+    $spacing-top: 1em;
+    $spacing-bottom: 0;
+    margin-block-start: $spacing-top;
+    margin-block-end: $spacing-bottom;
     scroll-margin-top: 1rem;
+    line-height: 1.25;
     
     + .header-anchor {
         font-size: 1.5em;
-        margin-block-start: 2.4rem;
-        margin-block-end: .83em;
+        margin-block-start: $spacing-top;
+        margin-block-end: $spacing-bottom;
         padding-inline: .25em;
 
         @supports not (padding-inline: .25em) {
-        padding-inline-start: .25em;
-        padding-inline-end: .25em;
+            padding-inline-start: .25em;
+            padding-inline-end: .25em;
         }
     }
 }
@@ -53,7 +57,7 @@ blockquote {
     @include gradient-links;
     --gradient-accent-width: 0.5rem;
     margin-inline: 0;
-    background: var(--color-primary-8);
+    background: var(--color-primary-7);
     border-radius: 0 .25rem .25rem 0;
     position: relative;
     padding: 1rem;
@@ -71,18 +75,4 @@ blockquote {
             hsl(var(--color-hs-highlight) 50%)
         );
     }
-}
-
-article {
-    @include gradient-links;
-
-    max-width: var(--content-max-width);
-    margin: auto;
-    padding: 1rem;
-    background: linear-gradient(
-        transparent,
-        var(--color-dark) 30px,
-        var(--color-dark) calc(100% - 30px),
-        transparent
-    );
 }
