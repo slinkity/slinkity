@@ -3,67 +3,8 @@
 .docs {
   --nav-width: 240px;
   --site-gap: clamp(2em, 4.25vmax, 4em);
-
-  &__container {
-    max-width: var(--content-max-width);
-    margin-inline: auto;
-    margin-block-start: var(--site-gap);
-    display: grid;
-    grid-template-columns: 1fr;
-    align-items: flex-start;
-    gap: var(--site-gap);
   
-    @media (min-width: breakpoint(tablet)) {
-      grid-template-columns: [side-start] var(--nav-width) [side-end content-start] 1fr [content-end];
-    }
-    
-    &__content {
-      @include content-card();
-      overflow: auto;
-      max-width: 100%;
-      margin: 0;
-  
-      :where(h1) {
-        margin-block-start: 0;
-        font-size: 2.25em;
-      }
-
-      :where(table) {
-        background-color: var(--color-primary-7);
-        width: 100%;
-        border-radius: var(--rounded-corners);
-        margin-block-end: 1.5em;
-        
-        td, th {
-          padding: .15em 1em;
-          text-align: left;
-
-          &:last-child {
-            text-align: center;
-          }
-        }
-
-        th {
-          padding: 1em;
-        }
-
-        tr:nth-child(even) {
-          opacity: .5;
-        }
-
-        tr:last-child {
-          td {
-            padding-block-end: 1em;
-          }
-        }
-      }
-  
-      @media (min-width: breakpoint(tablet)) {
-        grid-column: content-start / content-end;
-      }
-    }
-  }
-
+  // Top-Nav
   &__primary-nav {
     background-color: var(--color-primary-8);
 
@@ -112,7 +53,7 @@
     }
   }
 
-
+  // Docs Navigation
   &__side-nav {
     --bg: var(--color-primary-8);
     list-style: none;
@@ -168,6 +109,70 @@
   
       &:where(:hover, :focus) {
         color: var(--color-dark);
+      }
+    }
+  }
+
+  // Docs Page Content
+  &__container {
+    max-width: var(--content-max-width);
+    margin-inline: auto;
+    margin-block-start: var(--site-gap);
+    display: grid;
+    grid-template-columns: 1fr;
+    align-items: flex-start;
+    gap: var(--site-gap);
+  
+    @media (min-width: breakpoint(tablet)) {
+      grid-template-columns: [side-start] var(--nav-width) [side-end content-start] 1fr [content-end];
+    }
+    
+    &__content {
+      @include content-card();
+      overflow: auto;
+      max-width: 100%;
+      margin: 0;
+  
+      :where(h1) {
+        margin-block-start: 0;
+        font-size: 2.25em;
+      }
+
+      :where(table) {
+        background-color: var(--color-primary-7);
+        width: 100%;
+        border-radius: var(--rounded-corners);
+        margin-block-end: 1.5em;
+        border-collapse: collapse;
+        
+        td, th {
+          padding: .25em 1em;
+          text-align: left;
+
+          &:last-child {
+            text-align: center;
+          }
+        }
+
+        th {
+          padding: 1em;
+        }
+
+        tr:nth-child(even) {
+          td {
+            background-color: hsl(var(--color-hs-primary) calc(var(--color-weight-7) - 4%));
+          }
+        }
+
+        tr:last-child {
+          td {
+            padding-block-end: 1em;
+          }
+        }
+      }
+  
+      @media (min-width: breakpoint(tablet)) {
+        grid-column: content-start / content-end;
       }
     }
   }
