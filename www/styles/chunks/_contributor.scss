@@ -18,12 +18,11 @@
         position: absolute;
         top: 140px;
         right: 0px;
-        background: var(--primary);
         text-transform: uppercase;
-        color: var(--black);
+        color: var(--color-dark);
         font-size: 0.7rem;
         padding: 5px 10px;
-        background: linear-gradient(80deg, var(--primary), var(--secondary));
+        background: linear-gradient(80deg, var(--gradient-slinkity));
         font-family: var(--pro-hacker-font);
     }
 }

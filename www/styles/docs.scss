@@ -57,7 +57,8 @@
     }
   }
 
-  &__home-link, &__home-link:visited {
+  &__home-link,
+  &__home-link:visited {
     color: white;
     text-decoration: none;
     font-weight: bold;
@@ -72,13 +73,19 @@
       width: auto;
       align-self: flex-start;
     }
+
+    i {
+      color: var(--color-accent-4);
+      font-style: normal;
+    }
   }
 
 
   &__side-nav {
+    --bg: hsl(0, 0%, 20%);
     list-style: none;
     padding: 1rem 0;
-    background: var(--grey-100);
+    background: var(--bg);
     border-radius: 0.5rem;
     position: sticky;
     top: var(--site-gap);
@@ -95,18 +102,17 @@
     }
   
     a, a:visited {
-      --bg: var(--grey-100);
       display: block;
       padding: 0.5rem 1rem;
       text-decoration: none;
       color: var(--white);
   
       &.active {
-        color: var(--pink);
+        color: var(--color-accent-4);
       }
   
       &:where(:hover, :focus) {
-        color: var(--black);
+        color: var(--color-dark);
       }
     }
   }

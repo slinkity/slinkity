@@ -9,23 +9,22 @@
 }
 
 @mixin gradient-link {
-    color: var(--primary);
+    color: var(--color-accent-4);
     padding: 2px;
     transition-property: background-position-x, color, opacity;
     transition-duration: 0.2s;
     transition-timing-function: linear;
     background: linear-gradient(
         80deg,
-        var(--bg, var(--black)) 33%,
-        var(--primary),
-        var(--secondary)
+        var(--bg, var(--color-dark)) 33%,
+        var(--gradient-slinkity)
     );
     background-size: 300% 100%;
     background-position-x: 0;
 
     &:where(:hover, :focus) {
         background-position-x: 100%;
-        color: var(--black);
+        color: var(--color-dark);
         text-decoration: none;
     }
 }

@@ -4,7 +4,7 @@ body {
     margin: 0;
     color: white;
     line-height: 1.4;
-    background: var(--black);
+    background: var(--color-dark);
 
     &:before {
         content: '';
@@ -63,7 +63,7 @@ h2 {
 
 blockquote {
     @include gradient-links;
-    --bg: var(--grey-100);
+    --bg: hsl(0, 0%, 20%);
     --gradient-accent-width: 0.5rem;
     margin-inline: 0;
     background: var(--bg);
@@ -79,7 +79,10 @@ blockquote {
         left: 0;
         bottom: 0;
         width: var(--gradient-accent-width);
-        background: linear-gradient(var(--pink), var(--yellow));
+        background: linear-gradient(
+            hsl(var(--color-hs-accent) 50%),
+            hsl(var(--color-hs-highlight) 50%)
+        );
     }
 }
 
@@ -91,8 +94,8 @@ article {
     padding: 1rem;
     background: linear-gradient(
         transparent,
-        var(--black) 30px,
-        var(--black) calc(100% - 30px),
+        var(--color-dark) 30px,
+        var(--color-dark) calc(100% - 30px),
         transparent
     );
 }
