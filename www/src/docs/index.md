@@ -25,19 +25,18 @@ To learn more, and explore adding Slinkity to _existing_ 11ty projects...
 
 This project is still in early alpha, so we have many features soon to come! [This demo](https://www.youtube.com/watch?v=X_zp6CodHjc&t=493s) covers a majority of features we support today. For reference, here's our complete roadmap of current and upcoming features:
 
-| Feature                                                | Status |
-| ------------------------------------------------------ | ------ |
-| CLI to run 11ty and Vite simultaneously                | ✅      |
-| React component pages & layouts                        | ✅      |
-| React component shortcodes                             | ✅      |
-| SCSS and SASS                                          | ✅      |
-| PostCSS config (ex. Tailwind)                          | ✅      |
-| CSS imports via ESM (including CSS modules) *          | ⏺      |
-| Plugin ecosystem for your favorite component framework |
-| (Vue, Svelte, Solid, etc)                              | ⏳      |
-| Eleventy serverless compatibility                      | ❌      |
-| Shared state between component shortcodes              | ❌      |
-| Styled components & Emotion                            | ❌      |
+| Feature                                                                               | Status |
+|---------------------------------------------------------------------------------------|--------|
+| CLI to run 11ty and Vite simultaneously                                               | ✅      |
+| React component pages & layouts                                                       | ✅      |
+| React component shortcodes                                                            | ✅      |
+| SCSS and SASS                                                                         | ✅      |
+| PostCSS config (ex. Tailwind)                                                         | ✅      |
+| CSS imports via ESM (including CSS modules) *                                         | ⏺      |
+| Plugin ecosystem for your favorite component framework<br />(Vue, Svelte, Solid, etc) | ⏳      |
+| Eleventy serverless compatibility                                                     | ❌      |
+| Shared state between component shortcodes                                             | ❌      |
+| Styled components & Emotion                                                           | ❌      |
 
 _*CSS imports will work today, but with one caveat: stylesheets will bleed to other routes on your site. We're actively working on a fix!_
 
