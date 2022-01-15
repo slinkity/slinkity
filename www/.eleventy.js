@@ -2,6 +2,7 @@ const syntaxHighlight = require('@11ty/eleventy-plugin-syntaxhighlight')
 const yaml = require('js-yaml')
 const markdownIt = require('markdown-it')
 const markdownItAnchor = require('markdown-it-anchor')
+const convertEmojiToAccessibleProgress = require('./src/utils/feature-progress-shortcode')
 
 module.exports = function config(eleventyConfig) {
   // Render headline anchors in the most accessible way, according to Amber Wilson: https://amberwilson.co.uk/blog/are-your-anchor-links-accessible/#accessibility-check
@@ -27,6 +28,8 @@ module.exports = function config(eleventyConfig) {
     }
   }
   const markdownConfigured = markdownIt({ html: true }).use(markdownItAnchor, markdownItAnchorSettings)
+
+  eleventyConfig.addShortcode('featureProgress', convertEmojiToAccessibleProgress)
 
   eleventyConfig.setLibrary('md', markdownConfigured)
   eleventyConfig.addPassthroughCopy('public')
