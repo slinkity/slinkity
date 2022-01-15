@@ -1,22 +1,10 @@
 @use 'tools' as *;
 
 body {
+    @include gradient-grid();
     margin: 0;
     color: white;
     line-height: 1.4;
-    background: var(--color-dark);
-
-    &:before {
-        content: '';
-        background-image: url('/assets/constellation-background.svg');
-        background-repeat: repeat;
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        max-height: -webkit-fill-available;
-    }
 
     code,
     pre {

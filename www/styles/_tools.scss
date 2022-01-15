@@ -34,3 +34,30 @@
         @include gradient-link;
     }
 }
+
+@mixin gradient-grid {
+    background: var(--color-primary-9);
+    background-image:
+        linear-gradient(var(--color-primary-7) 1px, transparent 0),
+        linear-gradient(90deg, var(--color-primary-7) 1px, transparent 0);
+    background-size: var(--grid-size, 2rem) var(--grid-size, 2rem);
+
+    &::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+        background: linear-gradient(transparent 25%, var(--color-primary-9) 50%);
+        background-size: 100% 200%;
+        animation: fade-in-grid 0.8s linear forwards;
+    
+        @keyframes fade-in-grid {
+          from {
+            background-position-y: 100%;
+          }
+          to {
+            background-position-y: 0%;
+          }
+        }
+      }
+}
