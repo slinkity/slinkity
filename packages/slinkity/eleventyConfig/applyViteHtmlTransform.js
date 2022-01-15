@@ -6,9 +6,9 @@ const {
   SLINKITY_HEAD_STYLES,
   toSSRComment,
 } = require('../utils/consts')
-const { toRendererHtml } = require('./reactPlugin/1-pluginDefinitions/toRendererHtml')
+const { toRendererHtml } = require('./reactPlugin/toRendererHtml')
 const toSlashesTrimmed = require('../utils/toSlashesTrimmed')
-const toLoaderScript = require('./reactPlugin/2-pageTransform/toLoaderScript')
+const toLoaderScript = require('./toLoaderScript')
 const toHtmlAttrString = require('../utils/toHtmlAttrString')
 
 const ssrRegex = RegExp(toSSRComment('([0-9]+)'), 'g')

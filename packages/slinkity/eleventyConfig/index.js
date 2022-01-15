@@ -55,7 +55,7 @@ function toEleventyIgnored(userEleventyIgnores, dir) {
  * @param {SlinkityConfigOptions} options - all Slinkity plugin options
  * @returns (eleventyConfig: Object) => Object - config we'll apply to the Eleventy object
  */
-module.exports = function slinkityConfig({ userSlinkityConfig, ...options }) {
+module.exports = function toEleventyConfig({ userSlinkityConfig, ...options }) {
   const { dir, viteSSR, browserSyncOptions, environment } = options
   const eleventyIgnored = toEleventyIgnored(userSlinkityConfig.eleventyIgnores, dir)
   const componentAttrStore = toComponentAttrStore()

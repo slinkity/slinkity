@@ -85,8 +85,8 @@ async function viteBuild({ dir, ssrViteConfig, filePath, environment }) {
 
 /**
  * @typedef ViteSSRParams
- * @property {import('../plugin').SlinkityConfigOptions['environment']} environment
- * @property {import('../plugin').SlinkityConfigOptions['dir']} dir
+ * @property {import('../eleventyConfig').SlinkityConfigOptions['environment']} environment
+ * @property {import('../eleventyConfig').SlinkityConfigOptions['dir']} dir
  * @param {ViteSSRParams}
  *
  * @typedef FormattedModule

@@ -5,7 +5,7 @@ const UserConfig = require('@11ty/eleventy/src/UserConfig')
 const { resolve } = require('path')
 const { toViteSSR } = require('./toViteSSR')
 const { readUserSlinkityConfig } = require('./readUserSlinkityConfig')
-const slinkityConfig = require('../plugin')
+const toEleventyConfig = require('../eleventyConfig')
 
 function toUserConfig(configPath = '') {
   let userConfig
@@ -81,7 +81,7 @@ function applyUserConfigDir(dir = {}) {
     })
 
     const environment = options.watch ? 'dev' : 'prod'
-    const config = slinkityConfig({
+    const config = toEleventyConfig({
       dir,
       environment,
       viteSSR: await toViteSSR({ dir, environment }),
