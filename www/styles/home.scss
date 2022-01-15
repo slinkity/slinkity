@@ -1,7 +1,7 @@
 @use 'tools' as *;
 
 :root {
-    --content-max-width: 740px;
+    --content-max-width: 740px !important;
 }
 
 .home {
