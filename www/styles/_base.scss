@@ -61,14 +61,25 @@ h2 {
 
 blockquote {
     --bg: var(--color-primary-7);
+    --padding: clamp(1rem, 2vmax, 1.5em);
     @include gradient-links;
     --gradient-accent-width: 0.5rem;
     margin-inline: 0;
     background: var(--bg);
     border-radius: 0 .25rem .25rem 0;
     position: relative;
-    padding: 1rem;
-    padding-inline-start: calc(1rem + var(--gradient-accent-width));
+    padding: var(--padding);
+    border-radius: 2px;
+    overflow: hidden;
+    padding-inline-start: calc(var(--padding) + var(--gradient-accent-width));
+
+    > p {
+        margin-block: 0;
+    }
+
+    > * + * {
+        margin-block-start: 0;
+    } 
 
     &::before {
         content: '';
