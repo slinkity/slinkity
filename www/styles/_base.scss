@@ -12,7 +12,7 @@ body {
         padding: .1rem;
         border-radius: 2px;
         border: 1px solid var(--color-primary-7);
-        background-image: linear-gradient(to bottom right, var(--color-primary-9), transparent);
+        background-image: linear-gradient(to bottom right, var(--color-primary-9), var(--bg, var(--color-primary-7)));
         box-shadow: var(--shadow-heavy);
         color: var(--color-primary-1);
         text-shadow: 0 0 4px var(--color-primary-4);
