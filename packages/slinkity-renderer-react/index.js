@@ -24,23 +24,13 @@ module.exports = {
       },
     })
   },
-  page({ loadedModule, eleventyConfig, extension }) {
+  page({ toCommonJSModule }) {
     return {
-      getData() {
-        return loadedModule.frontMatter
-      },
-      // defaults to "static"
-      getHydrationMode(data) {
-        return data.hydrate
-      },
       // whether to format collections for better clientside parsing
       useFormatted11tyData: true,
-      async getProps(data) {
-        const { getProps } = loadedModule
-        return await getProps({
-          ...data,
-          shortcodes: eleventyConfig.javascriptFunctions ?? {},
-        })
+      async getData(inputPath) {
+        const Component = await toCommonJSModule(inputPath)
+        return Component.frontMatter
       },
     }
   },

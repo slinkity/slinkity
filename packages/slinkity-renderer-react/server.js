@@ -2,10 +2,14 @@ import { createElement } from 'react'
 import { renderToStaticMarkup as reactRenderToStaticMarkup, renderToString } from 'react-dom/server'
 import StaticHtml from './StaticHtml'
 
-/**
- * @type {import('../../main').ServerRenderer['renderToStaticMarkup']}
- */
-export function renderToStaticMarkup({ Component, props, children, hydrate }) {
+export async function renderToStaticMarkup({
+  toCommonJSModule,
+  inputPath,
+  props,
+  children,
+  hydrate,
+}) {
+  const Component = await toCommonJSModule(inputPath)
   const vnode = createElement(
     Component.default,
     props,
