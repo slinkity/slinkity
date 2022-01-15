@@ -1,4 +1,5 @@
-const { addPageExtension, addShortcode } = require('./1-pluginDefinitions')
+const addShortcode = require('./addShortcode')
+const addPageExtension = require('./addPageExtension')
 
 /**
  * @param {Object} eleventyConfig - config passed down by Eleventy

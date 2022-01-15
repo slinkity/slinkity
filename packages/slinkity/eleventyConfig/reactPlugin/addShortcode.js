@@ -1,6 +1,6 @@
 const { join } = require('path')
-const { log } = require('../../../utils/logger')
-const { toSSRComment } = require('../../../utils/consts')
+const { log } = require('../../utils/logger')
+const { toSSRComment } = require('../../utils/consts')
 
 const argsArrayToPropsObj = function ({ vargs = [], errorMsg = '' }) {
   if (vargs.length % 2 !== 0) {

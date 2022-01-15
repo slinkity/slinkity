@@ -1,6 +1,6 @@
-const toFormattedDataForProps = require('./toFormattedDataForProps')
 const { join } = require('path')
-const { toSSRComment } = require('../../../utils/consts')
+const toFormattedDataForProps = require('../../utils/toFormattedDataForProps')
+const { toSSRComment } = require('../../utils/consts')
 
 /**
  * @param {object} eleventyConfig
