@@ -43,6 +43,12 @@ const SLINKITY_CONFIG_FILE_NAME = 'slinkity.config'
 
 const BUILD_HASH = uuidv4()
 
+/**
+ * Returns an SSR comment with build hash and ID.
+ *
+ * @param  {string} id ID.
+ * @return {string}    SSR comment.
+ */
 function toSSRComment(id) {
   return `<!--slinkity-ssr ${BUILD_HASH} ${id}-->`
 }
