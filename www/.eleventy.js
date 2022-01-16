@@ -34,7 +34,14 @@ module.exports = function config(eleventyConfig) {
   eleventyConfig.setLibrary('md', markdownConfigured)
   eleventyConfig.addPassthroughCopy('public')
   eleventyConfig.addDataExtension('yaml', (contents) => yaml.load(contents))
-  eleventyConfig.addPlugin(syntaxHighlight)
+  eleventyConfig.addPlugin(
+    syntaxHighlight,
+    {
+      preAttributes: {
+        tabindex: 0
+      }
+    }
+  )
 
   return {
     htmlTemplateEngine: 'njk',
