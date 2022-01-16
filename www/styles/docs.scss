@@ -82,7 +82,7 @@
       color: var(--white);
       position: relative;
   
-      &.active {
+      &[aria-current="page"] {
         color: var(--color-accent-4);
 
         &::before {

@@ -27,7 +27,6 @@ styles:
         <a
           href="{{navLink.href}}"
           {% if navLink.href === page.url %}aria-current="page"{% endif %}
-          class="{{'active' if navLink.href === page.url else ''}}"
         >
           {{navLink.title}}
         </a>
