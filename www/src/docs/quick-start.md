@@ -124,4 +124,4 @@ This will do a few things:
 
 Now in your browser preview, clicking "Add one" should increase your counter 🎉
 
-### [Learn more about component shortcodes →](/docs/component-shortcodes)
+**[Learn more about component shortcodes →](/docs/component-shortcodes)**

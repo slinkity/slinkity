@@ -155,6 +155,10 @@
         }
       }
 
+      :where(p > strong:only-child > a:only-child) {
+        font-size: 1.17em;
+      }
+
       :where(table) {
         background-color: var(--color-primary-7);
         width: 100%;

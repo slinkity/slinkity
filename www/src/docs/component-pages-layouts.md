@@ -255,4 +255,4 @@ function getProps(eleventyData) {
 // -> { tenXEngineer: 10 }
 ```
 
-### [Learn the different ways to render components →](/docs/partial-hydration/)
+**[Learn the different ways to render components →](/docs/partial-hydration/)**
