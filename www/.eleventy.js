@@ -39,7 +39,7 @@ module.exports = function config(eleventyConfig) {
     {
       preAttributes: {
         tabindex: 0
-	  }
+      }
     }
   )
 
