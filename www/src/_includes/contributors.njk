@@ -2,8 +2,19 @@
   {% for contributor in contributors %}
   <article class="contributor">
     <img class="contributor__image" src="{{contributor.imageUrl}}" alt="{{contributor.username}}">
-    <h4 class="contributor__username"><a href=" {{contributor.url}}">{{contributor.username}}</a></h4>
-    <p class="contributor__title">{{contributor.title}}</p>
+    <a
+      href="{{contributor.url}}"
+      class="contributor__username"
+      aria-describedby="{{contributor.username}}-title"
+    >
+      {{contributor.username}}
+    </a>
+    <p
+      id="{{contributor.username}}-title"
+      class="contributor__title"
+    >
+      {{contributor.title}}
+    </p>
   </article>
   {% endfor %}
 </div>
