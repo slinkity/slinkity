@@ -10,6 +10,8 @@ module.exports = {
   extensions: ['jsx', 'tsx'],
   client,
   server,
+  // process CSS imported with JavaScript
+  processImportedStyles: true,
   viteConfig() {
     return defineConfig({
       optimizeDeps: {

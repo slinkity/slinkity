@@ -3,6 +3,10 @@
   "version": "0.0.1",
   "description": "React component renderer for the legendary 11ty tool, Slinkity",
   "main": "index.js",
+  "files": [
+    "client.js",
+    "server.js"
+  ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
