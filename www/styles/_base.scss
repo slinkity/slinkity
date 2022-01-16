@@ -18,6 +18,10 @@ body {
         text-shadow: 0 0 4px var(--color-primary-4);
         box-decoration-break: clone;
         -webkit-box-decoration-break: clone;
+
+        &:focus {
+            box-shadow: 0px 4px 14px var(--color-accent-4);
+		}
     }
 }
 
