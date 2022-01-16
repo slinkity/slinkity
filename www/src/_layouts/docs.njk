@@ -24,7 +24,12 @@ styles:
     <ul class="docs__side-nav" role="list">
       {%- for navLink in navLinksSorted -%}
       <li>
-        <a href="{{navLink.href}}" class="{{'active' if navLink.href === page.url else ''}}">{{navLink.title}}</a>
+        <a
+          href="{{navLink.href}}"
+          {% if navLink.href === page.url %}aria-current="page"{% endif %}
+        >
+          {{navLink.title}}
+        </a>
       </li>
       {%- endfor -%}
     </ul>
