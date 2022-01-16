@@ -4,7 +4,7 @@ styles:
   - '/@root/styles/home.scss'
 ---
 
-<section class="home__heading">
+<header class="home__heading">
   <div class="home__banner-container">
     {% include 'logo.njk' %}
   </div>
@@ -23,7 +23,7 @@ styles:
     <a class="home__heading-link" href="https://www.npmjs.com/package/slinkity">npm package</a>
     <a class="home__heading-link" href="https://github.com/slinkity/slinkity">Star on GitHub</a>
   </div>
-</section>
+</header>
 
 <main class="home__content">
   {{ content | safe }}
