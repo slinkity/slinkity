@@ -20,7 +20,7 @@ And HTML files:
 </head>
 ```
 
-### List of aliases
+## List of aliases
 
 - **/@root** - Relative to the base of your project. No, this is _not_ your project's input directory! This is merely based on where you ran the `slinkity` CLI command from. This is often used for `assets` or `utils` that wouldn't make sense as `input` directory routes or `_includes` entries.
 - **/@input** - Relative to your project's input directory, as configured using the `--input` CLI flag or 11ty's `dir` config option (see [our config docs](/docs/config) for more details)
