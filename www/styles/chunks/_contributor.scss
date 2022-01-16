@@ -24,13 +24,15 @@
     &__username {
         text-align: center;
         font-size: 1.17em;
+        display: block;
+        font-weight: bold;
+        margin-block-start: 1.33em;
+        margin-block-end: 1.33em;
 
-        & > a {
-            &::before {
-                content: '';
-                position: absolute;
-                inset: 0;
-            }
+        &::before {
+            content: '';
+            position: absolute;
+            inset: 0;
         }
     }
     
