@@ -155,7 +155,6 @@
         }
       }
 
-      :where(p > a:only-child),
       :where(p > strong:only-child > a:only-child) {
         font-size: 1.17em;
         font-weight: bold;

@@ -56,7 +56,7 @@ To opt-out of shipping JS, you can render your component as "static" HTML and CS
 
 For a full list of options to fine-tune how and when JavaScript is loaded on the client...
 
-### [💧 Learn more about partial hydration →](/docs/partial-hydration)
+**[💧 Learn more about partial hydration →](/docs/partial-hydration)**
 
 ## Passing props to shortcodes
 
@@ -108,4 +108,4 @@ url=page.url, fileSlug=page.fileSlug %}{% endraw %}
 
 Injecting components into templates is nice... but what if we want to build the entire route using a component framework?
 
-### [Learn about page-level components →](/docs/component-pages-layouts)
+**[Learn about page-level components →](/docs/component-pages-layouts)**
