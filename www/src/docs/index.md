@@ -19,7 +19,7 @@ Slinkity stands on the shoulders of giants. You can think of Slinkity as the "gl
 
 To learn more, and explore adding Slinkity to _existing_ 11ty projects...
 
-### [🐣 See our "quick start" guide →](/docs/quick-start)
+[🐣 See our "quick start" guide →](/docs/quick-start)
 
 ## Feature set
 
