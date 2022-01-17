@@ -3,10 +3,10 @@
  * @param {Object} eleventyData Data provided by the 11ty data cascade
  * @returns eleventyData formatted for use in clientside props
  */
-function toFormattedDataForProps(eleventyData) {
+function toFormattedDataForProps(eleventyData = {}) {
   const formattedCollections = {}
-  for (let name of Object.keys(eleventyData.collections)) {
-    formattedCollections[name] = eleventyData.collections[name].map((item) => {
+  for (let name of Object.keys(eleventyData.collections ?? {})) {
+    formattedCollections[name] = eleventyData.collections[name]?.map((item) => {
       /**
        * Items omitted:
        * - template: reference to the Template class
@@ -20,15 +20,15 @@ function toFormattedDataForProps(eleventyData) {
       // eslint-disable-next-line no-unused-vars
       const { collections, ...data } = item.data
       return {
-        inputPath: item.inputPath,
-        fileSlug: item.fileSlug,
-        filePathStem: item.filePathStem,
-        date: item.date,
-        outputPath: item.outputPath,
-        url: item.url,
+        inputPath: item.inputPath ?? '',
+        fileSlug: item.fileSlug ?? '',
+        filePathStem: item.filePathStem ?? '',
+        date: item.date ?? '',
+        outputPath: item.outputPath ?? '',
+        url: item.url ?? '',
         data,
         get templateContent() {
-          return item.templateContent
+          return item.templateContent ?? ''
         },
       }
     })
