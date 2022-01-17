@@ -1,16 +1,27 @@
 const toFormattedDataForProps = require('./toFormattedDataForProps')
 
 describe('toFormattedDataForProps', () => {
-  it('should throw without valid eleventyData', () => {
-    const message = 'must pass valid eleventyData to toFormattedDataForProps'
-    const error = new TypeError(message)
-    const args = [true, 1, '', null, undefined, {}, { someProp: 'someValue' }]
+  it('should return eleventyData with formatted collections', () => {
+    const eleventyData = {
+      collections: {
+        someCollection: [
+          {
+            data: {},
+            date: new Date().toString(),
+            filePathStem: 'some/file/path/stem',
+            fileSlug: 'some-file-slug',
+            inputPath: 'src',
+            outputPath: 'dist',
+            templateContent: 'some content',
+            url: 'some url',
+          },
+        ],
+      },
+    }
+    const expected = {
+      ...eleventyData,
+    }
 
-    expect(() => toFormattedDataForProps()).toThrowError(error)
-    args.forEach((arg) => {
-      expect(() => toFormattedDataForProps(arg)).toThrowError(error)
-    })
+    expect(toFormattedDataForProps(eleventyData)).toEqual(expected)
   })
-
-  test.todo('should return eleventyData with formatted collections')
 })

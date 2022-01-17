@@ -1,35 +1,9 @@
 /**
  * Format 11ty data to better stringify for use in clientside props
- * @param {Object} eleventyData (required) Data provided by the 11ty data cascade
+ * @param {Object} eleventyData Data provided by the 11ty data cascade
  * @returns eleventyData formatted for use in clientside props
  */
 function toFormattedDataForProps(eleventyData) {
-  // Validate eleventyData.
-  if (
-    eleventyData === null ||
-    typeof eleventyData !== 'object' ||
-    !Object.prototype.hasOwnProperty.call(eleventyData, 'collections') ||
-    !eleventyData.collections.every((collection) => {
-      return collection.every((item) => {
-        return [
-          'data',
-          'date',
-          'filePathStem',
-          'fileSlug',
-          'inputPath',
-          'outputPath',
-          'templateContent',
-          'url',
-        ].every((property) => {
-          return Object.prototype.hasOwnProperty.call(item, property)
-        })
-      })
-    })
-  ) {
-    const message = 'must pass valid eleventyData to toFormattedDataForProps'
-    throw new TypeError(message)
-  }
-
   const formattedCollections = {}
   for (let name of Object.keys(eleventyData.collections)) {
     formattedCollections[name] = eleventyData.collections[name].map((item) => {
