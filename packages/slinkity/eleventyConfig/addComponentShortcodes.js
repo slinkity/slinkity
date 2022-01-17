@@ -44,12 +44,13 @@ module.exports = function addShortcode({
       })
     }
 
-    const { render = 'eager' } = props
+    /** @type {{ hydrate: import('../cli/types').HydrationMode }} */
+    const { hydrate = 'none' } = props
     const id = componentAttrStore.push({
       path: path.join(resolvedImportAliases.includes, componentPath),
       rendererName: renderer.name,
       props,
-      hydrate: render,
+      hydrate,
       pageOutputPath: this.page.outputPath,
     })
 

@@ -14,6 +14,18 @@ export type ViteSSR = {
   createServer(): void;
 }
 
+type PageReturn = {
+  useFormatted11tyData: boolean;
+  getData(inputPath: any): Promise<Object>;
+}
+
+type HydrationMode = 'eager' | 'lazy' | 'none'
+
+export type Hydrate = HydrationMode | {
+  mode: HydrationMode;
+  props?(data: object): object | Promise<object>;
+}
+
 // TODO: in-line comments
 export type Renderer = {
   name: string;
@@ -24,10 +36,7 @@ export type Renderer = {
   viteConfig?(): UserConfigExport | Promise<UserConfigExport>;
   page({ toCommonJSModule }: {
     toCommonJSModule: ViteSSR['toCommonJSModule'];
-  }): {
-    useFormatted11tyData: boolean;
-    getData(inputPath: any): Promise<Object>;
-  };
+  }): PageReturn | Promise<PageReturn>;
 }
 
 export type UserSlinkityConfig = {
