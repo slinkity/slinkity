@@ -8,15 +8,11 @@ const { applyViteHtmlTransform } = require('./applyViteHtmlTransform')
 const addComponentPages = require('./addComponentPages')
 const addComponentShortcodes = require('./addComponentShortcodes')
 const { SLINKITY_HEAD_STYLES } = require('../utils/consts')
-const rendererReact = require('../../slinkity-renderer-react')
 const { toEleventyIgnored, defaultExtensions } = require('./handleTemplateExtensions')
 
 /**
  * @typedef {import('./types').EleventyConfigParams} EleventyConfigParams
  */
-
-// TODO: source from user's slinkity config
-const renderers = [rendererReact]
 
 /**
  * @param {EleventyConfigParams} options - all Slinkity plugin options
@@ -26,7 +22,7 @@ module.exports = function toEleventyConfig({ userSlinkityConfig, ...options }) {
   const { dir, viteSSR, browserSyncOptions, environment } = options
 
   /** @type {import('./handleTemplateExtensions').ExtensionMeta[]} */
-  const ignoredFromRenderers = renderers.flatMap((renderer) =>
+  const ignoredFromRenderers = userSlinkityConfig.renderers.flatMap((renderer) =>
     renderer.extensions.map((extension) => ({
       extension,
       isTemplateFormat: typeof renderer.page === 'function',
@@ -50,7 +46,7 @@ module.exports = function toEleventyConfig({ userSlinkityConfig, ...options }) {
     })
 
     const resolvedImportAliases = getResolvedAliases(dir)
-    for (const renderer of renderers) {
+    for (const renderer of userSlinkityConfig.renderers) {
       addComponentShortcodes({
         renderer,
         eleventyConfig,
@@ -92,7 +88,7 @@ module.exports = function toEleventyConfig({ userSlinkityConfig, ...options }) {
                       content,
                       outputPath,
                       componentAttrStore,
-                      renderers,
+                      renderers: userSlinkityConfig.renderers,
                       ...options,
                     }),
                   )
@@ -131,7 +127,7 @@ module.exports = function toEleventyConfig({ userSlinkityConfig, ...options }) {
           content,
           outputPath,
           componentAttrStore,
-          renderers,
+          renderers: userSlinkityConfig.renderers,
           options,
         })
       })
