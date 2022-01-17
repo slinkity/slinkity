@@ -4,6 +4,31 @@
  * @returns eleventyData formatted for use in clientside props
  */
 function toFormattedDataForProps(eleventyData = {}) {
+  // Validate eleventyData.
+  if (
+    eleventyData === null ||
+    typeof eleventyData !== 'object' ||
+    !Object.prototype.hasOwnProperty.call(eleventyData, 'collections') ||
+    !eleventyData.collections.every((collection) => {
+      return collection.every((item) => {
+        return [
+          'data',
+          'date',
+          'filePathStem',
+          'fileSlug',
+          'inputPath',
+          'outputPath',
+          'templateContent',
+          'url',
+        ].every((property) => {
+          return Object.prototype.hasOwnProperty.call(item, property)
+        })
+      })
+    })
+  ) {
+    throw new TypeError('must pass valid eleventyData')
+  }
+
   const formattedCollections = {}
   for (let name of Object.keys(eleventyData.collections)) {
     formattedCollections[name] = eleventyData.collections[name].map((item) => {
