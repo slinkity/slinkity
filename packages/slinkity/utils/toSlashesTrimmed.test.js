@@ -1,7 +1,7 @@
 const toSlashesTrimmed = require('./toSlashesTrimmed')
 
 describe('toSlashesTrimmed', () => {
-  it('returns a URL with slashes trimmed', () => {
+  it('returns a URL with leading and trailing slashes trimmed', () => {
     expect(toSlashesTrimmed('url')).toBe('url')
     expect(toSlashesTrimmed('/url')).toBe('url')
     expect(toSlashesTrimmed('url/')).toBe('url')
