@@ -17,9 +17,10 @@ function getConfigFile() {
 /**
  * Returns object with resolved aliases.
  *
+ * @typedef {import('../eleventyConfig').Dir} Dir
  * @typedef {import('../utils/consts').ImportAliases} ImportAliases
  * @typedef {Record<keyof import('../utils/consts').ImportAliases, string>} ResolvedImportAliases
- * @param {import('../eleventyConfig/index').SlinkityConfigOptions['dir']} dir
+ * @param {Dir} dir
  * @returns {ResolvedImportAliases}
  */
 function getResolvedAliases({ input, includes, layouts }) {
@@ -33,7 +34,7 @@ function getResolvedAliases({ input, includes, layouts }) {
 
 /**
  * Get Vite config shared by dev and production
- * @param {import('../eleventyConfig/index').SlinkityConfigOptions['dir']} dir
+ * @param {Dir} dir
  * @returns {import('vite').UserConfigExport}
  */
 async function getSharedConfig(eleventyDir) {
@@ -81,7 +82,7 @@ async function getSharedConfig(eleventyDir) {
 
 /**
  * Build production bundle
- * @param {import('../eleventyConfig/index').SlinkityConfigOptions['dir']} dir
+ * @param {Dir & { eleventyDir: string }} dir
  */
 async function build({ eleventyDir, input, output }) {
   const inputFiles = await glob(`${input}/**/*.html`, { absolute: true })
