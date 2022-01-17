@@ -15,31 +15,24 @@ module.exports = {
   viteConfig() {
     return {
       optimizeDeps: {
-        include: [
-          client,
-          server,
-          'react',
-          'react/jsx-runtime',
-          'react/jsx-dev-runtime',
-          'react-dom',
-        ],
+        include: [client, 'react', 'react/jsx-runtime', 'react/jsx-dev-runtime', 'react-dom'],
       },
+      exclude: [server],
       resolve: {
         dedupe: ['react', 'react-dom'],
       },
       ssr: {
         external: ['react-dom/server.js'],
       },
-      // TODO: decide if this is still necessary for production builds
-      // build: {
-      //   rollupOptions: {
-      //     output: {
-      //       manualChunks: {
-      //         react: ['react'],
-      //       },
-      //     },
-      //   },
-      // },
+      build: {
+        rollupOptions: {
+          output: {
+            manualChunks: {
+              react: ['react'],
+            },
+          },
+        },
+      },
     }
   },
   page({ toCommonJSModule }) {
