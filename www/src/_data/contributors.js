@@ -4,6 +4,7 @@ const usernameToCustomTitleMap = {
   Holben888: 'Supreme Slinkity Stan',
   ajcwebdev: 'Maintainer',
   nachtfunke: 'Cascading Style Slinky',
+  BenDMyers: 'Accessibili-Slinky',
 }
 
 function toTitleByUsername(username) {
