@@ -1,5 +1,5 @@
 import type { ViteSSR } from "../cli/toViteSSR"
-import type { UserSlinkityConfig } from '../index.d'
+import type { UserSlinkityConfig } from '..'
 import type { Options } from 'browser-sync'
 
 type Environment = 'dev' | 'prod'

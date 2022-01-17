@@ -12,7 +12,7 @@ const rendererReact = require('../../slinkity-renderer-react')
 const { toEleventyIgnored, defaultExtensions } = require('./handleTemplateExtensions')
 
 /**
- * @typedef {import('./index').EleventyConfigParams} EleventyConfigParams
+ * @typedef {import('./types').EleventyConfigParams} EleventyConfigParams
  */
 
 // TODO: source from user's slinkity config

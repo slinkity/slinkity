@@ -1,11 +1,9 @@
 /**
- * @typedef {import('./index').UserSlinkityConfig} UserSlinkityConfig
- *
- * @param {Partial<UserSlinkityConfig>} userConfig
- * @returns {UserSlinkityConfig} formatted Slinkity Config with defaults applied for omitted keys
+ * @type {import('./defineConfig').defineConfig}
  */
 function defineConfig(userConfig = {}) {
   return {
+    renderers: userConfig.renderers ?? [],
     eleventyIgnores: userConfig.eleventyIgnores ?? ((ignores) => ignores),
   }
 }

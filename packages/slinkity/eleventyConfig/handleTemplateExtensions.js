@@ -22,10 +22,10 @@ module.exports.defaultExtensions = [
 ]
 
 /**
- * @typedef {import('../index').UserSlinkityConfig} UserSlinkityConfig
+ * @typedef {import('../cli/types').UserSlinkityConfig} UserSlinkityConfig
  *
  * @param {UserSlinkityConfig['eleventyIgnores']} userEleventyIgnores
- * @param {import('./index').Dir} dir
+ * @param {import('./types').Dir} dir
  * @param {ExtensionMeta[]} extensions File extensions to map to ignore statements
  * @returns {string[]} absolute paths and/or globs for eleventy to ignore
  */
