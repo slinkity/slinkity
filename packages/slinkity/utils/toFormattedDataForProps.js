@@ -1,9 +1,9 @@
 /**
  * Format 11ty data to better stringify for use in clientside props
- * @param {Object} eleventyData Data provided by the 11ty data cascade
+ * @param {Object} eleventyData (required) Data provided by the 11ty data cascade
  * @returns eleventyData formatted for use in clientside props
  */
-function toFormattedDataForProps(eleventyData = {}) {
+function toFormattedDataForProps(eleventyData) {
   // Validate eleventyData.
   if (
     eleventyData === null ||
