@@ -26,7 +26,8 @@ function toFormattedDataForProps(eleventyData = {}) {
       })
     })
   ) {
-    throw new TypeError('must pass valid eleventyData')
+    const message = 'must pass valid eleventyData to toFormattedDataForProps'
+    throw new TypeError(message)
   }
 
   const formattedCollections = {}
