@@ -31,7 +31,6 @@ async function handleSSRComments({ content, outputPath, componentAttrStore, vite
   /** @type {Set<string>} */
   const importedStyles = new Set()
   const pageComponentAttrs = componentAttrStore.getAllByPage(outputPath)
-  console.log({ renderers, rendererMap, pageComponentAttrs })
   const serverRenderedComponents = []
   for (const componentAttrs of pageComponentAttrs) {
     const { path: componentPath, props, hydrate, rendererName } = componentAttrs
