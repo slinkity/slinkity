@@ -46,10 +46,14 @@ const BUILD_HASH = uuidv4()
 /**
  * Returns an SSR comment with build hash and ID.
  *
- * @param  {string} id ID.
+ * @param  {string} id (required) ID.
  * @return {string}    SSR comment.
  */
 function toSSRComment(id) {
+  if (typeof id !== 'string' || id === '') {
+    throw new TypeError('must pass non-empty string to toSSRComment')
+  }
+
   return `<!--slinkity-ssr ${BUILD_HASH} ${id}-->`
 }
 
