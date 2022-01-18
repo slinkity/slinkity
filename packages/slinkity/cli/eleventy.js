@@ -85,7 +85,7 @@ async function startEleventy({ dir, userSlinkityConfig, options }) {
     errorHandler.warn(promise, 'A promise rejection was handled asynchronously')
   })
 
-  /** @type {import('../eleventyConfig').Environment} */
+  /** @type {import('../eleventyConfig/types').Environment} */
   const environment = options.watch ? 'dev' : 'prod'
   const config = toEleventyConfig({
     dir,

@@ -17,7 +17,7 @@ function getConfigFile() {
 /**
  * Returns object with resolved aliases.
  *
- * @typedef {import('../eleventyConfig').Dir} Dir
+ * @typedef {import('../eleventyConfig/types').Dir} Dir
  * @typedef {import('../utils/consts').ImportAliases} ImportAliases
  * @typedef {Record<keyof import('../utils/consts').ImportAliases, string>} ResolvedImportAliases
  * @param {Dir} dir
