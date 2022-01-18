@@ -7,10 +7,13 @@
   "types": "index.d.ts",
   "files": [
     "lib",
+    "client",
     "index.js",
     "index.d.ts",
     "defineConfig.js",
-    "client",
+    "defineConfig.d.ts",
+    "cli/types.d.ts",
+    "eleventyConfig/types.d.ts",
     "client.js"
   ],
   "homepage": "https://slinkity.dev",
