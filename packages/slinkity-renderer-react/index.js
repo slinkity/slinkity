@@ -10,8 +10,7 @@ module.exports = {
   extensions: ['jsx', 'tsx'],
   client,
   server,
-  // process CSS imported with JavaScript
-  processImportedStyles: true,
+  injectImportedStyles: true,
   viteConfig() {
     return {
       optimizeDeps: {
@@ -37,7 +36,6 @@ module.exports = {
   },
   page({ toCommonJSModule }) {
     return {
-      // whether to format collections for better clientside parsing
       useFormatted11tyData: true,
       async getData(inputPath) {
         const Component = await toCommonJSModule(inputPath)
@@ -45,13 +43,4 @@ module.exports = {
       },
     }
   },
-  // Adds polyfills to Node's global object *yikes*
-  polyfills: null,
-  // List of imports to add as scripts on the client
-  hydrationPolyfills: null,
-
-  // Later TODO
-  // https://github.com/snowpackjs/astro/blob/main/packages/astro/src/vite-plugin-jsx/index.ts
-  jsxImportSource: null,
-  jsxTransformOptions: null,
 }

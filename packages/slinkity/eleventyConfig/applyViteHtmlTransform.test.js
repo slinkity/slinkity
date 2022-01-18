@@ -47,21 +47,21 @@ describe('applyViteHtmlTransform', () => {
         extensions: ['jsx'],
         client: '@slinkity/example/client',
         server: '@slinkity/example/server',
-        processImportedStyles: true,
+        injectImportedStyles: true,
       },
       {
         name: 'vue',
         extensions: ['vue'],
         client: '@slinkity/vue/client',
         server: '@slinkity/vue/server',
-        processImportedStyles: true,
+        injectImportedStyles: true,
       },
       {
         name: 'svelte',
         extensions: ['svelte'],
         client: '@slinkity/svelte/client',
         server: '@slinkity/svelte/server',
-        processImportedStyles: true,
+        injectImportedStyles: true,
       },
     ]
     const componentPathsToMeta = {

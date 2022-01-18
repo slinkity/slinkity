@@ -36,7 +36,7 @@ async function handleSSRComments({ content, outputPath, componentAttrStore, vite
     const { path: componentPath, props, hydrate, rendererName } = componentAttrs
     const renderer = rendererMap[rendererName]
     const { default: serverRenderer } = await viteSSR.toCommonJSModule(renderer.server)
-    if (renderer.processImportedStyles) {
+    if (renderer.injectImportedStyles) {
       const { __importedStyles } = await viteSSR.toCommonJSModule(componentPath)
       __importedStyles.forEach((importedStyle) => importedStyles.add(importedStyle))
     }
