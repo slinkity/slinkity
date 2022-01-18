@@ -57,4 +57,5 @@ module.exports = function addShortcode({
     return toSSRComment(id)
   })
 }
+
 module.exports.argsArrayToPropsObj = argsArrayToPropsObj
