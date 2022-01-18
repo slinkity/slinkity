@@ -4,7 +4,7 @@
  * @property {import('../cli/vite').ResolvedImportAliases} resolvedImportAliases
  * @property {import('../cli/toViteSSR').ViteSSR} viteSSR
  * @property {any} eleventyConfig
- * @property {any} renderer
+ * @property {import('../cli/types').Renderer} renderer
  * @param {AddComponentPagesParams}
  */
 module.exports = function addComponentPages({

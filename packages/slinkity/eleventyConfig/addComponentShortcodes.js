@@ -21,7 +21,7 @@ const argsArrayToPropsObj = function ({ vargs = [], errorMsg = '' }) {
  * @property {import('./componentAttrStore').ComponentAttrStore} componentAttrStore
  * @property {import('../cli/vite').ResolvedImportAliases} resolvedImportAliases
  * @property {any} eleventyConfig
- * @property {any} renderer
+ * @property {import('../cli/types').Renderer} renderer
  * @param {AddComponentShortcodesParams}
  */
 module.exports = function addShortcode({
