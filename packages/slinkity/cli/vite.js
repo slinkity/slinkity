@@ -5,11 +5,18 @@ const glob = promisify(require('glob'))
 const { resolveConfigFilePath } = require('../utils/resolveConfigFilePath')
 const { IMPORT_ALIASES } = require('../utils/consts')
 
+/**
+ * Returns config file path or undefined if config file does not exist.
+ *
+ * @return {string|undefined} File path.
+ */
 function getConfigFile() {
   return resolveConfigFilePath(['js', 'mjs', 'ts'].map((ext) => `vite.config.${ext}`))
 }
 
 /**
+ * Returns object with resolved aliases.
+ *
  * @typedef {import('../utils/consts').ImportAliases} ImportAliases
  * @typedef {Record<keyof import('../utils/consts').ImportAliases, string>} ResolvedImportAliases
  * @param {import('../eleventyConfig/index').SlinkityConfigOptions['dir']} dir
