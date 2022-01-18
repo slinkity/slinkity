@@ -20,7 +20,7 @@ const ssrRegex = RegExp(toSSRComment('([0-9]+)'), 'g')
  * @property {string} outputPath - the output path this HTML content will be written to
  * @property {import('./componentAttrStore').ComponentAttrStore} componentAttrStore
  * @property {import('.').SlinkityConfigOptions['viteSSR']} viteSSR
- * @property {any[]} renderers
+ * @property {import('../cli/types').Renderer[]} renderers
  * @param {HandleSSRCommentsParams}
  * @returns {Promise<string>} - HTML with components SSR'd
  */
@@ -77,12 +77,17 @@ async function handleSSRComments({ content, outputPath, componentAttrStore, vite
 }
 
 /**
+ * @typedef {import('./types').EleventyConfigParams} EleventyConfigParams
+ *
  * @typedef ApplyViteHtmlTransformParams
  * @property {string} content - the original HTML content to transform
  * @property {string} outputPath - the output path this HTML content will be written to
  * @property {import('./componentAttrStore').ComponentAttrStore} componentAttrStore
- * @property {any[]} renderers
- * @param {ApplyViteHtmlTransformParams & import('.').SlinkityConfigOptions}
+ * @property {import('../cli/types').Renderer[]} renderers
+ * @property {EleventyConfigParams['environment']} environment
+ * @property {EleventyConfigParams['dir']} dir
+ * @property {EleventyConfigParams['viteSSR']} viteSSR
+ * @param {ApplyViteHtmlTransformParams}
  * @returns {Promise<string>} - HTML with statically rendered content and Vite transforms applied
  */
 async function applyViteHtmlTransform({
