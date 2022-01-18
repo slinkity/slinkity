@@ -7,12 +7,6 @@
  * @property {import('../cli/types').Renderer} renderer
  * @param {AddComponentPagesParams}
  */
-module.exports = function addComponentPages({
-  renderer,
-  eleventyConfig,
-  viteSSR,
-  componentAttrStore,
-  resolvedImportAliases,
-}) {
+module.exports = function addComponentPages() {
   // TODO
 }
