@@ -11,6 +11,7 @@ function toComponentAttrsWithDefaults(componentAttrs) {
       hydrate: 'eager',
       props: {},
       pageOutputPath: 'default.html',
+      rendererName: 'react',
       ...componentAttr,
     })
   }
@@ -39,23 +40,81 @@ describe('applyViteHtmlTransform', () => {
   )
   describe('handleSSRComments', () => {
     const outputPath = '/handle/ssr/comments.html'
-    const componentPathsToStyles = {
-      'nice.jsx': [toConvincingUrl('styles.scss'), toConvincingUrl('more-styles.scss')],
-      'cool.svelte': [toConvincingUrl('nested/global.module.scss')],
-      'neat.vue': [toConvincingUrl('excellent.css'), toConvincingUrl('neato.stylus')],
+    /** @type {import('../cli/types').Renderer[]} */
+    const renderers = [
+      {
+        name: 'react',
+        extensions: ['jsx'],
+        client: '@slinkity/example/client',
+        server: '@slinkity/example/server',
+        processImportedStyles: true,
+      },
+      {
+        name: 'vue',
+        extensions: ['vue'],
+        client: '@slinkity/vue/client',
+        server: '@slinkity/vue/server',
+        processImportedStyles: true,
+      },
+      {
+        name: 'svelte',
+        extensions: ['svelte'],
+        client: '@slinkity/svelte/client',
+        server: '@slinkity/svelte/server',
+        processImportedStyles: true,
+      },
+    ]
+    const componentPathsToMeta = {
+      'nice.jsx': {
+        importedStyles: [toConvincingUrl('styles.scss'), toConvincingUrl('more-styles.scss')],
+        rendererName: 'react',
+        ssr: {
+          html: '<react>Content</react>',
+        },
+      },
+      'cool.svelte': {
+        importedStyles: [toConvincingUrl('nested/global.module.scss')],
+        rendererName: 'svelte',
+        ssr: {
+          html: '<svelte>Content</svelte>',
+        },
+      },
+      'neat.vue': {
+        importedStyles: [toConvincingUrl('excellent.css'), toConvincingUrl('neato.stylus')],
+        rendererName: 'vue',
+        ssr: {
+          html: '<vue>Content</vue>',
+        },
+      },
     }
     const viteSSR = {
       async toCommonJSModule(componentPath) {
-        return {
-          default: () => null,
-          __importedStyles: componentPathsToStyles[componentPath],
+        const matchingRenderer = renderers.find((renderer) => renderer.server === componentPath)
+        if (matchingRenderer) {
+          return {
+            default({ componentPath }) {
+              const { ssr } = componentPathsToMeta[componentPath]
+              return {
+                // insert the server renderer name into the snapshot
+                // to ensure we're using the correct renderer for a given component
+                html: `${ssr.html}\n  <p>rendered by ${matchingRenderer.name}</p>`,
+                css: ssr.css,
+              }
+            },
+          }
+        } else {
+          return {
+            default: () => null,
+            __importedStyles: componentPathsToMeta[componentPath].importedStyles,
+          }
         }
       },
     }
     const componentAttrStore = toComponentAttrsWithDefaults(
-      Object.keys(componentPathsToStyles).map((componentPath) => ({
+      Object.entries(componentPathsToMeta).map(([componentPath, { rendererName }]) => ({
         path: componentPath,
         pageOutputPath: outputPath,
+        rendererName,
       })),
     )
 
@@ -74,6 +133,7 @@ describe('applyViteHtmlTransform', () => {
         outputPath,
         componentAttrStore,
         viteSSR,
+        renderers,
       })
       expect(actual).toMatchSnapshot()
     })
@@ -96,6 +156,7 @@ describe('applyViteHtmlTransform', () => {
         outputPath,
         componentAttrStore,
         viteSSR,
+        renderers,
       })
       expect(actual).toMatchSnapshot()
     })
