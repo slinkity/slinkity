@@ -1,3 +1,7 @@
+// TODO: use this once shortcode children are supported
+// Yes, this is copy / pasted from the Astro repo for now
+// Source: https://github.com/withastro/astro/tree/main/packages/renderers/renderer-react
+
 import { createElement as h } from 'react'
 
 /**
