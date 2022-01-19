@@ -1,6 +1,6 @@
-const { join } = require('path')
-const { log } = require('../../utils/logger')
-const { toSSRComment } = require('../../utils/consts')
+const path = require('path')
+const { log } = require('../utils/logger')
+const { toSSRComment } = require('../utils/consts')
 
 const argsArrayToPropsObj = function ({ vargs = [], errorMsg = '' }) {
   if (vargs.length % 2 !== 0) {
@@ -17,21 +17,20 @@ const argsArrayToPropsObj = function ({ vargs = [], errorMsg = '' }) {
 }
 
 /**
- * @param {object} eleventyConfig
- * @typedef AddShortcodeParams
- * @property {import('../../componentAttrStore').ComponentAttrStore} componentAttrStore
- * @property {import('../../../cli/vite').ResolvedImportAliases} resolvedImportAliases
- * @param {AddShortcodeParams}
+ * @typedef AddComponentShortcodesParams
+ * @property {import('./componentAttrStore').ComponentAttrStore} componentAttrStore
+ * @property {import('../cli/vite').ResolvedImportAliases} resolvedImportAliases
+ * @property {any} eleventyConfig
+ * @property {import('../cli/types').Renderer} renderer
+ * @param {AddComponentShortcodesParams}
  */
-module.exports = function addShortcode(
+module.exports = function addShortcode({
+  renderer,
   eleventyConfig,
-  { componentAttrStore, resolvedImportAliases },
-) {
-  eleventyConfig.addShortcode('react', function (componentPath, ...vargs) {
-    const absComponentPath =
-      join(resolvedImportAliases.includes, componentPath) +
-      (componentPath.endsWith('.jsx') ? '' : '.jsx')
-
+  resolvedImportAliases,
+  componentAttrStore,
+}) {
+  eleventyConfig.addShortcode(renderer.name, function (componentPath, ...vargs) {
     let props = {}
 
     if (typeof vargs[0] === 'object') {
@@ -45,16 +44,18 @@ module.exports = function addShortcode(
       })
     }
 
-    const { render = 'eager' } = props
+    /** @type {{ hydrate: import('../cli/types').HydrationMode }} */
+    const { hydrate = 'none' } = props
     const id = componentAttrStore.push({
-      path: absComponentPath,
+      path: path.join(resolvedImportAliases.includes, componentPath),
+      rendererName: renderer.name,
       props,
-      hydrate: render,
-      styleToFilePathMap: {},
+      hydrate,
       pageOutputPath: this.page.outputPath,
     })
 
     return toSSRComment(id)
   })
 }
+
 module.exports.argsArrayToPropsObj = argsArrayToPropsObj
