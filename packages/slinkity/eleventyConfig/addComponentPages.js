@@ -56,7 +56,6 @@ module.exports = async function addComponentPages({
           const id = componentAttrStore.push({
             path: absInputPath,
             props,
-            styleToFilePathMap: {},
             hydrate: hydrate.mode ? hydrate.mode : hydrate,
             pageOutputPath: data.page.outputPath,
             rendererName: renderer.name,
