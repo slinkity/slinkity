@@ -10,7 +10,7 @@ const { defineConfig } = require('../defineConfig')
 // TODO: explore rewriting Slinkity to ESM, and use esbuild to bundle our 11ty plugins to CommonJS
 const supportedExts = ['js', 'ts']
 
-async function readUserSlinkityConfig() {
+module.exports = async function readUserSlinkityConfig() {
   const configFile = await resolveConfigFilePath(
     supportedExts.map((ext) => `${SLINKITY_CONFIG_FILE_NAME}.${ext}`),
   )
@@ -42,8 +42,4 @@ async function readUserSlinkityConfig() {
     })
     return defineConfig()
   }
-}
-
-module.exports = {
-  readUserSlinkityConfig,
 }
