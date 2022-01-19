@@ -36,10 +36,6 @@ module.exports = async function addComponentPages({
           const absInputPath = path.join(resolvedImportAliases.root, inputPath)
           let props
 
-          data.__slinkity.shortcodes.react = data.__slinkity.shortcodes.react.bind({
-            page: data.page,
-          })
-
           /** @type {{ hydrate: import('../cli/types').Hydrate }} */
           const { hydrate = 'none' } = data
           if (typeof hydrate !== 'string' && typeof hydrate.props === 'function') {
