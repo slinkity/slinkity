@@ -12,18 +12,21 @@ const { normalizePath } = require('vite')
  * @param {LoaderScriptParams}
  * @returns {string} String of HTML to run loader in the client
  */
-module.exports = function toLoaderScript({ componentPath, hydrate, id, props = {} }) {
+module.exports = function toLoaderScript({ componentPath, hydrate, id, props, clientRenderer }) {
   // TODO: abstract "props" to some other file, instead of stringifying in-place
   // We could be generating identical, large prop blobs
-  const componentImportStatement = JSON.stringify(normalizePath(componentPath))
+  const componentImportPath = JSON.stringify(normalizePath(componentPath))
+  const rendererImportPath = JSON.stringify(normalizePath(clientRenderer))
   if (hydrate === 'eager') {
     return `<script type="module">
-    import Component${id} from ${componentImportStatement};
+    import Component${id} from ${componentImportPath};
+    import renderer${id} from ${rendererImportPath};
     import { eagerLoader as eagerLoader${id} } from "${PACKAGES.client}";
   
     eagerLoader${id}({ 
       id: "${id}",
       Component: Component${id},
+      renderer: renderer${id},
       props: ${stringify(props)},
     });
   </script>`
@@ -33,7 +36,8 @@ module.exports = function toLoaderScript({ componentPath, hydrate, id, props = {
   
     lazyLoader${id}({ 
       id: "${id}",
-      componentImporter: async () => await import(${componentImportStatement}),
+      toComponent: async () => await import(${componentImportPath}),
+      toRenderer: async () => await import(${rendererImportPath}),
       props: ${stringify(props)},
     });
   </script>`

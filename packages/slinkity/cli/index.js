@@ -3,6 +3,7 @@ const { program } = require('commander')
 const { relative, resolve, sep } = require('path')
 const { emptyDir, mkdtemp, remove } = require('fs-extra')
 const { startEleventy, toEleventyConfigDir } = require('./eleventy')
+const readUserSlinkityConfig = require('./readUserSlinkityConfig')
 const meta = require('../../../package.json')
 const { build: viteBuild } = require('./vite')
 
@@ -97,22 +98,26 @@ const userConfigDir = toEleventyConfigDir({
 
 ;(async () => {
   const outputDir = resolve(userConfigDir.output)
+  const userSlinkityConfig = await readUserSlinkityConfig()
   await emptyDir(outputDir)
   if (options.serve) {
-    const eleventyDir = {
-      ...userConfigDir,
-    }
-    await startEleventy(eleventyDir)(toEleventyOptions(options))
+    await startEleventy({
+      dir: userConfigDir,
+      userSlinkityConfig,
+      options: toEleventyOptions(options),
+    })
   } else {
     const intermediateDir = relative('.', await mkdtemp('.11ty-build-'))
 
     // Eleventy builds to an internal temp directory
     // For Vite to pull from in a 2 step build process
     await startEleventy({
-      ...userConfigDir,
-      output: intermediateDir.split(sep).join('/'),
-    })(toEleventyOptions(options))
+      dir: { ...userConfigDir, output: intermediateDir.split(sep).join('/') },
+      userSlinkityConfig,
+      options: toEleventyOptions(options),
+    })
     await viteBuild({
+      userSlinkityConfig,
       eleventyDir: userConfigDir,
       input: intermediateDir,
       output: outputDir,
