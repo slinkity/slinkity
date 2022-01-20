@@ -7,7 +7,13 @@
         "editor.formatOnSave": false
     },
     "eslint.alwaysShowStatus": true,
+    "stylelint.enable": true,
+    "stylelint.validate": [
+        "scss",
+    ],
+    "stylelint.configFile": ".stylelintrc.json",
     "editor.codeActionsOnSave": {
-        "source.fixAll": true
+        "source.fixAll.eslint": true,
+        "source.fixAll.stylelint": true
     }
 }

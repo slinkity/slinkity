@@ -1,4 +1,4 @@
-@use '../tools' as *;
+@use "../tools" as *;
 
 .center-content {
   display: grid;
@@ -14,12 +14,13 @@
 
 .hide {
   &__mobile {
-    @media(max-width: breakpoint(mobile)) {
+    @media (max-width: breakpoint(mobile)) {
       display: none;
     }
   }
+
   &__tablet {
-    @media(max-width: breakpoint(tablet)) {
+    @media (max-width: breakpoint(tablet)) {
       display: none;
     }
   }

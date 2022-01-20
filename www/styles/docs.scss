@@ -1,9 +1,9 @@
-@use 'tools' as *;
+@use "tools" as *;
 
 .docs {
   --nav-width: 240px;
   --site-gap: clamp(2em, 4.25vmax, 4em);
-  
+
   // Top-Nav
   &__primary-nav {
     background-color: var(--color-primary-8);
@@ -34,7 +34,7 @@
     display: flex;
     align-items: baseline;
     gap: 1rem;
-    transform: translateY(.1em);
+    transform: translateY(0.1em);
 
     svg {
       height: 1.1em;
@@ -48,8 +48,8 @@
     }
 
     ~ a {
-      padding-inline: .5em !important;
-      transform: translateX(.5em); // the background is not visible unless hovered. Meaning, it looks misaligned unless hovered. This offsets it.
+      padding-inline: 0.5em !important;
+      transform: translateX(0.5em); // the background is not visible unless hovered. Meaning, it looks misaligned unless hovered. This offsets it.
     }
   }
 
@@ -64,29 +64,28 @@
     top: var(--site-gap);
     margin-block-start: 0;
     box-shadow: var(--shadow-heavy);
-  
     @include gradient-links;
-  
     @media (min-width: breakpoint(tablet)) {
       grid-column: side-start / side-end;
     }
-  
+
     li {
       margin: 0;
     }
-  
-    a, a:visited {
+
+    a,
+    a:visited {
       display: block;
       padding: 0.5rem 1rem;
       text-decoration: none;
       color: var(--white);
       position: relative;
-  
+
       &[aria-current="page"] {
         color: var(--color-accent-4);
 
         &::before {
-          content: '';
+          content: "";
           width: 4px;
           height: 100%;
           position: absolute;
@@ -98,7 +97,7 @@
           transition-duration: inherit;
           transition-timing-function: inherit;
         }
-        
+
         &:where(:hover, :focus) {
           color: var(--color-dark);
 
@@ -107,7 +106,7 @@
           }
         }
       }
-  
+
       &:where(:hover, :focus) {
         color: var(--color-dark);
       }
@@ -123,17 +122,16 @@
     grid-template-columns: 1fr;
     align-items: flex-start;
     gap: var(--site-gap);
-  
     @media (min-width: breakpoint(tablet)) {
       grid-template-columns: [side-start] var(--nav-width) [side-end content-start] 1fr [content-end];
     }
-    
+
     &__content {
-      @include content-card();
+      @include content-card;
       overflow: auto;
       max-width: 100%;
       margin: 0;
-  
+
       :where(h1) {
         margin-block-start: 0;
         font-size: 2.25em;
@@ -142,7 +140,8 @@
       :where(pre) {
         border: 1px solid var(--color-primary-7);
         border-radius: 2px;
-        background-image: linear-gradient(
+        background-image:
+          linear-gradient(
             to bottom right,
             var(--color-primary-9),
             transparent
@@ -165,9 +164,10 @@
         border-radius: var(--rounded-corners);
         margin-block-end: 1.5em;
         border-collapse: collapse;
-        
-        td, th {
-          padding: .25em 1em;
+
+        td,
+        th {
+          padding: 0.25em 1em;
           text-align: left;
 
           &:last-child {
@@ -191,11 +191,9 @@
           }
         }
       }
-  
       @media (min-width: breakpoint(tablet)) {
         grid-column: content-start / content-end;
       }
     }
   }
 }
-

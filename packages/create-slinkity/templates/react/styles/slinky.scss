@@ -19,17 +19,19 @@
     animation-fill-mode: forwards;
     transform-origin: 50% 80%;
   }
-
   @for $i from 1 through 7 {
     &.right > path:nth-child(#{$i}) {
       animation-name: slinky-right-#{$i};
+      /* stylelint-disable-next-line keyframes-name-pattern */
       @keyframes slinky-right-#{$i} {
         0% {
           transform: rotate(0);
         }
+
         50% {
           transform: rotate(($i - 1) * 27.5deg);
         }
+
         100% {
           transform: rotate(165deg);
         }
@@ -37,13 +39,16 @@
     }
     &.left > path:nth-child(#{$i}) {
       animation-name: slinky-left-#{$i};
+      /* stylelint-disable-next-line keyframes-name-pattern */
       @keyframes slinky-left-#{$i} {
         0% {
           transform: rotate(165deg);
         }
+
         50% {
           transform: rotate((7 - $i) * 27.5deg);
         }
+
         100% {
           transform: rotate(0);
         }

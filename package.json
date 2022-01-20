@@ -59,13 +59,19 @@
     "prettier": "^2.3.2",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "stylelint": "^14.2.0",
+    "stylelint-config-standard-scss": "^3.0.0",
     "typescript": "^4.4.4"
   },
   "scripts": {
     "build:slinkity": "node packages/slinkity/build.js",
     "dev:slinkity": "node packages/slinkity/build.js --watch",
-    "lint": "eslint \"packages/**/*.{js,jsx,mjs}\"",
-    "lint:fix": "eslint --fix \"packages/**/*.{js,jsx,mjs}\"",
+    "lint": "npm-run-all --parallel lint:css lint:js",
+    "lint:fix": "npm-run-all --parallel lint:*:fix",
+    "lint:css": "stylelint \"{packages,www}/**/*.scss\"",
+    "lint:css:fix": "stylelint --fix \"{packages,www}/**/*.scss\"",
+    "lint:js": "eslint \"packages/**/*.{js,jsx,mjs}\"",
+    "lint:js:fix": "eslint --fix \"packages/**/*.{js,jsx,mjs}\"",
     "test": "jest",
     "test:watch": "jest --watch"
   },
