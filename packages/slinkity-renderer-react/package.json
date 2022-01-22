@@ -5,7 +5,8 @@
   "main": "index.js",
   "files": [
     "client.js",
-    "server.js"
+    "server.js",
+    "StaticHtml.js"
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -14,11 +15,15 @@
   "keywords": [],
   "author": "bholmesdev",
   "license": "ISC",
-  "dependencies": {
+  "peerDependencies": {
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "slinkity": "^0.5.0"
+  },
+  "devDependencies": {
     "react": "^17.0.2",
     "react-dom": "^17.0.2"
   },
-  "devDependencies": {},
   "repository": {
     "type": "git",
     "url": "https://github.com/slinkity"
