@@ -128,7 +128,7 @@ module.exports = function toEleventyConfig({ userSlinkityConfig, ...options }) {
           outputPath,
           componentAttrStore,
           renderers: userSlinkityConfig.renderers,
-          options,
+          ...options,
         })
       })
     }
