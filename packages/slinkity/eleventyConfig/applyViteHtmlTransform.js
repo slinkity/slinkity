@@ -58,7 +58,7 @@ async function handleSSRComments({ content, outputPath, componentAttrStore, vite
       const clientRenderer = rendererMap[rendererName].client
       const loaderScript = toLoaderScript({ componentPath, props, hydrate, id, clientRenderer })
       const attrs = toHtmlAttrString({ [SLINKITY_ATTRS.id]: id })
-      return `<${SLINKITY_REACT_MOUNT_POINT} ${attrs}>\n\t${serverRenderedComponents[id]}\n</${SLINKITY_REACT_MOUNT_POINT}>\n${loaderScript}`
+      return `<${SLINKITY_REACT_MOUNT_POINT} ${attrs}>${serverRenderedComponents[id]}</${SLINKITY_REACT_MOUNT_POINT}>\n${loaderScript}`
     })
     // inject component styles into head
     .replace(
