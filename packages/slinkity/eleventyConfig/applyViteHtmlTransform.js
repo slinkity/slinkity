@@ -74,12 +74,12 @@ async function handleSSRComments({ content, outputPath, componentAttrStore, vite
         .map((importedStyle) =>
           importedStyle.endsWith('lang.css')
             ? // lang.css is used by SFC (single file component) styles
-          // ex. <style scoped> in a .vue file
-          // these are sadly *not* supported by <link> tag imports,
-          // so we'll switch to <script> as a compromise
-          // Note: this does cause FOUC
-          // See this issue log for more details: https://github.com/slinkity/slinkity/issues/84#issuecomment-1003783754
-            `<script ${toHtmlAttrString({ type: 'module', src: importedStyle })}></script>`
+              // ex. <style scoped> in a .vue file
+              // these are sadly *not* supported by <link> tag imports,
+              // so we'll switch to <script> as a compromise
+              // Note: this does cause FOUC
+              // See this issue log for more details: https://github.com/slinkity/slinkity/issues/84#issuecomment-1003783754
+              `<script ${toHtmlAttrString({ type: 'module', src: importedStyle })}></script>`
             : `<link ${toHtmlAttrString({ rel: 'stylesheet', href: importedStyle })}>`,
         )
         // .concat([...inlineStyles].map((inlineStyle) => `<style>${inlineStyle}</style>`))
