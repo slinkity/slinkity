@@ -33,7 +33,7 @@ module.exports = async function addComponentPages({
       },
       compileOptions: {
         permalink() {
-          return async function render({ permalink, ...data }) {
+          return function render({ permalink, ...data }) {
             if (typeof permalink === 'function') {
               return permalink(data)
             } else {
