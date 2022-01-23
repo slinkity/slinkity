@@ -56,7 +56,6 @@ async function handleSSRComments({ content, outputPath, componentAttrStore, vite
       inlineStyles.add(serverRendered.css)
     }
   }
-  console.log({ outputPath, importedStyles })
 
   const html = content
     // server render each component
@@ -82,7 +81,6 @@ async function handleSSRComments({ content, outputPath, componentAttrStore, vite
               `<script ${toHtmlAttrString({ type: 'module', src: importedStyle })}></script>`
             : `<link ${toHtmlAttrString({ rel: 'stylesheet', href: importedStyle })}>`,
         )
-        // .concat([...inlineStyles].map((inlineStyle) => `<style>${inlineStyle}</style>`))
         .join('\n'),
     )
   return html
