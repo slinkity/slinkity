@@ -30,6 +30,9 @@ async function handleSSRComments({ content, outputPath, componentAttrStore, vite
 
   /** @type {Set<string>} */
   const importedStyles = new Set()
+  /** @type {Set<string>} */
+  const inlineStyles = new Set()
+
   const pageComponentAttrs = componentAttrStore.getAllByPage(outputPath)
   const serverRenderedComponents = []
   for (const componentAttrs of pageComponentAttrs) {
@@ -49,7 +52,11 @@ async function handleSSRComments({ content, outputPath, componentAttrStore, vite
       hydrate,
     })
     serverRenderedComponents.push(serverRendered.html)
+    if (serverRendered.css) {
+      inlineStyles.add(serverRendered.css)
+    }
   }
+  console.log({ outputPath, importedStyles })
 
   const html = content
     // server render each component
@@ -64,13 +71,18 @@ async function handleSSRComments({ content, outputPath, componentAttrStore, vite
     .replace(
       SLINKITY_HEAD_STYLES,
       [...importedStyles]
-        .map(
-          (importedStyle) =>
-            `<link ${toHtmlAttrString({
-              rel: 'stylesheet',
-              href: importedStyle,
-            })}>`,
+        .map((importedStyle) =>
+          importedStyle.endsWith('lang.css')
+            ? // lang.css is used by SFC (single file component) styles
+          // ex. <style scoped> in a .vue file
+          // these are sadly *not* supported by <link> tag imports,
+          // so we'll switch to <script> as a compromise
+          // Note: this does cause FOUC
+          // See this issue log for more details: https://github.com/slinkity/slinkity/issues/84#issuecomment-1003783754
+            `<script ${toHtmlAttrString({ type: 'module', src: importedStyle })}></script>`
+            : `<link ${toHtmlAttrString({ rel: 'stylesheet', href: importedStyle })}>`,
         )
+        // .concat([...inlineStyles].map((inlineStyle) => `<style>${inlineStyle}</style>`))
         .join('\n'),
     )
   return html
