@@ -1,7 +1,7 @@
 const { join } = require('path')
 const packageMeta = require('./package.json')
 const { svelte } = require('@sveltejs/vite-plugin-svelte')
-const autoPreprocess = require('svelte-preprocess')
+const preprocess = require('svelte-preprocess')
 
 const client = join(packageMeta.name, 'client')
 const server = join(packageMeta.name, 'server')
@@ -21,7 +21,7 @@ module.exports = {
       },
       plugins: [
         svelte({
-          preprocess: autoPreprocess,
+          preprocess: preprocess(),
           compilerOptions: {
             hydratable: true,
           },
