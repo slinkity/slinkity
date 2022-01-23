@@ -1,4 +1,8 @@
 import React from 'react'
+import '/@root/styles/slinky.scss'
+// woah, what's that /@root doing here?
+// see our "import alias" docs to learn more!
+// https://slinkity.dev/docs/import-aliases/
 
 export default function SpinningLogo() {
   const [slinkDirection, setSlinkDirection] = React.useState('left')
