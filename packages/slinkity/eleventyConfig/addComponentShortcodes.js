@@ -44,6 +44,8 @@ module.exports = function addShortcode({
       })
     }
 
+    delete props['__keywords']
+
     /** @type {{ hydrate: import('../cli/types').HydrationMode }} */
     const { hydrate = 'none' } = props
     const id = componentAttrStore.push({
