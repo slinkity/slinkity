@@ -2,6 +2,7 @@ const { createServer, build, defineConfig, mergeConfig } = require('vite')
 const requireFromString = require('require-from-string')
 const logger = require('../utils/logger')
 const { getSharedConfig } = require('./vite')
+const path = require('path')
 
 /**
  * Regex of hard-coded stylesheet extensions
@@ -47,6 +48,7 @@ module.exports.collectCSS = collectCSS
  * @returns {FormattedModule}
  */
 async function viteBuild({ ssrViteConfig, filePath, environment }) {
+  const input = filePath.startsWith('@slinkity') ? path.resolve('node_modules', filePath) : filePath
   const { output } = await build({
     ...ssrViteConfig,
     mode: environment,
@@ -54,7 +56,7 @@ async function viteBuild({ ssrViteConfig, filePath, environment }) {
       ssr: true,
       write: false,
       rollupOptions: {
-        input: filePath,
+        input,
       },
     },
   })
