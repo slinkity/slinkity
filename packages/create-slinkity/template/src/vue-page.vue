@@ -44,8 +44,8 @@
 import { ref } from "vue";
 export default {
   frontMatter: {
-    layout: "layout",
     title: "Enjoy the Vue",
+    layout: "layout",
     hydrate: "none",
   },
   setup() {
