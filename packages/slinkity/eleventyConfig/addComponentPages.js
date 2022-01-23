@@ -31,6 +31,17 @@ module.exports = async function addComponentPages({
         const absInputPath = path.join(resolvedImportAliases.root, inputPath)
         return await getData(absInputPath)
       },
+      compileOptions: {
+        permalink() {
+          return async function render({ permalink, ...data }) {
+            if (typeof permalink === 'function') {
+              return permalink(data)
+            } else {
+              return permalink
+            }
+          }
+        },
+      },
       compile(_, inputPath) {
         return async function render(data) {
           const absInputPath = path.join(resolvedImportAliases.root, inputPath)
