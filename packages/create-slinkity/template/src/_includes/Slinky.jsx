@@ -4,7 +4,7 @@ import '/@root/styles/slinky.scss'
 // see our "import alias" docs to learn more!
 // https://slinkity.dev/docs/import-aliases/
 
-export default function SpinningLogo() {
+export default function SpinningLogo({ hydrate = 'none' }) {
   const [slinkDirection, setSlinkDirection] = React.useState('left')
 
   function toggleSlinkDirection() {
@@ -67,9 +67,11 @@ export default function SpinningLogo() {
           </linearGradient>
         </defs>
       </svg>
-      <button className="slinky__button" onClick={toggleSlinkDirection}>
-        {slinkDirection === 'left' ? 'Move slinky right 👉' : 'Move slinky left 👈'}
-      </button>
+      {hydrate !== 'none' ? (
+        <button className="slinky__button" onClick={toggleSlinkDirection}>
+          {slinkDirection === 'left' ? 'Move slinky right 👉' : 'Move slinky left 👈'}
+        </button>
+      ) : null}
     </section>
   )
 }
