@@ -30,8 +30,6 @@ async function handleSSRComments({ content, outputPath, componentAttrStore, vite
 
   /** @type {Set<string>} */
   const importedStyles = new Set()
-  /** @type {Set<string>} */
-  const inlineStyles = new Set()
 
   const pageComponentAttrs = componentAttrStore.getAllByPage(outputPath)
   const serverRenderedComponents = []
@@ -52,9 +50,6 @@ async function handleSSRComments({ content, outputPath, componentAttrStore, vite
       hydrate,
     })
     serverRenderedComponents.push(serverRendered.html)
-    if (serverRendered.css) {
-      inlineStyles.add(serverRendered.css)
-    }
   }
 
   const html = content
