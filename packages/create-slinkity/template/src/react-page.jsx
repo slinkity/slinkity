@@ -1,8 +1,9 @@
 import React from 'react'
 
 export const frontMatter = {
-  title: 'Using React for page templates',
+  title: 'React to this',
   layout: 'layout',
+  hydrate: 'eager',
 }
 
 function ReactDemo() {
@@ -11,23 +12,24 @@ function ReactDemo() {
   return (
     <>
       <p>
-        To create the <code>/react</code> page you see here, we place an <code>about.jsx</code> file
-        alongside the other pages on our site. That&apos;s because component pages are like any
-        other template on your 11ty site, just with 1 extra superpower:{' '}
+        To create the page you see here, we placed a<code>react-page.jsx</code> file alongside the
+        other pages on our site. That's because component pages are like any other template on your
+        11ty site, just with 1 extra superpower:
         <strong>you can hydrate the page with JavaScript.</strong>
       </p>
 
-      <h3>Hydrating this page</h3>
+      <h2>Hydrating this page</h2>
 
       <p>
-        We hydrate component pages by default. To adjust this, you can add a <code>render</code>{' '}
-        property to your front matter to decide <em>if and when</em> to ship JavaScript. Learn more
-        on <a href="https://slinkity.dev/docs/partial-hydration/">our partial hydration docs.</a>
+        We opted-in to shipping JavaScript using the <code>hydrate</code> key in our
+        <code>frontMatter</code>. Learn more on
+        <a href="https://slinkity.dev/docs/partial-hydration/">our partial hydration docs.</a>
       </p>
 
       <p>
-        Tip: try adding <code>render: static</code> to this page&apos;s front matter. The counter
-        below should stop working, since we&apos;ve opted out of shipping JS to the client.
+        Tip: try setting <code>hydrate</code> to <code>"none"</code>, or removing the key entirely.
+        The counter below should stop working! This is because we're no longer sending our component
+        to the client, effectively turning React into just another templating language.
       </p>
 
       <p className="counter">
@@ -38,11 +40,11 @@ function ReactDemo() {
       <h3>Front matter</h3>
 
       <p>
-        Including <code>frontMatter</code> in <code>about.jsx</code> wires up the layout and passes
-        information &quot;upstream&quot; for other templates to read from. It works the same way for
-        component-based pages as it does for{' '}
-        <a href="https://www.11ty.dev/docs/data-frontmatter/">11ty&apos;s front matter</a>. Here,
-        the <code>title</code> key is accessible from any layout templates applied to our page.
+        Our included <code>frontMatter</code> wires up the layout and passes information "upstream"
+        for other templates to read from. It works the same way for component-based pages as it does
+        for
+        <a href="https://www.11ty.dev/docs/data-frontmatter/">11ty's front matter</a>. Here, the{' '}
+        <code>title</code> key is accessible from any layout templates applied to our page.
       </p>
     </>
   )
