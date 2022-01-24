@@ -44,14 +44,15 @@ module.exports = function addShortcode({
       })
     }
 
-    delete props['__keywords']
+    // eslint-disable-next-line no-unused-vars
+    const { __keywords, ...restOfProps } = props
 
     /** @type {{ hydrate: import('../cli/types').HydrationMode }} */
     const { hydrate = 'none' } = props
     const id = componentAttrStore.push({
       path: path.join(resolvedImportAliases.includes, componentPath),
       rendererName: renderer.name,
-      props,
+      props: restOfProps,
       hydrate,
       pageOutputPath: this.page.outputPath,
     })
