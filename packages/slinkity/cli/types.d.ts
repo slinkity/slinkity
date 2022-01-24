@@ -53,6 +53,8 @@ export type Renderer = {
   client: string;
   /** path to module used for server rendering - NodeJS code */
   server: string;
+  /** path to module used to wrap shortcode HTML element in a component - NodeJS code */
+  toComponentByShortcode: string;
   /** inject CSS imported by component module into document head */
   injectImportedStyles: boolean;
   /** config to append to Vite server and production builds */
