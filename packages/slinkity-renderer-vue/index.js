@@ -4,6 +4,7 @@ const vue = require('@vitejs/plugin-vue')
 
 const client = join(packageMeta.name, 'client')
 const server = join(packageMeta.name, 'server')
+const toComponentByShortcode = join(packageMeta.name, 'StaticHtml')
 
 /** @type {import('../slinkity').Renderer} */
 module.exports = {
@@ -11,6 +12,7 @@ module.exports = {
   extensions: ['vue'],
   client,
   server,
+  toComponentByShortcode,
   injectImportedStyles: true,
   viteConfig() {
     return {

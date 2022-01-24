@@ -24,12 +24,16 @@ const ssrRegex = RegExp(toSSRComment('([0-9]+)'), 'g')
  * @param {HandleSSRCommentsParams}
  * @returns {Promise<string>} - HTML with components SSR'd
  */
-async function handleSSRComments({ content, outputPath, componentAttrStore, viteSSR, renderers }) {
+async function handleSSRComments({
+  content,
+  outputPath,
+  componentAttrStore,
+  viteSSR,
+  renderers,
+  importedStyles = new Set(),
+}) {
   /** @type {Record<string, any>} */
   const rendererMap = Object.fromEntries(renderers.map((renderer) => [renderer.name, renderer]))
-
-  /** @type {Set<string>} */
-  const importedStyles = new Set()
 
   const pageComponentAttrs = componentAttrStore.getAllByPage(outputPath)
   const serverRenderedComponents = []
@@ -41,10 +45,34 @@ async function handleSSRComments({ content, outputPath, componentAttrStore, vite
       const { __importedStyles } = await viteSSR.toCommonJSModule(componentPath)
       __importedStyles.forEach((importedStyle) => importedStyles.add(importedStyle))
     }
+    let shortcodes = props.__slinkity?.shortcodes
+    let propsWithShortcodes = props
+    if (typeof shortcodes === 'object' && hydrate === 'none') {
+      try {
+        const { toComponentByShortcode } = await viteSSR.toCommonJSModule(
+          renderer.toComponentByShortcode,
+        )
+        propsWithShortcodes = {
+          ...props,
+          __slinkity: {
+            ...(props.__slinkity ?? {}),
+            shortcodes: Object.fromEntries(
+              Object.entries(shortcodes).map(([name, shortcode]) => [
+                name,
+                (...unnamedArgs) => toComponentByShortcode({ unnamedArgs, shortcode }),
+              ]),
+            ),
+          },
+        }
+      } catch {
+        // This renderer can't handle shortcodes-as-components.
+        // Do nothing!
+      }
+    }
     const serverRendered = await serverRenderer({
       toCommonJSModule: viteSSR.toCommonJSModule,
       componentPath,
-      props,
+      props: propsWithShortcodes,
       // TODO: add children to componentAttrStore
       children: '',
       hydrate,
@@ -61,24 +89,41 @@ async function handleSSRComments({ content, outputPath, componentAttrStore, vite
       const attrs = toHtmlAttrString({ [SLINKITY_ATTRS.id]: id })
       return `<${SLINKITY_REACT_MOUNT_POINT} ${attrs}>${serverRenderedComponents[id]}</${SLINKITY_REACT_MOUNT_POINT}>\n${loaderScript}`
     })
-    // inject component styles into head
-    .replace(
-      SLINKITY_HEAD_STYLES,
-      [...importedStyles]
-        .map((importedStyle) =>
-          importedStyle.endsWith('lang.css')
-            ? // lang.css is used by SFC (single file component) styles
-              // ex. <style scoped> in a .vue file
-              // these are sadly *not* supported by <link> tag imports,
-              // so we'll switch to <script> as a compromise
-              // Note: this does cause FOUC
-              // See this issue log for more details: https://github.com/slinkity/slinkity/issues/84#issuecomment-1003783754
-              `<script ${toHtmlAttrString({ type: 'module', src: importedStyle })}></script>`
-            : `<link ${toHtmlAttrString({ rel: 'stylesheet', href: importedStyle })}>`,
+
+  if (html.match(ssrRegex)) {
+    // if there's more SSR components, there are likely
+    // components rendered by other components using shortcodes.
+    // recursively render until all SSR comments are resolved.
+    return handleSSRComments({
+      content: html,
+      outputPath,
+      componentAttrStore,
+      viteSSR,
+      renderers,
+      importedStyles,
+    })
+  } else {
+    return (
+      html
+        // inject component styles into head
+        .replace(
+          SLINKITY_HEAD_STYLES,
+          [...importedStyles]
+            .map((importedStyle) =>
+              importedStyle.endsWith('lang.css')
+                ? // lang.css is used by SFC (single file component) styles
+                  // ex. <style scoped> in a .vue file
+                  // these are sadly *not* supported by <link> tag imports,
+                  // so we'll switch to <script> as a compromise
+                  // Note: this does cause FOUC
+                  // See this issue log for more details: https://github.com/slinkity/slinkity/issues/84#issuecomment-1003783754
+                  `<script ${toHtmlAttrString({ type: 'module', src: importedStyle })}></script>`
+                : `<link ${toHtmlAttrString({ rel: 'stylesheet', href: importedStyle })}>`,
+            )
+            .join('\n'),
         )
-        .join('\n'),
     )
-  return html
+  }
 }
 
 /**

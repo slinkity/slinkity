@@ -43,7 +43,14 @@ module.exports = async function addComponentPages({
         },
       },
       compile(_, inputPath) {
+        const unboundShortcodes = this.config?.javascriptFunctions ?? {}
         return async function render(data) {
+          const shortcodes = Object.fromEntries(
+            Object.entries(unboundShortcodes).map(([name, fn]) => [
+              name,
+              fn.bind({ page: data.page }),
+            ]),
+          )
           const absInputPath = path.join(resolvedImportAliases.root, inputPath)
           let props
 
@@ -53,11 +60,24 @@ module.exports = async function addComponentPages({
             // if there's a "props" function,
             // use that to determine the component props
             const dataForProps = useFormatted11tyData ? toFormattedDataForProps(data) : data
-            props = (await hydrate.props(dataForProps)) ?? {}
+            const dataWithShortcodes = {
+              ...dataForProps,
+              __slinkity: {
+                ...(dataForProps.__slinkity || {}),
+                shortcodes,
+              },
+            }
+            props = (await hydrate.props(dataWithShortcodes)) ?? {}
           } else if (hydrate === 'none' || hydrate.mode === 'none') {
             // if there's no "props" function and we don't hydrate the page,
             // pass *all* 11ty data as props
-            props = data
+            props = {
+              ...data,
+              __slinkity: {
+                ...(data.__slinkity || {}),
+                shortcodes,
+              },
+            }
           } else {
             // if there's no "props" function, but we *do* hydrate the page,
             // don't pass any props
