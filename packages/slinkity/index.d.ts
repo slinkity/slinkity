@@ -1,2 +1,2 @@
-export type { UserSlinkityConfig } from './lib/config/defineConfig'
-export { defineConfig } from './lib/config/defineConfig'
+export { defineConfig } from './defineConfig'
+export type { UserSlinkityConfig, Hydrate, Renderer } from './cli/types'

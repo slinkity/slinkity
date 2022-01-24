@@ -6,7 +6,6 @@ const {
   SLINKITY_HEAD_STYLES,
   toSSRComment,
 } = require('../utils/consts')
-const { toRendererHtml } = require('./reactPlugin/toRendererHtml')
 const toSlashesTrimmed = require('../utils/toSlashesTrimmed')
 const toLoaderScript = require('./toLoaderScript')
 const toHtmlAttrString = require('../utils/toHtmlAttrString')
@@ -21,47 +20,61 @@ const ssrRegex = RegExp(toSSRComment('([0-9]+)'), 'g')
  * @property {string} outputPath - the output path this HTML content will be written to
  * @property {import('./componentAttrStore').ComponentAttrStore} componentAttrStore
  * @property {import('.').SlinkityConfigOptions['viteSSR']} viteSSR
+ * @property {import('../cli/types').Renderer[]} renderers
  * @param {HandleSSRCommentsParams}
  * @returns {Promise<string>} - HTML with components SSR'd
  */
-async function handleSSRComments({ content, outputPath, componentAttrStore, viteSSR }) {
+async function handleSSRComments({ content, outputPath, componentAttrStore, viteSSR, renderers }) {
+  /** @type {Record<string, any>} */
+  const rendererMap = Object.fromEntries(renderers.map((renderer) => [renderer.name, renderer]))
+
   /** @type {Set<string>} */
   const importedStyles = new Set()
+
   const pageComponentAttrs = componentAttrStore.getAllByPage(outputPath)
   const serverRenderedComponents = []
   for (const componentAttrs of pageComponentAttrs) {
-    const { path: componentPath, props, hydrate } = componentAttrs
-    const { default: Component, __importedStyles } = await viteSSR.toCommonJSModule(componentPath)
-    __importedStyles.forEach((importedStyle) => importedStyles.add(importedStyle))
-    // TODO: abstract renderer imports to be framework-agnostic
-    // (importing directly from the React plugin right now)
-    serverRenderedComponents.push(
-      toRendererHtml({
-        Component,
-        props,
-        hydrate,
-      }),
-    )
+    const { path: componentPath, props, hydrate, rendererName } = componentAttrs
+    const renderer = rendererMap[rendererName]
+    const { default: serverRenderer } = await viteSSR.toCommonJSModule(renderer.server)
+    if (renderer.injectImportedStyles) {
+      const { __importedStyles } = await viteSSR.toCommonJSModule(componentPath)
+      __importedStyles.forEach((importedStyle) => importedStyles.add(importedStyle))
+    }
+    const serverRendered = await serverRenderer({
+      toCommonJSModule: viteSSR.toCommonJSModule,
+      componentPath,
+      props,
+      // TODO: add children to componentAttrStore
+      children: '',
+      hydrate,
+    })
+    serverRenderedComponents.push(serverRendered.html)
   }
 
   const html = content
     // server render each component
     .replace(ssrRegex, (_, id) => {
-      const { path: componentPath, props, hydrate } = pageComponentAttrs[id]
-      const loaderScript = toLoaderScript({ componentPath, props, hydrate, id })
+      const { path: componentPath, props, hydrate, rendererName } = pageComponentAttrs[id]
+      const clientRenderer = rendererMap[rendererName].client
+      const loaderScript = toLoaderScript({ componentPath, props, hydrate, id, clientRenderer })
       const attrs = toHtmlAttrString({ [SLINKITY_ATTRS.id]: id })
-      return `<${SLINKITY_REACT_MOUNT_POINT} ${attrs}>\n\t${serverRenderedComponents[id]}\n</${SLINKITY_REACT_MOUNT_POINT}>\n${loaderScript}`
+      return `<${SLINKITY_REACT_MOUNT_POINT} ${attrs}>${serverRenderedComponents[id]}</${SLINKITY_REACT_MOUNT_POINT}>\n${loaderScript}`
     })
     // inject component styles into head
     .replace(
       SLINKITY_HEAD_STYLES,
       [...importedStyles]
-        .map(
-          (importedStyle) =>
-            `<link ${toHtmlAttrString({
-              rel: 'stylesheet',
-              href: importedStyle,
-            })}>`,
+        .map((importedStyle) =>
+          importedStyle.endsWith('lang.css')
+            ? // lang.css is used by SFC (single file component) styles
+              // ex. <style scoped> in a .vue file
+              // these are sadly *not* supported by <link> tag imports,
+              // so we'll switch to <script> as a compromise
+              // Note: this does cause FOUC
+              // See this issue log for more details: https://github.com/slinkity/slinkity/issues/84#issuecomment-1003783754
+              `<script ${toHtmlAttrString({ type: 'module', src: importedStyle })}></script>`
+            : `<link ${toHtmlAttrString({ rel: 'stylesheet', href: importedStyle })}>`,
         )
         .join('\n'),
     )
@@ -69,23 +82,38 @@ async function handleSSRComments({ content, outputPath, componentAttrStore, vite
 }
 
 /**
+ * @typedef {import('./types').EleventyConfigParams} EleventyConfigParams
+ *
  * @typedef ApplyViteHtmlTransformParams
  * @property {string} content - the original HTML content to transform
  * @property {string} outputPath - the output path this HTML content will be written to
  * @property {import('./componentAttrStore').ComponentAttrStore} componentAttrStore
+ * @property {import('../cli/types').Renderer[]} renderers
+ * @property {EleventyConfigParams['environment']} environment
+ * @property {EleventyConfigParams['dir']} dir
+ * @property {EleventyConfigParams['viteSSR']} viteSSR
  * @param {ApplyViteHtmlTransformParams}
- * @param {import('.').SlinkityConfigOptions}
  * @returns {Promise<string>} - HTML with statically rendered content and Vite transforms applied
  */
-async function applyViteHtmlTransform(
-  { content, outputPath, componentAttrStore },
-  { environment, viteSSR, dir },
-) {
+async function applyViteHtmlTransform({
+  content,
+  outputPath,
+  componentAttrStore,
+  environment,
+  viteSSR,
+  renderers,
+  dir,
+}) {
   if (!outputPath || !outputPath.endsWith('.html')) {
     return content
   }
-
-  const html = await handleSSRComments({ content, outputPath, componentAttrStore, viteSSR })
+  const html = await handleSSRComments({
+    content,
+    outputPath,
+    componentAttrStore,
+    viteSSR,
+    renderers,
+  })
   const server = viteSSR.getServer()
   const routePath = '/' + toSlashesTrimmed(normalizePath(relative(dir.output, outputPath)))
   return environment === 'dev' && server ? server.transformIndexHtml(routePath, html) : html

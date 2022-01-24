@@ -1,5 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`toRendererHtml render: eager or lazy should apply props to the component 1`] = `"<nav data-reactroot=\\"\\"><img src=\\"accessible-logo.png\\" alt=\\"Great logo\\"/><a href=\\"/home\\">Home</a><a href=\\"/about\\">About</a><a href=\\"/contact\\">Contact</a></nav>"`;
-
-exports[`toRendererHtml render: static should generate HTML 1`] = `"<h2>This test file is:</h2><ul><li>Very cool</li><li>Extremely helpful</li></ul>"`;

@@ -17,9 +17,10 @@ function getConfigFile() {
 /**
  * Returns object with resolved aliases.
  *
+ * @typedef {import('../eleventyConfig/types').Dir} Dir
  * @typedef {import('../utils/consts').ImportAliases} ImportAliases
  * @typedef {Record<keyof import('../utils/consts').ImportAliases, string>} ResolvedImportAliases
- * @param {import('../eleventyConfig/index').SlinkityConfigOptions['dir']} dir
+ * @param {Dir} dir
  * @returns {ResolvedImportAliases}
  */
 function getResolvedAliases({ input, includes, layouts }) {
@@ -33,57 +34,53 @@ function getResolvedAliases({ input, includes, layouts }) {
 
 /**
  * Get Vite config shared by dev and production
- * @param {import('../eleventyConfig/index').SlinkityConfigOptions['dir']} dir
+ *
+ * @typedef SharedConfigParams
+ * @property {Dir} dir
+ * @property {import('./types').UserSlinkityConfig} userSlinkityConfig
+ * @param {SharedConfigParams}
  * @returns {import('vite').UserConfigExport}
  */
-async function getSharedConfig(eleventyDir) {
-  const importAliasesToResolvedPath = Object.entries(getResolvedAliases(eleventyDir)).map(
+async function getSharedConfig({ dir, userSlinkityConfig }) {
+  const rendererConfigs = await Promise.all(
+    userSlinkityConfig.renderers.map((renderer) => renderer.viteConfig?.()),
+  )
+
+  const mergedRendererConfig = vite.defineConfig(
+    rendererConfigs.reduce((acc, config) => {
+      return vite.mergeConfig(acc, config)
+    }, {}),
+  )
+
+  const importAliasesToResolvedPath = Object.entries(getResolvedAliases(dir)).map(
     ([key, value]) => [IMPORT_ALIASES[key], value],
   )
-  let reactConfig = vite.defineConfig()
-  try {
-    require('react')
-    require('react-dom')
-    reactConfig = vite.defineConfig({
-      resolve: {
-        dedupe: ['react', 'react-dom'],
-      },
-      optimizeDeps: {
-        include: ['react', 'react/jsx-runtime', 'react/jsx-dev-runtime', 'react-dom'],
-      },
-      build: {
-        rollupOptions: {
-          output: {
-            manualChunks: {
-              react: ['react'],
-            },
-          },
-        },
-      },
-    })
-  } catch {
-    // no-op
+
+  /** @type {import('vite').UserConfigExport} */
+  const config = {
+    clearScreen: false,
+    configFile: await getConfigFile(),
+    resolve: {
+      alias: Object.fromEntries(importAliasesToResolvedPath),
+    },
+    optimizeDeps: {
+      include: ['slinkity/client'],
+    },
   }
-  return vite.mergeConfig(
-    vite.defineConfig({
-      clearScreen: false,
-      configFile: await getConfigFile(),
-      resolve: {
-        alias: Object.fromEntries(importAliasesToResolvedPath),
-      },
-      optimizeDeps: {
-        include: ['slinkity/client'],
-      },
-    }),
-    reactConfig,
-  )
+
+  return vite.defineConfig(vite.mergeConfig(config, mergedRendererConfig))
 }
 
 /**
  * Build production bundle
- * @param {import('../eleventyConfig/index').SlinkityConfigOptions['dir']} dir
+ * @typedef BuildParams
+ * @property {string} input
+ * @property {string} output
+ * @property {Dir} eleventyDir
+ * @property {import('./types').UserSlinkityConfig} userSlinkityConfig
+ * @param {BuildParams}
  */
-async function build({ eleventyDir, input, output }) {
+async function build({ eleventyDir, userSlinkityConfig, input, output }) {
   const inputFiles = await glob(`${input}/**/*.html`, { absolute: true })
   if (inputFiles.length) {
     await vite.build(
@@ -98,7 +95,7 @@ async function build({ eleventyDir, input, output }) {
             },
           },
         },
-        await getSharedConfig(eleventyDir),
+        await getSharedConfig({ dir: eleventyDir, userSlinkityConfig }),
       ),
     )
   }
