@@ -8,12 +8,25 @@ const PKG = 'package.json'
 
 ;(async () => {
   let dest = process.argv[2]
-  const promptResponses = await prompts({
-    type: dest ? null : 'text',
-    name: 'dest',
-    message: 'What is your project called?',
-    initial: 'my-slinkity-site',
-  })
+  const promptResponses = await prompts([
+    {
+      type: dest ? null : 'text',
+      name: 'dest',
+      message: 'What is your project called?',
+      initial: 'my-slinkity-site',
+    },
+    {
+      type: 'multiselect',
+      name: 'components',
+      message: 'Which flavor of components do you want?',
+      choices: [
+        { title: 'React', value: 'React' },
+        { title: 'Vue', value: 'Vue' },
+        { title: 'Svelte', value: 'Svelte' },
+      ],
+      hint: 'Pick a component flavor',
+    }
+  ])
   if (!dest) {
     dest = promptResponses.dest
   }
