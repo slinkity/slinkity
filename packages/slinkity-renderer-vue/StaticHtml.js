@@ -15,9 +15,20 @@ const StaticHtml = defineComponent({
   },
   setup({ value }) {
     if (!value) return () => null
-    return () => h('astro-fragment', { innerHTML: value })
+    return () => h('slinkity-fragment', { innerHTML: value })
   },
 })
+
+export function toComponentByShortcode({ unnamedArgs, shortcode }) {
+  return defineComponent({
+    setup(namedArgs) {
+      if (!namedArgs) return () => null
+      const innerHTML = shortcode(...unnamedArgs, namedArgs)
+      console.log({ innerHTML, unnamedArgs, namedArgs })
+      return () => h('slinkity-fragment', { innerHTML })
+    },
+  })
+}
 
 /**
  * Other frameworks have `shouldComponentUpdate` in order to signal

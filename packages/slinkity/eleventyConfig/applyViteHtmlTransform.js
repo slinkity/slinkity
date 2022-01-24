@@ -41,6 +41,23 @@ async function handleSSRComments({ content, outputPath, componentAttrStore, vite
       const { __importedStyles } = await viteSSR.toCommonJSModule(componentPath)
       __importedStyles.forEach((importedStyle) => importedStyles.add(importedStyle))
     }
+    let shortcodes = props.__slinkity?.shortcodes
+    if (typeof shortcodes === 'object' && hydrate === 'none') {
+      try {
+        const { toComponentByShortcode } = await viteSSR.toCommonJSModule(
+          renderer.toComponentByShortcode,
+        )
+        props.__slinkity.shortcodes = Object.fromEntries(
+          Object.entries(shortcodes).map(([name, shortcode]) => [
+            name,
+            (...unnamedArgs) => toComponentByShortcode({ unnamedArgs, shortcode }),
+          ]),
+        )
+      } catch {
+        // This renderer can't handle shortcodes-as-components.
+        // Do nothing!
+      }
+    }
     const serverRendered = await serverRenderer({
       toCommonJSModule: viteSSR.toCommonJSModule,
       componentPath,

@@ -8,7 +8,10 @@ export default async function server({ toCommonJSModule, componentPath, props, c
   if (children) {
     slots.default = () => h(StaticHtml, { value: children })
   }
-  const app = createSSRApp({ render: () => h(Component, props, slots) })
+  const shortcodes = Component.shortcodes?.(props.__slinkity?.shortcodes ?? {}) ?? {}
+  const app = createSSRApp({
+    render: () => h({ ...Component, components: shortcodes }, props, slots),
+  })
   const html = await renderToString(app)
   return { html }
 }
