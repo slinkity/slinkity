@@ -25,7 +25,7 @@ const PKG = 'package.json'
         { title: 'Svelte', value: 'Svelte' },
       ],
       hint: 'Pick a component flavor',
-    }
+    },
   ])
   if (!dest) {
     dest = promptResponses.dest
