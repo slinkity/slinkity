@@ -24,7 +24,6 @@ const PKG = 'package.json'
         { title: 'Vue', value: 'Vue' },
         { title: 'Svelte', value: 'Svelte' },
       ],
-      hint: 'Pick a component flavor',
     },
   ])
   if (!dest) {
