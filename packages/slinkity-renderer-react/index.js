@@ -3,6 +3,7 @@ const packageMeta = require('./package.json')
 
 const client = join(packageMeta.name, 'client')
 const server = join(packageMeta.name, 'server')
+const toComponentByShortcode = join(packageMeta.name, 'StaticHtml')
 
 /** @type {import('../slinkity').Renderer} */
 module.exports = {
@@ -10,6 +11,7 @@ module.exports = {
   extensions: ['jsx', 'tsx'],
   client,
   server,
+  toComponentByShortcode,
   injectImportedStyles: true,
   viteConfig() {
     return {
