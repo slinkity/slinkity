@@ -21,6 +21,10 @@ const StaticHtml = defineComponent({
 
 export function toComponentByShortcode({ unnamedArgs, shortcode }) {
   return defineComponent({
+    props: {
+      hydrate: String,
+      // TODO: support any props
+    },
     setup(namedArgs) {
       if (!namedArgs) return () => null
       const innerHTML = shortcode(...unnamedArgs, namedArgs)
