@@ -17,8 +17,8 @@ module.exports = {
     return {
       optimizeDeps: {
         include: [client, 'react', 'react/jsx-runtime', 'react/jsx-dev-runtime', 'react-dom'],
+        exclude: [server],
       },
-      exclude: [server],
       resolve: {
         dedupe: ['react', 'react-dom'],
       },
