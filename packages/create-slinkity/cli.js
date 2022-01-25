@@ -4,48 +4,69 @@ const fs = require('fs')
 const { yellow, red } = require('kolorist')
 const prompts = require('prompts')
 
+const INDEX_MD = 'src/index.md'
 const PKG = 'package.json'
-const componentFlavorToDeps = {
+const filesToPreprocess = new Set([INDEX_MD, PKG])
+
+const componentFlavorMeta = {
   react: {
-    dependencies: {
-      react: '^17.0.2',
-      'react-dom': '^17.0.2',
+    packageJson: {
+      dependencies: {
+        react: '^17.0.2',
+        'react-dom': '^17.0.2',
+      },
+      devDependencies: {
+        '@slinkity/renderer-react': '^0.1.0',
+      },
     },
-    devDependencies: {
-      '@slinkity/renderer-react': '^0.1.0',
+    slinkityConfig: {
+      renderer: 'reactRenderer',
+      importStatement: "import reactRenderer from '@slinkity/renderer-react'",
     },
+    shortcode: '{% react "Slinky", hydrate="eager" %}',
+    exclusiveTemplates: ['src/react-page.jsx', 'src/_includes/Slinky.jsx', 'styles/slinky.scss'],
   },
   vue: {
-    dependencies: {
-      vue: '^3.2.28',
+    packageJson: {
+      dependencies: {
+        vue: '^3.2.28',
+      },
+      devDependencies: {
+        '@slinkity/renderer-vue': '^0.1.0',
+      },
     },
-    devDependencies: {
-      '@slinkity/renderer-vue': '^0.1.0',
+    slinkityConfig: {
+      renderer: 'vueRenderer',
+      importStatement: "import vueRenderer from '@slinkity/renderer-vue'",
     },
+    shortcode: '{% vue "Slinky.vue", hydrate="eager" %}',
+    exclusiveTemplates: ['src/vue-page.vue', 'src/_includes/Slinky.vue'],
   },
   svelte: {
-    dependencies: {
-      svelte: '^3.46.2',
+    packageJson: {
+      dependencies: {
+        svelte: '^3.46.2',
+      },
+      devDependencies: {
+        '@slinkity/renderer-svelte': '^0.1.0',
+      },
     },
-    devDependencies: {
-      '@slinkity/renderer-svelte': '^0.1.0',
+    slinkityConfig: {
+      renderer: 'svelteRenderer',
+      importStatement: "import svelteRenderer from '@slinkity/renderer-svelte'",
     },
+    shortcode: '{% svelte "Slinky.svelte", hydrate="eager" %}',
+    exclusiveTemplates: ['src/svelte-page.svelte', 'src/_includes/Slinky.svelte'],
   },
 }
 
 function toSlinkityConfigContents(selectedComponentFlavors) {
-  const componentFlavorToRenderer = {
-    react: 'reactRenderer',
-    vue: 'vueRenderer',
-    svelte: 'svelteRenderer',
-  }
-  const componentFlavorToImportStatement = {
-    react: `import ${componentFlavorToRenderer.react} from '@slinkity/renderer-react'`,
-    vue: `import ${componentFlavorToRenderer.vue} from '@slinkity/renderer-vue'`,
-    svelte: `import ${componentFlavorToRenderer.svelte} from '@slinkity/renderer-svelte'`,
-  }
-  const renderers = selectedComponentFlavors.map((flavor) => componentFlavorToRenderer[flavor])
-  const imports = selectedComponentFlavors.map((flavor) => componentFlavorToImportStatement[flavor])
+  const renderers = selectedComponentFlavors.map(
+    (flavor) => componentFlavorMeta[flavor].slinkityConfig.renderer,
+  )
+  const imports = selectedComponentFlavors.map(
+    (flavor) => componentFlavorMeta[flavor].slinkityConfig.importStatement,
+  )
   return `import { defineConfig } from 'slinkity'
 ${imports.join('\n')}
 
@@ -86,26 +107,55 @@ export default defineConfig({
   const destResolved = path.join(process.cwd(), dest)
   fs.mkdirSync(destResolved)
 
+  // copy files to output
+  const templates = fs.readdirSync(srcResolved)
+  const componentTemplates = new Set(
+    Object.values(componentFlavorMeta).flatMap(({ exclusiveTemplates }) => exclusiveTemplates),
+  )
+  const selectedComponentTemplates = new Set(
+    promptResponses.components.flatMap(
+      (component) => componentFlavorMeta[component].exclusiveTemplates,
+    ),
+  )
+  for (const template of templates) {
+    const src = path.join(srcResolved, template)
+    const dest = path.join(destResolved, template)
+    copy(src, dest, (filePath) => {
+      // check whether or not we should copy the file
+      const relativePath = path.relative(srcResolved, filePath)
+      const isFileToPreprocess = filesToPreprocess.has(relativePath)
+      const isOmittedComponentTemplate =
+        componentTemplates.has(relativePath) && !selectedComponentTemplates.has(relativePath)
+      return isFileToPreprocess || isOmittedComponentTemplate
+    })
+  }
+
+  // package.json
   const pkg = require(path.join(srcResolved, PKG))
   pkg.name = toValidPackageName(dest)
   for (const componentFlavor of promptResponses.components) {
     pkg.dependencies = {
       ...pkg.dependencies,
-      ...componentFlavorToDeps[componentFlavor].dependencies,
+      ...componentFlavorMeta[componentFlavor].packageJson.dependencies,
     }
     pkg.devDependencies = {
       ...pkg.devDependencies,
-      ...componentFlavorToDeps[componentFlavor].devDependencies,
+      ...componentFlavorMeta[componentFlavor].packageJson.devDependencies,
     }
   }
   fs.writeFileSync(path.join(destResolved, PKG), JSON.stringify(pkg, null, 2))
 
-  const templateFilePaths = fs.readdirSync(srcResolved).filter((filePath) => filePath !== PKG)
-  for (const templateFilePath of templateFilePaths) {
-    const src = path.join(srcResolved, templateFilePath)
-    const dest = path.join(destResolved, templateFilePath)
-    copy(src, dest)
-  }
+  // index.md
+  const indexMd = fs.readFileSync(path.join(srcResolved, INDEX_MD)).toString()
+  const shortcodes = promptResponses.components.map(
+    (componentFlavor) => componentFlavorMeta[componentFlavor].shortcode,
+  )
+  fs.writeFileSync(
+    path.join(destResolved, INDEX_MD),
+    indexMd.replace('<!--insert-component-shortcodes-here-->', shortcodes.join('\n')),
+  )
+
+  // slinkity.config.js
   if (promptResponses.components.length) {
     fs.writeFileSync(
       path.join(destResolved, 'slinkity.config.js'),
@@ -128,12 +178,13 @@ npm start
  * Inspired by https://github.com/vitejs/vite/blob/main/packages/create-vite/index.js
  * @param {string} src
  * @param {string} dest
+ * @param {(filePath: string) => boolean} shouldOmit
  */
-function copy(src, dest) {
+function copy(src, dest, shouldOmit) {
   const stat = fs.statSync(src)
   if (stat.isDirectory()) {
-    copyDir(src, dest)
-  } else {
+    copyDir(src, dest, shouldOmit)
+  } else if (!shouldOmit(src)) {
     fs.copyFileSync(src, dest)
   }
 }
@@ -143,13 +194,14 @@ function copy(src, dest) {
  * Inspired by https://github.com/vitejs/vite/blob/main/packages/create-vite/index.js
  * @param {string} srcDir
  * @param {string} destDir
+ * @param {(filePath: string) => boolean} shouldOmit
  */
-function copyDir(srcDir, destDir) {
+function copyDir(srcDir, destDir, shouldOmit) {
   fs.mkdirSync(destDir, { recursive: true })
   for (const file of fs.readdirSync(srcDir)) {
     const srcFile = path.resolve(srcDir, file)
     const destFile = path.resolve(destDir, file)
-    copy(srcFile, destFile)
+    copy(srcFile, destFile, shouldOmit)
   }
 }
 
