@@ -8,12 +8,24 @@ const PKG = 'package.json'
 
 ;(async () => {
   let dest = process.argv[2]
-  const promptResponses = await prompts({
-    type: dest ? null : 'text',
-    name: 'dest',
-    message: 'What is your project called?',
-    initial: 'my-slinkity-site',
-  })
+  const promptResponses = await prompts([
+    {
+      type: dest ? null : 'text',
+      name: 'dest',
+      message: 'What is your project called?',
+      initial: 'my-slinkity-site',
+    },
+    {
+      type: 'multiselect',
+      name: 'components',
+      message: 'Which flavor of components do you want?',
+      choices: [
+        { title: 'React', value: 'React' },
+        { title: 'Vue', value: 'Vue' },
+        { title: 'Svelte', value: 'Svelte' },
+      ],
+    },
+  ])
   if (!dest) {
     dest = promptResponses.dest
   }
@@ -43,8 +55,8 @@ const PKG = 'package.json'
   console.log('Step 1: run these commands to install and serve locally 👇')
   console.log(`
 cd ${dest}
-yarn
-yarn start
+npm i
+npm start
 `)
   console.log(`Step 2: ${red('have fun ❤️')}`)
 })()
