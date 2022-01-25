@@ -88,7 +88,7 @@ export default defineConfig({
     {
       type: 'multiselect',
       name: 'components',
-      message: 'Which flavor of components do you want?',
+      message: 'What flavor of components do you want, if any?',
       choices: [
         { title: 'React', value: 'react' },
         { title: 'Vue', value: 'vue' },
