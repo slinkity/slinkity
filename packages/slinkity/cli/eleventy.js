@@ -51,7 +51,7 @@ function toEleventyConfigDir({ configPath = '', input = null, output = null }) {
 function toBrowserSyncOptions({ outputDir, port }) {
   return {
     server: outputDir,
-    port: port || 8080,
+    port: port,
     // mirror 11ty defaults before we migrate to their Browsersync server
     ignore: ['node_modules'],
     watch: false,
