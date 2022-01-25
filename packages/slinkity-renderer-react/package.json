@@ -1,6 +1,6 @@
 {
   "name": "@slinkity/renderer-react",
-  "version": "0.0.1",
+  "version": "0.1.1",
   "description": "React component renderer for the legendary 11ty tool, Slinkity",
   "main": "index.js",
   "files": [
