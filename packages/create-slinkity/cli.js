@@ -5,6 +5,33 @@ const { yellow, red } = require('kolorist')
 const prompts = require('prompts')
 
 const PKG = 'package.json'
+const componentFlavorToDeps = {
+  react: {
+    dependencies: {
+      react: '^17.0.2',
+      'react-dom': '^17.0.2',
+    },
+    devDependencies: {
+      '@slinkity/renderer-react': '^0.1.0',
+    },
+  },
+  vue: {
+    dependencies: {
+      vue: '^3.2.28',
+    },
+    devDependencies: {
+      '@slinkity/renderer-vue': '^0.1.0',
+    },
+  },
+  svelte: {
+    dependencies: {
+      svelte: '^3.46.2',
+    },
+    devDependencies: {
+      '@slinkity/renderer-svelte': '^0.1.0',
+    },
+  },
+}
 
 function toSlinkityConfigContents(selectedComponentFlavors) {
   const componentFlavorToRenderer = {
@@ -61,6 +88,16 @@ export default defineConfig({
 
   const pkg = require(path.join(srcResolved, PKG))
   pkg.name = toValidPackageName(dest)
+  for (const componentFlavor of promptResponses.components) {
+    pkg.dependencies = {
+      ...pkg.dependencies,
+      ...componentFlavorToDeps[componentFlavor].dependencies,
+    }
+    pkg.devDependencies = {
+      ...pkg.devDependencies,
+      ...componentFlavorToDeps[componentFlavor].devDependencies,
+    }
+  }
   fs.writeFileSync(path.join(destResolved, PKG), JSON.stringify(pkg, null, 2))
 
   const templateFilePaths = fs.readdirSync(srcResolved).filter((filePath) => filePath !== PKG)
