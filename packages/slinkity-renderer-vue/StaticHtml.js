@@ -28,7 +28,6 @@ export function toComponentByShortcode({ unnamedArgs, shortcode }) {
     setup(namedArgs) {
       if (!namedArgs) return () => null
       const innerHTML = shortcode(...unnamedArgs, namedArgs)
-      console.log({ innerHTML, unnamedArgs, namedArgs })
       return () => h('slinkity-fragment', { innerHTML })
     },
   })
