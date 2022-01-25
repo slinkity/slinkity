@@ -45,6 +45,9 @@ module.exports = async function addComponentPages({
       compile(_, inputPath) {
         const unboundShortcodes = this.config?.javascriptFunctions ?? {}
         return async function render(data) {
+          // shortcodes should have access to "page" via the "this" keyword
+          // this is missing on javascriptFunctions from this scope for some reason,
+          // so we'll add that binding back on
           const shortcodes = Object.fromEntries(
             Object.entries(unboundShortcodes).map(([name, fn]) => [
               name,
