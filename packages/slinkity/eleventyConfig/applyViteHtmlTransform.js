@@ -110,8 +110,8 @@ async function handleSSRComments({
           SLINKITY_HEAD_STYLES,
           [...importedStyles]
             .map((importedStyle) =>
-              importedStyle.endsWith('lang.css')
-                ? // lang.css is used by SFC (single file component) styles
+              importedStyle.match(/&lang.*$/)
+                ? // lang.(css|scss|sass...) is used by SFC (single file component) styles
                   // ex. <style scoped> in a .vue file
                   // these are sadly *not* supported by <link> tag imports,
                   // so we'll switch to <script> as a compromise
