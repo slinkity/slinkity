@@ -5,8 +5,9 @@ const { yellow, red } = require('kolorist')
 const prompts = require('prompts')
 
 const INDEX_MD = 'src/index.md'
+const LAYOUT_NJK = 'src/_includes/layout.njk'
 const PKG = 'package.json'
-const filesToPreprocess = new Set([INDEX_MD, PKG])
+const filesToPreprocess = new Set([INDEX_MD, PKG, LAYOUT_NJK])
 
 const componentFlavorMeta = {
   react: {
@@ -22,6 +23,10 @@ const componentFlavorMeta = {
     slinkityConfig: {
       renderer: 'reactRenderer',
       importStatement: "import reactRenderer from '@slinkity/renderer-react'",
+    },
+    navLink: {
+      href: '/react-page',
+      text: 'React',
     },
     shortcode: '{% react "Slinky", hydrate="eager" %}',
     exclusiveTemplates: ['src/react-page.jsx', 'src/_includes/Slinky.jsx', 'styles/slinky.scss'],
@@ -39,6 +44,10 @@ const componentFlavorMeta = {
       renderer: 'vueRenderer',
       importStatement: "import vueRenderer from '@slinkity/renderer-vue'",
     },
+    navLink: {
+      href: '/vue-page',
+      text: 'Vue',
+    },
     shortcode: '{% vue "Slinky.vue", hydrate="eager" %}',
     exclusiveTemplates: ['src/vue-page.vue', 'src/_includes/Slinky.vue'],
   },
@@ -54,6 +63,10 @@ const componentFlavorMeta = {
     slinkityConfig: {
       renderer: 'svelteRenderer',
       importStatement: "import svelteRenderer from '@slinkity/renderer-svelte'",
+    },
+    navLink: {
+      href: '/svelte-page',
+      text: 'Svelte',
     },
     shortcode: '{% svelte "Slinky.svelte", hydrate="eager" %}',
     exclusiveTemplates: ['src/svelte-page.svelte', 'src/_includes/Slinky.svelte'],
@@ -153,6 +166,17 @@ export default defineConfig({
   fs.writeFileSync(
     path.join(destResolved, INDEX_MD),
     indexMd.replace('<!--insert-component-shortcodes-here-->', shortcodes.join('\n')),
+  )
+
+  // layout.njk
+  const layoutNjk = fs.readFileSync(path.join(srcResolved, LAYOUT_NJK)).toString()
+  const navLinks = promptResponses.components.map((componentFlavor) => {
+    const { href, text } = componentFlavorMeta[componentFlavor].navLink
+    return `<a href="${href}">${text}</a>`
+  })
+  fs.writeFileSync(
+    path.join(destResolved, LAYOUT_NJK),
+    layoutNjk.replace('<!--insert-nav-links-here-->', navLinks.join('\n      ')),
   )
 
   // slinkity.config.js
