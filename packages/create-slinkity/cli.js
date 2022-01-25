@@ -33,21 +33,18 @@ const PKG = 'package.json'
   // they must have ctrl + C'd out of the program
   if (!dest) process.exit(0)
 
-  const srcRoot = path.join(__dirname, 'template')
-  const destRoot = path.join(process.cwd(), dest)
-  fs.mkdirSync(destRoot)
+  const srcResolved = path.join(__dirname, 'template')
+  const destResolved = path.join(process.cwd(), dest)
+  fs.mkdirSync(destResolved)
 
-  // Set package name based on project name
-  const pkg = require(path.join(srcRoot, PKG))
+  const pkg = require(path.join(srcResolved, PKG))
   pkg.name = toValidPackageName(dest)
-  fs.writeFileSync(path.join(destRoot, PKG), JSON.stringify(pkg, null, 2))
+  fs.writeFileSync(path.join(destResolved, PKG), JSON.stringify(pkg, null, 2))
 
-  // Copy all template files to dest
-  // TODO: add "plain" starter alongside "react"
-  const templateFilePaths = fs.readdirSync(srcRoot).filter((filePath) => filePath !== PKG)
+  const templateFilePaths = fs.readdirSync(srcResolved).filter((filePath) => filePath !== PKG)
   for (const templateFilePath of templateFilePaths) {
-    const src = path.join(srcRoot, templateFilePath)
-    const dest = path.join(destRoot, templateFilePath)
+    const src = path.join(srcResolved, templateFilePath)
+    const dest = path.join(destResolved, templateFilePath)
     copy(src, dest)
   }
 
