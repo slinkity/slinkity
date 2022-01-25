@@ -7,7 +7,7 @@ If you're reading this from your browser... congrats! You just built (or dev ser
 
 ## Component shortcodes
 
-{% react 'Slinky' %}
+<!--insert-component-shortcodes-here-->
 
 With [component shortcodes](https://www.11ty.dev/docs/shortcodes/), you can insert components into any static template that 11ty supports. Just tell us the path to the component and how / if we should <a href="https://slinkity.dev/docs/partial-hydration/">"hydrate" that component with JS</a>, and you're off to the interactivity races.
 
