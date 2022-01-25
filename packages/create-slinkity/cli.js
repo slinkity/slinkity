@@ -6,6 +6,28 @@ const prompts = require('prompts')
 
 const PKG = 'package.json'
 
+function toSlinkityConfigContents(selectedComponentFlavors) {
+  const componentFlavorToRenderer = {
+    react: 'reactRenderer',
+    vue: 'vueRenderer',
+    svelte: 'svelteRenderer',
+  }
+  const componentFlavorToImportStatement = {
+    react: `import ${componentFlavorToRenderer.react} from '@slinkity/renderer-react'`,
+    vue: `import ${componentFlavorToRenderer.vue} from '@slinkity/renderer-vue'`,
+    svelte: `import ${componentFlavorToRenderer.svelte} from '@slinkity/renderer-svelte'`,
+  }
+  const renderers = selectedComponentFlavors.map((flavor) => componentFlavorToRenderer[flavor])
+  const imports = selectedComponentFlavors.map((flavor) => componentFlavorToImportStatement[flavor])
+  return `import { defineConfig } from 'slinkity'
+${imports.join('\n')}
+
+export default defineConfig({
+  renderers: [${renderers.join(', ')}],
+})
+`
+}
+
 ;(async () => {
   let dest = process.argv[2]
   const promptResponses = await prompts([
@@ -20,9 +42,9 @@ const PKG = 'package.json'
       name: 'components',
       message: 'Which flavor of components do you want?',
       choices: [
-        { title: 'React', value: 'React' },
-        { title: 'Vue', value: 'Vue' },
-        { title: 'Svelte', value: 'Svelte' },
+        { title: 'React', value: 'react' },
+        { title: 'Vue', value: 'vue' },
+        { title: 'Svelte', value: 'svelte' },
       ],
     },
   ])
@@ -46,6 +68,12 @@ const PKG = 'package.json'
     const src = path.join(srcResolved, templateFilePath)
     const dest = path.join(destResolved, templateFilePath)
     copy(src, dest)
+  }
+  if (promptResponses.components.length) {
+    fs.writeFileSync(
+      path.join(destResolved, 'slinkity.config.js'),
+      toSlinkityConfigContents(promptResponses.components),
+    )
   }
 
   console.log(`Welcome to your first ${yellow('Slinkity site!')}`)
