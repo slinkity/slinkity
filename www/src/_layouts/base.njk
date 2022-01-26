@@ -50,7 +50,7 @@
     <meta property="og:image:height" content="630"/>
     <meta property="og:site_name" content="Slinkity"/>
     <meta property="og:title" content="{{ title or 'Slinkity' }}"/>
-    <meta name="theme-color" content="#ff00d6" />
+    <meta name="theme-color" content="#ff00d6"/>
 
     <meta
       property="og:description"
@@ -58,6 +58,7 @@
     <script defer data-domain="slinkity.dev" src="https://plausible.io/js/plausible.js"></script>
   </head>
   <body>
+    <a class="skip-to-main" href="#main-content">Skip to main content</a>
     {{ content | safe }}
     {% include 'footer.njk' %}
   </body>
