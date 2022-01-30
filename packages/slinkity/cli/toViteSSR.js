@@ -1,4 +1,5 @@
 const { createServer, build, defineConfig, mergeConfig } = require('vite')
+const path = require('path')
 const requireFromString = require('require-from-string')
 const logger = require('../utils/logger')
 const { getSharedConfig } = require('./vite')
@@ -47,6 +48,8 @@ module.exports.collectCSS = collectCSS
  * @returns {FormattedModule}
  */
 async function viteBuild({ ssrViteConfig, filePath, environment }) {
+  const isNpmPackage = /^[^./]|^\.[^./]|^\.\.[^/]/
+  const input = isNpmPackage.test(filePath) ? path.resolve('node_modules', filePath) : filePath
   const { output } = await build({
     ...ssrViteConfig,
     mode: environment,
@@ -54,7 +57,7 @@ async function viteBuild({ ssrViteConfig, filePath, environment }) {
       ssr: true,
       write: false,
       rollupOptions: {
-        input: filePath,
+        input,
       },
     },
   })
