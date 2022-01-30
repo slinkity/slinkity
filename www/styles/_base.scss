@@ -1,100 +1,99 @@
-@use 'tools' as *;
+@use "tools" as *;
 
 body {
-    @include gradient-grid();
-    margin: 0;
-    color: white;
-    line-height: 1.5;
+  @include gradient-grid;
+  margin: 0;
+  color: white;
+  line-height: 1.5;
 
-    :where(code, pre) {
-        font-family: var(--pro-hacker-font);
-        font-size: 0.8em;
-        padding: .1rem;
-        border-radius: 2px;
-        border: 1px solid var(--color-primary-7);
-        background-image: linear-gradient(to bottom right, var(--color-primary-9), var(--bg, var(--color-primary-7)));
-        box-shadow: var(--shadow-heavy);
-        color: var(--color-primary-1);
-        text-shadow: 0 0 4px var(--color-primary-4);
-        box-decoration-break: clone;
-        -webkit-box-decoration-break: clone;
+  :where(code, pre) {
+    font-family: var(--pro-hacker-font);
+    font-size: 0.8em;
+    padding: 0.1rem;
+    border-radius: 2px;
+    border: 1px solid var(--color-primary-7);
+    background-image: linear-gradient(to bottom right, var(--color-primary-9), var(--bg, var(--color-primary-7)));
+    box-shadow: var(--shadow-heavy);
+    color: var(--color-primary-1);
+    text-shadow: 0 0 4px var(--color-primary-4);
+    box-decoration-break: clone;
 
-        &:focus {
-            box-shadow: 0px 4px 14px var(--color-accent-4);
-        }
+    &:focus {
+      box-shadow: 0 4px 14px var(--color-accent-4);
     }
+  }
 }
 
 main {
-    margin: 1rem 0;
+  margin: 1rem 0;
 }
 
 :is(ul, ol) > li {
-    margin-block-end: 1rem;
+  margin-block-end: 1rem;
 }
 
 h1 {
-    margin-block-end: 0;
-    
-    > svg {
-        max-width: 95vw;
-        height: auto;
-    }
+  margin-block-end: 0;
+
+  > svg {
+    max-width: 95vw;
+    height: auto;
+  }
 }
 
 h2 {
-    $spacing-top: 1em;
-    $spacing-bottom: 0;
+  $spacing-top: 1em;
+  $spacing-bottom: 0;
+  margin-block-start: $spacing-top;
+  margin-block-end: $spacing-bottom;
+  scroll-margin-top: 1rem;
+  line-height: 1.25;
+
+  + .header-anchor {
+    font-size: 1.5em;
     margin-block-start: $spacing-top;
     margin-block-end: $spacing-bottom;
-    scroll-margin-top: 1rem;
-    line-height: 1.25;
-    
-    + .header-anchor {
-        font-size: 1.5em;
-        margin-block-start: $spacing-top;
-        margin-block-end: $spacing-bottom;
-        padding-inline: .25em;
-
-        @supports not (padding-inline: .25em) {
-            padding-inline-start: .25em;
-            padding-inline-end: .25em;
-        }
+    padding-inline: 0.25em;
+    @supports not (padding-inline: 0.25em) {
+      padding-inline-start: 0.25em;
+      padding-inline-end: 0.25em;
     }
+  }
 }
 
 blockquote {
-    --bg: var(--color-primary-7);
-    --padding: clamp(1rem, 2vmax, 1.5em);
-    @include gradient-links;
-    --gradient-accent-width: 0.5rem;
-    margin-inline: 0;
-    background: var(--bg);
-    border-radius: 0 .25rem .25rem 0;
-    position: relative;
-    padding: var(--padding);
-    border-radius: 2px;
-    overflow: hidden;
-    padding-inline-start: calc(var(--padding) + var(--gradient-accent-width));
+  --bg: var(--color-primary-7);
+  --padding: clamp(1rem, 2vmax, 1.5em);
+  @include gradient-links;
 
-    > p {
-        margin-block: 0;
-    }
+  --gradient-accent-width: 0.5rem;
+  margin-inline: 0;
+  background: var(--bg);
+  position: relative;
+  padding: var(--padding);
+  border-radius: 2px;
+  overflow: hidden;
+  padding-inline-start: calc(var(--padding) + var(--gradient-accent-width));
 
-    > * + * {
-        margin-block-start: 0;
-    } 
+  > p {
+    margin-block: 0;
+  }
 
-    &::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        bottom: 0;
-        width: var(--gradient-accent-width);
-        background: linear-gradient(
-            hsl(var(--color-hs-accent) 50%),
-            hsl(var(--color-hs-highlight) 50%)
-        );
-    }
+  > * + * {
+    margin-block-start: 0;
+  }
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: var(--gradient-accent-width);
+    background:
+      linear-gradient(
+        hsl(var(--color-hs-accent) 50%),
+        hsl(var(--color-hs-highlight) 50%)
+      );
+  }
 }

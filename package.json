@@ -54,18 +54,26 @@
     "eslint-plugin-prettier": "^3.4.0",
     "eslint-plugin-react": "^7.24.0",
     "faker": "^5.5.3",
+    "husky": "^4.3.0",
     "jest": "^27.0.6",
+    "lint-staged": "^12.2.1",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.3.2",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "stylelint": "^14.2.0",
+    "stylelint-config-standard-scss": "^3.0.0",
     "typescript": "^4.4.4"
   },
   "scripts": {
     "build:slinkity": "node packages/slinkity/build.js",
     "dev:slinkity": "node packages/slinkity/build.js --watch",
-    "lint": "eslint \"packages/**/*.{js,jsx,mjs}\"",
-    "lint:fix": "eslint --fix \"packages/**/*.{js,jsx,mjs}\"",
+    "lint": "npm-run-all --parallel lint:css lint:js",
+    "lint:fix": "npm-run-all --parallel lint:*:fix",
+    "lint:css": "stylelint \"{packages,www}/**/*.scss\"",
+    "lint:css:fix": "stylelint --fix \"{packages,www}/**/*.scss\"",
+    "lint:js": "eslint \"packages/**/*.{js,jsx,mjs}\"",
+    "lint:js:fix": "eslint --fix \"packages/**/*.{js,jsx,mjs}\"",
     "test": "jest",
     "test:watch": "jest --watch"
   },
@@ -75,6 +83,16 @@
     ]
   },
   "volta": {
-    "node": "14.18.1"
+    "node": "14.18.1",
+    "npm": "7.24.2"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.js": "npm run lint:js:fix",
+    "*.scss": "npm run lint:css:fix"
   }
 }

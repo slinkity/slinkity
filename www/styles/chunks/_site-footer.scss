@@ -1,15 +1,16 @@
-@use '../tools' as *;
+@use "../tools" as *;
 
 .site-footer {
   @include gradient-links;
   padding: 1rem;
 
   &__content {
-      text-align: center;
-      font-style: italic;
-      font-size: 0.8rem;
-      margin: auto;
-      max-width: var(--content-max-width);
-      --bg: transparent;
+    text-align: center;
+    font-style: italic;
+    font-size: 0.8rem;
+    margin: auto;
+    max-width: var(--content-max-width);
+
+    --bg: transparent;
   }
 }

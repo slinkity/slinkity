@@ -1,0 +1,24 @@
+{
+    "extends": ["stylelint-config-standard-scss"],
+    "rules": {
+      "at-rule-no-unknown": null,
+      "at-rule-empty-line-before": ["always", { "except": ["after-same-name", "inside-block", "blockless-after-same-name-blockless"], "ignoreAtRules": ["function", "mixin"] }],
+      "block-closing-brace-newline-after": ["always", { "ignoreAtRules": ["if", "else"] }],
+      "block-opening-brace-space-before": "always",
+      "block-opening-brace-newline-after": "always",
+      "block-closing-brace-newline-before": "always",
+      "block-closing-brace-empty-line-before": "never",
+      "declaration-block-trailing-semicolon": "always",
+      "declaration-empty-line-before": "never",
+      "declaration-block-semicolon-newline-after": "always-multi-line",
+      "font-family-name-quotes": "always-where-required",
+      "indentation": 2,
+      "max-line-length": null,
+      "no-descending-specificity": null,
+      "selector-class-pattern": "[a-z](?:[_-]*?[a-z0-9])*",
+      "scss/at-if-closing-brace-newline-after": "always-last-in-chain",
+      "scss/at-if-closing-brace-space-after": "always-intermediate",
+      "scss/at-rule-no-unknown": true
+    }
+}
+  
