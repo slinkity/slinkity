@@ -21,7 +21,7 @@ styles:
       </a>
     </div>
   </nav>
-  <main class="docs__container" id="main-content">
+  <main class="docs__container">
     <ul class="docs__side-nav" role="list">
       {%- for navLink in navLinksSorted -%}
         <li>
@@ -34,7 +34,7 @@ styles:
         </li>
       {%- endfor -%}
     </ul>
-    <article class="docs__container__content">
+    <article class="docs__container__content" id="main-content">
       <h1>{{ title }}</h1>
       {{ content | safe }}
     </article>
