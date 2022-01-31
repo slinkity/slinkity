@@ -2,7 +2,7 @@ import type { ViteSSR } from "../cli/toViteSSR"
 import type { UserSlinkityConfig } from '..'
 import type { Options } from 'browser-sync'
 
-type Environment = 'dev' | 'prod'
+type Environment = 'development' | 'production'
 
 /** Paths to all significant directories, as specified in 11ty's "dir" documentation */
 export type Dir = {

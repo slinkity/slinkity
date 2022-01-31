@@ -161,7 +161,7 @@ async function applyViteHtmlTransform({
   })
   const server = viteSSR.getServer()
   const routePath = '/' + toSlashesTrimmed(normalizePath(relative(dir.output, outputPath)))
-  return environment === 'dev' && server ? server.transformIndexHtml(routePath, html) : html
+  return environment === 'development' && server ? server.transformIndexHtml(routePath, html) : html
 }
 
 module.exports = { applyViteHtmlTransform, handleSSRComments }
