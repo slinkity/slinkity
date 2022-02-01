@@ -45,6 +45,11 @@ const eleventyArgs = {
     description: 'Override the eleventy config file path',
     defaultValue: '.eleventy.js',
   },
+  port: {
+    flag: '--port <port>',
+    description: 'Port for Vite server',
+    defaultValue: 8080,
+  },
 }
 
 const slinkityArgs = {
@@ -52,10 +57,6 @@ const slinkityArgs = {
     flag: '--serve',
     description:
       'Run Vite server and watch for file changes. Configure server options + production build options by creating a vite.config.js at the base of your project',
-  },
-  port: {
-    flag: '--port <port>',
-    description: 'Port for Vite server (default: 3000)',
   },
 }
 
@@ -78,7 +79,7 @@ applyOption(eleventyArgs.input)
 applyOption(eleventyArgs.output)
 applyOption(eleventyArgs.watch)
 applyOption(slinkityArgs.serve)
-applyOption(slinkityArgs.port)
+applyOption(eleventyArgs.port)
 applyOption(eleventyArgs.incremental)
 applyOption(eleventyArgs.formats)
 applyOption(eleventyArgs.quiet)
