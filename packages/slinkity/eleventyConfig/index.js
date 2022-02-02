@@ -64,7 +64,7 @@ module.exports = function toEleventyConfig({ userSlinkityConfig, ...options }) {
       }
     }
 
-    if (environment === 'dev') {
+    if (environment === 'development') {
       const urlToOutputHtmlMap = {}
 
       eleventyConfig.on('beforeBuild', () => {
@@ -121,7 +121,7 @@ module.exports = function toEleventyConfig({ userSlinkityConfig, ...options }) {
       )
     }
 
-    if (environment === 'prod') {
+    if (environment === 'production') {
       eleventyConfig.addTransform('apply-vite', async function (content, outputPath) {
         return await applyViteHtmlTransform({
           content,
