@@ -87,6 +87,7 @@ async function build({ eleventyDir, userSlinkityConfig, input, output }) {
       vite.mergeConfig(
         {
           root: input,
+          mode: 'production',
           build: {
             outDir: output,
             emptyOutDir: true,
