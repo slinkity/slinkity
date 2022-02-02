@@ -1,4 +1,5 @@
 const { createServer, build, defineConfig, mergeConfig } = require('vite')
+const path = require('path')
 const requireFromString = require('require-from-string')
 const logger = require('../utils/logger')
 const { getSharedConfig } = require('./vite')
@@ -44,9 +45,11 @@ module.exports.collectCSS = collectCSS
  * @property {string} filePath
  * @property {import('../eleventyConfig/types').Environment} environment
  * @param {ViteBuildParams}
- * @returns {FormattedModule}
+ * @returns {DefaultModule}
  */
 async function viteBuild({ ssrViteConfig, filePath, environment }) {
+  const isNpmPackage = /^[^./]|^\.[^./]|^\.\.[^/]/
+  const input = isNpmPackage.test(filePath) ? path.resolve('node_modules', filePath) : filePath
   const { output } = await build({
     ...ssrViteConfig,
     mode: environment,
@@ -54,15 +57,13 @@ async function viteBuild({ ssrViteConfig, filePath, environment }) {
       ssr: true,
       write: false,
       rollupOptions: {
-        input: filePath,
+        input,
       },
     },
   })
-  /** @type {FormattedModule} */
+  /** @type {DefaultModule} */
   const defaultMod = {
     default: () => null,
-    getProps: () => ({}),
-    frontMatter: {},
     __importedStyles: new Set(),
   }
   if (!output?.length) {
@@ -90,10 +91,8 @@ async function viteBuild({ ssrViteConfig, filePath, environment }) {
  * @property {import('./types').UserSlinkityConfig} userSlinkityConfig
  * @param {ViteSSRParams}
  *
- * @typedef FormattedModule
+ * @typedef DefaultModule
  * @property {() => any} default
- * @property {(eleventyData: any) => any} getProps
- * @property {Record<string, any>} frontMatter
  * @property {Set<string>} __importedStyles
  *
  * @typedef {import('./types').ViteSSR} ViteSSR
@@ -104,10 +103,10 @@ async function toViteSSR({ environment, dir, userSlinkityConfig }) {
   const sharedConfig = await getSharedConfig({ dir, userSlinkityConfig })
   const ssrViteConfig = defineConfig(mergeConfig({ root: dir.output }, sharedConfig))
 
-  /** @type {Record<string, FormattedModule>} */
+  /** @type {Record<string, DefaultModule>} */
   const probablyInefficientCache = {}
 
-  if (environment === 'dev') {
+  if (environment === 'development') {
     /** @type {import('vite').ViteDevServer} */
     let server = null
     return {
@@ -115,7 +114,7 @@ async function toViteSSR({ environment, dir, userSlinkityConfig }) {
         if (options.useCache && probablyInefficientCache[filePath]) {
           return probablyInefficientCache[filePath]
         }
-        /** @type {FormattedModule} */
+        /** @type {DefaultModule} */
         let viteOutput
         if (server) {
           const ssrModule = await server.ssrLoadModule(filePath)
@@ -125,8 +124,6 @@ async function toViteSSR({ environment, dir, userSlinkityConfig }) {
           collectCSS(moduleGraph, __importedStyles)
           viteOutput = {
             default: () => null,
-            getProps: () => ({}),
-            frontMatter: {},
             __importedStyles,
             ...ssrModule,
           }
