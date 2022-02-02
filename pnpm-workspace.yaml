@@ -1,0 +1,4 @@
+packages:
+  - www
+  - packages/*
+  - "!packages/create-slinkity"
