@@ -23,7 +23,7 @@ function toConvincingUrl(fileName) {
 }
 
 describe('applyViteHtmlTransform', () => {
-  const environments = ['prod', 'dev']
+  const environments = ['production', 'development']
   it.each(environments)(
     'should not try and parse files that are not html for %s',
     async (environment) => {

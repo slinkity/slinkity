@@ -86,7 +86,7 @@ async function startEleventy({ dir, userSlinkityConfig, options }) {
   })
 
   /** @type {import('../eleventyConfig/types').Environment} */
-  const environment = options.watch ? 'dev' : 'prod'
+  const environment = options.watch ? 'development' : 'production'
   const config = toEleventyConfig({
     dir,
     environment,

@@ -3,10 +3,10 @@ import SvelteWrapper from './Wrapper.svelte.ssr.js'
 export default async function server({ toCommonJSModule, componentPath, props, children }) {
   const { default: Component } = await toCommonJSModule(componentPath)
 
-  const { html } = SvelteWrapper.render({
+  const { html, css } = SvelteWrapper.render({
     __slinkity_component: Component,
     __slinkity_children: children,
     ...props,
   })
-  return { html }
+  return { html, css: css.code }
 }
