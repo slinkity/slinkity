@@ -94,9 +94,7 @@
     "prepare": "npm run build",
     "watch": "babel src -d lib -w",
     "lint": "eslint \"*.{js,jsx,mjs}\"",
-    "lint:fix": "eslint --fix \"*.{js,jsx,mjs}\"",
-    "test": "cd ../../ && jest",
-    "test:watch": "cd ../../ && jest --watch"
+    "lint:fix": "eslint --fix \"*.{js,jsx,mjs}\""
   },
   "volta": {
     "node": "14.18.1"

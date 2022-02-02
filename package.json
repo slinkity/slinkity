@@ -66,10 +66,10 @@
     "typescript": "^4.4.4"
   },
   "scripts": {
-    "build:slinkity": "node packages/slinkity/build.js",
-    "dev:slinkity": "node packages/slinkity/build.js --watch",
-    "lint": "npm-run-all --parallel lint:css lint:js",
-    "lint:fix": "npm-run-all --parallel lint:*:fix",
+    "build:slinkity": "pnpm -r --filter slinkity run build",
+    "dev:slinkity": "pnpm -r --filter slinkity run dev",
+    "lint": "run-p lint:css lint:js",
+    "lint:fix": "run-p lint:*:fix",
     "lint:css": "stylelint \"{packages,www}/**/*.scss\"",
     "lint:css:fix": "stylelint --fix \"{packages,www}/**/*.scss\"",
     "lint:js": "eslint \"packages/**/*.{js,jsx,mjs}\"",
