@@ -12,7 +12,9 @@ module.exports = {
   extensions: ['svelte'],
   client,
   server,
-  injectImportedStyles: true,
+  // injected styles will throw for non-hydrated components in production builds
+  // TODO: enable when we find a fix
+  injectImportedStyles: false,
   viteConfig() {
     return {
       optimizeDeps: {

@@ -21,6 +21,8 @@ const ssrRegex = RegExp(toSSRComment('([0-9]+)'), 'g')
  * @property {import('./componentAttrStore').ComponentAttrStore} componentAttrStore
  * @property {import('.').SlinkityConfigOptions['viteSSR']} viteSSR
  * @property {import('../cli/types').Renderer[]} renderers
+ * @property {Set<string>} importedStyles Styles imported by components on page
+ * @property {Set<string>} inlineStyles Compiled styles to be injected as <style> tags
  * @param {HandleSSRCommentsParams}
  * @returns {Promise<string>} - HTML with components SSR'd
  */
@@ -31,6 +33,7 @@ async function handleSSRComments({
   viteSSR,
   renderers,
   importedStyles = new Set(),
+  inlineStyles = new Set(),
 }) {
   /** @type {Record<string, any>} */
   const rendererMap = Object.fromEntries(renderers.map((renderer) => [renderer.name, renderer]))
@@ -77,6 +80,9 @@ async function handleSSRComments({
       children: '',
       hydrate,
     })
+    if (serverRendered.css) {
+      inlineStyles.add(serverRendered.css)
+    }
     serverRenderedComponents.push(serverRendered.html)
   }
 
@@ -101,6 +107,7 @@ async function handleSSRComments({
       viteSSR,
       renderers,
       importedStyles,
+      inlineStyles,
     })
   } else {
     return (
@@ -120,6 +127,7 @@ async function handleSSRComments({
                   `<script ${toHtmlAttrString({ type: 'module', src: importedStyle })}></script>`
                 : `<link ${toHtmlAttrString({ rel: 'stylesheet', href: importedStyle })}>`,
             )
+            .concat([...inlineStyles].map((inlineStyle) => `<style>${inlineStyle}</style>`))
             .join('\n'),
         )
     )
