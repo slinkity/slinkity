@@ -1,4 +1,6 @@
+[build.enviroment]
+  NPM_FLAGS = "--version"
+
 [build]
-  base = "www"
-  publish = "_site"
-  command = "npm run build"
+  publish = "www/_site"
+  command = "npx pnpm --store=node_modules/.pnpm-store && npm run www:build"

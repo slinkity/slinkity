@@ -75,7 +75,9 @@
     "lint:js": "eslint \"packages/**/*.{js,jsx,mjs}\"",
     "lint:js:fix": "eslint --fix \"packages/**/*.{js,jsx,mjs}\"",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "www:build": "npm -C www run build",
+    "www:serve": "npm -C www run serve"
   },
   "jest": {
     "roots": [
