@@ -66,8 +66,8 @@
     "typescript": "^4.4.4"
   },
   "scripts": {
-    "build": "npm -C slinkity run build",
-    "dev": "npm -C slinkity run dev",
+    "build": "pnpm -r --filter slinkity run build",
+    "dev": "pnpm -r --filter slinkity run dev",
     "lint": "run-p lint:css lint:js",
     "lint:fix": "run-p lint:*:fix",
     "lint:css": "stylelint \"{packages,www}/**/*.scss\"",
