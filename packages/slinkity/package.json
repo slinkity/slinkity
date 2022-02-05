@@ -91,7 +91,6 @@
     "build:types": "tsc",
     "build": "run-s build:src build:types",
     "dev": "node build.js --watch",
-    "prepare": "npm run build",
     "watch": "babel src -d lib -w",
     "lint": "eslint \"*.{js,jsx,mjs}\"",
     "lint:fix": "eslint --fix \"*.{js,jsx,mjs}\""
