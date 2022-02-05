@@ -1,4 +1,4 @@
-[build.enviroment]
+[build.environment]
   NPM_FLAGS = "--version"
 
 [build]
