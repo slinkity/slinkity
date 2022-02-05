@@ -7,9 +7,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
+        uses: actions/checkout@v2
 
       - name: Install pnpm
-        uses: actions/checkout@v2
         uses: pnpm/action-setup@v2.0.1
         with:
           version: 6.29.1
@@ -18,7 +18,7 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: 14
-          cache: 'pnpm'
+          cache: "pnpm"
 
       - name: Install dependencies
         run: "pnpm i"
@@ -30,9 +30,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
+        uses: actions/checkout@v2
 
       - name: Install pnpm
-        uses: actions/checkout@v2
         uses: pnpm/action-setup@v2.0.1
         with:
           version: 6.29.1
@@ -41,7 +41,7 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: 14
-          cache: 'pnpm'
+          cache: "pnpm"
 
       - name: Install dependencies
         run: "pnpm i"
@@ -53,9 +53,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
+        uses: actions/checkout@v2
 
       - name: Install pnpm
-        uses: actions/checkout@v2
         uses: pnpm/action-setup@v2.0.1
         with:
           version: 6.29.1
@@ -64,7 +64,7 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: 14
-          cache: 'pnpm'
+          cache: "pnpm"
 
       - name: Install dependencies
         run: "pnpm i"
