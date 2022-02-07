@@ -136,51 +136,39 @@ Now this happens:
 1. 11ty processes the template and writes it to a `public` folder: `.11ty-build-<hash>/public/sitemap.xml`.
 2. Vite sees the `public` folder and copies it into your final build output directory, giving you `_site/sitemap.xml`. Note that the nested `/public` directory disappears from the final build output!
 
-#### Approach 2: Passthrough-copying a `public` folder
+### Passthrough copied files
 
-Maybe you don't want Vite to static resources for you, and all you want is to dump them into your build output folder and reference them statically in your layouts using root-relative paths. In that case, place your static resources in a `public` folder outside your input directory and tell Eleventy to passthrough-copy them.
-
-In this case, your project structure might look like this:
+Now, say we have some assets that are passthrough copied without direct references. A common example may be a `robots.txt` file. Say our project structure looks like this:
 
 ```plaintext
-├── public
-│   └── fonts
-│       └── Atkinson-Hyperlegible-Regular.woff2
+├── assets
+│   └── robots.txt
 ├── src
 │   ├── _includes
 │   │   └── layout.njk
 │   └── index.md
-└── styles
-    └── index.css
 ```
 
-Now, instead of using a relative path or an import alias to the font files, your CSS would use a root-relative path to the font files:
+As you might imagine, passthrough copying `assets` directly will _not_ preserve our `txt` file. We'll need to wrap our assets in a `public` directory:
 
-```css
-/* styles/index.css */
-@font-face {
-  font-family: Atkinson;
-  src: url('/fonts/Atkinson-Hyperlegible-Regular.woff2');
-  font-display: swap;
+```plaintext
+├── public
+│   └── assets
+│       └── robots.txt
+├── src
+│   ├── _includes
+│   │   └── layout.njk
+│   └── index.md
+```
+
+...and update that passthrough copy to use `public` instead of `assets`:
+
+```js
+// eleventy.js
+module.exports = function(eleventyConfig) {
+  // see 11ty's passthrough copy docs for more: https://www.11ty.dev/docs/copy/
+  eleventyConfig.addPassthroughCopy('public')
 }
 ```
 
-And you'd pass-through copy the entire `public` directory:
-
-```js
-// .eleventy.js
-eleventyConfig.addPassthroughCopy('public')
-```
-
-Once you build your site for production, the final output will contain the passthrough-copied subdirectories (in this case, `fonts`):
-
-```plaintext
-_site
-├── assets
-│   └── index.8790d40e.css
-├── fonts
-│   └── Atkinson-Hyperlegible-Regular.woff2
-└── index.html
-```
-
-Notice that the font file no longer has a unique hash appended to its name; this is because Vite did not process that file and merely copied the `public` directory's contents over to the build output folder. This may not be desirable if you want to take advantage of hashes for cache-busting static assets.
+Note the `public` directory should be **at the root level of your passthrough copy.**
