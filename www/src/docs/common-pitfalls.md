@@ -23,14 +23,12 @@ Here's how you can think about asset management:
 </head>
 ```
 
-❌ If a resource is _not_ referenced by an HTML page in any way (no `link`, image `src`, script `src` etc), **it will be stripped from the build.** This is because Vite ignores anything that's 1. not an HTML file and 2. not loaded into any other HTML file.
-
-This is where a `public/` directory comes in.
+❌ If a resource is _not_ referenced by an HTML page in any way (no `link`, image `src`, script `src` etc), **it will be stripped from the build by default.** This is because Vite ignores anything that's 1. not an HTML file and 2. not loaded into any other HTML file.
 
 There are two situations where you may encounter this pitfall:
 
 - Permalinked static files that aren't HTML (`sitemap.xml`, `robots.txt`, and the like).
-- Resources that are passthrough-copied (fonts, images, etc.).
+- Resources that are passthrough-copied (fonts, images, etc).
 
 Let's take a closer look at each scenario.
 
@@ -154,11 +152,11 @@ The production CSS will then correctly reference the font files using root-relat
 }
 ```
 
-> ⚠️ One downside to this approach is that Vite can't resolve relative paths or import aliases from `preload` tags. If you need these on your site, we recommend going with the passthrough-copy approach instead.
+> ⚠️ One downside to this approach: Vite can't resolve relative paths or import aliases from `preload` tags. If you need these on your site, we recommend going with the passthrough-copy approach instead.
 
 #### Approach 2: Passthrough-copying a `public` folder
 
-Maybe you don't want Vite to static resources for you, and all you want is to dump them into your build output folder and reference them statically in your layouts using root-relative paths. In that case, all you need to do is place your static resources in a `public` folder outside your input directory and tell Eleventy to passthrough-copy them.
+Maybe you don't want Vite to static resources for you, and all you want is to dump them into your build output folder and reference them statically in your layouts using root-relative paths. In that case, place your static resources in a `public` folder outside your input directory and tell Eleventy to passthrough-copy them.
 
 In this case, your project structure might look like this:
 
