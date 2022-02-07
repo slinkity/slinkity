@@ -91,8 +91,8 @@ As long as this stylesheet is later referenced somewhere in your layouts, Vite w
 
 There are two situations where you may encounter this pitfall:
 
-- Permalinked files that aren't HTML. Example: a `sitemap.njk` permalinked to a `sitemap.xml`.
-- Non-HTML resources that aren't referenced elsewhere. Example: a passthrough-copied `robots.txt`.
+1. Permalinked files that aren't HTML. Example: a `sitemap.njk` permalinked to a `sitemap.xml`.
+2. Non-HTML resources that aren't referenced in templates using relative paths or import aliases. Example: a passthrough-copied OpenGraph image.
 
 This is where the `public/` directory comes in!
 
@@ -102,7 +102,7 @@ In short, anything nested inside a `public/` directory is off-limits for Vite to
 
 [See Vite's documentation](https://vitejs.dev/guide/assets.html#the-public-directory) for more details and configuration options.
 
-### Permalinked files
+### Scenario 1: Permalinked files
 
 Suppose you're using 11ty to auto-generate a `sitemap.xml` for your site. In 11ty, you'd create this file using your chosen templating language extension and set a root-relative permalink in its front matter, like so:
 
@@ -137,32 +137,38 @@ Now this happens:
 1. 11ty processes the template and writes it to a `public` folder: `.11ty-build-<hash>/public/sitemap.xml`.
 2. Vite sees the `public` folder and copies it into your final build output directory, giving you `_site/sitemap.xml`. Note that the nested `/public` directory disappears from the final build output!
 
-### Passthrough copied files
+### Scenario 2: Passthrough-copied files
 
-Now, say we have some assets that are passthrough copied without direct references. A common example may be a `robots.txt` file. Say our project structure looks like this:
+Now, say we want to add an OpenGraph image to our site to get some nice social media previews. Maybe those images are stored under an assets directory:
 
 ```plaintext
 ├── assets
-│   └── robots.txt
+│   └── og-thumbnail.jpg
 ├── src
-│   ├── _includes
-│   │   └── layout.njk
-│   └── index.md
+│   └── ...
 ```
 
-As you might imagine, passthrough copying `assets` directly will _not_ preserve our `txt` file. We'll need to wrap our assets in a `public` directory:
+Unfortunately, OpenGraph images need to be absolute URLs, like this:
+
+```html
+<meta property="og:image" content="https://my-awesome-site.com/assets/og-thumbnail.jpg">
+```
+
+Because we're no longer using relative paths or import aliases when referencing this image, Vite won't correctly identify it as a dependency and copy it over to the build output folder. Moreover, as described before, passthrough-copying `assets` directly will _not_ preserve the thumbnail.
+
+#### Solution
+
+To fix this, we'll need to nest our assets under the special `public` directory:
 
 ```plaintext
 ├── public
 │   └── assets
-│       └── robots.txt
+│       └── og-thumbnail.jpg
 ├── src
-│   ├── _includes
-│   │   └── layout.njk
-│   └── index.md
+│   └── ...
 ```
 
-... and update that passthrough copy to use `public` instead of `assets`:
+... and then update our 11ty config to passthrough-copy this `public` directory instead of `assets`:
 
 ```js
 // eleventy.js
