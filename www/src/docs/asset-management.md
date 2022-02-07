@@ -1,25 +1,21 @@
 ---
-title: Common pitfalls
+title: Asset management
 ---
-
-For the most part, you should be able to seamlessly migrate your site from 11ty to Slinkity with minimal reconfiguration. But there are a few changes that may catch you off guard. These gotchas are summarized below.
-
-## Static files disappeared from my production build output folder
 
 In an 11ty site, you are free to structure your project however you like. You can put your static assets in a `public` folder outside your [11ty input directory]((https://www.11ty.dev/docs/config/#input-directory)), an `assets` folder in your input directory, a `banana` folder in your `_includes`... You get the idea. **As long as you tell 11ty how and where to copy assets to the build output,** you're good to go.
 
 Now that Slinkity brings [Vite](https://vitejs.dev/) into the equation, the days of manual passthrough copying are no more 😮 Let's learn how this works.
 
-### What gets included in my production build?
+## What gets included in my production build?
 
 ✅ If a resource (stylesheet, image, font, etc) is referenced by an HTML page using:
 - a relative path to an asset
 - an absolute path to a passthrough copied asset
 - [an import aliased path](/docs/import-aliases)
 
-...it'll be included in the build. We recommend that last option when referencing assets outside your build folder; aka anything _not_ passthrough copied. 
+...it'll be included in the build.
 
-For example, suppose you have a project structure that looks like this:
+For example, suppose we have a project structure that looks like this:
 
 ```plaintext
 ├── fonts
@@ -32,10 +28,10 @@ For example, suppose you have a project structure that looks like this:
     └── index.scss
 ```
 
-Say we want to reference our font from that `styles/index.scss`. We can use relative paths:
+We want to reference our font from that `styles/index.scss`. We can use relative paths:
 
 ```css
-/* styles/index.css */
+/* styles/index.scss */
 @font-face {
   font-family: Atkinson;
   src: url('../fonts/Atkinson-Hyperlegible-Regular.woff2');
@@ -45,7 +41,7 @@ Say we want to reference our font from that `styles/index.scss`. We can use rela
 Leverage import aliases:
 
 ```css
-/* styles/index.css */
+/* styles/index.scss */
 @font-face {
   font-family: Atkinson;
   src: url('/@root/fonts/Atkinson-Hyperlegible-Regular.woff2');
@@ -55,7 +51,7 @@ Leverage import aliases:
 _Or_ use an absolute URL + a passthrough copy on our `fonts/`:
 
 ```css
-/* styles/index.css */
+/* styles/index.scss */
 @font-face {
   font-family: Atkinson;
   src: url('/fonts/Atkinson-Hyperlegible-Regular.woff2');
@@ -95,7 +91,7 @@ As long as this stylesheet is later referenced somewhere in your layouts, Vite w
 There are two situations where you may encounter this pitfall:
 
 - Permalinked files that aren't HTML. Ex. a `sitemap.njk` permalinked to a `sitemap.xml`
-- Non-HTML resources that aren't referenced elsewhere. Ex. a passthrough copied `robots.txt
+- Non-HTML resources that aren't referenced elsewhere. Ex. a passthrough copied `robots.txt`
 
 ### Permalinked files
 
@@ -110,7 +106,7 @@ permalink: /sitemap.xml
 
 When _plain_ 11ty builds your site, it processes this template file and spits out a file named `_site/sitemap.xml`.
 
-⚠️ **This won't work in Slinkity production builds!** [Since we build to a temporary output](/docs/how-we-build-your-site), the sitemap will get written to `.11ty-build-<hash>/sitemap.xml`. In the follow-up steps, Vite will:
+⚠️ **This won't work in Slinkity production builds!** Since we build to a temporary output, the sitemap will get written to `.11ty-build-<hash>/sitemap.xml`. In the follow-up steps, Vite will:
 
 1. Process this temporary build directory.
 2. See that a) `sitemap.xml` is not referenced by any other file and b) isn't in the dedicated `public` folder.
