@@ -11,8 +11,8 @@ These are the docs for Slinkity's landing page, [slinkity.dev](https://slinkity.
 This is a static site built on (you guessed it) Slinkity! To spin up the dev server, run:
 
 ```
-npm i
-npm start
+pnpm i
+pnpm dev
 ```
 
 This will use the `--serve` flag to enable live reloading with Vite.
@@ -20,5 +20,5 @@ This will use the `--serve` flag to enable live reloading with Vite.
 For production builds, run:
 
 ```
-npm run build
+pnpm run build
 ```

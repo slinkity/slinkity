@@ -77,7 +77,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "www:build": "npm -C www run build",
-    "www:serve": "npm -C www run serve"
+    "www:dev": "npm -C www run dev"
   },
   "jest": {
     "roots": [

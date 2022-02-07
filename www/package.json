@@ -5,7 +5,7 @@
   "main": ".eleventy.js",
   "scripts": {
     "build": "slinkity",
-    "serve": "slinkity --serve --incremental",
+    "dev": "slinkity --serve --incremental",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
