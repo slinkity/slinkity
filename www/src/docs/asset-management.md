@@ -2,18 +2,17 @@
 title: Asset management
 ---
 
-In an 11ty site, you are free to structure your project however you like. You can put your static assets in a `public` folder outside your [11ty input directory]((https://www.11ty.dev/docs/config/#input-directory)), an `assets` folder in your input directory, a `banana` folder in your `_includes`... You get the idea. **As long as you tell 11ty how and where to copy assets to the build output,** you're good to go.
+In an 11ty site, you're free to structure your project however you like. You can put your static assets in a `public` folder outside your [11ty input directory]((https://www.11ty.dev/docs/config/#input-directory)), an `assets` folder in your input directory, a `banana` folder in your `_includes`... You get the idea. **As long as you tell 11ty how and where to copy assets to the build output,** you're good to go.
 
 Now that Slinkity brings [Vite](https://vitejs.dev/) into the equation, the days of manual passthrough copying are no more 😮 Let's learn how this works.
 
 ## What gets included in my production build?
 
-✅ If a resource (stylesheet, image, font, etc) is referenced by an HTML page using:
-- a relative path to an asset
-- an absolute path to a passthrough copied asset
-- [an import aliased path](/docs/import-aliases)
+✅ Resources like CSS, images, fonts, etc. will be included in the build if they are referenced by an HTML page using:
 
-...it'll be included in the build.
+- A relative path to an asset,
+- An absolute path to a passthrough-copied asset, or
+- [An import alias path](/docs/import-aliases).
 
 For example, suppose we have a project structure that looks like this:
 
@@ -28,7 +27,9 @@ For example, suppose we have a project structure that looks like this:
     └── index.scss
 ```
 
-We want to reference our font from that `styles/index.scss`. We can use relative paths:
+We want to reference our font from that `styles/index.scss`.
+
+We can use relative paths:
 
 ```css
 /* styles/index.scss */
@@ -48,7 +49,7 @@ Leverage import aliases:
 }
 ```
 
-_Or_ use an absolute URL + a passthrough copy on our `fonts/`:
+_Or_ use an absolute URL + a passthrough copy on our `fonts` directory:
 
 ```css
 /* styles/index.scss */
@@ -90,14 +91,14 @@ As long as this stylesheet is later referenced somewhere in your layouts, Vite w
 
 There are two situations where you may encounter this pitfall:
 
-- Permalinked files that aren't HTML. Ex. a `sitemap.njk` permalinked to a `sitemap.xml`
-- Non-HTML resources that aren't referenced elsewhere. Ex. a passthrough copied `robots.txt`
+- Permalinked files that aren't HTML. Example: a `sitemap.njk` permalinked to a `sitemap.xml`.
+- Non-HTML resources that aren't referenced elsewhere. Example: a passthrough-copied `robots.txt`.
 
 This is where the `public/` directory comes in!
 
 ### The `public/` directory
 
-In short, anything nested inside a `public/` directory is off-limits for Vite to strip. You can also treat it as a "disappearing" directory, since the directory itself gets flattened in the build output. In other words, `_site/public/robots.txt` simply becomes `_site/robots.txt` without any further processing.
+In short, anything nested inside a `public/` directory is off-limits for Vite to strip. You can also treat it as a "disappearing" directory since the directory itself gets flattened in the build output. In other words, `_site/public/robots.txt` simply becomes `_site/robots.txt` without any further processing.
 
 [See Vite's documentation](https://vitejs.dev/guide/assets.html#the-public-directory) for more details and configuration options.
 
@@ -161,7 +162,7 @@ As you might imagine, passthrough copying `assets` directly will _not_ preserve 
 │   └── index.md
 ```
 
-...and update that passthrough copy to use `public` instead of `assets`:
+... and update that passthrough copy to use `public` instead of `assets`:
 
 ```js
 // eleventy.js
@@ -171,4 +172,4 @@ module.exports = function(eleventyConfig) {
 }
 ```
 
-Note the `public` directory should be **at the root level of your passthrough copy.**
+Note that the `public` directory should be **at the root level of your passthrough copy**.
