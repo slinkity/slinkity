@@ -23,16 +23,26 @@ styles:
   </nav>
   <main class="docs__container">
     <ul class="docs__side-nav" role="list">
-      {%- for navLink in navLinksSorted -%}
-        <li>
-          <a
-          href="{{navLink.href}}"
-          {% if navLink.href === page.url %}aria-current="page"{% endif %}
-        >
-            {{navLink.title}}
-          </a>
-        </li>
-      {%- endfor -%}
+      <li>
+        <span class="category">{{ navLinksSorted.guides.label }}</span>
+        <ul role="list">
+          {%- for link in navLinksSorted.guides.links -%}
+            <li>
+              <a href="{{ link.href }}" {% if link.href === page.url %}aria-current="page"{% endif %}>{{ link.title }}</a>
+            </li>
+          {%- endfor -%}
+        </ul>
+      </li>
+      <li>
+        <span class="category">{{ navLinksSorted.reference.label }}</span>
+        <ul role="list">
+          {%- for link in navLinksSorted.reference.links -%}
+            <li>
+              <a href="{{ link.href }}" {% if link.href === page.url %}aria-current="page"{% endif %}>{{ link.title }}</a>
+            </li>
+          {%- endfor -%}
+        </ul>
+      </li>
     </ul>
     <article class="docs__container__content" id="main-content" tabindex="-1">
       <h1>{{ title }}</h1>
