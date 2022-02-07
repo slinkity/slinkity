@@ -10,75 +10,14 @@ In an 11ty site, you are free to structure your project however you like. You ca
 
 Now that Slinkity brings [Vite](https://vitejs.dev/) into the equation, the days of manual passthrough copying are no more 😮 Let's learn how this works.
 
-### The rule: what gets included, and what gets stripped?
+### What gets included in my production build?
 
-Here's how you can think about asset management:
+✅ If a resource (stylesheet, image, font, etc) is referenced by an HTML page using:
+- a relative path to an asset
+- an absolute path to a passthrough copied asset
+- [an import aliased path](/docs/import-aliases)
 
-✅ If a resource (stylesheet, image, font, etc) is referenced by an HTML page using 1. a relative path or 2. [an import aliased path](/docs/import-aliases), it'll be included in the build. We recommend #2 when referencing assets outside your build folder; aka anything _not_ passthrough copied. For instance, say we have a `base.scss` file in a `styles/` folder at the root of our project. here's how we can load a stylesheet into an `index.njk` file:
-
-```html
-<!--index.njk-->
-<head>
-  <link rel="stylesheet" href="/@root/styles/base.scss">
-</head>
-```
-
-❌ If a resource is _not_ referenced by an HTML page in any way (no `link`, image `src`, script `src` etc), **it will be stripped from the build by default.** This is because Vite ignores anything that's 1. not an HTML file and 2. not loaded into any other HTML file.
-
-There are two situations where you may encounter this pitfall:
-
-- Permalinked static files that aren't HTML (`sitemap.xml`, `robots.txt`, and the like).
-- Resources that are passthrough-copied (fonts, images, etc).
-
-Let's take a closer look at each scenario.
-
-### Permalinked static files that aren't `.html`
-
-Suppose you're using 11ty to auto-generate a `sitemap.xml` for your site. In 11ty, you'd create this file using your chosen templating language extension and set a root-relative permalink in its front matter, like so:
-
-```liquid
-<!-- src/sitemap.liquid -->
----
-permalink: /sitemap.xml
----
-```
-
-When _plain_ 11ty builds your site, it processes this template file and spits out a file named `_site/sitemap.xml`.
-
-⚠️ **However, this won't work in Slinkity production builds!** [Since we build to a temporary output](/docs/how-we-build-your-site), the sitemap will get written to `.11ty-build-<hash>/sitemap.xml`. In the follow-up steps, Vite will:
-
-1. Process this temporary build directory.
-2. See that a) `sitemap.xml` is not referenced by any other file and b) isn't in the dedicated `public` folder.
-3. Exclude it from the final output that it writes to `_site`.
-
-#### Solution
-
-To fix this problem, you need to prefix the static file's permalink with `/public`, like this:
-
-```liquid
-<!-- src/sitemap.liquid -->
----
-permalink: /public/sitemap.xml
----
-```
-
-Now, this happens:
-
-1. 11ty processes the template and writes it to a `public` folder nested inside the temporary build folder: `.11ty-build-<hash>/public/sitemap.xml`.
-2. Vite sees the `public` folder and copies it into your final build output directory, giving you `_site/sitemap.xml`. Note that the nested `/public` directory disappears from the final build output!
-
-### Resources that are passthrough-copied
-
-A typical 11ty site has many static resources, including fonts, images, and more. Some of these (like images) may need to be processed manually using 11ty, but others (like fonts) just need to be copied to the build output directory.
-
-In Slinkity, there are two approaches you can take to ensure that static resources correctly make their way to the final build output:
-
-1. Using relative paths or import aliases to the resources on a page.
-2. Passthrough-copying the resources to a `/public` folder.
-
-#### Approach 1: Path resolution
-
-In the first approach, we lean on Vite's ability to resolve dependencies and resources referenced by our templates. In this case, if you want your font files to end up in your site's final build output, all you need to do is reference those font files somewhere in your CSS. You can do this using either relative paths (not absolute!) or [import aliases](/docs/import-aliases).
+...it'll be included in the build. We recommend that last option when referencing assets outside your build folder; aka anything _not_ passthrough copied. 
 
 For example, suppose you have a project structure that looks like this:
 
@@ -90,28 +29,44 @@ For example, suppose you have a project structure that looks like this:
 │   │   └── layout.njk
 │   └── index.md
 └── styles
-    └── index.css
+    └── index.scss
 ```
 
-In the path resolution approach, you can either use relative paths:
+Say we want to reference our font from that `styles/index.scss`. We can use relative paths:
 
 ```css
 /* styles/index.css */
 @font-face {
   font-family: Atkinson;
   src: url('../fonts/Atkinson-Hyperlegible-Regular.woff2');
-  font-display: swap;
 }
 ```
 
-Or you can leverage import aliases:
+Leverage import aliases:
 
 ```css
 /* styles/index.css */
 @font-face {
   font-family: Atkinson;
   src: url('/@root/fonts/Atkinson-Hyperlegible-Regular.woff2');
-  font-display: swap;
+}
+```
+
+_Or_ use an absolute URL + a passthrough copy on our `fonts/`:
+
+```css
+/* styles/index.css */
+@font-face {
+  font-family: Atkinson;
+  src: url('/fonts/Atkinson-Hyperlegible-Regular.woff2');
+}
+```
+
+```js
+// eleventy.js
+module.exports = function(eleventyConfig) {
+  // see 11ty's passthrough copy docs for more: https://www.11ty.dev/docs/copy/
+  eleventyConfig.addPassthroughCopy('fonts')
 }
 ```
 
@@ -131,28 +86,51 @@ As long as this stylesheet is later referenced somewhere in your layouts, Vite w
 ```
 {% endraw %}
 
-In the production build, Vite will generate an `assets` directory containing your font files and CSS, nested in your build output directory:
+> ⚠️ One downside to relative paths and import aliases: Vite can't resolve relative paths or import aliases from `preload` tags. If you need these for a particular resource, we recommend absolute URLs + passthrough copying.
 
-```plaintext
-_site
-├── assets
-│   ├── Atkinson-Hyperlegible-Regular.efe52c57.woff2
-│   └── index.7edd6dae.css
-└── index.html
+## What gets stripped from my production build?
+
+❌ If a resource is _not_ referenced by an HTML page in any way (no `link`, image `src`, script `src` etc), **it will be stripped from the build by default.** This is because Vite ignores anything that's 1. not an HTML file and 2. not loaded into any other HTML file.
+
+There are two situations where you may encounter this pitfall:
+
+- Permalinked files that aren't HTML. Ex. a `sitemap.njk` permalinked to a `sitemap.xml`
+- Non-HTML resources that aren't referenced elsewhere. Ex. a passthrough copied `robots.txt
+
+### Permalinked files
+
+Suppose you're using 11ty to auto-generate a `sitemap.xml` for your site. In 11ty, you'd create this file using your chosen templating language extension and set a root-relative permalink in its front matter, like so:
+
+```liquid
+<!-- src/sitemap.liquid -->
+---
+permalink: /sitemap.xml
+---
 ```
 
-The production CSS will then correctly reference the font files using root-relative paths, along with unique hashes that Vite appends to asset file names:
+When _plain_ 11ty builds your site, it processes this template file and spits out a file named `_site/sitemap.xml`.
 
-```css
-/* _site/assets/index.7edd6dae.css */
-@font-face {
-  font-family: Atkinson;
-  src: url(/assets/Atkinson-Hyperlegible-Regular.efe52c57.woff2);
-  font-display: swap;
-}
+⚠️ **This won't work in Slinkity production builds!** [Since we build to a temporary output](/docs/how-we-build-your-site), the sitemap will get written to `.11ty-build-<hash>/sitemap.xml`. In the follow-up steps, Vite will:
+
+1. Process this temporary build directory.
+2. See that a) `sitemap.xml` is not referenced by any other file and b) isn't in the dedicated `public` folder.
+3. Exclude it from the final output that it writes to `_site`.
+
+#### Solution
+
+To fix this problem, you need to prefix the static file's permalink with `/public`:
+
+```liquid
+<!-- src/sitemap.liquid -->
+---
+permalink: /public/sitemap.xml
+---
 ```
 
-> ⚠️ One downside to this approach: Vite can't resolve relative paths or import aliases from `preload` tags. If you need these on your site, we recommend going with the passthrough-copy approach instead.
+Now this happens:
+
+1. 11ty processes the template and writes it to a `public` folder: `.11ty-build-<hash>/public/sitemap.xml`.
+2. Vite sees the `public` folder and copies it into your final build output directory, giving you `_site/sitemap.xml`. Note that the nested `/public` directory disappears from the final build output!
 
 #### Approach 2: Passthrough-copying a `public` folder
 
