@@ -93,6 +93,14 @@ There are two situations where you may encounter this pitfall:
 - Permalinked files that aren't HTML. Ex. a `sitemap.njk` permalinked to a `sitemap.xml`
 - Non-HTML resources that aren't referenced elsewhere. Ex. a passthrough copied `robots.txt`
 
+This is where the `public/` directory comes in!
+
+### The `public/` directory
+
+In short, anything nested inside a `public/` directory is off-limits for Vite to strip. You can also treat it as a "disappearing" directory, since the directory itself gets flattened in the build output. In other words, `_site/public/robots.txt` simply becomes `_site/robots.txt` without any further processing.
+
+[See Vite's documentation](https://vitejs.dev/guide/assets.html#the-public-directory) for more details and configuration options.
+
 ### Permalinked files
 
 Suppose you're using 11ty to auto-generate a `sitemap.xml` for your site. In 11ty, you'd create this file using your chosen templating language extension and set a root-relative permalink in its front matter, like so:
