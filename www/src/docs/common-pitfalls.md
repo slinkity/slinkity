@@ -6,9 +6,26 @@ For the most part, you should be able to seamlessly migrate your site from 11ty 
 
 ## Static files disappeared from my production build output folder
 
-In an 11ty site, you are free to structure your project however you like. You can put your static assets in a `public` folder outside your [11ty input directory]((https://www.11ty.dev/docs/config/#input-directory)), an `assets` folder in your input directory, a `banana` folder in your `_includes`... You get the idea. But now that Slinkity brings [Vite](https://vitejs.dev/) into the equation, there are a couple gotchas to consider.
+In an 11ty site, you are free to structure your project however you like. You can put your static assets in a `public` folder outside your [11ty input directory]((https://www.11ty.dev/docs/config/#input-directory)), an `assets` folder in your input directory, a `banana` folder in your `_includes`... You get the idea. **As long as you tell 11ty how and where to copy assets to the build output,** you're good to go.
 
-As described in our docs on [how builds work](/how-we-build-your-site/), Vite requires that you place static assets inside a `public` directory if those assets aren't referenced by any other pages (e.g., in `link` tags on a page). Any static asset that isn't referenced by a page and isn't in the `public` directory will be removed from the final build output. For this reason, you may find that certain files disappear from production builds, even though they were technically processed correctly by 11ty.
+Now that Slinkity brings [Vite](https://vitejs.dev/) into the equation, the days of manual passthrough copying are no more 😮 Let's learn how this works.
+
+### The rule: what gets included, and what gets stripped?
+
+Here's how you can think about asset management:
+
+✅ If a resource (stylesheet, image, font, etc) is referenced by an HTML page using 1. a relative path or 2. [an import aliased path](/docs/import-aliases), it'll be included in the build. We recommend #2 when referencing assets outside your build folder; aka anything _not_ passthrough copied. For instance, say we have a `base.scss` file in a `styles/` folder at the root of our project. here's how we can load a stylesheet into an `index.njk` file:
+
+```html
+<!--index.njk-->
+<head>
+  <link rel="stylesheet" href="/@root/styles/base.scss">
+</head>
+```
+
+❌ If a resource is _not_ referenced by an HTML page in any way (no `link`, image `src`, script `src` etc), **it will be stripped from the build.** This is because Vite ignores anything that's 1. not an HTML file and 2. not loaded into any other HTML file.
+
+This is where a `public/` directory comes in.
 
 There are two situations where you may encounter this pitfall:
 
