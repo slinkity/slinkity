@@ -1,6 +1,6 @@
 {
   "name": "@slinkity/renderer-svelte",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Svelte component renderer for the legendary 11ty tool, Slinkity",
   "main": "index.js",
   "files": [
