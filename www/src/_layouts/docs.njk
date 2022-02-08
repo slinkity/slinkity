@@ -76,6 +76,7 @@ styles:
         e.preventDefault;
         e.stopPropagation;
         
+        document.body.classList.remove('no-scroll');
         menu.classList.add('is-hidden');
         // some focus management
         menuButton.setAttribute('aria-expanded', false);
@@ -95,6 +96,7 @@ styles:
 
       // wait for the un-hiding to be _done_
       setTimeout(() => {
+        document.body.classList.add('no-scroll');
         menu.classList.add('is-open');
         menu.focus();
 

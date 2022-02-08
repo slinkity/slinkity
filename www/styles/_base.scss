@@ -22,6 +22,12 @@ body {
       box-shadow: 0 4px 14px var(--color-accent-4);
     }
   }
+
+  &.no-scroll {
+    height: 100vh;
+    height: -webkit-fill-avilable;
+    overflow: hidden;
+  }
 }
 
 main {
