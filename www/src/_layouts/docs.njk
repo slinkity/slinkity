@@ -62,59 +62,55 @@ styles:
   const menu = document.querySelector('[data-menu]');
 
   menuButton.addEventListener('click', (e) => {
-    const openIcon = e.currentTarget.querySelector('[data-icon-burger]');
-    const closeIcon = e.currentTarget.querySelector('[data-icon-close]');
     e.stopPropagation();
     e.preventDefault();
-
+    const openIcon = e.currentTarget.querySelector('[data-icon-burger]');
+    const closeIcon = e.currentTarget.querySelector('[data-icon-close]');
+    
     const closeMenu = () => {
-      const shrink = () => {
-        menu.classList.add('is-hidden'); // hide the menu
-        console.log('triggered!');
-
-        menuButton.focus(); // focus the button
-
-        menu.removeAttribute('tabindex'); // restore normal focus behaviour
-        menu.removeEventListener('transitionend', shrink); // removing the event makes sure that any animations inside won't trigger it again
-      }
-      
-      // switch out the icons
       openIcon.style.display = 'block';
       closeIcon.style.display = 'none';
       
       menu.classList.remove('is-open'); // animate the menu out
-      menu.addEventListener('transitionend', shrink, false);
+      menu.addEventListener('transitionend', function shrink(e) {
+        e.preventDefault;
+        e.stopPropagation;
+        
+        menu.classList.add('is-hidden');
+        // some focus management
+        menuButton.setAttribute('aria-expanded', false);
+        menuButton.focus();
+        menu.removeAttribute('tabindex');
+        // transitionend cleanup
+        menu.removeEventListener('transitionend', shrink);
+      }, false);
     }
 
-    if ( e.currentTarget.getAttribute('aria-expanded') == "false" ) { // open the menu!
-      // switch out the icons
+    if ( menu.classList.contains('is-hidden') ) { // open the menu!
       openIcon.style.display = 'none';
       closeIcon.style.display = 'block';
       
-      // make the menu programmatically focusable
       menu.setAttribute('tabindex', -1);
-      
-      menu.classList.remove('is-hidden'); // unhide the menu
+      menu.classList.remove('is-hidden');
 
-      /*const watchClickOutside = (e) => {
-        if ( !e.target.closest('[data-menu]') ) {
-          closeMenu();
-          console.log('clicked outside!');
-          document.removeEventListener('click', watchClickOutside);
-        }
-      }*/
+      // wait for the un-hiding to be _done_
       setTimeout(() => {
-        menu.classList.add('is-open'); // animate the menu in
-        menu.focus(); // focus the menu
+        menu.classList.add('is-open');
+        menu.focus();
 
         // watch for clicks outside
-        //document.addEventListener('click', watchClickOutside, false);
+        document.addEventListener('click', function watchClickOutside(e) {
+          if ( !e.target.closest('[data-menu]') ) {
+            e.stopPropagation();
+            closeMenu();
+            document.removeEventListener('click', watchClickOutside);
+          }
+        }, false);
       }, 100);
 
       e.currentTarget.setAttribute('aria-expanded', true);
-    } else { // close the menu!
+    } else {
       closeMenu();
-      e.currentTarget.setAttribute('aria-expanded', false);
     }
   });
 </script>
