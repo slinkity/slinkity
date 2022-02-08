@@ -2,6 +2,7 @@
   display: inline-flex;
   flex-direction: column;
   align-items: center;
+  position: relative;
 
   & *:not(.contributor__title) {
     position: static;
