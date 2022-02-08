@@ -97,3 +97,26 @@ blockquote {
       );
   }
 }
+
+.skip-to-main {
+  @include gradient-link;
+  display: inline-block;
+  margin-top: 12px;
+  position: absolute;
+  margin-left: 20px;
+  padding: 8px 14px;
+  text-decoration: none;
+
+  --bg: var(--color-accent-4);
+  color: var(--color-dark);
+  font-weight: bold;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 20;
+
+  &:focus,
+  :focus-within {
+    opacity: 1;
+    pointer-events: all;
+  }
+}
