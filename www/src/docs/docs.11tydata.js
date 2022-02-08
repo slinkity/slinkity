@@ -9,6 +9,7 @@ const navSlugSortOrder = [
   'component-pages-layouts',
   'partial-hydration',
   'styling',
+  'asset-management',
   'import-aliases',
   'deployment',
 ]
