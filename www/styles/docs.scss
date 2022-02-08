@@ -2,19 +2,60 @@
 
 .docs {
   --nav-width: 240px;
+  --nav-height: 4rem;
   --site-gap: clamp(2em, 4.25vmax, 4em);
 
   // Top-Nav
   &__primary-nav {
     background-color: var(--color-primary-8);
+    position: relative;
+    z-index: 1;
+    box-shadow: var(--shadow-heavy);
 
     &__content {
       max-width: var(--content-max-width);
       margin-inline: auto;
-      height: 4rem;
+      height: var(--nav-height);
       display: flex;
       align-items: center;
       gap: 2em;
+      padding: var(--default-padding);
+      padding-block: 0;
+      @media (min-width: breakpoint(tablet)) {
+        padding-inline: 1.25em;
+      }
+      @media (min-width: breakpoint(wrapper)) {
+        padding-inline: 0;
+      }
+    }
+
+    &-button {
+      border: none;
+      padding: 0;
+      background-color: transparent;
+      display: inlne-flex;
+      align-items: center;
+      font-size: 1.25em;
+      color: var(--color-primary-1);
+      transition: color var(--animation-base-duration) var(--animation-base-easing);
+      @media (min-width: breakpoint(tablet)) {
+        display: none;
+      }
+
+      &:hover {
+        cursor: pointer;
+        color: var(--color-accent-3);
+      }
+
+      & > * {
+        pointer-events: none; // makes sure, that the click event gets triggered, even if clicked on its child elements
+      }
+
+      svg {
+        display: block;
+        width: 1em;
+        height: auto;
+      }
     }
 
     a:not(.docs__home-link) {
@@ -68,6 +109,31 @@
     flex-direction: column;
     gap: 1.5em;
     @include gradient-links;
+    @media (max-width: breakpoint(tablet)) {
+      position: absolute;
+      width: 0;
+      min-width: max-content;
+      height: 100%;
+      opacity: 0;
+      overflow: hidden;
+      top: 0;
+      padding-block-start: calc(var(--nav-height) + 1em);
+      left: 0;
+      z-index: 0;
+      border-radius: 0;
+      transition-property: width, opacity;
+      transition-duration: var(--animation-base-duration);
+      transition-timing-function: var(--animation-base-easing);
+
+      &.is-hidden {
+        display: none;
+      }
+
+      &.is-open {
+        width: 75vw;
+        opacity: 1;
+      }
+    }
     @media (min-width: breakpoint(tablet)) {
       grid-column: side-start / side-end;
     }
