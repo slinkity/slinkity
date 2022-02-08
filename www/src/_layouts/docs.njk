@@ -9,7 +9,8 @@ styles:
     <div class="docs__primary-nav__content">
       <a class="docs__home-link" href="/docs">
         {% include 'slinkity-simplified-logo.svg' %}
-        <span class="hide__tablet">Slinkity <i>docs</i></span>
+        <span class="hide__tablet">Slinkity <i>docs</i>
+        </span>
       </a>
       <a class="hide__tablet" href="/">Homepage</a>
       <a class="external-link" href="https://github.com/slinkity/slinkity">
@@ -23,17 +24,17 @@ styles:
   <main class="docs__container">
     <ul class="docs__side-nav" role="list">
       {%- for navLink in navLinksSorted -%}
-      <li>
-        <a
+        <li>
+          <a
           href="{{navLink.href}}"
           {% if navLink.href === page.url %}aria-current="page"{% endif %}
         >
-          {{navLink.title}}
-        </a>
-      </li>
+            {{navLink.title}}
+          </a>
+        </li>
       {%- endfor -%}
     </ul>
-    <article class="docs__container__content">
+    <article class="docs__container__content" id="main-content" tabindex="-1">
       <h1>{{ title }}</h1>
       {{ content | safe }}
     </article>
