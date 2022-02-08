@@ -12,7 +12,10 @@ styles:
           <svg data-icon-burger width="16" height="16" viewbox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15.333 2.286H.667C.3 2.286 0 1.77 0 1.143 0 .514.3 0 .667 0h14.666C15.7 0 16 .514 16 1.143c0 .628-.3 1.143-.667 1.143Zm0 6.857H.667C.3 9.143 0 8.629 0 8s.3-1.143.667-1.143h14.666C15.7 6.857 16 7.371 16 8s-.3 1.143-.667 1.143Zm0 6.857H.667C.3 16 0 15.486 0 14.857c0-.628.3-1.143.667-1.143h14.666c.367 0 .667.515.667 1.143 0 .629-.3 1.143-.667 1.143Z" fill="currentcolor"/></svg>
           <svg data-icon-close style="display: none;" width="14" height="13" viewbox="0 0 14 13" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="m7 7.76 4.377 4.376c.26.26.835.108 1.28-.336.444-.445.596-1.02.337-1.28L8.616 6.143l4.378-4.377c.259-.26.107-.836-.337-1.28-.444-.444-1.02-.596-1.28-.337L7 4.527 2.623.149c-.26-.259-.835-.107-1.28.337C.9.93.747 1.506 1.006 1.766l4.378 4.377-4.377 4.377c-.26.26-.108.835.336 1.28.445.444 1.02.596 1.28.336L7 7.76Z" fill="currentcolor"/></svg>
         </span>
-        <span class="sr-only">open menu</span>
+        <span class="sr-only">
+          <span data-text-open>open menu</span>
+          <span data-text-close style="display: none;">close menu</span>
+        </span>
       </button>
       <a class="docs__home-link" href="/docs">
         {% include 'slinkity-simplified-logo.svg' %}
@@ -66,10 +69,14 @@ styles:
     e.preventDefault();
     const openIcon = e.currentTarget.querySelector('[data-icon-burger]');
     const closeIcon = e.currentTarget.querySelector('[data-icon-close]');
+    const openText = e.currentTarget.querySelector('[data-text-open]');
+    const closeText = e.currentTarget.querySelector('[data-text-close]');
     
     const closeMenu = () => {
       openIcon.style.display = 'block';
+      openText.style.display = 'block';
       closeIcon.style.display = 'none';
+      closeText.style.display = 'none';
       
       menu.classList.remove('is-open'); // animate the menu out
       menu.addEventListener('transitionend', function shrink(e) {
@@ -89,7 +96,9 @@ styles:
 
     if ( menu.classList.contains('is-hidden') ) { // open the menu!
       openIcon.style.display = 'none';
+      openText.style.display = 'none';
       closeIcon.style.display = 'block';
+      closeText.style.display = 'block';
       
       menu.setAttribute('tabindex', -1);
       menu.classList.remove('is-hidden');
