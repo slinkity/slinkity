@@ -96,6 +96,11 @@
           transition-property: opacity;
           transition-duration: inherit;
           transition-timing-function: inherit;
+
+          @media (forced-colors: active) {
+            forced-color-adjust: none;
+            background-color: LinkText;
+          }
         }
 
         &:where(:hover, :focus) {
