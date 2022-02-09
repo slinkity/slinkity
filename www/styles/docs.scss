@@ -19,11 +19,9 @@
 
     a:not(.docs__home-link) {
       @include gradient-link;
+      @include underline-link-in-forced-colors;
       color: white;
       text-decoration: none;
-      @media (forced-colors: active) {
-        text-decoration: underline;
-      }
     }
   }
 
@@ -78,14 +76,12 @@
 
     a,
     a:visited {
+      @include underline-link-in-forced-colors;
       display: block;
       padding: 0.5rem 1rem;
       text-decoration: none;
       color: var(--white);
       position: relative;
-      @media (forced-colors: active) {
-        text-decoration: underline;
-      }
 
       &[aria-current="page"] {
         color: var(--color-accent-4);

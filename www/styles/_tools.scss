@@ -80,3 +80,9 @@
   }
   @include gradient-links;
 }
+
+@mixin underline-link-in-forced-colors {
+  @media (forced-colors: active) {
+    text-decoration: underline;
+  }
+}
