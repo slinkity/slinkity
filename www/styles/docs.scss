@@ -132,6 +132,7 @@
       &.is-open {
         width: 75vw;
         opacity: 1;
+        overflow: auto;
       }
     }
     @media (min-width: breakpoint(tablet)) {
