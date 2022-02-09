@@ -15,11 +15,11 @@
   }
 
   &__image {
+    @include outline-in-forced-colors;
     max-width: 150px;
     height: auto;
     border-radius: 100%;
     overflow: hidden;
-    outline: 2px solid transparent; // Ensures outline shows up in forced colors mode
   }
 
   &__username {

@@ -65,6 +65,7 @@ blockquote {
   --bg: var(--color-primary-7);
   --padding: clamp(1rem, 2vmax, 1.5em);
   @include gradient-links;
+  @include outline-in-forced-colors;
 
   --gradient-accent-width: 0.5rem;
   margin-inline: 0;
@@ -74,7 +75,6 @@ blockquote {
   border-radius: 2px;
   overflow: hidden;
   padding-inline-start: calc(var(--padding) + var(--gradient-accent-width));
-  outline: 2px solid transparent; // Ensures outline shows up in forced colors mode
 
   > p {
     margin-block: 0;
