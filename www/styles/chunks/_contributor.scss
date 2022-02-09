@@ -15,11 +15,13 @@
   }
 
   &__image {
-    border: 2px solid transparent; // provide border in Forced Colors mode
     max-width: 150px;
     height: auto;
     border-radius: 100%;
     overflow: hidden;
+    @media (forced-colors: active) {
+      border: 2px solid transparent;
+    }
   }
 
   &__username {
