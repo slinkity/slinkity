@@ -21,10 +21,9 @@
       @include gradient-link;
       color: white;
       text-decoration: none;
-
       @media (forced-colors: active) {
         text-decoration: underline;
-	  }
+      }
     }
   }
 
@@ -103,10 +102,9 @@
           transition-property: opacity;
           transition-duration: inherit;
           transition-timing-function: inherit;
-
           @media (forced-colors: active) {
             forced-color-adjust: none;
-            background-color: LinkText;
+            background-color: linktext;
           }
         }
 
