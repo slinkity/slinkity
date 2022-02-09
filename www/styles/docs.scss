@@ -110,7 +110,6 @@
 
           &::before {
             opacity: 0;
-
             @media (forced-colors: active) {
               opacity: 1;
             }
