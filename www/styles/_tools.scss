@@ -93,6 +93,6 @@
 
 @mixin outline-in-forced-colors($outline-width: 2px) {
   @media (forced-colors: active) {
-    outline: $outline-width;
+    outline: $outline-width solid transparent;
   }
 }
