@@ -15,7 +15,7 @@
   }
 
   &__image {
-    @include outline-in-forced-colors;
+    @include outline-in-forced-colors();
     max-width: 150px;
     height: auto;
     border-radius: 100%;
