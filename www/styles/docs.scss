@@ -21,6 +21,10 @@
       @include gradient-link;
       color: white;
       text-decoration: none;
+
+      @media (forced-colors: active) {
+        text-decoration: underline;
+	  }
     }
   }
 
