@@ -65,6 +65,7 @@
     top: var(--site-gap);
     margin-block-start: 0;
     box-shadow: var(--shadow-heavy);
+    outline: 2px solid transparent; // outline for forced colors mode
     @include gradient-links;
     @media (min-width: breakpoint(tablet)) {
       grid-column: side-start / side-end;
