@@ -66,16 +66,18 @@
     "typescript": "^4.4.4"
   },
   "scripts": {
-    "build:slinkity": "node packages/slinkity/build.js",
-    "dev:slinkity": "node packages/slinkity/build.js --watch",
-    "lint": "npm-run-all --parallel lint:css lint:js",
-    "lint:fix": "npm-run-all --parallel lint:*:fix",
+    "build": "pnpm -r --filter slinkity run build",
+    "dev": "pnpm -r --filter slinkity run dev",
+    "lint": "run-p lint:css lint:js",
+    "lint:fix": "run-p lint:*:fix",
     "lint:css": "stylelint \"{packages,www}/**/*.scss\"",
     "lint:css:fix": "stylelint --fix \"{packages,www}/**/*.scss\"",
     "lint:js": "eslint \"packages/**/*.{js,jsx,mjs}\"",
     "lint:js:fix": "eslint --fix \"packages/**/*.{js,jsx,mjs}\"",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "www:build": "npm -C www run build",
+    "www:dev": "npm -C www run dev"
   },
   "jest": {
     "roots": [

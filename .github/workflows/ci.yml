@@ -9,13 +9,19 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v2
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2.0.1
+        with:
+          version: 6.29.1
+
       - name: Set up Node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v2
         with:
           node-version: 14
+          cache: "pnpm"
 
       - name: Install dependencies
-        run: npm i
+        run: "pnpm i"
 
       - name: Run linter
         run: npm run lint
@@ -26,16 +32,22 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v2
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2.0.1
+        with:
+          version: 6.29.1
+
       - name: Set up Node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v2
         with:
           node-version: 14
+          cache: "pnpm"
 
       - name: Install dependencies
-        run: "npm i && cd packages/slinkity && npm i"
+        run: "pnpm i"
 
       - name: Build Slinkity package
-        run: npm run build:slinkity
+        run: pnpm run build
 
   test:
     runs-on: ubuntu-latest
@@ -43,13 +55,19 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v2
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2.0.1
+        with:
+          version: 6.29.1
+
       - name: Set up Node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v2
         with:
           node-version: 14
+          cache: "pnpm"
 
       - name: Install dependencies
-        run: "npm i && cd packages/slinkity && npm i"
+        run: "pnpm i"
 
       - name: Test package
-        run: npm test
+        run: pnpm run test

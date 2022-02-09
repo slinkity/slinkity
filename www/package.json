@@ -4,8 +4,8 @@
   "description": "Landing page for the Slinkity build plugin. To eleventy and beyond!",
   "main": ".eleventy.js",
   "scripts": {
-    "start": "slinkity --serve --incremental",
     "build": "slinkity",
+    "dev": "slinkity --serve --incremental",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

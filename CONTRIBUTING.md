@@ -16,6 +16,7 @@ Glad to see you here. We're open to contributions of all kinds, including:
 - [Working in the Slinkity Framework](#working-in-the-slinkity-framework)
   - ["Framework" vs. "Project"](#framework-vs-project)
   - [Architecture](#architecture)
+  - [General Prerequisites](#general-prerequisites)
   - [Setting up linters](#setting-up-linters)
   - [Running our test suites](#running-our-test-suites)
   - [Running the framework against tester projects](#running-the-framework-against-tester-projects)
@@ -68,6 +69,24 @@ You can learn more about how Slinkity _really_ works under-the-hood in our ARCHI
 
 [**Go explore** 🚀](/ARCHITECTURE.md)
 
+### General Prerequisites
+
+1. Node.js `>=14.18`
+2. pnpm
+
+    We use `pnpm` to install and manage dependencies in our monorepo, which uses `pnpm workspaces`.
+
+    Note: If you want to learn more about pnpm or how to install it, head to their [docs](https://pnpm.io/installation).
+
+
+With those set up, clone this repo and run pnpm install.
+
+```bash
+git clone https://github.com/slinkity/slinkity.git
+cd slinkity
+pnpm install
+```
+
 ### Setting up linters
 
 We use [ESLlint](https://eslint.org/) alongside their [Prettier](https://prettier.io/) plugin to format our code. You'll also notice we don't use semicolons around here. If that scares you... too bad 😈
@@ -77,8 +96,8 @@ And if you use VS Code, **we include a settings.json based on Wes Bos' setup gui
 You can also validate and fix lint errors by running either of these commands:
 
 ```bash
-npm run lint # validate and find lint errors
-npm run lint:fix # (attempt to) fix any errors found
+pnpm run lint # validate and find lint errors
+pnpm run lint:fix # (attempt to) fix any errors found
 ```
 
 ### Running our test suites
@@ -89,13 +108,13 @@ Here's a few commands for running our tests locally:
 
 ```bash
 # run all the tests
-npm run test
+pnpm run test
 # run a specific test file. This uses fuzzy find for matching, so need to copy the whole relative path!
-npm run test -- -t=toHtmlAttrString
+pnpm run test -- -t=toHtmlAttrString
 # update all snapshots
-npm run test -- -u
+pnpm run test -- -u
 # update all snapshots for a specific test file
-npm run test -- -t=toRendererHtml -u
+pnpm run test -- -t=toRendererHtml -u
 ```
 
 ### Running the framework against tester projects
@@ -106,7 +125,7 @@ Next, run this command from your local copy of the Slinkity framework (not your 
 
 ```bash
 # from within packages/slinkity
-npm run dev
+pnpm run dev
 ```
 
 This will spin up an [esbuild-powered](https://esbuild.github.io/) process in "watch" mode. Any changes you make to the framework should appear in the `lib/` directory, complete with live reloading.
@@ -160,9 +179,9 @@ This will build everything in `src/` into a `lib/` folder, and compress the cont
 
 All PRs need to pass these tests before they're ready to merge.
 
-1. **Does the project build?** We'll run our `npm run build` command to ensure everything bundles without errors.
-2. **Are there any lint errors?** We'll use the same `npm run lint` command detailed in the [linter setup section](#setting-up-linters).
-3. **Do all our tests pass?** We'll run `npm run test` over all tests found in `packages/**`, as detailed in the [test suite section](#running-our-test-suites).
+1. **Does the project build?** We'll run our `pnpm run build` command to ensure everything bundles without errors.
+2. **Are there any lint errors?** We'll use the same `pnpm run lint` command detailed in the [linter setup section](#setting-up-linters).
+3. **Do all our tests pass?** We'll run `pnpm run test` over all tests found in `packages/**`, as detailed in the [test suite section](#running-our-test-suites).
 4. **Do our docs deploy successfully?** We use [Netlify](https://www.netlify.com/)'s GitHub extension to generate deploy previews on every PR. If you didn't work on the docs, don't worry! Netlify will skip the deploy preview if there aren't any changes.
 
 ☝️ If you're seeing green checks across the board, congrats! We'll review your PR as soon as we can 😁
