@@ -5,5 +5,9 @@
   &__icon > svg {
     height: 0.8em;
     width: 0.8em;
+
+    @media (forced-colors: active) {
+      color: LinkText;
+    }
   }
 }
