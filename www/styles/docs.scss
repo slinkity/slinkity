@@ -136,6 +136,9 @@
     @media (min-width: breakpoint(tablet)) {
       grid-template-columns: [side-start] var(--nav-width) [side-end content-start] 1fr [content-end];
     }
+    @media (forced-colors: active) {
+      margin-block-start: 0;
+    }
 
     &__content {
       @include content-card;
