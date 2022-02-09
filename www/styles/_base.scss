@@ -65,7 +65,7 @@ blockquote {
   --bg: var(--color-primary-7);
   --padding: clamp(1rem, 2vmax, 1.5em);
   @include gradient-links;
-  @include outline-in-forced-colors();
+  @include outline-in-forced-colors($outline-width: 2px);
 
   --gradient-accent-width: 0.5rem;
   margin-inline: 0;
