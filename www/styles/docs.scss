@@ -19,6 +19,7 @@
 
     a:not(.docs__home-link) {
       @include gradient-link;
+      @include underline-link-in-forced-colors;
       color: white;
       text-decoration: none;
     }
@@ -64,6 +65,7 @@
     top: var(--site-gap);
     margin-block-start: 0;
     box-shadow: var(--shadow-heavy);
+    outline: 2px solid transparent; // outline for forced colors mode
     @include gradient-links;
     @media (min-width: breakpoint(tablet)) {
       grid-column: side-start / side-end;
@@ -75,6 +77,7 @@
 
     a,
     a:visited {
+      @include underline-link-in-forced-colors;
       display: block;
       padding: 0.5rem 1rem;
       text-decoration: none;
@@ -96,6 +99,11 @@
           transition-property: opacity;
           transition-duration: inherit;
           transition-timing-function: inherit;
+          @media (forced-colors: active) {
+            forced-color-adjust: none;
+            background-image: none;
+            background-color: linktext;
+          }
         }
 
         &:where(:hover, :focus) {
@@ -103,6 +111,9 @@
 
           &::before {
             opacity: 0;
+            @media (forced-colors: active) {
+              opacity: 1;
+            }
           }
         }
       }
@@ -193,6 +204,9 @@
       }
       @media (min-width: breakpoint(tablet)) {
         grid-column: content-start / content-end;
+      }
+      @media (forced-colors: active) {
+        padding-block-start: 0;
       }
     }
   }

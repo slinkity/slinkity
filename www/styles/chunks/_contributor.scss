@@ -19,6 +19,9 @@
     height: auto;
     border-radius: 100%;
     overflow: hidden;
+    @media (forced-colors: active) {
+      border: 2px solid transparent;
+    }
   }
 
   &__username {
