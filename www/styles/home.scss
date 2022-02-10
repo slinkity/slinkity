@@ -35,6 +35,7 @@
 
     &-link {
       @include gradient-link;
+      @include underline-link-in-forced-colors;
 
       --bg: var(--color-primary-8);
       padding: 8px 14px;
