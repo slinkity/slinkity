@@ -43,6 +43,11 @@
   --content-max-width: 1024px;
   --rounded-corners: 5px;
   --shadow-heavy: 0 4px 14px #000;
+  --default-padding: clamp(1em, 5vh, 3em) clamp(1em, 4vw, 2em);
+
+  // animation
+  --animation-base-duration: 275ms;
+  --animation-base-easing: ease-in-out;
 
   // font-sizes
   --h1: 64px;
@@ -70,5 +75,4 @@
 
 * {
   box-sizing: border-box;
-  position: relative;
 }
