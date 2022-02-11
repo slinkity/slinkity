@@ -91,7 +91,9 @@
 
     ~ a {
       padding-inline: 0.5em !important;
-      transform: translateX(0.5em); // the background is not visible unless hovered. Meaning, it looks misaligned unless hovered. This offsets it.
+      @media (min-width: 1040px) {
+        transform: translateX(0.5em); // the background is not visible unless hovered. Meaning, it looks misaligned unless hovered. This offsets it.
+      }
     }
   }
 
