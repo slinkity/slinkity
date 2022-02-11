@@ -12,7 +12,7 @@
   "author": "Ben Holmes",
   "license": "MIT",
   "devDependencies": {
-    "@11ty/eleventy": "^1.0.0-beta.9",
+    "@11ty/eleventy": "^1.0.0",
     "@11ty/eleventy-cache-assets": "^2.3.0",
     "@11ty/eleventy-plugin-syntaxhighlight": "^3.1.2",
     "js-yaml": "^3.14.1",
@@ -20,6 +20,6 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "sass": "^1.42.1",
-    "slinkity": "^0.4.2"
+    "slinkity": "*"
   }
 }
