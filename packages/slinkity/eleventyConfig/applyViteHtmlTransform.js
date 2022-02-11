@@ -41,7 +41,7 @@ async function handleSSRComments({
   const pageComponentAttrs = componentAttrStore.getAllByPage(outputPath)
   const serverRenderedComponents = []
   for (const componentAttrs of pageComponentAttrs) {
-    const { path: componentPath, props, hydrate, rendererName } = componentAttrs
+    const { path: componentPath, props, hydrate, rendererName, children } = componentAttrs
     const renderer = rendererMap[rendererName]
     const { default: serverRenderer } = await viteSSR.toCommonJSModule(renderer.server)
     if (renderer.injectImportedStyles) {
@@ -76,8 +76,7 @@ async function handleSSRComments({
       toCommonJSModule: viteSSR.toCommonJSModule,
       componentPath,
       props: propsWithShortcodes,
-      // TODO: add children to componentAttrStore
-      children: '',
+      children,
       hydrate,
     })
     if (serverRendered.css) {
@@ -89,9 +88,16 @@ async function handleSSRComments({
   const html = content
     // server render each component
     .replace(ssrRegex, (_, id) => {
-      const { path: componentPath, props, hydrate, rendererName } = pageComponentAttrs[id]
+      const { path: componentPath, props, hydrate, rendererName, children } = pageComponentAttrs[id]
       const clientRenderer = rendererMap[rendererName].client
-      const loaderScript = toLoaderScript({ componentPath, props, hydrate, id, clientRenderer })
+      const loaderScript = toLoaderScript({
+        componentPath,
+        props,
+        hydrate,
+        id,
+        clientRenderer,
+        children,
+      })
       const attrs = toHtmlAttrString({ [SLINKITY_ATTRS.id]: id })
       return `<${SLINKITY_REACT_MOUNT_POINT} ${attrs}>${serverRenderedComponents[id]}</${SLINKITY_REACT_MOUNT_POINT}>\n${loaderScript}`
     })

@@ -9,10 +9,18 @@ const { normalizePath } = require('vite')
  * @property {string} id - the unique id for a given mount point
  * @property {'eager' | 'lazy'} hydrate - which hydration loader to use
  * @property {Record<string, any>} props - data used when hydrating the component
+ * @property {string} children - Stringified HTML children
  * @param {LoaderScriptParams}
  * @returns {string} String of HTML to run loader in the client
  */
-module.exports = function toLoaderScript({ componentPath, hydrate, id, props, clientRenderer }) {
+module.exports = function toLoaderScript({
+  componentPath,
+  hydrate,
+  id,
+  props,
+  clientRenderer,
+  children,
+}) {
   // TODO: abstract "props" to some other file, instead of stringifying in-place
   // We could be generating identical, large prop blobs
   const componentImportPath = JSON.stringify(normalizePath(componentPath))
@@ -28,6 +36,8 @@ module.exports = function toLoaderScript({ componentPath, hydrate, id, props, cl
       Component: Component${id},
       renderer: renderer${id},
       props: ${stringify(props)},
+      children: \`
+${children}\`,
     });
   </script>`
   } else if (hydrate === 'lazy') {
@@ -39,6 +49,8 @@ module.exports = function toLoaderScript({ componentPath, hydrate, id, props, cl
       toComponent: async () => await import(${componentImportPath}),
       toRenderer: async () => await import(${rendererImportPath}),
       props: ${stringify(props)},
+      children: \`
+${children}\`,
     });
   </script>`
   } else {

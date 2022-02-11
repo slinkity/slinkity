@@ -9,6 +9,7 @@
  * @property {string} path - the component's file path
  * @property {string} rendererName - name of renderer to use for component
  * @property {Record<string, any>} props - all props passed to the component
+ * @property {string} children - stringified HTML children
  * @property {'eager' | 'lazy' | 'static'} hydrate - mode to use when hydrating the component
  * @property {string} pageOutputPath - the page where this component lives, based on 11ty's inputPath property (ex. src/index.html)
  * @property {ID} id - a unique identifier for later retrieval from the store
