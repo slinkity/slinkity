@@ -34,20 +34,23 @@ module.exports = function addComponentShortcode({
     return toSSRComment(id)
   })
 
-  eleventyConfig.addPairedShortcode('componentWrap', function (content, componentPath, ...vargs) {
-    const id = componentAttrStore.push(
-      toComponentAttrStoreEntry({
-        componentPath,
-        vargs,
-        children: content,
-        resolvedImportAliases,
-        extensionToRendererMap,
-        page: this.page,
-      }),
-    )
+  eleventyConfig.addPairedShortcode(
+    'slottedComponent',
+    function (content, componentPath, ...vargs) {
+      const id = componentAttrStore.push(
+        toComponentAttrStoreEntry({
+          componentPath,
+          vargs,
+          children: content,
+          resolvedImportAliases,
+          extensionToRendererMap,
+          page: this.page,
+        }),
+      )
 
-    return toSSRComment(id)
-  })
+      return toSSRComment(id)
+    },
+  )
 }
 
 const argsArrayToPropsObj = function ({ vargs = [], errorMsg = '' }) {
