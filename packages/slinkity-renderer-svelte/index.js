@@ -1,10 +1,9 @@
-const { join } = require('path')
-const packageMeta = require('./package.json')
+const pkg = require('./package.json')
 const { svelte } = require('@sveltejs/vite-plugin-svelte')
 const preprocess = require('svelte-preprocess')
 
-const client = join(packageMeta.name, 'client')
-const server = join(packageMeta.name, 'server')
+const client = `${pkg.name}/client`
+const server = `${pkg.name}/server`
 
 /** @type {import('../slinkity').Renderer} */
 module.exports = {

@@ -11,7 +11,7 @@ const makeAllPackagesExternalPlugin = {
   },
 }
 
-const entryPoints = [path.resolve(__dirname, 'cli/index.js')]
+const entryPoints = ['cli/index.js']
 const isWatchEnabled = process.argv.includes('--watch')
 let watch = false
 if (isWatchEnabled) {
