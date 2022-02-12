@@ -131,7 +131,7 @@ importers:
       react: ^17.0.2
       react-dom: ^17.0.2
       sass: ^1.42.1
-      slinkity: '*'
+      slinkity: workspace:*
     devDependencies:
       '@11ty/eleventy': 1.0.0
       '@11ty/eleventy-cache-assets': 2.3.0
