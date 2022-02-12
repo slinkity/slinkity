@@ -1,8 +1,5 @@
 const { argsArrayToPropsObj } = require('./addComponentShortcodes')
 const { random, datatype } = require('faker')
-const logger = require('../utils/logger')
-
-jest.mock('../utils/logger')
 
 describe('argsArrayToPropsObj', () => {
   it('should generate an empty object for empty arrays', () => {
@@ -29,13 +26,11 @@ describe('argsArrayToPropsObj', () => {
 
     expect(argsArrayToPropsObj({ vargs })).toEqual(expected)
   })
-  it('should log a warning for invalid props array', () => {
+  it('should throw for invalid props array', () => {
     const vargs = ['all work', 'and no play', 'makes Jack']
-    const spy = jest.spyOn(logger, 'log')
     const errorMsg = 'Uh oh! We made a boo boo'
 
-    expect(argsArrayToPropsObj({ vargs, errorMsg })).toEqual({})
-    expect(spy).toHaveBeenCalledWith({ message: errorMsg, type: 'warning' })
+    expect(() => argsArrayToPropsObj({ vargs, errorMsg })).toThrow(new Error(errorMsg))
   })
   it('should return empty object when no params are passed', () => {
     expect(argsArrayToPropsObj({})).toEqual({})

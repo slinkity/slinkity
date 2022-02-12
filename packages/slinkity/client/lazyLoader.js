@@ -5,7 +5,7 @@ const options = {
   threshold: 0,
 }
 
-export default function lazyLoader({ id, props, toComponent, toRenderer }) {
+export default function lazyLoader({ id, props, children, toComponent, toRenderer }) {
   const observer = new IntersectionObserver(async function (entries) {
     for (const entry of entries) {
       if (entry.isIntersecting) {
@@ -13,7 +13,7 @@ export default function lazyLoader({ id, props, toComponent, toRenderer }) {
         if (!target.getAttribute('data-s-is-hydrated')) {
           const { default: renderer } = await toRenderer()
           const { default: Component } = await toComponent()
-          renderer({ Component, target, props })
+          renderer({ Component, target, props, children })
           target.setAttribute('data-s-is-hydrated', true)
         }
       }

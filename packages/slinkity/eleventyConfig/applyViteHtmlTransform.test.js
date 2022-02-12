@@ -22,6 +22,17 @@ function toConvincingUrl(fileName) {
   return `/@fs/Users/person/project/${fileName}`
 }
 
+function toTemplateString({ content, head }) {
+  return `
+<html>
+<head>
+  <title>It's hydration time</title>${head ? `\n${head}` : ''}
+</head>
+<body>${content ? `\n${content}` : ''}
+</body>
+</html>`
+}
+
 describe('applyViteHtmlTransform', () => {
   const environments = ['production', 'development']
   it.each(environments)(
@@ -119,15 +130,7 @@ describe('applyViteHtmlTransform', () => {
     )
 
     it('should inject styles into head', async () => {
-      const content = `
-<html>
-<head>
-  <title>It's hydration time</title>
-  ${SLINKITY_HEAD_STYLES}
-</head>
-<body>
-</body>
-</html>`
+      const content = toTemplateString({ head: SLINKITY_HEAD_STYLES })
       const actual = await handleSSRComments({
         content,
         outputPath,
@@ -139,18 +142,68 @@ describe('applyViteHtmlTransform', () => {
     })
 
     it('should replace SSR comments with server rendered content', async () => {
-      const content = `
-<html>
-<head>
-  <title>It's hydration time</title>
-</head>
-<body>
-  ${componentAttrStore
-    .getAllByPage(outputPath)
-    .map(({ id }) => toSSRComment(id))
-    .join('\n')}
-</body>
-</html>`
+      const content = toTemplateString({
+        content: componentAttrStore
+          .getAllByPage(outputPath)
+          .map(({ id }) => toSSRComment(id))
+          .join('\n'),
+      })
+      const actual = await handleSSRComments({
+        content,
+        outputPath,
+        componentAttrStore,
+        viteSSR,
+        renderers,
+      })
+      expect(actual).toMatchSnapshot()
+    })
+    it('should inject children as string', async () => {
+      const componentAttrStore = toComponentAttrsWithDefaults(
+        Object.entries(componentPathsToMeta).map(([componentPath, { rendererName }]) => ({
+          path: componentPath,
+          pageOutputPath: outputPath,
+          rendererName,
+          children: `<h2>Boy do I love ${rendererName}!</h2>`,
+        })),
+      )
+      const content = toTemplateString({
+        content: componentAttrStore
+          .getAllByPage(outputPath)
+          .map(({ id }) => toSSRComment(id))
+          .join('\n'),
+      })
+
+      const actual = await handleSSRComments({
+        content,
+        outputPath,
+        componentAttrStore,
+        viteSSR,
+        renderers,
+      })
+      expect(actual).toMatchSnapshot()
+    })
+    it('should inject props as object', async () => {
+      const componentAttrStore = toComponentAttrsWithDefaults(
+        Object.entries(componentPathsToMeta).map(([componentPath, { rendererName }]) => ({
+          path: componentPath,
+          pageOutputPath: outputPath,
+          rendererName,
+          props: {
+            rendererName,
+            outputPath,
+            componentPath,
+            nullValue: null,
+            number: 42,
+          },
+        })),
+      )
+      const content = toTemplateString({
+        content: componentAttrStore
+          .getAllByPage(outputPath)
+          .map(({ id }) => toSSRComment(id))
+          .join('\n'),
+      })
+
       const actual = await handleSSRComments({
         content,
         outputPath,
