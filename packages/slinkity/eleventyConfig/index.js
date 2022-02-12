@@ -46,13 +46,13 @@ module.exports = function toEleventyConfig({ userSlinkityConfig, ...options }) {
     })
 
     const resolvedImportAliases = getResolvedAliases(dir)
+    addComponentShortcodes({
+      renderers: userSlinkityConfig.renderers,
+      eleventyConfig,
+      resolvedImportAliases,
+      componentAttrStore,
+    })
     for (const renderer of userSlinkityConfig.renderers) {
-      addComponentShortcodes({
-        renderer,
-        eleventyConfig,
-        resolvedImportAliases,
-        componentAttrStore,
-      })
       if (renderer.page) {
         addComponentPages({
           renderer,

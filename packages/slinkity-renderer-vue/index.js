@@ -1,10 +1,9 @@
-const { join } = require('path')
-const packageMeta = require('./package.json')
+const pkg = require('./package.json')
 const vue = require('@vitejs/plugin-vue')
 
-const client = join(packageMeta.name, 'client')
-const server = join(packageMeta.name, 'server')
-const toComponentByShortcode = join(packageMeta.name, 'StaticHtml')
+const client = `${pkg.name}/client`
+const server = `${pkg.name}/server`
+const toComponentByShortcode = `${pkg.name}/StaticHtml`
 
 /** @type {import('../slinkity').Renderer} */
 module.exports = {
