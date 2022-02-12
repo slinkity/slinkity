@@ -1,5 +1,6 @@
 {
   "name": "slinkity-docs",
+  "private": true,
   "version": "1.0.0",
   "description": "Landing page for the Slinkity build plugin. To eleventy and beyond!",
   "main": ".eleventy.js",
