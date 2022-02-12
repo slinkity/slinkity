@@ -37,7 +37,7 @@ module.exports = function toLoaderScript({
       renderer: renderer${id},
       props: ${stringify(props)},
       children: \`
-${children}\`,
+${children ?? ''}\`,
     });
   </script>`
   } else if (hydrate === 'lazy') {
@@ -50,7 +50,7 @@ ${children}\`,
       toRenderer: async () => await import(${rendererImportPath}),
       props: ${stringify(props)},
       children: \`
-${children}\`,
+${children ?? ''}\`,
     });
   </script>`
   } else {
