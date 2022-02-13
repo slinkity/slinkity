@@ -1,8 +1,19 @@
 <script>
+  /** Labels for each tab button */
   export let tabs = [];
+  /** generates tab and tab panel IDs. A unique ID is recommended! */
+  export let id = "tabs";
+
   let currentTabIdx = 0;
-  let buttonContainer;
-  let tabPanels;
+  let tabEl;
+  let tabPanelEl;
+
+  function toTabId(idx) {
+    return `tabs--${id}--tab--${idx}`;
+  }
+  function toTabPanelId(idx) {
+    return `tabs--${id}--panel--${idx}`;
+  }
 
   function moveFocus(event) {
     if (event.key === "ArrowLeft") {
@@ -18,32 +29,38 @@
 
   $: onCurrentTabChange(currentTabIdx);
   function onCurrentTabChange(newTabIdx) {
-    if (buttonContainer && tabPanels) {
-      const currButton = buttonContainer.querySelector(
+    if (tabEl && tabPanelEl) {
+      const currButton = tabEl.querySelector(
         `button:nth-child(${newTabIdx + 1}`
       );
       currButton.focus();
 
-      const panels = tabPanels.querySelector("slinkity-fragment").children;
+      const panels = tabPanelEl.querySelector("slinkity-fragment").children;
       const currPanel = panels[newTabIdx];
-      for (const panel of panels) {
+      for (const [idx, panel] of [...panels].entries()) {
         panel.setAttribute("hidden", "");
+        panel.setAttribute("role", "tabpanel");
+        panel.setAttribute("aria-labelledby", toTabId(idx));
+        panel.setAttribute("id", toTabPanelId(idx));
       }
       currPanel.removeAttribute("hidden");
     }
   }
 </script>
 
-<h2>Hey!</h2>
-<div bind:this={buttonContainer}>
+<div bind:this={tabEl} on:keydown={moveFocus}>
   {#each tabs as tab, idx}
     <button
+      aria-controls={toTabPanelId(idx)}
+      id={toTabId(idx)}
       aria-current={idx === currentTabIdx}
-      on:keydown={moveFocus}
+      tabindex={idx === currentTabIdx ? "0" : "-1"}
+      role="tab"
+      type="button"
       on:click={() => (currentTabIdx = idx)}>{tab}</button
     >
   {/each}
 </div>
-<div bind:this={tabPanels}>
+<div bind:this={tabPanelEl}>
   <slot />
 </div>

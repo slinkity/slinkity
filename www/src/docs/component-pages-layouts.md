@@ -6,7 +6,7 @@ You're free to use React, Vue, Svelte, and more to create page-level templates. 
 
 ## Prerequisites
 
-{% slottedComponent 'Tabs.svelte', hydrate='lazy', tabs=['React', 'Vue', 'Svelte'] %}
+{% slottedComponent 'Tabs.svelte', hydrate='eager', id="prereqs", tabs=['React', 'Vue', 'Svelte'] %}
 {% renderTemplate "md" %}
 <section>
 You'll want React's suite of dependencies, along with the Slinkity React renderer:
