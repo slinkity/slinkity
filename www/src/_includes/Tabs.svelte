@@ -1,10 +1,12 @@
 <script>
+  import { onDestroy } from "svelte";
+  import { currentTabIdx } from "./currentTabStore.js";
+
   /** Labels for each tab button */
   export let tabs = [];
   /** generates tab and tab panel IDs. A unique ID is recommended! */
   export let id = "tabs";
 
-  let currentTabIdx = 0;
   let tabEl;
   let tabPanelEl;
 
@@ -14,7 +16,7 @@
   function setTabPanelAttrs(currentTabPanels) {
     if (!currentTabPanels?.length) return;
 
-    const currPanel = currentTabPanels[currentTabIdx];
+    const currPanel = currentTabPanels[$currentTabIdx];
     for (const [idx, panel] of [...currentTabPanels].entries()) {
       panel.setAttribute("hidden", "");
       panel.setAttribute("role", "tabpanel");
@@ -32,28 +34,23 @@
   }
 
   function moveFocus(event) {
-    if (event.key === "ArrowLeft") {
-      if (currentTabIdx > 0) {
-        currentTabIdx -= 1;
-      }
-    } else if (event.key === "ArrowRight") {
-      if (currentTabIdx < tabs.length - 1) {
-        currentTabIdx += 1;
-      }
+    let newTabIdx = $currentTabIdx;
+    if (event.key === "ArrowLeft" && $currentTabIdx > 0) {
+      newTabIdx -= 1;
+    } else if (event.key === "ArrowRight" && $currentTabIdx < tabs.length - 1) {
+      newTabIdx += 1;
     }
+    const currButton = tabEl.querySelector(`button:nth-child(${newTabIdx + 1}`);
+    currButton.focus();
+    currentTabIdx.set(newTabIdx);
   }
 
-  $: onCurrentTabChange(currentTabIdx);
-  function onCurrentTabChange(newTabIdx) {
-    if (tabEl && tabPanels) {
-      const currButton = tabEl.querySelector(
-        `button:nth-child(${newTabIdx + 1}`
-      );
-      currButton.focus();
-
+  const unsubscribe = currentTabIdx.subscribe((tabIdx) => {
+    if (tabPanels) {
       setTabPanelAttrs(tabPanels);
     }
-  }
+  });
+  onDestroy(unsubscribe);
 </script>
 
 <div role="tablist" class="tabs" bind:this={tabEl} on:keydown={moveFocus}>
@@ -62,11 +59,11 @@
       class="tab"
       aria-controls={toTabPanelId(idx)}
       id={toTabId(idx)}
-      aria-selected={idx === currentTabIdx}
-      tabindex={idx === currentTabIdx ? "0" : "-1"}
+      aria-selected={idx === $currentTabIdx}
+      tabindex={idx === $currentTabIdx ? "0" : "-1"}
       role="tab"
       type="button"
-      on:click={() => (currentTabIdx = idx)}>{tab}</button
+      on:click={() => currentTabIdx.set(idx)}>{tab}</button
     >
   {/each}
 </div>
