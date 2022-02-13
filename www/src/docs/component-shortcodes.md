@@ -2,17 +2,11 @@
 title: Component shortcodes
 ---
 
-> Vue and Svelte support is coming soon! For now, these docs will be React-specific.
+You can embed React, Vue, Svelte, and more into your existing templates. Let's learn how!
 
 ## Prerequisites
 
-Make sure you have `react` and `react-dom` installed in your project like so:
-
-```bash
-npm i react react-dom --save-dev
-```
-
-With this in place, your Vite server can find any necessary React dependencies.
+{% include 'prereqs.njk' %}
 
 ## Basic usage
 

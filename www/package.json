@@ -6,7 +6,7 @@
   "main": ".eleventy.js",
   "scripts": {
     "build": "slinkity",
-    "dev": "slinkity --serve --incremental",
+    "dev": "slinkity --serve --incremental --quiet",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -16,11 +16,16 @@
     "@11ty/eleventy": "^1.0.0",
     "@11ty/eleventy-cache-assets": "^2.3.0",
     "@11ty/eleventy-plugin-syntaxhighlight": "^3.1.2",
+    "@slinkity/renderer-svelte": "workspace:*",
     "js-yaml": "^3.14.1",
+    "markdown-it": "^12.3.2",
     "markdown-it-anchor": "^8.3.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "sass": "^1.42.1",
     "slinkity": "workspace:*"
+  },
+  "dependencies": {
+    "svelte": "^3.46.2"
   }
 }
