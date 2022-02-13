@@ -144,25 +144,87 @@ function About() {...
 
 We've pushed data _up_ into the data cascade using front matter. So how do you pull data back _down_ in our components?
 
-In short, we need to **"opt in" by choosing the pieces of data our component needs.** Say we want to grab 3 pieces of data as props:
-- The `date` object [supplied by 11ty](https://www.11ty.dev/docs/data-eleventy-supplied/)
-- The page `title` we specified as front matter earlier
-- Some CMS data supplied by [a `.11tydata.js` function](https://www.11ty.dev/docs/data-template-dir/)
+Assuming your page isn't hydrated (see how hydrated props work), all 11ty data is available as props 😁
 
-Using a "regular" 11ty template, all this information would be available right away as variables:
+Say we have a list of incredible, amazing, intelligent Slinkity contributors in a global data file, `_data/contributors.json`:
+
+```json
+[
+  { "name": "Ben Myers", "ghProfile": "https://github.com/BenDMyers" },
+  { "name": "Anthony Campolo", "ghProfile": "https://github.com/ajcwebdev" },
+  { "name": "Thomas Semmler", "ghProfile": "https://github.com/nachtfunke" }
+]
+```
+
+Since [all `_data` files are piped into 11ty's data cascade](https://www.11ty.dev/docs/data-global/), this is now available to your component page via the `contributors` prop:
+
+{% slottedComponent "Tabs.svelte", hydrate="eager", id="page-props", tabs=["React", "Vue", "Svelte"] %}
+{% renderTemplate "md" %}
+<section>
+
+```jsx
+// about.jsx
+export default function About({ contributors }) {
+  return (
+    <ul>
+      {contributors.map(({ name, ghProfile }) => (
+        <li><a href={ghProfile}>{name}</a></li>
+      ))}
+    </ul>
+  )
+}
+```
+</section>
+<section hidden>
 
 ```html
-<!--roll-call.html-->
-{% raw %}
-<h1>{{ title }}</h1>
-<p>Today's date {{ page.date.toISOString() }}</p>
-<ul>
-  {%- for name in cmsData.names -%}
-  <li>{{ name }}</li>
-  {%- endfor -%}
-</ul>
-{% endraw %}
+<!--about.vue-->
+<template>
+  <ul v-for="contributor in contributors">
+    <li>
+      <a href="{{contributor.ghProfile}}">{{contributor.name}}</a>
+    </li>
+  </ul>
+</template>
+
+<script>
+  export default {
+    props: ['contributors'],
+  }
+</script>
 ```
+</section>
+<section hidden>
+
+```html
+<!--about.svelte-->
+<script>
+  export let contributors = []
+</script>
+
+<article>
+  <ul>
+    {#each contributors as contributor}
+      <li>
+        <a href={contributor.ghProfile}>{contributor.name}</a>
+      </li>
+    {/each}
+  </ul>
+</article>
+```
+</section>
+
+{% endrenderTemplate %}
+{% endslottedComponent %}
+
+> To get the most out of these data props, we recommend learning more about the 11ty data cascade. Here's some helpful resources:
+> - 📝 [**The official 11ty docs**](https://www.11ty.dev/docs/data-cascade/)
+> - 🚏 [**A beginner-friendly walkthrough**](https://benmyers.dev/blog/eleventy-data-cascade/) by Ben Myers
+
+
+## Hydrate your page
+
+### Handling props
 
 So how could we pull off something similar in React? Well, let's "request" that data by exporting a `getProps` function:
 
