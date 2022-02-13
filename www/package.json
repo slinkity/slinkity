@@ -5,8 +5,7 @@
   "description": "Landing page for the Slinkity build plugin. To eleventy and beyond!",
   "main": ".eleventy.js",
   "scripts": {
-    "prebuild": "pnpm --filter slinkity run build",
-    "build": "pnpm prebuild && slinkity",
+    "build": "slinkity",
     "dev": "slinkity --serve --incremental --quiet",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
