@@ -45,12 +45,15 @@
     currentTabIdx.set(newTabIdx);
   }
 
-  const unsubscribe = currentTabIdx.subscribe((tabIdx) => {
+  const unsubscribe = currentTabIdx.subscribe(() => {
     if (tabPanels) {
       setTabPanelAttrs(tabPanels);
     }
   });
-  onDestroy(unsubscribe);
+  // TODO: debug why onDestroy fails in production SSR
+  if (typeof window !== "undefined") {
+    onDestroy(unsubscribe);
+  }
 </script>
 
 <div role="tablist" class="tabs" bind:this={tabEl} on:keydown={moveFocus}>
