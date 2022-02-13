@@ -7,14 +7,14 @@ You'll want React's suite of dependencies, along with the Slinkity React rendere
 npm i -D react react-dom @slinkity/renderer-react
 ```
 </section>
-<section>
+<section hidden>
 You'll want to install Vue 3 + the Slinkity Vue renderer:
 
 ```bash
 npm i -D vue@3 @slinkity/renderer-vue
 ```
 </section>
-<section>
+<section hidden>
 You'll want to install Svelte + the Slinkity Svelte renderer:
 
 ```bash
