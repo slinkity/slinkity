@@ -2,17 +2,11 @@
 title: Component pages
 ---
 
-> Vue and Svelte support is coming soon! For now, these docs will be React-specific.
+You're free to use React, Vue, Svelte, and more to create page-level templates. Let's learn how!
 
 ## Prerequisites
 
-Make sure you have `react` and `react-dom` installed in your project like so:
-
-```bash
-npm i react react-dom --save-dev
-```
-
-With this in place, your Vite server can find any necessary React dependencies.
+{% include 'prereqs.njk' %}
 
 ## Creating a component page
 
