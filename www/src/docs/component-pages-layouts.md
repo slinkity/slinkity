@@ -20,7 +20,7 @@ about.jsx|.vue|.svelte
 
 ...And you're ready to start templating. If you're following along at home, you'll want to add some content to this file:
 
-{% slottedComponent "Tabs.svelte", hydrate="lazy", tabs=["React", "Vue", "Svelte"] %}
+{% slottedComponent "Tabs.svelte", hydrate="eager", id="page-templates", tabs=["React", "Vue", "Svelte"] %}
 {% renderTemplate "md" %}
 <section>
 
@@ -88,7 +88,7 @@ For example, let's say you have a simple layout in your project called `_include
 
 You can apply this layout to your `/about` page using front matter:
 
-{% slottedComponent "Tabs.svelte", hydrate="lazy", tabs=["React", "Vue", "Svelte"] %}
+{% slottedComponent "Tabs.svelte", hydrate="eager", id="page-frontmatter", tabs=["React", "Vue", "Svelte"] %}
 {% renderTemplate "md" %}
 <section>
 
