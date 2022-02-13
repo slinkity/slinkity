@@ -130,14 +130,14 @@ importers:
       '@11ty/eleventy': ^1.0.0
       '@11ty/eleventy-cache-assets': ^2.3.0
       '@11ty/eleventy-plugin-syntaxhighlight': ^3.1.2
-      '@slinkity/renderer-svelte': workspace:*
+      '@slinkity/renderer-svelte': 0.1.6
       js-yaml: ^3.14.1
       markdown-it: ^12.3.2
       markdown-it-anchor: ^8.3.1
       react: ^17.0.2
       react-dom: ^17.0.2
       sass: ^1.42.1
-      slinkity: workspace:*
+      slinkity: ^0.6.1-canary.3
       svelte: ^3.46.2
     dependencies:
       svelte: 3.46.4
@@ -3974,6 +3974,18 @@ packages:
       debug: 4.3.2
     dev: true
 
+  /follow-redirects/1.14.7_debug@4.3.3:
+    resolution: {integrity: sha512-+hbxoLbFMbRKDwohX8GkTataGqO6Jb7jGwpAlwgy2bIz25XtRm7KEzJM76R1WiNT5SwZkX4Y75SwBolkpmE7iQ==}
+    engines: {node: '>=4.0'}
+    peerDependencies:
+      debug: '*'
+    peerDependenciesMeta:
+      debug:
+        optional: true
+    dependencies:
+      debug: 4.3.3
+    dev: true
+
   /form-data/3.0.1:
     resolution: {integrity: sha512-RHkBKtLWUVwd7SqRIvCZMEvAMoGUp0XU+seQiZejj0COz3RI3hWP4sCv3gZWWLjJTd7rGwcsF5eKZGii0r/hbg==}
     engines: {node: '>= 6'}
@@ -4327,7 +4339,7 @@ packages:
     engines: {node: '>=8.0.0'}
     dependencies:
       eventemitter3: 4.0.7
-      follow-redirects: 1.14.7_debug@4.3.2
+      follow-redirects: 1.14.7_debug@4.3.3
       requires-port: 1.0.0
     transitivePeerDependencies:
       - debug
