@@ -53,6 +53,7 @@ importers:
   packages/slinkity:
     specifiers:
       browser-sync: ^2.27.5
+      chalk: 4.1.2
       commander: ^5.1.0
       esbuild: ^0.12.29
       esbuild-css-modules-plugin: ^2.0.7
@@ -84,6 +85,7 @@ importers:
       vite: 2.7.13_sass@1.49.0
     devDependencies:
       browser-sync: 2.27.7
+      chalk: 4.1.2
       eslint: 7.32.0
       eslint-config-prettier: 8.3.0_eslint@7.32.0
       eslint-plugin-prettier: 3.4.1_6e6a25a49a944db0fa38418c3ba4bc86
@@ -128,18 +130,25 @@ importers:
       '@11ty/eleventy': ^1.0.0
       '@11ty/eleventy-cache-assets': ^2.3.0
       '@11ty/eleventy-plugin-syntaxhighlight': ^3.1.2
+      '@slinkity/renderer-svelte': workspace:*
       js-yaml: ^3.14.1
+      markdown-it: ^12.3.2
       markdown-it-anchor: ^8.3.1
       react: ^17.0.2
       react-dom: ^17.0.2
       sass: ^1.42.1
       slinkity: workspace:*
+      svelte: ^3.46.2
+    dependencies:
+      svelte: 3.46.4
     devDependencies:
       '@11ty/eleventy': 1.0.0
       '@11ty/eleventy-cache-assets': 2.3.0
       '@11ty/eleventy-plugin-syntaxhighlight': 3.2.2
+      '@slinkity/renderer-svelte': link:../packages/slinkity-renderer-svelte
       js-yaml: 3.14.1
-      markdown-it-anchor: 8.4.1
+      markdown-it: 12.3.2
+      markdown-it-anchor: 8.4.1_markdown-it@12.3.2
       react: 17.0.2
       react-dom: 17.0.2_react@17.0.2
       sass: 1.49.0
@@ -3965,18 +3974,6 @@ packages:
       debug: 4.3.2
     dev: true
 
-  /follow-redirects/1.14.7_debug@4.3.3:
-    resolution: {integrity: sha512-+hbxoLbFMbRKDwohX8GkTataGqO6Jb7jGwpAlwgy2bIz25XtRm7KEzJM76R1WiNT5SwZkX4Y75SwBolkpmE7iQ==}
-    engines: {node: '>=4.0'}
-    peerDependencies:
-      debug: '*'
-    peerDependenciesMeta:
-      debug:
-        optional: true
-    dependencies:
-      debug: 4.3.3
-    dev: true
-
   /form-data/3.0.1:
     resolution: {integrity: sha512-RHkBKtLWUVwd7SqRIvCZMEvAMoGUp0XU+seQiZejj0COz3RI3hWP4sCv3gZWWLjJTd7rGwcsF5eKZGii0r/hbg==}
     engines: {node: '>= 6'}
@@ -4330,7 +4327,7 @@ packages:
     engines: {node: '>=8.0.0'}
     dependencies:
       eventemitter3: 4.0.7
-      follow-redirects: 1.14.7_debug@4.3.3
+      follow-redirects: 1.14.7_debug@4.3.2
       requires-port: 1.0.0
     transitivePeerDependencies:
       - debug
@@ -5599,11 +5596,13 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
-  /markdown-it-anchor/8.4.1:
+  /markdown-it-anchor/8.4.1_markdown-it@12.3.2:
     resolution: {integrity: sha512-sLODeRetZ/61KkKLJElaU3NuU2z7MhXf12Ml1WJMSdwpngeofneCRF+JBbat8HiSqhniOMuTemXMrsI7hA6XyA==}
     peerDependencies:
       '@types/markdown-it': '*'
       markdown-it: '*'
+    dependencies:
+      markdown-it: 12.3.2
     dev: true
 
   /markdown-it/12.3.2:
@@ -7516,7 +7515,6 @@ packages:
   /svelte/3.46.4:
     resolution: {integrity: sha512-qKJzw6DpA33CIa+C/rGp4AUdSfii0DOTCzj/2YpSKKayw5WGSS624Et9L1nU1k2OVRS9vaENQXp2CVZNU+xvIg==}
     engines: {node: '>= 8'}
-    dev: true
 
   /svg-tags/1.0.0:
     resolution: {integrity: sha1-WPcc7jvVGbWdSyqEO2x95krAR2Q=}
