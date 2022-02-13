@@ -8,6 +8,22 @@
   let tabEl;
   let tabPanelEl;
 
+  $: tabPanels = tabPanelEl?.querySelector("slinkity-fragment").children;
+  $: setTabPanelAttrs(tabPanels);
+
+  function setTabPanelAttrs(currentTabPanels) {
+    if (!currentTabPanels?.length) return;
+
+    const currPanel = currentTabPanels[currentTabIdx];
+    for (const [idx, panel] of [...currentTabPanels].entries()) {
+      panel.setAttribute("hidden", "");
+      panel.setAttribute("role", "tabpanel");
+      panel.setAttribute("aria-labelledby", toTabId(idx));
+      panel.setAttribute("id", toTabPanelId(idx));
+    }
+    currPanel.removeAttribute("hidden");
+  }
+
   function toTabId(idx) {
     return `tabs--${id}--tab--${idx}`;
   }
@@ -29,21 +45,13 @@
 
   $: onCurrentTabChange(currentTabIdx);
   function onCurrentTabChange(newTabIdx) {
-    if (tabEl && tabPanelEl) {
+    if (tabEl && tabPanels) {
       const currButton = tabEl.querySelector(
         `button:nth-child(${newTabIdx + 1}`
       );
       currButton.focus();
 
-      const panels = tabPanelEl.querySelector("slinkity-fragment").children;
-      const currPanel = panels[newTabIdx];
-      for (const [idx, panel] of [...panels].entries()) {
-        panel.setAttribute("hidden", "");
-        panel.setAttribute("role", "tabpanel");
-        panel.setAttribute("aria-labelledby", toTabId(idx));
-        panel.setAttribute("id", toTabPanelId(idx));
-      }
-      currPanel.removeAttribute("hidden");
+      setTabPanelAttrs(tabPanels);
     }
   }
 </script>
