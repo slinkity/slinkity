@@ -74,7 +74,12 @@
   <slot />
 </div>
 
-<style>
+<style lang="scss">
+  @mixin focus-ring {
+    outline: 1px solid var(--color-accent-5);
+    outline-offset: -1px;
+  }
+
   .tabs {
     margin-block: 1rem;
   }
@@ -87,9 +92,17 @@
     font-family: inherit;
     position: relative;
     cursor: pointer;
-  }
-  .tab[aria-selected="true"] {
-    background: var(--color-primary-6);
+
+    &:focus-visible {
+      @include focus-ring;
+    }
+
+    &[aria-selected="true"] {
+      background: var(--color-primary-6);
+      @media (forced-colors: active) {
+        @include focus-ring;
+      }
+    }
   }
   .tab::after {
     content: "";
