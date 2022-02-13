@@ -1,4 +1,5 @@
 const pkg = require('./package.json')
+const reactPlugin = require('@vitejs/plugin-react')
 
 const client = `${pkg.name}/client`
 const server = `${pkg.name}/server`
@@ -14,6 +15,7 @@ module.exports = {
   injectImportedStyles: true,
   viteConfig() {
     return {
+      plugins: [reactPlugin()],
       optimizeDeps: {
         include: [client, 'react', 'react/jsx-runtime', 'react/jsx-dev-runtime', 'react-dom'],
         exclude: [server],
