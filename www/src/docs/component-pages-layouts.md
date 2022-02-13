@@ -6,7 +6,7 @@ You're free to use React, Vue, Svelte, and more to create page-level templates. 
 
 ## Prerequisites
 
-{% include 'prereqs.md' %}
+{% include 'prereqs.njk' %}
 
 ## Creating a component page
 

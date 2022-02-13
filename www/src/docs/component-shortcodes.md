@@ -6,7 +6,7 @@ title: Component shortcodes
 
 ## Prerequisites
 
-{% include 'prereqs.md' %}
+{% include 'prereqs.njk' %}
 
 ## Basic usage
 
