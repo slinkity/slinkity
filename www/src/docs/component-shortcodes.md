@@ -2,7 +2,7 @@
 title: Component shortcodes
 ---
 
-> Vue and Svelte support is coming soon! For now, these docs will be React-specific.
+You can embed React, Vue, Svelte, and more into your existing templates. Let's learn how!
 
 ## Prerequisites
 
