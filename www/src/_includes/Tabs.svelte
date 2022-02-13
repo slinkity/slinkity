@@ -86,6 +86,7 @@
     color: white;
     font-family: inherit;
     position: relative;
+    cursor: pointer;
   }
   .tab[aria-selected="true"] {
     background: var(--color-primary-6);
