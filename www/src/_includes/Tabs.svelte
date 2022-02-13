@@ -56,9 +56,10 @@
   }
 </script>
 
-<div bind:this={tabEl} on:keydown={moveFocus}>
+<div class="tabs" bind:this={tabEl} on:keydown={moveFocus}>
   {#each tabs as tab, idx}
     <button
+      class="tab"
       aria-controls={toTabPanelId(idx)}
       id={toTabId(idx)}
       aria-current={idx === currentTabIdx}
@@ -72,3 +73,40 @@
 <div bind:this={tabPanelEl}>
   <slot />
 </div>
+
+<style>
+  .tabs {
+    margin-block: 1rem;
+  }
+  .tab {
+    border: none;
+    background: var(--color-primary-7);
+    padding-inline: 1rem;
+    padding-block: 0.5rem;
+    color: white;
+    font-family: inherit;
+    position: relative;
+  }
+  .tab[aria-current="true"] {
+    background: var(--color-primary-6);
+  }
+  .tab::after {
+    content: "";
+    position: absolute;
+    background: linear-gradient(
+      80deg,
+      var(--bg, var(--color-primary-7)) 33%,
+      var(--gradient-slinkity)
+    );
+    background-size: 300% 100%;
+    background-position-x: 0;
+    transition: background-position-x 0.2s;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+  }
+  .tab[aria-current="true"]::after {
+    background-position-x: 100%;
+  }
+</style>
