@@ -56,13 +56,13 @@
   }
 </script>
 
-<div class="tabs" bind:this={tabEl} on:keydown={moveFocus}>
+<div role="tablist" class="tabs" bind:this={tabEl} on:keydown={moveFocus}>
   {#each tabs as tab, idx}
     <button
       class="tab"
       aria-controls={toTabPanelId(idx)}
       id={toTabId(idx)}
-      aria-current={idx === currentTabIdx}
+      aria-selected={idx === currentTabIdx}
       tabindex={idx === currentTabIdx ? "0" : "-1"}
       role="tab"
       type="button"
@@ -87,7 +87,7 @@
     font-family: inherit;
     position: relative;
   }
-  .tab[aria-current="true"] {
+  .tab[aria-selected="true"] {
     background: var(--color-primary-6);
   }
   .tab::after {
@@ -106,7 +106,7 @@
     right: 0;
     height: 2px;
   }
-  .tab[aria-current="true"]::after {
+  .tab[aria-selected="true"]::after {
     background-position-x: 100%;
   }
 </style>
