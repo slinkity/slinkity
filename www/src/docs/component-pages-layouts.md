@@ -63,7 +63,7 @@ export default function About() {
 
 Now, you should see a tragic tale on `/about` 👀
 
-> Before frantically Googling "state variables don't work in Slinkity template," This is intentional! We _avoid_ hydrating your component clientside by default. To opt-in to using `useState`, vue `ref`s, and the like, jump to our hydration section 💧
+> Before frantically Googling "state variables don't work in Slinkity template," This is intentional! We _avoid_ hydrating your component clientside by default. To opt-in to using `useState`, vue `ref`s, and the like, [jump to our hydration section](#hydrate-your-page) 💧
 
 ## Apply front matter
 
@@ -144,9 +144,9 @@ function About() {...
 
 We've pushed data _up_ into the data cascade using front matter. So how do you pull data back _down_ in our components?
 
-Assuming your page isn't hydrated (see how hydrated props work), all 11ty data is available as props 😁
+Assuming your page isn't hydrated ([see how hydrated props work](#hydrate-your-page)), all 11ty data is magically available as props 😁
 
-Say we have a list of incredible, amazing, intelligent Slinkity contributors in a global data file, `_data/contributors.json`:
+Say we have a list of incredible, amazing, intelligent Slinkity contributors in a global data file called `_data/contributors.json`:
 
 ```json
 [
@@ -224,61 +224,207 @@ export default function About({ contributors }) {
 
 ## Hydrate your page
 
-### Handling props
+We've used components as build-time templating languages. Now let's add some JavaScript into the mix 🥗
 
-So how could we pull off something similar in React? Well, let's "request" that data by exporting a `getProps` function:
+You can enable hydration using the `hydrate` front matter prop:
+
+{% slottedComponent "Tabs.svelte", hydrate="eager", id="page-hydrate-frontmatter", tabs=["React", "Vue", "Svelte"] %}
+{% renderTemplate "md" %}
+<section>
 
 ```jsx
-// roll-call.jsx
-// note: getProps can also be asynchronous
-export function getProps(eleventyData) {
-  return {
-    // map eleventy's generated Date to a "date" prop
-    date: eleventyData.page.date,
-    // map our cmsData to a "names" prop
-    names: eleventyData.cmsData.names,
-    // map the "title" passed down
-    title: eleventyData.title,
-  }
+// about.jsx
+import { useState } from 'react'
+
+export const frontMatter = {
+  hydrate: 'eager',
 }
-export default function RollCall({ date, names, title }) {
-  return ({% raw %}
+
+export default function About() {
+  const [count, setCount] = useState(0)
+
+  return (
     <>
-      <h1>{title}</h1>
-      <p>Today's date {date.toISOString()}</p>
-      <ul>
-        {names.map(name => <li>{name}</li>)}
-      </ul>
+      <p>You've had {count} glasses of water 💧</p>
+      <button onClick={() => setCount(count + 1)}>Add one</button>
     </>
-  ){% endraw %}
+  )
 }
 ```
+</section>
+<section hidden>
+
+```html
+<!--about.vue-->
+<template>
+  <p>You've had {{ count }} glasses of water 💧</p>
+  <button @click="add()">Add one</button>
+</template>
+
+<script>
+  import { ref } from 'vue'
+  export default {
+    frontMatter: {
+      hydrate: 'eager',
+    },
+    setup() {
+      const count = ref(0);
+      const add = () => (count.value = count.value + 1);
+      return { count, add };
+    }
+  }
+</script>
+```
+</section>
+<section hidden>
+
+```html
+<!--about.svelte-->
+<script context="module">
+  export const frontMatter = {
+    hydrate: 'eager',
+  }
+</script>
+<script>
+  let count = 0
+
+  function add() {
+    count += 1
+  }
+</script>
+
+<p>You've had {count} glasses of water 💧</p>
+<button on:click={add}>Add one</button>
+```
+</section>
+
+{% endrenderTemplate %}
+{% endslottedComponent %}
+
+Like [component shortcodes](/docs/component-shortcodes), you're free to use any of [our partial hydration modes](/docs/partial-hydration) (`eager`, `lazy`, etc).
+
+### Handling props
+
+Props work a _bit_ differently now that JS is involved. In order to access 11ty data from your component, you'll need to choose which pieces of data you need.
+
+For instance, say we need to access that same global `contributors` list [from earlier](#use-11ty-data-as-props). We'll use a special `hydrate.props` function from our front matter like so:
+
+
+{% slottedComponent "Tabs.svelte", hydrate="eager", id="page-hydrated-props", tabs=["React", "Vue", "Svelte"] %}
+{% renderTemplate "md" %}
+<section>
+
+```jsx
+// about.jsx
+export const frontMatter = {
+  hydrate: {
+    mode: 'eager',
+    // the result of this function
+    // will be based to your component as props
+    props: (eleventyData) => ({
+      contributors: eleventyData.contributors,
+    })
+  }
+}
+export default function About({ contributors }) {
+  return (
+    <ul>
+      {contributors.map(({ name, ghProfile }) => (
+        <li><a href={ghProfile}>{name}</a></li>
+      ))}
+    </ul>
+  )
+}
+```
+</section>
+<section hidden>
+
+```html
+<!--about.vue-->
+<template>
+  <ul v-for="contributor in contributors">
+    <li>
+      <a href="{{contributor.ghProfile}}">{{contributor.name}}</a>
+    </li>
+  </ul>
+</template>
+
+<script>
+  export default {
+    props: ['contributors'],
+    frontMatter: {
+      hydrate: {
+        mode: 'eager',
+        // the result of this function
+        // will be based to your component as props
+        props: (eleventyData) => ({
+          contributors: eleventyData.contributors,
+        })
+      }
+    }
+  }
+</script>
+```
+</section>
+<section hidden>
+
+```html
+<!--about.svelte-->
+<script context="module">
+  export const frontMatter = {
+    hydrate: {
+      mode: 'eager',
+      // the result of this function
+      // will be based to your component as props
+      props: (eleventyData) => ({
+        contributors: eleventyData.contributors,
+      })
+    }
+  }
+</script>
+<script>
+  export let contributors = []
+</script>
+
+<article>
+  <ul>
+    {#each contributors as contributor}
+      <li>
+        <a href={contributor.ghProfile}>{contributor.name}</a>
+      </li>
+    {/each}
+  </ul>
+</article>
+```
+</section>
+
+{% endrenderTemplate %}
+{% endslottedComponent %}
 
 A few takeaways here:
 
-1. We export a `getProps` function from our component file
-2. Slinkity finds this function _at build time_ and passes in all the 11ty data available
-3. We choose the pieces of `eleventyData` we want as props
-
-Then, our component has access to everything `getProps` returns. Nothing more, nothing less.
+1. We update `hydrate: "eager"` to `hydrate: { mode: "eager" }`
+2. We include a `hydrate.props` function for Slinkity to decide which props our component needs
+3. Slinkity runs this function _at build time_ (not on the client!) to decide which props to generate
+4. These props are accessible from your browser-rendered component
 
 ### 🚨 (Important!) Being mindful about your data
 
 You may be wondering, "why can't _all_ the `eleventyData` get passed to my component as props? This seems like an extra step."
 
-Well, it all comes down to the end user's experience. Remember that we're sending your JS-driven component to the browser so pages can be interactive ([unless you say otherwise](/docs/partial-hydration/)). If we sent all that `eleventyData` along with it, **the user would have to download that huge data blob for every component on your site.** 😮
+Well, it all comes down to the end user's experience. Remember that we're sending your JS-driven component to the browser so pages can be interactive. If we sent all that `eleventyData` along with it, **the user would have to download that huge data blob for every component on your site.** 😮
 
-So, we added `getProps` as a way to pick the data that you need, and "filter out" the data that you don't.
+So, we added `hydrate.props` as a way to pick the data that you need, and "filter out" the data that you don't.
 
-[11ty's collections object](https://www.11ty.dev/docs/collections/) is a prime example of where `getProps` shines. This object contains references to _every_ page on your site, plus all the data those pages receive. Needless to say, that blob can get pretty big! We suggest you:
+[11ty's collections object](https://www.11ty.dev/docs/collections/) is a prime example of where `hydrate.props` shines. This object contains references to _every_ page on your site, plus all the data those pages receive. Needless to say, that blob can get pretty big! We suggest you:
 
-```jsx
+```js
 // ❌ Don't pass everything
-function getProps({ collections }) {
+props({ collections }) {
   return { collections }
 }
 // ✅ Map out the pieces you need
-function getProps({ collections }) {
+props({ collections }) {
   return {
     blogPostUrls: collections.blogPosts.map(
       blogPost => blogPost.page.url
@@ -287,36 +433,10 @@ function getProps({ collections }) {
 }
 ```
 
-### Can I call `getProps` inside my components?
+### Can I call `frontMatter.hydrate.props()` inside my components?
 
-_Technically_ yes, but we wouldn't recommend it! Note that Slinkity calls `getProps` at _build-time_ to figure out which resources to bundle. This means your `getProps` function is _not_ sent to the browser; it's only run by that shiny CLI command. This is very similar to [NextJS' `getStaticProps`](https://nextjs.org/docs/basic-features/data-fetching#getstaticprops-static-generation) or [NuxtJS' data fetchers](https://nuxtjs.org/docs/2.x/features/data-fetching).
+_Technically_ yes, but we wouldn't recommend it. Note that Slinkity calls this function at _build-time_ to figure out which resources to bundle. In other words, it's not meant to re-run in the browser. This is very similar to [NextJS' `getStaticProps`](https://nextjs.org/docs/basic-features/data-fetching#getstaticprops-static-generation) or [NuxtJS' data fetchers](https://nuxtjs.org/docs/2.x/features/data-fetching).
 
-## Accessing shortcodes
-
-If you want to replace some existing 11ty templates with component-ified pages, you might be thinking "okay, but how can I access my shortcodes?"
-
-Well, you can't go writing shortcodes within the component itself. But you _can_ access shortcodes at the build step using `getProps`! As long a shortcode is accessible either as a "global" shortcode or a "javascript function:"
-
-```js
-// .eleventy.js
-module.exports = function(eleventyConfig) {
-  // either this...
-  eleventyConfig.addJavaScriptFunction('make10xEngineer', (eng) => eng * 10)
-  // ...or this
-  eleventyConfig.addShortcode('make10xEngineer', (eng) => eng * 10)
-}
-```
-
-You can access it from the `shortcodes` key like so:
-
-```js
-function getProps(eleventyData) {
-  const oneXEngineer = 1
-  return {
-    tenXEngineer: eleventyData.shortcodes.make10xEngineer(oneXEngineer)
-  }
-}
-// -> { tenXEngineer: 10 }
-```
+Oh, and for more on hydration options...
 
 **[Learn the different ways to render components →](/docs/partial-hydration/)**
