@@ -8,131 +8,139 @@ You're free to use React, Vue, Svelte, and more to create page-level templates. 
 
 {% include 'prereqs.md' %}
 
-## Creating a component page
+## Create a component page
 
-Think of component pages like any other template on your 11ty site. For instance, say we wanted to create an `/about` page with an interactive image carousel. We can create an `about.jsx` file alongside the other pages on our site:
+Think of component pages like any other template on your 11ty site. For instance, you can add a `/about` page alongside your others routes like so:
 
-```jsx
+```bash
 index.html
-about.jsx
 blog.md
+about.jsx|.vue|.svelte
 ```
 
-...And we're ready to go! If you're following along at home, you likely received an error message that `about.jsx` doesn't export anything. Let's change that:
+...And you're ready to start templating. If you're following along at home, you'll want to add some content to this file:
 
-```jsx
-import React from 'react'
-// yes, this import is still necessary
-// we plan to remove this requirement soon!
-
-function About() {
-  return (
-    <p>Did YOU ever hear the Tragedy of Darth Plagueis the Wise?</p>
-  )
-}
-
-export default About
-```
-
-Now, you should see our tragic tale on `/about/`
-
-> Note: You will need to include that trailing slash `/` for our Vite server to find the page. This is because our JS bundle lives on `/about`, which trips up the Vite development server. But don't worry, that trailing slash isn't necessary for production builds if your hosting solution handles that for you!
-
-## Applying front matter
-
-If you're familiar with 11ty, you've likely worked with front matter before. It works the same way for component-based pages as well:
+{% slottedComponent "Tabs.svelte", hydrate="lazy", tabs=["React", "Vue", "Svelte"] %}
+{% renderTemplate "md" %}
+<section>
 
 ```jsx
 // about.jsx
-export const frontMatter = {
-  title: 'About me'
+export default function About() {
+  return (
+    <article>
+      <h2>A tragic tale</h2>
+      <p>Did YOU ever hear the Tragedy of Darth Plagueis the Wise?</p>
+    </article>
+  )
 }
-
-function About() {...
 ```
-
-You can think of front matter as a way to pass information "upstream" for other templates to read from. For instance, this `title` key is now accessible from any layout templates applied to our page (which we'll explore in the next section!). See [11ty's front matter documentation](https://www.11ty.dev/docs/data-frontmatter/) for more on how the data cascade fits into this.
-
-### Example: Applying layouts
-
-Now, let's wrap our page in a layout template. You may have noticed we're wrapping your component with some `html` and `body` tags automatically, because we're nice like that 🙃. But you may have some metadata or extra wrapper elements to include!
-
-Let's build on our example by creating a `layout.html` under our `_includes` directory.
-
-```
-_includes 📁
- | layout.html
-about.jsx
-```
-
-You can learn more about layout chaining [from the 11ty docs](https://www.11ty.dev/docs/layouts/). Now let's populate our `layout.html` with some content:
+</section>
+<section hidden>
 
 ```html
-{% raw %}
-<!DOCTYPE html>
+<!--about.vue-->
+<template>
+  <article>
+    <h2>A tragic tale</h2>
+    <p>Did YOU ever hear the Tragedy of Darth Plagueis the Wise?</p>
+  </article>
+</template>
+```
+</section>
+<section hidden>
+
+```html
+<!--about.svelte-->
+<article>
+  <h2>A tragic tale</h2>
+  <p>Did YOU ever hear the Tragedy of Darth Plagueis the Wise?</p>
+</article>
+```
+</section>
+{% endrenderTemplate %}
+{% endslottedComponent %}
+
+Now, you should see a tragic tale on `/about` 👀
+
+> Before frantically Googling "state variables don't work in Slinkity template," This is intentional! We _avoid_ hydrating your component clientside by default. To opt-in to using `useState`, vue `ref`s, and the like, jump to our hydration section 💧
+
+## Apply front matter
+
+If you're familiar with 11ty, you've likely worked with front matter before. It allows you to associate "data" with your current template, which can be picked up by [layouts](https://www.11ty.dev/docs/layouts/), [11ty's collections API](https://www.11ty.dev/docs/collections/), and more (see [11ty's front matter documentation](https://www.11ty.dev/docs/data-frontmatter/) for full details).
+
+For example, let's say you have a simple layout in your project called `_includes/base.njk`. This layout will:
+1. Inject a given route's `title` property into the page `<title>`
+2. Apply the content of that layout between some `<body>` tags
+
+```html{% raw %}
+<!--_includes/base.njk-->
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  ...
   <title>{{ title }}</title>
 </head>
 <body>
-  <h1>A tragic tale</h1>
   {{ content }}
 </body>
 </html>
-{% endraw %}
-```
+```{% endraw %}
 
-What we expect:
+You can apply this layout to your `/about` page using front matter:
 
-1. {% raw %}`{{ title }}`{% endraw %} uses the "title" attribute from our page's front matter
-2. {% raw %}`{{ content }}`{% endraw %} renders our component page
-
-To wire up our layout, we just need a little front matter:
+{% slottedComponent "Tabs.svelte", hydrate="lazy", tabs=["React", "Vue", "Svelte"] %}
+{% renderTemplate "md" %}
+<section>
 
 ```jsx
 // about.jsx
 export const frontMatter = {
-  title: 'About me',
-  layout: 'layout.html',
+  title: 'A tragic tale',
+  layout: 'base.njk',
 }
 
 function About() {...
 ```
-
-If all goes well, we should see a build output like this under [our build directory](https://www.11ty.dev/docs/config/):
+</section>
+<section hidden>
 
 ```html
-<!--_site/about/index.html-->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>About me</title>
-</head>
+<!--about.vue-->
+<template>
+  ...
+</template>
 
-<body>
-  <h1>A tragic tale</h1>
-  <!--components are placed inside a custom web component-->
-  <!--that handles all the JS fetching and loading-->
-  <slinkity-react-mount-point>
-    <p data-reactroot="">
-      Did YOU ever hear the Tragedy of Darth Plagueis the Wise?
-    </p>
-  </slinkity-react-mount-point>
-
-  <script type="module">
-    // React loaders go here
-  </script>
-</body>
-</html>
+<script>
+  export const frontMatter = {
+    title: 'A tragic tale',
+    layout: 'base.njk',
+  }
+</script>
 ```
+</section>
+<section hidden>
 
-## Using 11ty data as props
+> Note: don't forget `context="module"` here! This allows us to export data from our component. [See the Svelte docs](https://svelte.dev/tutorial/module-exports) for more.
+
+```html
+<!--about.svelte-->
+<script context="module">
+  export const frontMatter = {
+    title: 'A tragic tale',
+    layout: 'base.njk',
+  }
+</script>
+
+<article>
+  ...
+</article>
+```
+</section>
+
+{% endrenderTemplate %}
+{% endslottedComponent %}
+
+## Use 11ty data as props
 
 We've pushed data _up_ into the data cascade using front matter. So how do you pull data back _down_ in our components?
 
