@@ -2,6 +2,6 @@
   NPM_FLAGS = "--version"
 
 [build]
-  base = "."
-  publish = "www/_site"
-  command = "npx pnpm i -r --store=node_modules/.pnpm-store && cd www && npm run build"
+  base = "www"
+  publish = "_site"
+  command = "npx pnpm i --store=node_modules/.pnpm-store && npx pnpm build"
