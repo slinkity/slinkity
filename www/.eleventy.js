@@ -1,3 +1,4 @@
+const { EleventyRenderPlugin } = require("@11ty/eleventy");
 const syntaxHighlight = require('@11ty/eleventy-plugin-syntaxhighlight')
 const yaml = require('js-yaml')
 const markdownIt = require('markdown-it')
@@ -34,6 +35,7 @@ module.exports = function config(eleventyConfig) {
   eleventyConfig.setLibrary('md', markdownConfigured)
   eleventyConfig.addPassthroughCopy('public')
   eleventyConfig.addDataExtension('yaml', (contents) => yaml.load(contents))
+  eleventyConfig.addPlugin(EleventyRenderPlugin)
   eleventyConfig.addPlugin(
     syntaxHighlight,
     {
@@ -45,6 +47,7 @@ module.exports = function config(eleventyConfig) {
 
   return {
     htmlTemplateEngine: 'njk',
+    markdownTemplateEngine: 'njk',
     dir: {
       input: 'src',
       layouts: '_layouts',
