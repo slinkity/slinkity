@@ -7,33 +7,29 @@ You're free to use React, Vue, Svelte, and more to create page-level templates. 
 ## Prerequisites
 
 {% slottedComponent 'Tabs.svelte', hydrate='lazy', tabs=['React', 'Vue', 'Svelte'] %}
-<section>
 {% renderTemplate "md" %}
+<section>
 You'll want React's suite of dependencies, along with the Slinkity React renderer:
 
 ```bash
 npm i -D react react-dom @slinkity/renderer-react
 ```
-{% endrenderTemplate %}
 </section>
 <section hidden>
-{% renderTemplate "md" %}
 You'll want to install Vue 3 + the Slinkity Vue renderer:
 
 ```bash
 npm i -D vue@3 @slinkity/renderer-vue
 ```
-{% endrenderTemplate %}
 </section>
 <section hidden>
-{% renderTemplate "md" %}
 You'll want to install Svelte + the Slinkity Svelte renderer:
 
 ```bash
 npm i -D svelte @slinkity/renderer-svelte
 ```
-{% endrenderTemplate %}
 </section>
+{% endrenderTemplate %}
 {% endslottedComponent %}
 
 ## Creating a component page
