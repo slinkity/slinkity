@@ -30,7 +30,6 @@ module.exports = function config(eleventyConfig) {
   }
   const markdownConfigured = markdownIt({ html: true }).use(markdownItAnchor, markdownItAnchorSettings)
 
-  eleventyConfig.addFilter('markdown', value => markdownConfigured.render(value));
   eleventyConfig.addPlugin(toc, {tags: ['h2', 'h3', 'h4', 'h5', 'h6']})
 
   eleventyConfig.addShortcode('featureProgress', convertEmojiToAccessibleProgress)
