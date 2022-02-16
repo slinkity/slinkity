@@ -2,6 +2,7 @@ const syntaxHighlight = require('@11ty/eleventy-plugin-syntaxhighlight')
 const yaml = require('js-yaml')
 const markdownIt = require('markdown-it')
 const markdownItAnchor = require('markdown-it-anchor')
+const toc = require('eleventy-plugin-nesting-toc')
 const convertEmojiToAccessibleProgress = require('./src/utils/feature-progress-shortcode')
 
 module.exports = function config(eleventyConfig) {
@@ -13,7 +14,7 @@ module.exports = function config(eleventyConfig) {
       symbol: '🔗'
   })
   const markdownItAnchorSettings = {
-    level: [2],
+    level: [2,3],
     permalink (slug, opts, state, idx) {
       // this is necessary to wrap the headings in an element
       state.tokens.splice(idx, 0, Object.assign(new state.Token('div_open', 'div', 1), {
@@ -28,6 +29,9 @@ module.exports = function config(eleventyConfig) {
     }
   }
   const markdownConfigured = markdownIt({ html: true }).use(markdownItAnchor, markdownItAnchorSettings)
+
+  eleventyConfig.addFilter('markdown', value => markdownConfigured.render(value));
+  eleventyConfig.addPlugin(toc, {tags: ['h2', 'h3', 'h4', 'h5', 'h6']})
 
   eleventyConfig.addShortcode('featureProgress', convertEmojiToAccessibleProgress)
 

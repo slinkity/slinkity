@@ -54,8 +54,14 @@ styles:
         </ul>
       </li>
     </ul>
+    <div class="docs__toc  toc-container">
+      {%- include 'toc.njk' -%}
+    </div>
     <article class="docs__container__content" id="main-content" tabindex="-1">
       <h1>{{ title }}</h1>
+      <div class="docs__container__content-toc  toc-container">
+        {%- include 'toc.njk' -%}
+      </div>
       {{ content | safe }}
     </article>
   </main>

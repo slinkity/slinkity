@@ -106,6 +106,7 @@ importers:
       '@11ty/eleventy': ^1.0.0-beta.9
       '@11ty/eleventy-cache-assets': ^2.3.0
       '@11ty/eleventy-plugin-syntaxhighlight': ^3.1.2
+      eleventy-plugin-nesting-toc: ^1.3.0
       js-yaml: ^3.14.1
       markdown-it-anchor: ^8.3.1
       react: ^17.0.2
@@ -116,6 +117,7 @@ importers:
       '@11ty/eleventy': 1.0.0
       '@11ty/eleventy-cache-assets': 2.3.0
       '@11ty/eleventy-plugin-syntaxhighlight': 3.2.2
+      eleventy-plugin-nesting-toc: 1.3.0
       js-yaml: 3.14.1
       markdown-it-anchor: 8.4.1
       react: 17.0.2
@@ -2550,6 +2552,29 @@ packages:
       is-regex: 1.1.4
     dev: true
 
+  /cheerio-select/1.5.0:
+    resolution: {integrity: sha512-qocaHPv5ypefh6YNxvnbABM07KMxExbtbfuJoIie3iZXX1ERwYmJcIiRrr9H05ucQP1k28dav8rpdDgjQd8drg==}
+    dependencies:
+      css-select: 4.2.1
+      css-what: 5.1.0
+      domelementtype: 2.2.0
+      domhandler: 4.3.0
+      domutils: 2.8.0
+    dev: true
+
+  /cheerio/1.0.0-rc.10:
+    resolution: {integrity: sha512-g0J0q/O6mW8z5zxQ3A8E8J1hUgp4SMOvEoW/x84OwyHKe/Zccz83PVT4y5Crcr530FV6NgmKI1qvGTKVl9XXVw==}
+    engines: {node: '>= 6'}
+    dependencies:
+      cheerio-select: 1.5.0
+      dom-serializer: 1.3.2
+      domhandler: 4.3.0
+      htmlparser2: 6.1.0
+      parse5: 6.0.1
+      parse5-htmlparser2-tree-adapter: 6.0.1
+      tslib: 2.3.1
+    dev: true
+
   /chokidar/3.5.3:
     resolution: {integrity: sha512-Dr3sfKRP6oTcjf2JmUmFJfeVMvXBdegxB0iVQ5eb2V10uFJUCAS8OByZdVAyVb8xXNz3GjjTgj9kLWsZTqE6kw==}
     engines: {node: '>= 8.10.0'}
@@ -3090,6 +3115,12 @@ packages:
 
   /electron-to-chromium/1.4.53:
     resolution: {integrity: sha512-rFveSKQczlcav+H3zkKqykU6ANseFwXwkl855jOIap5/0gnEcuIhv2ecz6aoTrXavF6I/CEBeRnBnkB51k06ew==}
+    dev: true
+
+  /eleventy-plugin-nesting-toc/1.3.0:
+    resolution: {integrity: sha512-WZzVkz28nw3A0DpJFQWXZzQxniyjvOZKxVix5x7WVAS0H1OD1hYJbR0go/Lr1kK2SrmxfbsUHUlekR+mQPvqMA==}
+    dependencies:
+      cheerio: 1.0.0-rc.10
     dev: true
 
   /emittery/0.8.1:
@@ -3760,18 +3791,6 @@ packages:
       debug: 4.3.2
     dev: true
 
-  /follow-redirects/1.14.7_debug@4.3.3:
-    resolution: {integrity: sha512-+hbxoLbFMbRKDwohX8GkTataGqO6Jb7jGwpAlwgy2bIz25XtRm7KEzJM76R1WiNT5SwZkX4Y75SwBolkpmE7iQ==}
-    engines: {node: '>=4.0'}
-    peerDependencies:
-      debug: '*'
-    peerDependenciesMeta:
-      debug:
-        optional: true
-    dependencies:
-      debug: 4.3.3
-    dev: true
-
   /form-data/3.0.1:
     resolution: {integrity: sha512-RHkBKtLWUVwd7SqRIvCZMEvAMoGUp0XU+seQiZejj0COz3RI3hWP4sCv3gZWWLjJTd7rGwcsF5eKZGii0r/hbg==}
     engines: {node: '>= 6'}
@@ -4087,6 +4106,15 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
+  /htmlparser2/6.1.0:
+    resolution: {integrity: sha512-gyyPk6rgonLFEDGoeRgQNaEUvdJ4ktTmmUh/h2t7s+M8oPpIPxgNACWa+6ESR57kXstwqPiCut0V8NRpcwgU7A==}
+    dependencies:
+      domelementtype: 2.2.0
+      domhandler: 4.3.0
+      domutils: 2.8.0
+      entities: 2.2.0
+    dev: true
+
   /htmlparser2/7.2.0:
     resolution: {integrity: sha512-H7MImA4MS6cw7nbyURtLPO1Tms7C5H602LRETv95z1MxO/7CP7rDVROehUYeYBUYEON94NXXDEPmZuq+hX4sog==}
     dependencies:
@@ -4143,7 +4171,7 @@ packages:
     engines: {node: '>=8.0.0'}
     dependencies:
       eventemitter3: 4.0.7
-      follow-redirects: 1.14.7_debug@4.3.3
+      follow-redirects: 1.14.7_debug@4.3.2
       requires-port: 1.0.0
     transitivePeerDependencies:
       - debug
@@ -5902,6 +5930,12 @@ packages:
       error-ex: 1.3.2
       json-parse-even-better-errors: 2.3.1
       lines-and-columns: 1.2.4
+    dev: true
+
+  /parse5-htmlparser2-tree-adapter/6.0.1:
+    resolution: {integrity: sha512-qPuWvbLgvDGilKc5BoicRovlT4MtYT6JfJyBOMDsKoiT+GiuP5qyrPCnR9HcPECIJJmZh5jRndyNThnhhb/vlA==}
+    dependencies:
+      parse5: 6.0.1
     dev: true
 
   /parse5/6.0.1:
