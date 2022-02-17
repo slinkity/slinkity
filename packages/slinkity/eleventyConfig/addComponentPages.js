@@ -1,6 +1,7 @@
 const path = require('path')
 const toFormattedDataForProps = require('../utils/toFormattedDataForProps')
 const { toSSRComment } = require('../utils/consts')
+const { log } = require('../utils/logger')
 
 /**
  * @typedef AddComponentPagesParams
@@ -85,6 +86,13 @@ module.exports = async function addComponentPages({
             // if there's no "props" function, but we *do* hydrate the page,
             // don't pass any props
             props = {}
+          }
+
+          if (data.render !== undefined) {
+            log({
+              type: 'warning',
+              message: `The "render" prop no longer affects hydration as of v0.6! If you intended to use "render" to hydrate "${inputPath}," try using "hydrate" instead. Also note that pages are no longer hydrated by default. See our docs for more: https://slinkity.dev/docs/component-pages-layouts`,
+            })
           }
 
           const id = componentAttrStore.push({

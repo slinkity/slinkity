@@ -146,6 +146,13 @@ See our docs for more: https://slinkity.dev/docs/component-shortcodes`)
   // eslint-disable-next-line no-unused-vars
   const { __keywords, ...restOfProps } = props
 
+  if (restOfProps.render !== undefined) {
+    log({
+      type: 'warning',
+      message: `The "render" prop no longer affects hydration as of v0.6! If you intended to use "render" to hydrate "${componentPath}," try using "hydrate" instead. Also note that components are no longer hydrated by default. See our docs for more: https://slinkity.dev/docs/component-shortcodes`,
+    })
+  }
+
   /** @type {{ hydrate: import('../cli/types').HydrationMode }} */
   const { hydrate = 'none' } = props
   return {
