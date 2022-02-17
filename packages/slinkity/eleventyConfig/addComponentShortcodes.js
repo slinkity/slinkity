@@ -1,5 +1,6 @@
 const path = require('path')
 const { toSSRComment } = require('../utils/consts')
+const { log } = require('../utils/logger')
 
 /**
  * @typedef AddComponentShortcodesParams
@@ -23,6 +24,32 @@ module.exports = function addComponentShortcode({
     const id = componentAttrStore.push(
       toComponentAttrStoreEntry({
         componentPath,
+        vargs,
+        children: '',
+        resolvedImportAliases,
+        extensionToRendererMap,
+        page: this.page,
+      }),
+    )
+
+    return toSSRComment(id)
+  })
+
+  // TODO: remove for 1.0
+  eleventyConfig.addShortcode('react', function (componentPath, ...vargs) {
+    log({
+      type: 'warning',
+      message:
+        'The "react" shortcode is now deprecated and will be removed in v1.0. We recommend using the "component" shortcode instead. See our documentation for more: https://slinkity.dev/docs/component-shortcodes',
+    })
+
+    const componentPathWithExt = componentPath.endsWith('.jsx')
+      ? componentPath
+      : `${componentPath}.jsx`
+
+    const id = componentAttrStore.push(
+      toComponentAttrStoreEntry({
+        componentPath: componentPathWithExt,
         vargs,
         children: '',
         resolvedImportAliases,
@@ -91,8 +118,13 @@ function toComponentAttrStoreEntry({
   page,
 }) {
   const extension = path.extname(componentPath).replace(/^\./, '')
-  const renderer = extensionToRendererMap[extension]
+  if (!extension) {
+    throw new Error(
+      `File extensions are required when using the "component" and "slottedComponent" shortcodes. Try adding an extension to "${componentPath}"`,
+    )
+  }
 
+  const renderer = extensionToRendererMap[extension]
   if (!renderer) {
     throw new Error(`We couldn't find a renderer for "${componentPath}".
 Check that you have a renderer configured to handle "${extension}" extensions.
