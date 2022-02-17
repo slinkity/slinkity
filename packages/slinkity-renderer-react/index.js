@@ -43,7 +43,6 @@ module.exports = {
       useFormatted11tyData: true,
       async getData(inputPath) {
         const Component = await toCommonJSModule(inputPath)
-        console.log(Object.keys(Component))
         if (Component.getProps !== undefined) {
           console.log(
             chalk.yellow(
