@@ -47,7 +47,7 @@ module.exports = {
         if (Component.getProps !== undefined) {
           console.log(
             chalk.yellow(
-              `[Warning] The "getProps" function is no longer supported as of v0.6! If you intended to use "getProps" to generate props for your component page "${inputPath}," try using "hydrate.props(...)" instead. See our docs for more: https://slinkity.dev/docs/component-pages-layouts`,
+              `[Warning] The "getProps" function is no longer supported as of v0.6! If you intended to use "getProps" to generate props for your component page "${inputPath}," try using "hydrate.props(...)" instead. You can also avoid hydrating your page to omit "getProps" entirely. See our docs for more: https://slinkity.dev/docs/component-pages-layouts`,
             ),
           )
         }
