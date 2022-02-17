@@ -91,7 +91,7 @@ module.exports = async function addComponentPages({
           if (data.render !== undefined) {
             log({
               type: 'warning',
-              message: `The "render" prop no longer affects hydration as of v0.6! If you intended to use "render" to hydrate the component page at "${inputPath}," try using "hydrate" instead. See our docs for more: https://slinkity.dev/docs/component-pages-layouts`,
+              message: `The "render" prop no longer affects hydration as of v0.6! If you intended to use "render" to hydrate "${inputPath}," try using "hydrate" instead. Also note that pages are no longer hydrated by default. See our docs for more: https://slinkity.dev/docs/component-pages-layouts`,
             })
           }
 

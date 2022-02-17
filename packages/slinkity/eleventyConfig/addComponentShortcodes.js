@@ -149,7 +149,7 @@ See our docs for more: https://slinkity.dev/docs/component-shortcodes`)
   if (restOfProps.render !== undefined) {
     log({
       type: 'warning',
-      errorMsg: `The "render" prop no longer affects hydration as of v0.6! If you intended to use "render" to hydrate the component "${componentPath}," try using "hydrate" instead. See our docs for more: https://slinkity.dev/docs/component-shortcodes`,
+      message: `The "render" prop no longer affects hydration as of v0.6! If you intended to use "render" to hydrate "${componentPath}," try using "hydrate" instead. Also note that components are no longer hydrated by default. See our docs for more: https://slinkity.dev/docs/component-shortcodes`,
     })
   }
 
