@@ -10,7 +10,7 @@ You're free to use React, Vue, Svelte, and more to create page-level templates. 
 
 ## Create a component page
 
-Think of component pages like any other template on your 11ty site. For instance, you can add a `/about` page alongside your others routes like so:
+Think of component pages like any other template on your 11ty site. For instance, you can add a component-driven `/about` page alongside your others routes like so:
 
 ```bash
 index.html
