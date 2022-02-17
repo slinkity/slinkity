@@ -16,11 +16,13 @@ import { defineConfig } from 'slinkity'
 import rendererReact from '@slinkity/renderer-react'
 
 export default defineConfig({
-  renderers: [rendererReact()],
+  renderers: [rendererReact],
 })
 ```
 </section>
 <section hidden>
+
+> Slinkity is designed with Vue 3 in mind. Use Vue 2.x at your own risk!
 
 First, install Vue 3 + the [Slinkity Vue renderer](https://www.npmjs.com/package/@slinkity/renderer-vue):
 
@@ -36,7 +38,7 @@ import { defineConfig } from 'slinkity'
 import rendererVue from '@slinkity/renderer-vue'
 
 export default defineConfig({
-  renderers: [rendererVue()],
+  renderers: [rendererVue],
 })
 ```
 </section>
@@ -56,7 +58,7 @@ import { defineConfig } from 'slinkity'
 import rendererSvelte from '@slinkity/renderer-svelte'
 
 export default defineConfig({
-  renderers: [rendererSvelte()],
+  renderers: [rendererSvelte],
 })
 ```
 </section>
