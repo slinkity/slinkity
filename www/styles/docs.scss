@@ -2,6 +2,7 @@
 
 .docs {
   --nav-width: 240px;
+  --toc-width: 270px;
   --nav-height: 4rem;
   --site-gap: clamp(2em, 4.25vmax, 4em);
 
@@ -218,6 +219,21 @@
     }
   }
 
+  // this TOC is shown on desktop
+  &__toc {
+    @include content-card;
+    display: none;
+    @media (min-width: breakpoint(wrapper)) {
+      width: 100%;
+      display: block;
+      grid-column: toc-start / toc-end;
+      margin-block-start: 0;
+      padding: 1rem;
+      position: sticky;
+      top: var(--site-gap);
+    }
+  }
+
   // Docs Page Content
   &__container {
     max-width: var(--content-max-width);
@@ -226,9 +242,13 @@
     display: grid;
     grid-template-columns: 1fr;
     align-items: flex-start;
-    gap: var(--site-gap);
+    gap: calc(var(--site-gap) / 2);
     @media (min-width: breakpoint(tablet)) {
       grid-template-columns: [side-start] var(--nav-width) [side-end content-start] 1fr [content-end];
+    }
+    @media (min-width: breakpoint(wrapper)) {
+      grid-template-columns: [side-start] var(--nav-width) [side-end content-start] 1fr [content-end toc-start] var(--toc-width) [toc-end];
+      grid-auto-flow: dense;
     }
 
     &__content {
@@ -236,10 +256,35 @@
       overflow: auto;
       max-width: 100%;
       margin: 0;
+      @media (min-width: breakpoint(tablet)) {
+        grid-column: content-start / content-end;
+      }
+      @media (forced-colors: active) {
+        padding-block-start: 0;
+      }
+
+      // this TOC is shown on smaller screens
+      &-toc {
+        --bg: hsl(var(--color-hs-primary) calc(var(--color-weight-7) - 6.5%));
+        padding: calc(var(--spacing) * 1.5);
+        background-color: var(--bg);
+        border-radius: 5px;
+        @media (min-width: breakpoint(wrapper)) {
+          display: none;
+        }
+
+        & + * {
+          margin-block: 2.5em;
+        }
+      }
 
       :where(h1) {
         margin-block-start: 0;
         font-size: 2.25em;
+
+        + * {
+          margin-block-start: 1.5em;
+        }
       }
 
       :where(pre) {
@@ -295,12 +340,6 @@
             padding-block-end: 1em;
           }
         }
-      }
-      @media (min-width: breakpoint(tablet)) {
-        grid-column: content-start / content-end;
-      }
-      @media (forced-colors: active) {
-        padding-block-start: 0;
       }
     }
   }

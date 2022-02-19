@@ -1,0 +1,76 @@
+.toc {
+  &-container {
+    --gap: 0.25em;
+    --spacing: 0.75em;
+    --border-width: 2px;
+    --border-style: var(--border-width) solid var(--color-primary-6);
+
+    :is(a,a:visited) {
+      display: block;
+      text-decoration: none;
+
+      &:not(:focus, :hover) {
+        color: var(--link-color, #fff);
+      }
+    }
+  }
+
+  &__label {
+    color: var(--color-primary-2);
+    font-family: var(--pro-hacker-font);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    font-size: 0.75em;
+    margin-block-start: 0;
+    margin-block-end: 1em;
+  }
+
+  &__overview-link {
+    display: block;
+    margin-inline-start: calc(var(--spacing) + var(--border-width));
+    position: relative;
+
+    &::before {
+      content: "";
+      position: absolute;
+      height: 100%;
+      left: calc((var(--spacing) + var(--border-width)) * -1);
+      top: 0;
+      border-inline-start: var(--border-style);
+    }
+  }
+
+  ol {
+    padding-inline-start: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap);
+  }
+
+  li {
+    margin-block-end: 0;
+    padding-inline-start: var(--spacing);
+    line-height: 1.25;
+
+    &::marker {
+      font-size: 0;
+    }
+  }
+
+  & > ol {
+    margin-block: 0;
+    border-inline-start: var(--border-style);
+
+    > li {
+      > ol {
+        margin-block-start: var(--spacing);
+        font-size: 0.9rem;
+
+        a,
+        a:visited {
+          --link-color: var(--color-primary-1);
+        }
+      }
+    }
+  }
+}

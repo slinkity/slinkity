@@ -72,13 +72,13 @@
   border-radius: var(--rounded-corners);
   box-shadow: var(--shadow-heavy);
   background-color: var(--color-primary-8);
+  @include gradient-links;
 
   > .heading-wrapper:first-child {
     > * {
       margin-block-start: 0;
     }
   }
-  @include gradient-links;
 }
 
 @mixin underline-link-in-forced-colors {
