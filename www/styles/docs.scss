@@ -223,6 +223,7 @@
   &__toc {
     @include content-card;
     display: none;
+    outline: 2px solid transparent; // outline for forced colors mode
     @media (min-width: breakpoint(wrapper)) {
       width: 100%;
       display: block;
