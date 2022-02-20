@@ -9,9 +9,13 @@
   // Top-Nav
   &__primary-nav {
     background-color: var(--color-primary-8);
-    position: relative;
-    z-index: 1;
+    position: sticky;
+    top: 0;
+    z-index: 2;
     box-shadow: var(--shadow-heavy);
+    @media (min-width: breakpoint(tablet)) {
+      position: relative;
+    }
 
     &__content {
       max-width: var(--content-max-width);
@@ -115,16 +119,16 @@
     outline: 2px solid transparent; // outline for forced colors mode
     @include gradient-links;
     @media (max-width: breakpoint(tablet)) {
-      position: absolute;
+      position: fixed;
       width: 0;
       min-width: max-content;
       height: 100%;
       opacity: 0;
       overflow: hidden;
       top: 0;
-      padding-block-start: calc(var(--nav-height) + 1em);
       left: 0;
-      z-index: 0;
+      z-index: 1;
+      padding-block-start: calc(var(--nav-height) + 1em);
       border-radius: 0;
       transition-property: width, opacity;
       transition-duration: var(--animation-base-duration);
