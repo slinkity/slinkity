@@ -139,11 +139,11 @@ export default {
 
 ## Use 11ty data as props
 
-We've pushed data _up_ into the data cascade using front matter. So how do you pull data back _down_ in our components?
+You've pushed data _up_ into the data cascade using front matter. So how do you pull data back _down_ in your components?
 
 Assuming your page isn't hydrated ([see how hydrated props work](#hydrate-your-page)), all 11ty data is magically available as props 😁
 
-Say we have a list of incredible, amazing, intelligent Slinkity contributors in a global data file called `_data/contributors.json`:
+Say you have a list of incredible, amazing, intelligent Slinkity contributors in a global data file called `_data/contributors.json`:
 
 ```json
 [
@@ -618,7 +618,7 @@ Like [component shortcodes](/docs/component-shortcodes), you're free to use any 
 
 Props work a _bit_ differently now that JS is involved. In order to access 11ty data from your component, you'll need to choose which pieces of data you need.
 
-For instance, say we need to access that same global `contributors` list [from earlier](#use-11ty-data-as-props). We'll use a special `hydrate.props` function from our front matter like so:
+For instance, say you need to access that same global `contributors` list [from earlier](#use-11ty-data-as-props). You can use a special `hydrate.props` function from your front matter like so:
 
 
 {% slottedComponent "Tabs.svelte", hydrate="eager", id="page-hydrated-props", tabs=["React", "Vue", "Svelte"] %}
@@ -631,7 +631,7 @@ export const frontMatter = {
   hydrate: {
     mode: 'eager',
     // the result of this function
-    // will be based to your component as props
+    // will be passed to your component as props
     props: (eleventyData) => ({
       contributors: eleventyData.contributors,
     })
@@ -667,7 +667,7 @@ export default {
     hydrate: {
       mode: "eager",
       // the result of this function
-      // will be based to your component as props
+      // will be passed to your component as props
       props: (eleventyData) => ({
         contributors: eleventyData.contributors,
       }),
@@ -686,7 +686,7 @@ export default {
     hydrate: {
       mode: "eager",
       // the result of this function
-      // will be based to your component as props
+      // will be passed to your component as props
       props: (eleventyData) => ({
         contributors: eleventyData.contributors,
       }),
@@ -718,7 +718,7 @@ A few takeaways here:
 1. We update `hydrate: "eager"` to `hydrate: { mode: "eager" }`
 2. We include a `hydrate.props` function for Slinkity to decide which props our component needs
 3. Slinkity runs this function _at build time_ (not on the client!) to decide which props to generate
-4. These props are accessible from your browser-rendered component
+4. These props are accessible from the browser-rendered component
 
 ### 🚨 (Important!) Be mindful about your data
 
