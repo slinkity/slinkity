@@ -6,7 +6,7 @@ You can embed React, Vue, Svelte, and more into your existing templates. Let's l
 
 ## Prerequisites
 
-{% include 'prereqs.njk' %}
+{% include 'prereqs.md' %}
 
 ## Basic usage
 
