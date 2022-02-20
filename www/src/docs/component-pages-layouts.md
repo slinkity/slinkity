@@ -6,209 +6,737 @@ You're free to use React, Vue, Svelte, and more to create page-level templates. 
 
 ## Prerequisites
 
-{% include 'prereqs.njk' %}
+{% include 'prereqs.md' %}
 
-## Creating a component page
+## Create a component page
 
-Think of component pages like any other template on your 11ty site. For instance, say we wanted to create an `/about` page with an interactive image carousel. We can create an `about.jsx` file alongside the other pages on our site:
+Think of component pages like any other template on your 11ty site. For instance, you can add a component-driven `/about` page alongside your others routes like so:
 
-```jsx
+```bash
 index.html
-about.jsx
 blog.md
+about.jsx|.vue|.svelte
 ```
 
-...And we're ready to go! If you're following along at home, you likely received an error message that `about.jsx` doesn't export anything. Let's change that:
+...And you're ready to start templating. If you're following along at home, you'll want to add some content to this file:
 
-```jsx
-import React from 'react'
-// yes, this import is still necessary
-// we plan to remove this requirement soon!
-
-function About() {
-  return (
-    <p>Did YOU ever hear the Tragedy of Darth Plagueis the Wise?</p>
-  )
-}
-
-export default About
-```
-
-Now, you should see our tragic tale on `/about/`
-
-> Note: You will need to include that trailing slash `/` for our Vite server to find the page. This is because our JS bundle lives on `/about`, which trips up the Vite development server. But don't worry, that trailing slash isn't necessary for production builds if your hosting solution handles that for you!
-
-## Applying front matter
-
-If you're familiar with 11ty, you've likely worked with front matter before. It works the same way for component-based pages as well:
+{% slottedComponent "Tabs.svelte", hydrate="eager", id="page-templates", tabs=["React", "Vue", "Svelte"] %}
+{% renderTemplate "md" %}
+<section>
 
 ```jsx
 // about.jsx
-export const frontMatter = {
-  title: 'About me'
+export default function About() {
+  return (
+    <article>
+      <h2>A tragic tale</h2>
+      <p>Did YOU ever hear the Tragedy of Darth Plagueis the Wise?</p>
+    </article>
+  )
 }
-
-function About() {...
 ```
-
-You can think of front matter as a way to pass information "upstream" for other templates to read from. For instance, this `title` key is now accessible from any layout templates applied to our page (which we'll explore in the next section!). See [11ty's front matter documentation](https://www.11ty.dev/docs/data-frontmatter/) for more on how the data cascade fits into this.
-
-### Example: Applying layouts
-
-Now, let's wrap our page in a layout template. You may have noticed we're wrapping your component with some `html` and `body` tags automatically, because we're nice like that 🙃. But you may have some metadata or extra wrapper elements to include!
-
-Let's build on our example by creating a `layout.html` under our `_includes` directory.
-
-```
-_includes 📁
- | layout.html
-about.jsx
-```
-
-You can learn more about layout chaining [from the 11ty docs](https://www.11ty.dev/docs/layouts/). Now let's populate our `layout.html` with some content:
+</section>
+<section hidden>
 
 ```html
-{% raw %}
-<!DOCTYPE html>
+<!--about.vue-->
+<template>
+  <article>
+    <h2>A tragic tale</h2>
+    <p>Did YOU ever hear the Tragedy of Darth Plagueis the Wise?</p>
+  </article>
+</template>
+```
+</section>
+<section hidden>
+
+```html
+<!--about.svelte-->
+<article>
+  <h2>A tragic tale</h2>
+  <p>Did YOU ever hear the Tragedy of Darth Plagueis the Wise?</p>
+</article>
+```
+</section>
+{% endrenderTemplate %}
+{% endslottedComponent %}
+
+Now, you should see a tragic tale on `/about` 👀
+
+> Before frantically Googling "state variables don't work in Slinkity template," This is intentional! We _avoid_ hydrating your component clientside by default. To opt-in to using `useState`, vue `ref`s, and the like, [jump to our hydration section](#hydrate-your-page) 💧
+
+## Apply front matter
+
+If you're familiar with 11ty, you've likely worked with front matter before. It allows you to associate "data" with your current template, which can be picked up by [layouts](https://www.11ty.dev/docs/layouts/), [11ty's collections API](https://www.11ty.dev/docs/collections/), and more (see [11ty's front matter documentation](https://www.11ty.dev/docs/data-frontmatter/) for full details).
+
+For example, let's say you have a simple layout in your project called `_includes/base.njk`. This layout will:
+1. Inject a given route's `title` property into the page `<title>`
+2. Apply the content of that layout between some `<body>` tags
+
+```html{% raw %}
+<!--_includes/base.njk-->
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{ title }}</title>
 </head>
 <body>
-  <h1>A tragic tale</h1>
-  {{ content }}
+  {{ content | safe }}
 </body>
 </html>
-{% endraw %}
-```
+```{% endraw %}
 
-What we expect:
+You can apply this layout to your `/about` page using front matter:
 
-1. {% raw %}`{{ title }}`{% endraw %} uses the "title" attribute from our page's front matter
-2. {% raw %}`{{ content }}`{% endraw %} renders our component page
-
-To wire up our layout, we just need a little front matter:
+{% slottedComponent "Tabs.svelte", hydrate="eager", id="page-frontmatter", tabs=["React", "Vue", "Svelte"] %}
+{% renderTemplate "md" %}
+<section>
 
 ```jsx
 // about.jsx
 export const frontMatter = {
-  title: 'About me',
-  layout: 'layout.html',
+  title: 'A tragic tale',
+  layout: 'base.njk',
 }
 
-function About() {...
+function About() {...}
 ```
-
-If all goes well, we should see a build output like this under [our build directory](https://www.11ty.dev/docs/config/):
+</section>
+<section hidden>
 
 ```html
-<!--_site/about/index.html-->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>About me</title>
-</head>
+<!--about.vue-->
+<template>...</template>
 
-<body>
-  <h1>A tragic tale</h1>
-  <!--components are placed inside a custom web component-->
-  <!--that handles all the JS fetching and loading-->
-  <slinkity-react-mount-point>
-    <p data-reactroot="">
-      Did YOU ever hear the Tragedy of Darth Plagueis the Wise?
-    </p>
-  </slinkity-react-mount-point>
-
-  <script type="module">
-    // React loaders go here
-  </script>
-</body>
-</html>
+<script>
+export default {
+  frontMatter: {
+    title: "A tragic tale",
+    layout: "base.njk",
+  },
+};
+</script>
 ```
+</section>
+<section hidden>
 
-## Using 11ty data as props
-
-We've pushed data _up_ into the data cascade using front matter. So how do you pull data back _down_ in our components?
-
-In short, we need to **"opt in" by choosing the pieces of data our component needs.** Say we want to grab 3 pieces of data as props:
-- The `date` object [supplied by 11ty](https://www.11ty.dev/docs/data-eleventy-supplied/)
-- The page `title` we specified as front matter earlier
-- Some CMS data supplied by [a `.11tydata.js` function](https://www.11ty.dev/docs/data-template-dir/)
-
-Using a "regular" 11ty template, all this information would be available right away as variables:
+> Note: don't forget `context="module"` here! This allows us to export data from our component. [See the Svelte docs](https://svelte.dev/tutorial/module-exports) for more.
 
 ```html
-<!--roll-call.html-->
-{% raw %}
-<h1>{{ title }}</h1>
-<p>Today's date {{ page.date.toISOString() }}</p>
-<ul>
-  {%- for name in cmsData.names -%}
-  <li>{{ name }}</li>
-  {%- endfor -%}
-</ul>
-{% endraw %}
+<!--about.svelte-->
+<script context="module">
+  export const frontMatter = {
+    title: "A tragic tale",
+    layout: "base.njk",
+  };
+</script>
+
+<article>...</article>
+```
+</section>
+
+{% endrenderTemplate %}
+{% endslottedComponent %}
+
+## Use 11ty data as props
+
+You've pushed data _up_ into the data cascade using front matter. So how do you pull data back _down_ in your components?
+
+Assuming your page isn't hydrated ([see how hydrated props work](#hydrate-your-page)), all 11ty data is magically available as props 😁
+
+Say you have a list of incredible, amazing, intelligent Slinkity contributors in a global data file called `_data/contributors.json`:
+
+```json
+[
+  { "name": "Ben Myers", "ghProfile": "https://github.com/BenDMyers" },
+  { "name": "Anthony Campolo", "ghProfile": "https://github.com/ajcwebdev" },
+  { "name": "Thomas Semmler", "ghProfile": "https://github.com/nachtfunke" }
+]
 ```
 
-So how could we pull off something similar in React? Well, let's "request" that data by exporting a `getProps` function:
+Since [all `_data` files are piped into 11ty's data cascade](https://www.11ty.dev/docs/data-global/), this is now available to your component page via the `contributors` prop:
+
+{% slottedComponent "Tabs.svelte", hydrate="eager", id="page-props", tabs=["React", "Vue", "Svelte"] %}
+{% renderTemplate "md" %}
+<section>
 
 ```jsx
-// roll-call.jsx
-// note: getProps can also be asynchronous
-export function getProps(eleventyData) {
-  return {
-    // map eleventy's generated Date to a "date" prop
-    date: eleventyData.page.date,
-    // map our cmsData to a "names" prop
-    names: eleventyData.cmsData.names,
-    // map the "title" passed down
-    title: eleventyData.title,
-  }
-}
-export default function RollCall({ date, names, title }) {
-  return ({% raw %}
-    <>
-      <h1>{title}</h1>
-      <p>Today's date {date.toISOString()}</p>
-      <ul>
-        {names.map(name => <li>{name}</li>)}
-      </ul>
-    </>
-  ){% endraw %}
+// about.jsx
+export default function About({ contributors }) {
+  return (
+    <ul>
+      {contributors.map(({ name, ghProfile }) => (
+        <li><a href={ghProfile}>{name}</a></li>
+      ))}
+    </ul>
+  )
 }
 ```
+</section>
+<section hidden>
+
+```html
+<!--about.vue-->
+<template>
+  <ul v-for="contributor in contributors">
+    <li>
+      <a href="{{contributor.ghProfile}}">{{ contributor.name }}</a>
+    </li>
+  </ul>
+</template>
+
+<script>
+export default {
+  props: ["contributors"],
+};
+</script>
+```
+</section>
+<section hidden>
+
+```html
+<!--about.svelte-->
+<script>
+  export let contributors = [];
+</script>
+
+<article>
+  <ul>
+    {#each contributors as contributor}
+      <li>
+        <a href={contributor.ghProfile}>{contributor.name}</a>
+      </li>
+    {/each}
+  </ul>
+</article>
+```
+</section>
+
+{% endrenderTemplate %}
+{% endslottedComponent %}
+
+> To get the most out of these data props, we recommend learning more about the 11ty data cascade. Here's some helpful resources:
+> - 📝 [**The official 11ty docs**](https://www.11ty.dev/docs/data-cascade/)
+> - 🚏 [**A beginner-friendly walkthrough**](https://benmyers.dev/blog/eleventy-data-cascade/) by Ben Myers
+
+## Access shortcodes and filters
+
+All [shortcodes](https://www.11ty.dev/docs/shortcodes/) and [filters](https://www.11ty.dev/docs/filters/) are accessible from the `__functions` prop as javascript functions. This includes any shortcode or filter created using the following eleventy config helpers:
+
+```js
+// .eleventy.js
+module.exports = function(eleventyConfig) {
+  // Universal filter
+  eleventyConfig.addFilter("capitalize", function(value) { … });
+
+  // Universal shortcode
+  eleventyConfig.addShortcode("capitalized", function(value) { … });
+
+  // Universal paired shortcode
+  eleventyConfig.addPairedShortcode("capitalized", function(content, value) { … });
+
+  // JavaScript Template Function
+  eleventyConfig.addJavaScriptFunction("capitalize", function(value) { … });
+};
+```
+
+> For those wondering "what are shortcodes and filters:" they're universal helpers you can access from any page template, no imports necessary. These are especially useful in not-so-JavaScript templates like Nunjucks and markdown. We recommend [visiting 11ty.rocks](https://11ty.rocks/eleventyjs/content/) for concrete examples!
+
+For instance, say you registered a `capitalize` filter like so:
+
+```js
+// .eleventy.js
+module.exports = function(eleventyConfig) {
+    eleventyConfig.addFilter('capitalize', function(value) {
+      const firstLetter = value[0]
+      const restOfPhrase = value.slice(1)
+      return firstLetter.toUpperCase() + restOfPhrase
+    })
+}
+```
+
+You can access this filter across your component pages like so:
+
+{% slottedComponent "Tabs.svelte", hydrate="eager", id="page-permalink-basic", tabs=["React", "Vue", "Svelte"] %}
+{% renderTemplate "md" %}
+<section>
+
+```jsx
+// about.jsx
+export default function About({ __functions }) {
+  const name = 'darth Plagueis the Wise'
+  return (
+    <article>
+      <h2>A tragic tale</h2>
+      <p>Did YOU ever hear the Tragedy of {__functions.capitalize(name)}?</p>
+    </article>
+  )
+}
+```
+</section>
+<section hidden>
+
+```html
+<!--about.vue-->
+<template>
+  <article>
+    <h2>A tragic tale</h2>
+    <p>Did YOU ever hear the Tragedy of {{ __functions.capitalize(name) }}?</p>
+  </article>
+</template>
+
+<script>
+export default {
+  props: ["__functions"],
+  setup() {
+    return {
+      name: "darth Plagueis the Wise",
+    };
+  },
+};
+</script>
+```
+</section>
+<section hidden>
+
+```html
+<!--about.svelte-->
+<script>
+  export let __functions = {};
+  const name = "darth Plagueis the Wise";
+</script>
+
+<article>
+  <h2>A tragic tale</h2>
+  <p>Did YOU ever hear the Tragedy of {__functions.capitalize(name)}?</p>
+</article>
+```
+</section>
+{% endrenderTemplate %}
+{% endslottedComponent %}
+
+## Handle dynamic permalinks
+
+[Dynamic permalinks](https://www.11ty.dev/docs/permalinks/#use-data-variables-in-permalink) are incredibly useful when generating a URL from 11ty data. You may be used to template strings when using plain 11ty (say, [using Nunjucks](https://www.11ty.dev/docs/permalinks/#use-data-variables-in-permalink) to output a URL). But with Slinkity, you have the power of JavaScript functions at your disposal 😎
+
+### Example - Generate a permalink from a page title
+
+Say you want to generate a blog post's URL from its title. Since front matter is available from the 11ty data object, you can use a `permalink()` function like so:
+
+{% slottedComponent "Tabs.svelte", hydrate="eager", id="page-permalink-basic", tabs=["React", "Vue", "Svelte"] %}
+{% renderTemplate "md" %}
+<section>
+
+```jsx
+// about.jsx
+export const frontMatter = {
+  title: 'A tragic tale',
+  permalink(eleventyData) {
+    // note: shortcodes and filters are available
+    // from __functions. We're using 11ty's built-in
+    // slugify filter here.
+    const { __functions, title } = eleventyData
+    return \`/${__functions.slugify(title)}/\`
+  },
+}
+
+export default function About() {...}
+```
+</section>
+<section hidden>
+
+```html
+<!--about.vue-->
+<template>...</template>
+
+<script>
+export default {
+  frontMatter: {
+    title: "A tragic tale",
+    permalink(eleventyData) {
+      // note: shortcodes and filters are available
+      // from __functions. We're using 11ty's built-in
+      // slugify filter here.
+      const { __functions, title } = eleventyData
+      return \`/${__functions.slugify(title)}/\`
+    },
+  },
+}
+</script>
+```
+</section>
+<section hidden>
+
+```html
+<!--about.svelte-->
+<script context="module">
+  export const frontMatter = {
+    title: "A tragic tale",
+    permalink(eleventyData) {
+      // note: shortcodes and filters are available
+      // from __functions. We're using 11ty's built-in
+      // slugify filter here.
+      const { __functions, title } = eleventyData;
+      return \`/${__functions.slugify(title)}/\`;
+    },
+  };
+</script>
+
+<article>...</article>
+```
+</section>
+
+{% endrenderTemplate %}
+{% endslottedComponent %}
+
+Here's how your site's input / output directories will look, assuming `_site` is your output and `src` is your input:
+
+```plaintext
+├── _site
+│   └── a-tragic-tale
+│       └──index.html
+├── src
+│   └── about.jsx|vue|svelte
+```
+
+### Example - Dynamic permalinks with pagination
+
+Pagination is another common use case for dynamic permalinks. We won't go _too_ in depth on 11ty's pagination options ([see their docs for full details](https://www.11ty.dev/docs/pagination/#aliasing-to-a-different-variable)), but we'll cover the primary use case: generate some routes from an array of data.
+
+Say that:
+1. You have an array of T-shirts to sell on your e-commerce site
+2. You want to generate a unique route to preview each T-shirt
+
+That list of T-shirts may look like this (`_data/tshirts.json`):
+
+```json
+[
+  {
+    "name": "Me and the Possum Posse",
+    "slug": "possum-posse",
+    "image": "assets/possum-posse.jpg"
+  },
+  {
+    "name": "It possumtimes be like that",
+    "slug": "possumtimes",
+    "image": "assets/possumtimes.jpg"
+  }
+]
+```
+
+You can generate routes for each of these T-shirts using the `pagination` and `permalink` properties like so:
+
+{% slottedComponent "Tabs.svelte", hydrate="eager", id="page-permalink-basic", tabs=["React", "Vue", "Svelte"] %}
+{% renderTemplate "md" %}
+<section>
+
+```jsx
+// tshirt.jsx
+export const frontMatter = {
+  pagination: {
+    // name of your data
+    data: 'tshirts',
+    // number of routes per array element
+    size: 1,
+    // variable to access array element values
+    // from your permalink fn and your component page
+    alias: 'tshirt' 
+  },
+  // note the trailing "/" here!
+  permalink: ({ tshirt }) => \`/${tshirt.slug}/\`
+}
+
+export default function Tshirt({ tshirt }) {
+  return (
+    <article>
+      <h1>{tshirt.name}</h1>
+      <img src={tshirt.image} alt={tshirt.name} />
+    </article>
+  )
+}
+```
+</section>
+<section hidden>
+
+```html
+<!--tshirt.vue-->
+<template>
+  <article>
+    <h1>{{ tshirt.name }}</h1>
+    <img src="{{ tshirt.image }}" alt="{{ tshirt.name }}" />
+  </article>
+</template>
+
+<script>
+export default {
+  frontMatter: {
+    pagination: {
+      // name of your data
+      data: "tshirts",
+      // number of routes per array element
+      size: 1,
+      // variable to access array element values
+      // from your permalink fn and your component page
+      alias: "tshirt",
+    },
+    // note the trailing "/" here!
+    permalink: ({ tshirt }) => \`/${tshirt.slug}/\`,
+  },
+  props: ["tshirt"],
+};
+</script>
+```
+</section>
+<section hidden>
+
+```html
+<!--tshirt.svelte-->
+<script context="module">
+  export const frontMatter = {
+    pagination: {
+      // name of your data
+      data: "tshirts",
+      // number of routes per array element
+      size: 1,
+      // variable to access array element values
+      // from your permalink fn and your component page
+      alias: "tshirt",
+    },
+    // note the trailing "/" here!
+    permalink: ({ tshirt }) => \`/${tshirt.slug}/\`,
+  };
+</script>
+
+<script>
+  export let tshirt = {};
+</script>
+
+<article>
+  <h1>{tshirt.name}</h1>
+  <img src={tshirt.image} alt={tshirt.name} />
+</article>
+```
+</section>
+
+{% endrenderTemplate %}
+{% endslottedComponent %}
+
+Here's how your site's input / output directories will look, assuming `_site` is your output and `src` is your input:
+
+```plaintext
+├── _site
+│   └── possum-posse
+│       └── index.html
+│   └── possumtimes
+│       └── index.html
+├── src
+│   └── tshirt.jsx|vue|svelte
+```
+
+## Hydrate your page
+
+We've used components as build-time templating languages. Now let's add some JavaScript into the mix 🥗
+
+You can enable hydration using the `hydrate` front matter prop:
+
+{% slottedComponent "Tabs.svelte", hydrate="eager", id="page-hydrate-frontmatter", tabs=["React", "Vue", "Svelte"] %}
+{% renderTemplate "md" %}
+<section>
+
+```jsx
+// about.jsx
+import { useState } from 'react'
+
+export const frontMatter = {
+  hydrate: 'eager',
+}
+
+export default function About() {
+  const [count, setCount] = useState(0)
+
+  return (
+    <>
+      <p>You've had {count} glasses of water 💧</p>
+      <button onClick={() => setCount(count + 1)}>Add one</button>
+    </>
+  )
+}
+```
+</section>
+<section hidden>
+
+```html
+<!--about.vue-->
+<template>
+  <p>You've had {{ count }} glasses of water 💧</p>
+  <button @click="add()">Add one</button>
+</template>
+
+<script>
+import { ref } from "vue";
+export default {
+  frontMatter: {
+    hydrate: "eager",
+  },
+  setup() {
+    const count = ref(0);
+    const add = () => (count.value = count.value + 1);
+    return { count, add };
+  },
+};
+</script>
+```
+</section>
+<section hidden>
+
+```html
+<!--about.svelte-->
+<script context="module">
+  export const frontMatter = {
+    hydrate: "eager",
+  };
+</script>
+
+<script>
+  let count = 0;
+
+  function add() {
+    count += 1;
+  }
+</script>
+
+<p>You've had {count} glasses of water 💧</p>
+<button on:click={add}>Add one</button>
+```
+</section>
+
+{% endrenderTemplate %}
+{% endslottedComponent %}
+
+Like [component shortcodes](/docs/component-shortcodes), you're free to use any of [our partial hydration modes](/docs/partial-hydration) (`eager`, `lazy`, etc).
+
+### Handle props on hydrated components
+
+Props work a _bit_ differently now that JS is involved. In order to access 11ty data from your component, you'll need to choose which pieces of data you need.
+
+For instance, say you need to access that same global `contributors` list [from earlier](#use-11ty-data-as-props). You can use a special `hydrate.props` function from your front matter like so:
+
+
+{% slottedComponent "Tabs.svelte", hydrate="eager", id="page-hydrated-props", tabs=["React", "Vue", "Svelte"] %}
+{% renderTemplate "md" %}
+<section>
+
+```jsx
+// about.jsx
+export const frontMatter = {
+  hydrate: {
+    mode: 'eager',
+    // the result of this function
+    // will be passed to your component as props
+    props: (eleventyData) => ({
+      contributors: eleventyData.contributors,
+    })
+  }
+}
+export default function About({ contributors }) {
+  return (
+    <ul>
+      {contributors.map(({ name, ghProfile }) => (
+        <li><a href={ghProfile}>{name}</a></li>
+      ))}
+    </ul>
+  )
+}
+```
+</section>
+<section hidden>
+
+```html
+<!--about.vue-->
+<template>
+  <ul v-for="contributor in contributors">
+    <li>
+      <a href="{{contributor.ghProfile}}">{{ contributor.name }}</a>
+    </li>
+  </ul>
+</template>
+
+<script>
+export default {
+  props: ["contributors"],
+  frontMatter: {
+    hydrate: {
+      mode: "eager",
+      // the result of this function
+      // will be passed to your component as props
+      props: (eleventyData) => ({
+        contributors: eleventyData.contributors,
+      }),
+    },
+  },
+};
+</script>
+```
+</section>
+<section hidden>
+
+```html
+<!--about.svelte-->
+<script context="module">
+  export const frontMatter = {
+    hydrate: {
+      mode: "eager",
+      // the result of this function
+      // will be passed to your component as props
+      props: (eleventyData) => ({
+        contributors: eleventyData.contributors,
+      }),
+    },
+  };
+</script>
+
+<script>
+  export let contributors = [];
+</script>
+
+<article>
+  <ul>
+    {#each contributors as contributor}
+      <li>
+        <a href={contributor.ghProfile}>{contributor.name}</a>
+      </li>
+    {/each}
+  </ul>
+</article>
+```
+</section>
+
+{% endrenderTemplate %}
+{% endslottedComponent %}
 
 A few takeaways here:
 
-1. We export a `getProps` function from our component file
-2. Slinkity finds this function _at build time_ and passes in all the 11ty data available
-3. We choose the pieces of `eleventyData` we want as props
+1. We update `hydrate: "eager"` to `hydrate: { mode: "eager" }`
+2. We include a `hydrate.props` function for Slinkity to decide which props our component needs
+3. Slinkity runs this function _at build time_ (not on the client!) to decide which props to generate
+4. These props are accessible from the browser-rendered component
 
-Then, our component has access to everything `getProps` returns. Nothing more, nothing less.
-
-### 🚨 (Important!) Being mindful about your data
+### 🚨 (Important!) Be mindful about your data
 
 You may be wondering, "why can't _all_ the `eleventyData` get passed to my component as props? This seems like an extra step."
 
-Well, it all comes down to the end user's experience. Remember that we're sending your JS-driven component to the browser so pages can be interactive ([unless you say otherwise](/docs/partial-hydration/)). If we sent all that `eleventyData` along with it, **the user would have to download that huge data blob for every component on your site.** 😮
+Well, it all comes down to the end user's experience. Remember that we're sending your JS-driven component to the browser so pages can be interactive. If we sent all that `eleventyData` along with it, **the user would have to download that huge data blob for every component on your site.** 😮
 
-So, we added `getProps` as a way to pick the data that you need, and "filter out" the data that you don't.
+So, we added `hydrate.props` as a way to pick the data that you need, and "filter out" the data that you don't.
 
-[11ty's collections object](https://www.11ty.dev/docs/collections/) is a prime example of where `getProps` shines. This object contains references to _every_ page on your site, plus all the data those pages receive. Needless to say, that blob can get pretty big! We suggest you:
+[11ty's collections object](https://www.11ty.dev/docs/collections/) is a prime example of where `hydrate.props` shines. This object contains references to _every_ page on your site, plus all the data those pages receive. Needless to say, that blob can get pretty big! We suggest you:
 
-```jsx
+```js
 // ❌ Don't pass everything
-function getProps({ collections }) {
+props({ collections }) {
   return { collections }
 }
 // ✅ Map out the pieces you need
-function getProps({ collections }) {
+props({ collections }) {
   return {
     blogPostUrls: collections.blogPosts.map(
       blogPost => blogPost.page.url
@@ -217,36 +745,10 @@ function getProps({ collections }) {
 }
 ```
 
-### Can I call `getProps` inside my components?
+### Can I call `frontMatter.hydrate.props()` inside my components?
 
-_Technically_ yes, but we wouldn't recommend it! Note that Slinkity calls `getProps` at _build-time_ to figure out which resources to bundle. This means your `getProps` function is _not_ sent to the browser; it's only run by that shiny CLI command. This is very similar to [NextJS' `getStaticProps`](https://nextjs.org/docs/basic-features/data-fetching#getstaticprops-static-generation) or [NuxtJS' data fetchers](https://nuxtjs.org/docs/2.x/features/data-fetching).
+_Technically_ yes, but we wouldn't recommend it. Note that Slinkity calls this function at _build-time_ to figure out which resources to bundle. In other words, it's not meant to re-run in the browser. This is very similar to [NextJS' `getStaticProps`](https://nextjs.org/docs/basic-features/data-fetching#getstaticprops-static-generation) or [NuxtJS' data fetchers](https://nuxtjs.org/docs/2.x/features/data-fetching).
 
-## Accessing shortcodes
-
-If you want to replace some existing 11ty templates with component-ified pages, you might be thinking "okay, but how can I access my shortcodes?"
-
-Well, you can't go writing shortcodes within the component itself. But you _can_ access shortcodes at the build step using `getProps`! As long a shortcode is accessible either as a "global" shortcode or a "javascript function:"
-
-```js
-// .eleventy.js
-module.exports = function(eleventyConfig) {
-  // either this...
-  eleventyConfig.addJavaScriptFunction('make10xEngineer', (eng) => eng * 10)
-  // ...or this
-  eleventyConfig.addShortcode('make10xEngineer', (eng) => eng * 10)
-}
-```
-
-You can access it from the `shortcodes` key like so:
-
-```js
-function getProps(eleventyData) {
-  const oneXEngineer = 1
-  return {
-    tenXEngineer: eleventyData.shortcodes.make10xEngineer(oneXEngineer)
-  }
-}
-// -> { tenXEngineer: 10 }
-```
+Oh, and for more on hydration options...
 
 **[Learn the different ways to render components →](/docs/partial-hydration/)**
