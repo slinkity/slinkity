@@ -518,7 +518,7 @@ export default {
 
 Like [component shortcodes](/docs/component-shortcodes), you're free to use any of [our partial hydration modes](/docs/partial-hydration) (`eager`, `lazy`, etc).
 
-### Handling props
+### Handle props on hydrated components
 
 Props work a _bit_ differently now that JS is involved. In order to access 11ty data from your component, you'll need to choose which pieces of data you need.
 
@@ -624,7 +624,7 @@ A few takeaways here:
 3. Slinkity runs this function _at build time_ (not on the client!) to decide which props to generate
 4. These props are accessible from your browser-rendered component
 
-### 🚨 (Important!) Being mindful about your data
+### 🚨 (Important!) Be mindful about your data
 
 You may be wondering, "why can't _all_ the `eleventyData` get passed to my component as props? This seems like an extra step."
 
