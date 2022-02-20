@@ -77,11 +77,10 @@ For example, let's say you have a simple layout in your project called `_include
 <!--_includes/base.njk-->
 <html lang="en">
 <head>
-  ...
   <title>{{ title }}</title>
 </head>
 <body>
-  {{ content }}
+  {{ content | safe }}
 </body>
 </html>
 ```{% endraw %}
@@ -99,16 +98,14 @@ export const frontMatter = {
   layout: 'base.njk',
 }
 
-function About() {...
+function About() {...}
 ```
 </section>
 <section hidden>
 
 ```html
 <!--about.vue-->
-<template>
-  ...
-</template>
+<template>...</template>
 
 <script>
   export const frontMatter = {
@@ -131,9 +128,7 @@ function About() {...
   }
 </script>
 
-<article>
-  ...
-</article>
+<article>...</article>
 ```
 </section>
 
