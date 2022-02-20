@@ -108,10 +108,12 @@ function About() {...}
 <template>...</template>
 
 <script>
-  export const frontMatter = {
-    title: 'A tragic tale',
-    layout: 'base.njk',
-  }
+export default {
+  frontMatter: {
+    title: "A tragic tale",
+    layout: "base.njk",
+  },
+};
 </script>
 ```
 </section>
