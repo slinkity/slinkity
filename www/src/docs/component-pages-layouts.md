@@ -125,9 +125,9 @@ export default {
 <!--about.svelte-->
 <script context="module">
   export const frontMatter = {
-    title: 'A tragic tale',
-    layout: 'base.njk',
-  }
+    title: "A tragic tale",
+    layout: "base.njk",
+  };
 </script>
 
 <article>...</article>
@@ -196,7 +196,7 @@ export default {
 ```html
 <!--about.svelte-->
 <script>
-  export let contributors = []
+  export let contributors = [];
 </script>
 
 <article>
@@ -274,15 +274,15 @@ export default {
 <!--about.svelte-->
 <script context="module">
   export const frontMatter = {
-  title: 'A tragic tale',
+    title: "A tragic tale",
     permalink(eleventyData) {
       // note: shortcodes and filters are available
       // from __functions. We're using 11ty's built-in
       // slugify filter here.
-      const { __functions, title } = eleventyData
-      return \`/${__functions.slugify(title)}/\`
+      const { __functions, title } = eleventyData;
+      return \`/${__functions.slugify(title)}/\`;
     },
-  }
+  };
 </script>
 
 <article>...</article>
@@ -398,21 +398,25 @@ export default {
   export const frontMatter = {
     pagination: {
       // name of your data
-      data: 'tshirts',
+      data: "tshirts",
       // number of routes per array element
       size: 1,
       // variable to access array element values
       // from your permalink fn and your component page
-      alias: 'tshirt' 
+      alias: "tshirt",
     },
     // note the trailing "/" here!
-    permalink: ({ tshirt }) => \`/${tshirt.slug}/\`
-  }
+    permalink: ({ tshirt }) => \`/${tshirt.slug}/\`,
+  };
+</script>
+
+<script>
+  export let tshirt = {};
 </script>
 
 <article>
   <h1>{tshirt.name}</h1>
-  <img src={tshirt.image} alt={tshirt.name}>
+  <img src={tshirt.image} alt={tshirt.name} />
 </article>
 ```
 </section>
@@ -492,14 +496,15 @@ export default {
 <!--about.svelte-->
 <script context="module">
   export const frontMatter = {
-    hydrate: 'eager',
-  }
+    hydrate: "eager",
+  };
 </script>
+
 <script>
-  let count = 0
+  let count = 0;
 
   function add() {
-    count += 1
+    count += 1;
   }
 </script>
 
@@ -583,17 +588,18 @@ export default {
 <script context="module">
   export const frontMatter = {
     hydrate: {
-      mode: 'eager',
+      mode: "eager",
       // the result of this function
       // will be based to your component as props
       props: (eleventyData) => ({
         contributors: eleventyData.contributors,
-      })
-    }
-  }
+      }),
+    },
+  };
 </script>
+
 <script>
-  export let contributors = []
+  export let contributors = [];
 </script>
 
 <article>
