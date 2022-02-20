@@ -4,12 +4,13 @@
   "description": "A splendid starter for my Slinkity site!",
   "main": ".eleventy.js",
   "scripts": {
+    "dev": "slinkity --serve --incremental",
     "start": "slinkity --serve --incremental",
     "build": "slinkity"
   },
   "dependencies": {},
   "devDependencies": {
-    "@11ty/eleventy": "^1.0.0-beta.8",
+    "@11ty/eleventy": "^1.0.0",
     "slinkity": "^0.6.1-canary.0"
   }
 }
