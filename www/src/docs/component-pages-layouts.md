@@ -218,6 +218,102 @@ export default {
 > - 📝 [**The official 11ty docs**](https://www.11ty.dev/docs/data-cascade/)
 > - 🚏 [**A beginner-friendly walkthrough**](https://benmyers.dev/blog/eleventy-data-cascade/) by Ben Myers
 
+## Access shortcodes and filters
+
+All [shortcodes](https://www.11ty.dev/docs/shortcodes/) and [filters](https://www.11ty.dev/docs/filters/) are accessible from the `__functions` prop as javascript functions. This includes any shortcode or filter created using the following eleventy config helpers:
+
+```js
+// .eleventy.js
+module.exports = function(eleventyConfig) {
+  // Universal filter
+  eleventyConfig.addFilter("capitalize", function(value) { … });
+
+  // Universal shortcode
+  eleventyConfig.addShortcode("capitalized", function(value) { … });
+
+  // Universal paired shortcode
+  eleventyConfig.addPairedShortcode("capitalized", function(content, value) { … });
+
+  // JavaScript Template Function
+  eleventyConfig.addJavaScriptFunction("capitalize", function(value) { … });
+};
+```
+
+> For those wondering "what are shortcodes and filters:" they're universal helpers you can access from any page template, no imports necessary. These are especially useful in not-so-JavaScript templates like Nunjucks and markdown. We recommend [visiting 11ty.rocks](https://11ty.rocks/eleventyjs/content/) for concrete examples!
+
+For instance, say you registered a `capitalize` filter like so:
+
+```js
+// .eleventy.js
+module.exports = function(eleventyConfig) {
+    eleventyConfig.addFilter('capitalize', function(value) {
+      const firstLetter = value[0]
+      const restOfPhrase = value.slice(1)
+      return firstLetter.toUpperCase() + restOfPhrase
+    })
+}
+```
+
+You can access this filter across your component pages like so:
+
+{% slottedComponent "Tabs.svelte", hydrate="eager", id="page-permalink-basic", tabs=["React", "Vue", "Svelte"] %}
+{% renderTemplate "md" %}
+<section>
+
+```jsx
+// about.jsx
+export default function About({ __functions }) {
+  const name = 'darth Plagueis the Wise'
+  return (
+    <article>
+      <h2>A tragic tale</h2>
+      <p>Did YOU ever hear the Tragedy of {__functions.capitalize(name)}?</p>
+    </article>
+  )
+}
+```
+</section>
+<section hidden>
+
+```html
+<!--about.vue-->
+<template>
+  <article>
+    <h2>A tragic tale</h2>
+    <p>Did YOU ever hear the Tragedy of {{ __functions.capitalize(name) }}?</p>
+  </article>
+</template>
+
+<script>
+export default {
+  props: ["__functions"],
+  setup() {
+    return {
+      name: "darth Plagueis the Wise",
+    };
+  },
+};
+</script>
+```
+</section>
+<section hidden>
+
+```html
+<!--about.svelte-->
+<script>
+  export let __functions = {};
+  const name = "darth Plagueis the Wise";
+</script>
+
+<article>
+  <h2>A tragic tale</h2>
+  <p>Did YOU ever hear the Tragedy of {__functions.capitalize(name)}?</p>
+</article>
+```
+</section>
+{% endrenderTemplate %}
+{% endslottedComponent %}
+
 ## Handle dynamic permalinks
 
 [Dynamic permalinks](https://www.11ty.dev/docs/permalinks/#use-data-variables-in-permalink) are incredibly useful when generating a URL from 11ty data. You may be used to template strings when using plain 11ty (say, [using Nunjucks](https://www.11ty.dev/docs/permalinks/#use-data-variables-in-permalink) to output a URL). But with Slinkity, you have the power of JavaScript functions at your disposal 😎
