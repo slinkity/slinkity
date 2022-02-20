@@ -62,6 +62,7 @@ You'll configure all 11ty-specific options in this file. There are quite a few c
 
 [Head to their docs](https://www.11ty.dev/docs/config/#default-template-engine-for-markdown-files) for the full list of options. And yes, everything should work as expected with Slinkity.
 
+**🚨 Note:** Due to implementation complexity running 11ty's [Debugging Commands](https://www.11ty.dev/docs/debugging/#commands) ```DEBUG=Eleventy* npx @11ty/eleventy``` currently fails. Solutions are being investigated.
 ## Vite's `vite.config.js`
 
 **[Full Vite documentation here](https://vitejs.dev/config/)**
