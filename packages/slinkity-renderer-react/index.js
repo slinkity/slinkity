@@ -4,7 +4,6 @@ const chalk = require('chalk')
 
 const client = `${pkg.name}/client`
 const server = `${pkg.name}/server`
-const toComponentByShortcode = `${pkg.name}/StaticHtml`
 
 /** @type {import('../slinkity').Renderer} */
 module.exports = {
@@ -12,7 +11,6 @@ module.exports = {
   extensions: ['jsx', 'tsx'],
   client,
   server,
-  toComponentByShortcode,
   injectImportedStyles: true,
   viteConfig() {
     return {
