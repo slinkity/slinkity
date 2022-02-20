@@ -313,16 +313,15 @@ That list of T-shirts may look like this (`_data/tshirts.json`):
 ```json
 [
   {
-    name: 'Me and the Possum Posse',
-    slug: 'possum-posse',
-    image: 'assets/possum-posse.jpg',
+    "name": "Me and the Possum Posse",
+    "slug": "possum-posse",
+    "image": "assets/possum-posse.jpg"
   },
   {
-    name: 'It possumtimes be like that',
-    slug: 'possumtimes',
-    image: 'assets/possumtimes.jpg',
-  },
-  ...
+    "name": "It possumtimes be like that",
+    "slug": "possumtimes",
+    "image": "assets/possumtimes.jpg"
+  }
 ]
 ```
 
