@@ -5,6 +5,7 @@
   "main": ".eleventy.js",
   "scripts": {
     "dev": "slinkity --serve --incremental",
+    "start": "slinkity --serve --incremental",
     "build": "slinkity"
   },
   "dependencies": {},
