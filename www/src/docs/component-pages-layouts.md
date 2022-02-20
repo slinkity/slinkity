@@ -221,6 +221,219 @@ export default function About({ contributors }) {
 > - 📝 [**The official 11ty docs**](https://www.11ty.dev/docs/data-cascade/)
 > - 🚏 [**A beginner-friendly walkthrough**](https://benmyers.dev/blog/eleventy-data-cascade/) by Ben Myers
 
+## Handle dynamic permalinks
+
+[Dynamic permalinks](https://www.11ty.dev/docs/permalinks/#use-data-variables-in-permalink) are incredibly useful when generating a URL from 11ty data. You may be used to template strings when using plain 11ty (say, [using Nunjucks](https://www.11ty.dev/docs/permalinks/#use-data-variables-in-permalink) to output a URL). But with Slinkity, you have the power of JavaScript functions at your disposal 😎
+
+### Example - Generate a permalink from a page title
+
+Say you want to generate a blog post's URL from its title. Since front matter is available from the 11ty data object, you can use a `permalink()` function like so:
+
+{% slottedComponent "Tabs.svelte", hydrate="eager", id="page-permalink-basic", tabs=["React", "Vue", "Svelte"] %}
+{% renderTemplate "md" %}
+<section>
+
+```jsx
+// about.jsx
+export const frontMatter = {
+  title: 'A tragic tale',
+  permalink(eleventyData) {
+    // note: shortcodes and filters are available
+    // from __functions. We're using 11ty's built-in
+    // slugify filter here.
+    const { __functions, title } = eleventyData
+    return \`/${__functions.slugify(title)}/\`
+  },
+}
+
+export default function About() {...}
+```
+</section>
+<section hidden>
+
+```html
+<!--about.vue-->
+<template>...</template>
+
+<script>
+  export default {
+    frontMatter: {
+      title: 'A tragic tale',
+      permalink(eleventyData) {
+        // note: shortcodes and filters are available
+        // from __functions. We're using 11ty's built-in
+        // slugify filter here.
+        const { __functions, title } = eleventyData
+        return \`/${__functions.slugify(title)}/\`
+      },
+    },
+  }
+</script>
+```
+</section>
+<section hidden>
+
+```html
+<!--about.svelte-->
+<script context="module">
+  export const frontMatter = {
+  title: 'A tragic tale',
+    permalink(eleventyData) {
+      // note: shortcodes and filters are available
+      // from __functions. We're using 11ty's built-in
+      // slugify filter here.
+      const { __functions, title } = eleventyData
+      return \`/${__functions.slugify(title)}/\`
+    },
+  }
+</script>
+
+<article>...</article>
+```
+</section>
+
+{% endrenderTemplate %}
+{% endslottedComponent %}
+
+Here's how your site's input / output directories will look, assuming `_site` is your output and `src` is your input:
+
+```plaintext
+├── _site
+│   └── a-tragic-tale
+│       └──index.html
+├── src
+│   └── about.jsx|vue|svelte
+```
+
+### Example - Dynamic permalinks with pagination
+
+Pagination is another common use case for dynamic permalinks. We won't go _too_ in depth on 11ty's pagination options ([see their docs for full details](https://www.11ty.dev/docs/pagination/#aliasing-to-a-different-variable)), but we'll cover the primary use case: generate some routes from an array of data.
+
+Say that:
+1. You have an array of T-shirts to sell on your e-commerce site
+2. You want to generate a unique route to preview each T-shirt
+
+That list of T-shirts may look like this (`_data/tshirts.json`):
+
+```json
+[
+  {
+    name: 'Me and the Possum Posse',
+    slug: 'possum-posse',
+    image: 'assets/possum-posse.jpg',
+  },
+  {
+    name: 'It possumtimes be like that',
+    slug: 'possumtimes',
+    image: 'assets/possumtimes.jpg',
+  },
+  ...
+]
+```
+
+You can generate routes for each of these T-shirts using the `pagination` and `permalink` properties like so:
+
+{% slottedComponent "Tabs.svelte", hydrate="eager", id="page-permalink-basic", tabs=["React", "Vue", "Svelte"] %}
+{% renderTemplate "md" %}
+<section>
+
+```jsx
+// tshirt.jsx
+export const frontMatter = {
+  pagination: {
+    // name of your data
+    data: 'tshirts',
+    // number of routes per array element
+    size: 1,
+    // variable to access array element values
+    // from your permalink fn and your component page
+    alias: 'tshirt' 
+  },
+  // note the trailing "/" here!
+  permalink: ({ tshirt }) => \`/${tshirt.slug}/\`
+}
+
+export default function Tshirt({ tshirt }) {
+  return (
+    <article>
+      <h1>{tshirt.name}</h1>
+      <img src={tshirt.image} alt={tshirt.name} />
+    </article>
+  )
+}
+```
+</section>
+<section hidden>
+
+```html
+<!--tshirt.vue-->
+<template>
+  <article>
+    <h1>{{ tshirt.name }}</h1>
+    <img src="{{ tshirt.image }}" alt="{{ tshirt.name}}">
+  </article>
+</template>
+
+<script>
+  export default {
+    frontMatter: {
+      pagination: {
+        // name of your data
+        data: 'tshirts',
+        // number of routes per array element
+        size: 1,
+        // variable to access array element values
+        // from your permalink fn and your component page
+        alias: 'tshirt' 
+      },
+      // note the trailing "/" here!
+      permalink: ({ tshirt }) => \`/${tshirt.slug}/\`
+    }
+  }
+</script>
+```
+</section>
+<section hidden>
+
+```html
+<!--tshirt.svelte-->
+<script context="module">
+  export const frontMatter = {
+    pagination: {
+      // name of your data
+      data: 'tshirts',
+      // number of routes per array element
+      size: 1,
+      // variable to access array element values
+      // from your permalink fn and your component page
+      alias: 'tshirt' 
+    },
+    // note the trailing "/" here!
+    permalink: ({ tshirt }) => \`/${tshirt.slug}/\`
+  }
+</script>
+
+<article>
+  <h1>{tshirt.name}</h1>
+  <img src={tshirt.image} alt={tshirt.name}>
+</article>
+```
+</section>
+
+{% endrenderTemplate %}
+{% endslottedComponent %}
+
+Here's how your site's input / output directories will look, assuming `_site` is your output and `src` is your input:
+
+```plaintext
+├── _site
+│   └── possum-posse
+│       └── index.html
+│   └── possumtimes
+│       └── index.html
+├── src
+│   └── tshirt.jsx|vue|svelte
+```
 
 ## Hydrate your page
 
