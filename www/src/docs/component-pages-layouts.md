@@ -179,15 +179,15 @@ export default function About({ contributors }) {
 <template>
   <ul v-for="contributor in contributors">
     <li>
-      <a href="{{contributor.ghProfile}}">{{contributor.name}}</a>
+      <a href="{{contributor.ghProfile}}">{{ contributor.name }}</a>
     </li>
   </ul>
 </template>
 
 <script>
-  export default {
-    props: ['contributors'],
-  }
+export default {
+  props: ["contributors"],
+};
 </script>
 ```
 </section>
@@ -253,18 +253,18 @@ export default function About() {...}
 <template>...</template>
 
 <script>
-  export default {
-    frontMatter: {
-      title: 'A tragic tale',
-      permalink(eleventyData) {
-        // note: shortcodes and filters are available
-        // from __functions. We're using 11ty's built-in
-        // slugify filter here.
-        const { __functions, title } = eleventyData
-        return \`/${__functions.slugify(title)}/\`
-      },
+export default {
+  frontMatter: {
+    title: "A tragic tale",
+    permalink(eleventyData) {
+      // note: shortcodes and filters are available
+      // from __functions. We're using 11ty's built-in
+      // slugify filter here.
+      const { __functions, title } = eleventyData
+      return \`/${__functions.slugify(title)}/\`
     },
-  }
+  },
+}
 </script>
 ```
 </section>
@@ -366,26 +366,27 @@ export default function Tshirt({ tshirt }) {
 <template>
   <article>
     <h1>{{ tshirt.name }}</h1>
-    <img src="{{ tshirt.image }}" alt="{{ tshirt.name}}">
+    <img src="{{ tshirt.image }}" alt="{{ tshirt.name }}" />
   </article>
 </template>
 
 <script>
-  export default {
-    frontMatter: {
-      pagination: {
-        // name of your data
-        data: 'tshirts',
-        // number of routes per array element
-        size: 1,
-        // variable to access array element values
-        // from your permalink fn and your component page
-        alias: 'tshirt' 
-      },
-      // note the trailing "/" here!
-      permalink: ({ tshirt }) => \`/${tshirt.slug}/\`
-    }
-  }
+export default {
+  frontMatter: {
+    pagination: {
+      // name of your data
+      data: "tshirts",
+      // number of routes per array element
+      size: 1,
+      // variable to access array element values
+      // from your permalink fn and your component page
+      alias: "tshirt",
+    },
+    // note the trailing "/" here!
+    permalink: ({ tshirt }) => \`/${tshirt.slug}/\`,
+  },
+  props: ["tshirt"],
+};
 </script>
 ```
 </section>
@@ -471,17 +472,17 @@ export default function About() {
 </template>
 
 <script>
-  import { ref } from 'vue'
-  export default {
-    frontMatter: {
-      hydrate: 'eager',
-    },
-    setup() {
-      const count = ref(0);
-      const add = () => (count.value = count.value + 1);
-      return { count, add };
-    }
-  }
+import { ref } from "vue";
+export default {
+  frontMatter: {
+    hydrate: "eager",
+  },
+  setup() {
+    const count = ref(0);
+    const add = () => (count.value = count.value + 1);
+    return { count, add };
+  },
+};
 </script>
 ```
 </section>
@@ -553,25 +554,25 @@ export default function About({ contributors }) {
 <template>
   <ul v-for="contributor in contributors">
     <li>
-      <a href="{{contributor.ghProfile}}">{{contributor.name}}</a>
+      <a href="{{contributor.ghProfile}}">{{ contributor.name }}</a>
     </li>
   </ul>
 </template>
 
 <script>
-  export default {
-    props: ['contributors'],
-    frontMatter: {
-      hydrate: {
-        mode: 'eager',
-        // the result of this function
-        // will be based to your component as props
-        props: (eleventyData) => ({
-          contributors: eleventyData.contributors,
-        })
-      }
-    }
-  }
+export default {
+  props: ["contributors"],
+  frontMatter: {
+    hydrate: {
+      mode: "eager",
+      // the result of this function
+      // will be based to your component as props
+      props: (eleventyData) => ({
+        contributors: eleventyData.contributors,
+      }),
+    },
+  },
+};
 </script>
 ```
 </section>
