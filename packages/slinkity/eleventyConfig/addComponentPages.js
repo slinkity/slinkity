@@ -44,13 +44,13 @@ module.exports = async function addComponentPages({
         },
       },
       compile(_, inputPath) {
-        const unboundShortcodes = this.config?.javascriptFunctions ?? {}
+        const unboundFunctions = this.config?.javascriptFunctions ?? {}
         return async function render(data) {
-          // shortcodes should have access to "page" via the "this" keyword
-          // this is missing on javascriptFunctions from this scope for some reason,
+          // functions should have access to "page" via the "this" keyword
+          // this is missing on javascriptFunctions from this scope,
           // so we'll add that binding back on
-          const shortcodes = Object.fromEntries(
-            Object.entries(unboundShortcodes).map(([name, fn]) => [
+          const __functions = Object.fromEntries(
+            Object.entries(unboundFunctions).map(([name, fn]) => [
               name,
               fn.bind({ page: data.page }),
             ]),
@@ -63,25 +63,13 @@ module.exports = async function addComponentPages({
           if (typeof hydrate !== 'string' && typeof hydrate.props === 'function') {
             // if there's a "props" function,
             // use that to determine the component props
-            const dataForProps = useFormatted11tyData ? toFormattedDataForProps(data) : data
-            const dataWithShortcodes = {
-              ...dataForProps,
-              __slinkity: {
-                ...(dataForProps.__slinkity || {}),
-                shortcodes,
-              },
-            }
-            props = (await hydrate.props(dataWithShortcodes)) ?? {}
+            const formattedData = useFormatted11tyData ? toFormattedDataForProps(data) : data
+            const formattedDataWithFns = { ...formattedData, __functions }
+            props = (await hydrate.props(formattedDataWithFns)) ?? {}
           } else if (hydrate === 'none' || hydrate.mode === 'none') {
             // if there's no "props" function and we don't hydrate the page,
             // pass *all* 11ty data as props
-            props = {
-              ...data,
-              __slinkity: {
-                ...(data.__slinkity || {}),
-                shortcodes,
-              },
-            }
+            props = { ...data, __functions }
           } else {
             // if there's no "props" function, but we *do* hydrate the page,
             // don't pass any props

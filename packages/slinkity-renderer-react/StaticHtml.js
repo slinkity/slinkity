@@ -13,17 +13,10 @@ import { createElement as h } from 'react'
  */
 const StaticHtml = ({ value }) => {
   if (!value) return null
-  return h('slinkity-fragment', {
+  return h('astro-fragment', {
     suppressHydrationWarning: true,
     dangerouslySetInnerHTML: { __html: value },
   })
-}
-
-export function toComponentByShortcode({ unnamedArgs, shortcode }) {
-  return (namedArgs) => {
-    const value = shortcode(...unnamedArgs, namedArgs)
-    return h(StaticHtml, { value })
-  }
 }
 
 /**
