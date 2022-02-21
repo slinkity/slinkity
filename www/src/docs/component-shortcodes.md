@@ -186,6 +186,119 @@ url=page.url, hydrate='eager', fileSlug=page.fileSlug %}
 
 > Is that a "hydrate" flag sandwiched between the other props? Yep! Do we care? Nope.
 
+## Pass children / unnamed slots to component
+
+We have a separate [paired shortcode](https://www.11ty.dev/docs/shortcodes/#paired-shortcodes) for passing child HTML: `slottedComponent`. 
+
+Say you have a simple component to wrap text with a dropdown toggle. That component could be written like so:
+
+{% slottedComponent "Tabs.svelte", hydrate="eager", id="slotted-component", tabs=["React", "Vue", "Svelte"] %}
+{% renderTemplate "md" %}
+<section>
+
+```jsx
+export default function Dropdown({ heading, children }) {
+  return (
+    <details>
+      <summary>{heading}</summary>
+      {children}
+    </details>
+  )
+}
+```
+</section>
+<section hidden>
+
+```html
+<template>
+  <details>
+    <summary>{{ heading }}</summary>
+    <slot />
+  </details>
+</template>
+
+<script>
+export default {
+  props: ["heading"],
+};
+</script>
+```
+</section>
+<section hidden>
+
+```html
+<script>
+  export let heading = "";
+</script>
+
+<details>
+  <summary>{heading}</summary>
+  <slot />
+</details>
+```
+</section>
+{% endrenderTemplate %}
+{% endslottedComponent %}
+
+You can use this component the same way as the `component` shortcode, now with children:
+
+{% slottedComponent 'Tabs.svelte', hydrate='eager', id='slotted-shortcode-usage', store='templates', tabs=['nunjucks', 'liquid'] %}
+{% renderTemplate 'md' %}
+<section>
+
+```html
+{% slottedComponent 'Dropdown.jsx|vue|svelte', heading='Full disclosure' %}
+<p>"details" and "summary" are kinda confusing element names</p>
+{% endslottedComponent %}
+```
+</section>
+<section hidden>
+
+```html
+{% slottedComponent 'Dropdown.jsx|vue|svelte' 'heading' 'Full disclosure' %}
+<p>"details" and "summary" are kinda confusing element names</p>
+{% endslottedComponent %}
+```
+</section>
+{% endrenderTemplate %}
+{% endslottedComponent %}
+
+### Important gotcha: templating in children
+
+You may be rushing to try slotted components in your markdown:
+
+```md{% raw %}
+{% slottedComponent 'FancyBackground.jsx|vue|svelte' %}
+### Why I love markdown
+
+- Bulleted lists are easy
+- Paragraph and code blocks are even easier
+
+{% endslottedComponent %}{% endraw %}
+```
+
+🚨 **Careful, this won't work as written!** Paired shortcode content is processed as plain HTML, so markdown syntax won't work as expected 😢
+
+But all is not lost. Since you _can_ still nest other shortcodes as paired shortcode content, you can use [11ty's handy `renderTemplate`](https://www.11ty.dev/docs/plugins/render/) like so:
+
+```md{% raw %}
+{% slottedComponent 'FancyBackground.jsx|vue|svelte' %}
+{% renderTemplate 'md' %}
+### Why I love markdown
+
+- Bulleted lists are easy
+- Paragraph and code blocks are even easier
+
+{% endrenderTemplate %}
+{% endslottedComponent %}{% endraw %}
+```
+
+> Be sure to set up `renderTemplate` in your 11ty config before trying this. [See their docs](https://www.11ty.dev/docs/plugins/render/) for more.
+
+This will process your markdown, then pass the result to your component.
+
+***
+
 So injecting components into templates is nice... but what if we want to build the entire route using a component framework?
 
 **[Learn about page-level components →](/docs/component-pages-layouts)**
