@@ -10,24 +10,41 @@ You can embed React, Vue, Svelte, and more into your existing templates. Let's l
 
 ## Basic usage
 
-Using the `react` [shortcode](https://www.11ty.dev/docs/shortcodes/), you can insert components into any static template that 11ty supports. First, ensure your component is:
-- **located in your includes directory** - defaults to `_includes`, but you can [override this from your eleventy config](https://www.11ty.dev/docs/config/#directory-for-includes)
-- **exports your component as a default export** (aka `export default ComponentName`) - named exports currently aren't supported
+Using the `component` [shortcode](https://www.11ty.dev/docs/shortcodes/), you can insert components into any static template that 11ty supports.
 
-Now, you can add a component shortcode to your template of choice:
+First, ensure your component is **located in your includes directory** This defaults to `_includes` for new 11ty projects, but you can [override this from your eleventy config](https://www.11ty.dev/docs/config/#directory-for-includes).
+
+For instance, say you've written a Vue component under `_includes/Component.vue`. You can insert this component into your templates like so:
+
+{% slottedComponent 'Tabs.svelte', hydrate='eager', id='shortcode-basics', store="templates", tabs=['njk', 'liquid', 'hbs'] %}
+{% renderTemplate 'md' %}
+<section>
 
 ```html
-<!--for nunjucks and liquid templates -->
-{% raw %}{% react 'path/to/Component' %}{% endraw %}
-
-<!--for handlebars templates --> 
-{% raw %}{{{ react 'path/to/Component' }}}{% endraw %}
+{% component 'Component.vue' %}
 ```
+</section>
+<section hidden>
+
+```html
+{% component 'Component.vue' %}
+```
+</section>
+<section hidden>
+
+```html
+{{{ component 'Component.vue' }}}
+```
+</section>
+{% endrenderTemplate %}
+{% endslottedComponent %}
+
+> These examples work from markdown (`.md`) and HTML (`.html`) files as well! You can use liquid syntax within either of these by default, though we recommend using Nunjucks instead. See [our recommend config options](/docs/config/#recommended-config-options) for more.
 
 This will do a few things:
-1. Find `_includes/path/to/Component.jsx` (notice the file extension is optional)
+1. Find `_includes/GlassCounter.*`. Note that we'll always look inside the `_includes` directory to find your components.
 2. [Prerender](https://jamstack.org/glossary/pre-render/) your component at build time. This means you'll always see your component, even when disabling JS in your browser ([try it!](https://developer.chrome.com/docs/devtools/javascript/disable/)).
-3. ["Hydrate"](/docs/partial-hydration/) that prerendered component with JavaScript
+3. ["Hydrate"](/docs/partial-hydration/) that prerendered component with JavaScript. This is thanks to our `hydrate='eager'` flag.
 
 ## Choose how and when to hydrate
 
