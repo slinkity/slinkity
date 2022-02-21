@@ -6,17 +6,27 @@
   export let tabs = [];
   /** generates tab and tab panel IDs. A unique ID is recommended! */
   export let id = "tabs";
+  /** a custom store ID to use for sharing tab indexes across tab views */
+  export let store = "default";
 
   let tabEl;
   let tabPanelEl;
 
   $: tabPanels = tabPanelEl?.querySelector("slinkity-fragment").children;
-  $: setTabPanelAttrs(tabPanels);
+  $: tabIdx = $currentTabIdx[store] ?? 0;
+  $: setTabPanelAttrs(tabPanels, tabIdx);
 
-  function setTabPanelAttrs(currentTabPanels) {
+  function updateTabIdx(newTabIdx) {
+    currentTabIdx.update((tabIdxStore) => ({
+      ...tabIdxStore,
+      [store]: newTabIdx,
+    }));
+  }
+
+  function setTabPanelAttrs(currentTabPanels, currentTabIdx) {
     if (!currentTabPanels?.length) return;
 
-    const currPanel = currentTabPanels[$currentTabIdx];
+    const currPanel = currentTabPanels[currentTabIdx];
     for (const [idx, panel] of [...currentTabPanels].entries()) {
       panel.setAttribute("hidden", "");
       panel.setAttribute("role", "tabpanel");
@@ -34,25 +44,15 @@
   }
 
   function moveFocus(event) {
-    let newTabIdx = $currentTabIdx;
-    if (event.key === "ArrowLeft" && $currentTabIdx > 0) {
+    let newTabIdx = tabIdx;
+    if (event.key === "ArrowLeft" && tabIdx > 0) {
       newTabIdx -= 1;
-    } else if (event.key === "ArrowRight" && $currentTabIdx < tabs.length - 1) {
+    } else if (event.key === "ArrowRight" && tabIdx < tabs.length - 1) {
       newTabIdx += 1;
     }
     const currButton = tabEl.querySelector(`button:nth-child(${newTabIdx + 1}`);
     currButton.focus();
-    currentTabIdx.set(newTabIdx);
-  }
-
-  const unsubscribe = currentTabIdx.subscribe(() => {
-    if (tabPanels) {
-      setTabPanelAttrs(tabPanels);
-    }
-  });
-  // TODO: debug why onDestroy fails in production SSR
-  if (typeof window !== "undefined") {
-    onDestroy(unsubscribe);
+    updateTabIdx(newTabIdx);
   }
 </script>
 
@@ -62,11 +62,11 @@
       class="tab"
       aria-controls={toTabPanelId(idx)}
       id={toTabId(idx)}
-      aria-selected={idx === $currentTabIdx}
-      tabindex={idx === $currentTabIdx ? "0" : "-1"}
+      aria-selected={idx === tabIdx}
+      tabindex={idx === tabIdx ? "0" : "-1"}
       role="tab"
       type="button"
-      on:click={() => currentTabIdx.set(idx)}>{tab}</button
+      on:click={() => updateTabIdx(idx)}>{tab}</button
     >
   {/each}
 </div>

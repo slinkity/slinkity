@@ -1,3 +1,3 @@
 import { writable } from 'svelte/store'
 
-export const currentTabIdx = writable(0)
+export const currentTabIdx = writable({ default: 0 })

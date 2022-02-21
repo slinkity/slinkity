@@ -67,6 +67,10 @@ h2 {
   }
 }
 
+hr {
+  border: 1px solid var(--color-primary-7);
+}
+
 blockquote {
   --bg: var(--color-primary-7);
   --padding: clamp(1rem, 2vmax, 1.5em);
