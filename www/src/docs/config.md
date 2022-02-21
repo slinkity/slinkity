@@ -198,7 +198,7 @@ type Renderer = {
 }
 ```
 
-You can also [follow the source code](https://github.com/slinkity/slinkity/tree/main/packages) of our existing renderer pages. Don't worry, the code is fairly simple!
+You can also [follow the source code](https://github.com/slinkity/slinkity/tree/main/packages) of our existing renderer packages. Don't worry, the code is fairly simple!
 
 #### eleventyIgnores
 
