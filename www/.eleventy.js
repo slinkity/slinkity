@@ -34,7 +34,7 @@ module.exports = function config(eleventyConfig) {
   eleventyConfig.addPlugin(
     toc,
     {
-      wrapper: 'nav aria-labelledby="toc-label"',
+      wrapper: 'nav',
       tags: ['h2', 'h3', 'h4', 'h5', 'h6']
     }
   )
