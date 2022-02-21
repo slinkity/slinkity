@@ -74,7 +74,7 @@
     "vite": "^2.7.10"
   },
   "peerDependencies": {
-    "@11ty/eleventy": "^1.0.0-beta.3"
+    "@11ty/eleventy": "^1.0.0"
   },
   "devDependencies": {
     "browser-sync": "^2.27.5",
