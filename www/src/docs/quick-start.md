@@ -78,7 +78,7 @@ If you run this using the `slinkity --serve --incremental` command, you'll just 
 
 But what if we want something... interactive? For instance, say we're tracking how many glasses of water we've had today (because [hydration is important](https://www.gatsbyjs.com/docs/conceptual/react-hydration/)!). If we know a little JavaScript, we can whip up a counter using our favorite flavor of components.
 
-First, we'll install need one of our "renderers" to handle React, Vue, and/or Svelte. Don't worry, this is definitely a set-it-and-forget-it step 😁
+First, we'll need one of our "renderers" to handle React, Vue, and/or Svelte. Don't worry, this is definitely a set-it-and-forget-it step 😁
 
 {% include 'prereqs.md' %}
 
