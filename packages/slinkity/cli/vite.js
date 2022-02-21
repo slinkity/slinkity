@@ -49,7 +49,13 @@ async function getSharedConfig(eleventyDir) {
         dedupe: ['react', 'react-dom'],
       },
       optimizeDeps: {
-        include: ['react', 'react/jsx-runtime', 'react/jsx-dev-runtime', 'react-dom', 'slinkity/client'],
+        include: [
+          'react',
+          'react/jsx-runtime',
+          'react/jsx-dev-runtime',
+          'react-dom',
+          'slinkity/client',
+        ],
       },
       build: {
         rollupOptions: {
