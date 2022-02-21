@@ -16,7 +16,7 @@ First, ensure your component is **located in your includes directory** This defa
 
 For instance, say you've written a Vue component under `_includes/Component.vue`. You can insert this component into your templates like so:
 
-{% slottedComponent 'Tabs.svelte', hydrate='eager', id='shortcode-basics', store="templates", tabs=['njk', 'liquid', 'hbs'] %}
+{% slottedComponent 'Tabs.svelte', hydrate='eager', id='shortcode-basics', store='templates', tabs=['nunjucks', 'liquid'] %}
 {% renderTemplate 'md' %}
 <section>
 
@@ -30,12 +30,6 @@ For instance, say you've written a Vue component under `_includes/Component.vue`
 {% component 'Component.vue' %}
 ```
 </section>
-<section hidden>
-
-```html
-{{{ component 'Component.vue' }}}
-```
-</section>
 {% endrenderTemplate %}
 {% endslottedComponent %}
 
@@ -44,64 +38,105 @@ For instance, say you've written a Vue component under `_includes/Component.vue`
 This will do a few things:
 1. Find `_includes/GlassCounter.*`. Note that we'll always look inside the `_includes` directory to find your components.
 2. [Prerender](https://jamstack.org/glossary/pre-render/) your component at build time. This means you'll always see your component, even when disabling JS in your browser ([try it!](https://developer.chrome.com/docs/devtools/javascript/disable/)).
-3. ["Hydrate"](/docs/partial-hydration/) that prerendered component with JavaScript. This is thanks to our `hydrate='eager'` flag.
+
+One feature we _won't_ provide automatically: hydrating on the client. In other words, your React `useState`, Vue `refs`, or Svelte stores won't work immediately. You'll need to opt-in to sending JavaScript to the browser, which brings us to our next section...
 
 ## Choose how and when to hydrate
 
-Slinkity assumes you'll hydrate your component by default. In other words, we ship your component as a JavaScript bundle to ensure your stateful variables work on the client. But what if you _don't_ need to ship any interactivity?
+Slinkity requires a special `hydrate` prop to ship JavaScript alongside your components. This lets you use your favorite component framework for templating guilt-free, and opt-in to JS bundles when the need arises.
 
-To opt-out of shipping JS, you can render your component as "static" HTML and CSS like so:
+To hydrate that `Component.vue` from earlier, you can apply the `hydrate='eager'` flag:
+
+{% slottedComponent 'Tabs.svelte', hydrate='eager', id='shortcode-basics', store='templates', tabs=['nunjucks', 'liquid'] %}
+{% renderTemplate 'md' %}
+<section>
 
 ```html
-{% raw %}
-<!--for nunjucks templates -->
-{% react 'components/Date', render="static" %}
-
-<!--for liquid templates (note we can't use the "=" sign here!) -->
-{% react 'components/Date' 'render' 'static' %}
-
-<!--for handlebars templates --> 
-{{{ react 'components/Date', 'render', 'static' }}}
-{% endraw %}
+{% component 'Component.vue', hydrate='eager' %}
 ```
+
+> If you prefer the syntax available in nunjucks templates, we do too! We recommend configuring nunjucks as the default templating language for HTML and markdown files to access this syntax everywhere. [Head to our configuration docs](/docs/config/#11ty's-.eleventy.js) for more details.
+
+</section>
+<section hidden>
+
+```html
+{% component 'Component.vue' 'hydrate' 'eager' %}
+```
+
+> Liquid doesn't handle inline objects very well. So, we recommend passing each key-value pair as separate arguments as shown above. Each pair (ex. `'hydrate' 'eager'`) will be joined on our end (ex. `hydrate='eager'`).
+
+</section>
+{% endrenderTemplate %}
+{% endslottedComponent %}
 
 For a full list of options to fine-tune how and when JavaScript is loaded on the client...
 
 **[💧 Learn more about partial hydration →](/docs/partial-hydration)**
 
-## Passing props to shortcodes
+## Pass props to shortcodes
 
 You can also pass data to your components as key / value pairs.
 
-Let's say you have a date component that wants to use [11ty's supplied `date` object](https://www.11ty.dev/docs/data-eleventy-supplied/). You can pass this "date" prop like so:
+Let's say you have a date component written in your favorite framework (`_includes/Date.jsx|vue|svelte`) that wants to use [11ty's supplied `date` object](https://www.11ty.dev/docs/data-eleventy-supplied/). You can pass this "date" prop like so:
+
+{% slottedComponent 'Tabs.svelte', hydrate='eager', id='shortcode-basics', store='templates', tabs=['nunjucks', 'liquid'] %}
+{% renderTemplate 'md' %}
+<section>
 
 ```html
-<!--for nunjucks templates -->
-{% raw %}{% react 'components/Date', date=page.date %}{% endraw %}
-
-<!--for liquid templates (note we can't use the "=" sign here!) -->
-{% raw %}{% react 'components/Date' 'date' page.date %}{% endraw %}
-
-<!--for handlebars templates --> 
-{% raw %}{{{ react 'components/Date', 'date', page.date }}}{% endraw %}
+{% component 'Date.jsx|vue|svelte', data=page.date %}
 ```
+</section>
+<section hidden>
 
-> If you prefer the syntax available in nunjucks templates, we do too! We recommend configuring nunjucks as the default templating language for HTML and markdown files to access this syntax everywhere. [Head to our configuration docs](/docs/config/#11ty's-.eleventy.js) for more details.
+```html
+{% component 'Date.jsx|vue|svelte' 'date' page.date %}
+```
+</section>
+{% endrenderTemplate %}
+{% endslottedComponent %}
 
-"date" is the key for our prop here, and `page.date` is the value passed by 11ty. We can access our prop inside `components/Date.jsx` like so:
+"date" is the key for our prop here, and `page.date` is the value passed by 11ty. You can access that `date` inside your component like so:
+
+{% slottedComponent "Tabs.svelte", hydrate="eager", id="component-props", tabs=["React", "Vue", "Svelte"] %}
+{% renderTemplate "md" %}
+<section>
 
 ```jsx
-// _includes/Date.jsx
-import React from 'react'
-
-function ViewDate({ date }) {
+export default function ViewDate({ date }) {
   return (
     <span>{date}</span>
   )
 }
-
-export default ViewDate
 ```
+</section>
+<section hidden>
+
+```html
+<template>
+  <span>{{ date }}</span>
+</template>
+
+<script>
+export default {
+  props: ["date"],
+}
+</script>
+```
+</section>
+<section hidden>
+
+```html
+<script>
+  export let date = '';
+</script>
+
+<span>{date}</span>
+```
+</section>
+{% endrenderTemplate %}
+{% endslottedComponent %}
 
 ### Passing multiple props
 
