@@ -85,13 +85,25 @@ Let's say you have a date component written in your favorite framework (`_includ
 <section>
 
 ```html
-{% component 'Date.jsx|vue|svelte', data=page.date %}
+{% component 'Date.jsx|vue|svelte', date=page.date %}
+```
+
+Note that you can pass the `hydrate` flag alongside this prop as well. `hydrate` is considered just another prop, like any other! This should work fine for instance:
+
+```html
+{% component 'Date.jsx|vue|svelte', date=page.date, hydrate='eager' %}
 ```
 </section>
 <section hidden>
 
 ```html
 {% component 'Date.jsx|vue|svelte' 'date' page.date %}
+```
+
+Note that you can pass the `hydrate` flag alongside this prop as well. `hydrate` is considered just another prop, like any other! This should work fine for instance:
+
+```html
+{% component 'Date.jsx|vue|svelte' 'date' page.date 'hydrate' 'eager' %}
 ```
 </section>
 {% endrenderTemplate %}
@@ -138,7 +150,7 @@ export default {
 {% endrenderTemplate %}
 {% endslottedComponent %}
 
-### Passing multiple props
+### Pass multiple props
 
 You're free to pass as many key / value pairs as you want! The names and ordering of your keys shouldn't matter.
 
