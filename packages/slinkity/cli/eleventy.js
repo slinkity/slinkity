@@ -4,7 +4,6 @@ const EleventyErrorHandler = require('@11ty/eleventy/src/EleventyErrorHandler')
 const UserConfig = require('@11ty/eleventy/src/UserConfig')
 const { resolve } = require('path')
 const { toViteSSR } = require('./toViteSSR')
-const { readUserSlinkityConfig } = require('./readUserSlinkityConfig')
 const toEleventyConfig = require('../eleventyConfig')
 
 function toUserConfig(configPath = '') {
@@ -63,52 +62,58 @@ function toBrowserSyncOptions({ outputDir, port }) {
   }
 }
 
-function applyUserConfigDir(dir = {}) {
-  return async function startEleventy(options = {}) {
-    if (process.env.DEBUG) {
-      require('time-require')
-    }
+/**
+ * @typedef StartEleventyParams
+ * @property {import('../eleventyConfig/types').Dir} dir
+ * @property {import('./types').UserSlinkityConfig} userSlinkityConfig
+ * @property {object} options
+ * @param {StartEleventyParams}
+ */
+async function startEleventy({ dir, userSlinkityConfig, options }) {
+  if (process.env.DEBUG) {
+    require('time-require')
+  }
 
-    const errorHandler = new EleventyErrorHandler()
-    process.on('unhandledRejection', (error) => {
-      errorHandler.fatal(error, 'Unhandled rejection in promise')
-    })
-    process.on('uncaughtException', (error) => {
-      errorHandler.fatal(error, 'Uncaught exception')
-    })
-    process.on('rejectionHandled', (promise) => {
-      errorHandler.warn(promise, 'A promise rejection was handled asynchronously')
-    })
+  const errorHandler = new EleventyErrorHandler()
+  process.on('unhandledRejection', (error) => {
+    errorHandler.fatal(error, 'Unhandled rejection in promise')
+  })
+  process.on('uncaughtException', (error) => {
+    errorHandler.fatal(error, 'Uncaught exception')
+  })
+  process.on('rejectionHandled', (promise) => {
+    errorHandler.warn(promise, 'A promise rejection was handled asynchronously')
+  })
 
-    const environment = options.watch ? 'dev' : 'prod'
-    const config = toEleventyConfig({
-      dir,
-      environment,
-      viteSSR: await toViteSSR({ dir, environment }),
-      userSlinkityConfig: await readUserSlinkityConfig(),
-      browserSyncOptions: toBrowserSyncOptions({ port: options.port, outputDir: dir.output }),
-    })
+  /** @type {import('../eleventyConfig/types').Environment} */
+  const environment = options.watch ? 'development' : 'production'
+  const config = toEleventyConfig({
+    dir,
+    environment,
+    viteSSR: await toViteSSR({ dir, environment, userSlinkityConfig }),
+    userSlinkityConfig,
+    browserSyncOptions: toBrowserSyncOptions({ port: options.port, outputDir: dir.output }),
+  })
 
-    let elev = new Eleventy(dir.input, dir.output, {
-      quietMode: options.quiet,
-      configPath: options.config,
-      config,
-      source: 'cli',
-    })
+  let elev = new Eleventy(dir.input, dir.output, {
+    quietMode: options.quiet,
+    configPath: options.config,
+    config,
+    source: 'cli',
+  })
 
-    elev.setPathPrefix(options.pathprefix)
-    elev.setDryRun(options.dryrun)
-    elev.setIncrementalBuild(options.incremental)
-    elev.setPassthroughAll(options.passthroughall)
-    elev.setFormats(options.formats)
+  elev.setPathPrefix(options.pathprefix)
+  elev.setDryRun(options.dryrun)
+  elev.setIncrementalBuild(options.incremental)
+  elev.setPassthroughAll(options.passthroughall)
+  elev.setFormats(options.formats)
 
-    await elev.init()
-    if (options.watch) {
-      await elev.watch()
-    } else {
-      await elev.write()
-    }
+  await elev.init()
+  if (options.watch) {
+    await elev.watch()
+  } else {
+    await elev.write()
   }
 }
 
-module.exports = { toEleventyConfigDir, startEleventy: applyUserConfigDir }
+module.exports = { toEleventyConfigDir, startEleventy }

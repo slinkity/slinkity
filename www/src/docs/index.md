@@ -28,20 +28,17 @@ This project is still in early alpha, so we have many features soon to come! [Th
 | Feature                                                                               | Status                    |
 |---------------------------------------------------------------------------------------|---------------------------|
 | CLI to run 11ty and Vite simultaneously                                               | {% featureProgress '✅' %} |
-| React component pages & layouts                                                       | {% featureProgress '✅' %} |
-| React component shortcodes                                                            | {% featureProgress '✅' %} |
+| Plugin ecosystem for your favorite component framework<br />(React, Vue, Svelte, etc) | {% featureProgress '✅' %} |
+| Component pages                                                                       | {% featureProgress '✅' %} |
+| Component shortcodes                                                                  | {% featureProgress '✅' %} |
 | SCSS and SASS                                                                         | {% featureProgress '✅' %} |
 | PostCSS config (ex. Tailwind)                                                         | {% featureProgress '✅' %} |
-| CSS imports via ESM (including CSS modules) *                                         | {% featureProgress '⏺' %} |
-| Plugin ecosystem for your favorite component framework<br />(Vue, Svelte, Solid, etc) | {% featureProgress '⏳' %} |
-| Eleventy serverless compatibility                                                     | {% featureProgress '❌' %} |
-| Shared state between component shortcodes                                             | {% featureProgress '❌' %} |
-| Styled components & Emotion                                                           | {% featureProgress '❌' %} |
-
-_*CSS imports will work today, but with one caveat: stylesheets will bleed to other routes on your site. We're actively working on a fix!_
+| CSS imports via ESM (including CSS modules)                                           | {% featureProgress '✅' %} |
+| Eleventy serverless compatibility                                                     | {% featureProgress '⏳' %} |
+| Shared state between any component shortcode                                          | {% featureProgress '❌' %} |
+| Styled components & Emotion support                                                   | {% featureProgress '❌' %} |
 
 - ✅ = Ready to use
-- ⏺ = Partial support
 - ⏳ = In progress
 - ❌ = Not started, but on roadmap
 

@@ -1,4 +1,5 @@
-const { createServer, build, defineConfig } = require('vite')
+const { createServer, build, defineConfig, mergeConfig } = require('vite')
+const path = require('path')
 const requireFromString = require('require-from-string')
 const logger = require('../utils/logger')
 const { getSharedConfig } = require('./vite')
@@ -39,30 +40,30 @@ module.exports.collectCSS = collectCSS
 
 /**
  * Production-style build using Vite's build CLI
- * @param {ViteSSRParams & {
- *  ssrViteConfig: import('vite').UserConfigExport;
- *  filePath: string;
- * }} params
- * @returns {FormattedModule}
+ * @typedef ViteBuildParams
+ * @property {import('vite').UserConfigExport} ssrViteConfig
+ * @property {string} filePath
+ * @property {import('../eleventyConfig/types').Environment} environment
+ * @param {ViteBuildParams}
+ * @returns {DefaultModule}
  */
-async function viteBuild({ dir, ssrViteConfig, filePath, environment }) {
+async function viteBuild({ ssrViteConfig, filePath, environment }) {
+  const isNpmPackage = /^[^./]|^\.[^./]|^\.\.[^/]/
+  const input = isNpmPackage.test(filePath) ? path.resolve('node_modules', filePath) : filePath
   const { output } = await build({
     ...ssrViteConfig,
-    ...(await getSharedConfig(dir)),
     mode: environment,
     build: {
       ssr: true,
       write: false,
       rollupOptions: {
-        input: filePath,
+        input,
       },
     },
   })
-  /** @type {FormattedModule} */
+  /** @type {DefaultModule} */
   const defaultMod = {
     default: () => null,
-    getProps: () => ({}),
-    frontMatter: {},
     __importedStyles: new Set(),
   }
   if (!output?.length) {
@@ -85,32 +86,27 @@ async function viteBuild({ dir, ssrViteConfig, filePath, environment }) {
 
 /**
  * @typedef ViteSSRParams
- * @property {import('../eleventyConfig').SlinkityConfigOptions['environment']} environment
- * @property {import('../eleventyConfig').SlinkityConfigOptions['dir']} dir
+ * @property {import('../eleventyConfig/types').Environment} environment
+ * @property {import('../eleventyConfig/types').Dir} dir
+ * @property {import('./types').UserSlinkityConfig} userSlinkityConfig
  * @param {ViteSSRParams}
  *
- * @typedef FormattedModule
+ * @typedef DefaultModule
  * @property {() => any} default
- * @property {(eleventyData: any) => any} getProps
- * @property {Record<string, any>} frontMatter
  * @property {Set<string>} __importedStyles
  *
- * @typedef ToCommonJSModuleOptions
- * @property {boolean} useCache Whether to (attempt to) use the in-memory cache for fetching a build result. Defaults to true in production
- *
- * @typedef ViteSSR - available fns for module conversion
- * @property {(filePath: string, options?: ToCommonJSModuleOptions) => Promise<FormattedModule>} toCommonJSModule - fn to grab a Node-friendly module output from a given file path
- * @property {() => (import('vite').ViteDevServer | null)} getServer Get instance of the Vite development server (always null for production envs)
- * @property {() => Promise<void>} createServer Starts the Vite development server (has no effect for production envs)
+ * @typedef {import('./types').ViteSSR} ViteSSR
  *
  * @returns {ViteSSR} viteSSR
  */
-async function toViteSSR({ environment, dir }) {
-  const ssrViteConfig = defineConfig({ root: dir.output })
-  /** @type {Record<string, FormattedModule>} */
+async function toViteSSR({ environment, dir, userSlinkityConfig }) {
+  const sharedConfig = await getSharedConfig({ dir, userSlinkityConfig })
+  const ssrViteConfig = defineConfig(mergeConfig({ root: dir.output }, sharedConfig))
+
+  /** @type {Record<string, DefaultModule>} */
   const probablyInefficientCache = {}
 
-  if (environment === 'dev') {
+  if (environment === 'development') {
     /** @type {import('vite').ViteDevServer} */
     let server = null
     return {
@@ -118,7 +114,7 @@ async function toViteSSR({ environment, dir }) {
         if (options.useCache && probablyInefficientCache[filePath]) {
           return probablyInefficientCache[filePath]
         }
-        /** @type {FormattedModule} */
+        /** @type {DefaultModule} */
         let viteOutput
         if (server) {
           const ssrModule = await server.ssrLoadModule(filePath)
@@ -128,8 +124,6 @@ async function toViteSSR({ environment, dir }) {
           collectCSS(moduleGraph, __importedStyles)
           viteOutput = {
             default: () => null,
-            getProps: () => ({}),
-            frontMatter: {},
             __importedStyles,
             ...ssrModule,
           }
@@ -150,7 +144,6 @@ async function toViteSSR({ environment, dir }) {
       async createServer() {
         server = await createServer({
           ...ssrViteConfig,
-          ...(await getSharedConfig(dir)),
           server: {
             middlewareMode: 'ssr',
           },

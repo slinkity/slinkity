@@ -5,16 +5,16 @@ const options = {
   threshold: 0,
 }
 
-export default function lazyLoader({ id, componentImporter = () => () => null, props = {} }) {
+export default function lazyLoader({ id, props, children, toComponent, toRenderer }) {
   const observer = new IntersectionObserver(async function (entries) {
     for (const entry of entries) {
       if (entry.isIntersecting) {
-        const mountPoint = toMountPointById(id)
-        if (!mountPoint.getAttribute('data-s-is-hydrated')) {
-          const { default: renderComponent } = await import('./renderer')
-          const { default: Component } = await componentImporter()
-          renderComponent({ mountPoint, Component, props })
-          mountPoint.setAttribute('data-s-is-hydrated', true)
+        const target = toMountPointById(id)
+        if (!target.getAttribute('data-s-is-hydrated')) {
+          const { default: renderer } = await toRenderer()
+          const { default: Component } = await toComponent()
+          renderer({ Component, target, props, children })
+          target.setAttribute('data-s-is-hydrated', true)
         }
       }
     }

@@ -1,16 +1,19 @@
 {
   "name": "slinkity",
   "description": "To 11ty and beyond! The all-in-one tool for templates where you want them, component frameworks where you need them",
-  "version": "0.5.3",
+  "version": "0.6.1",
   "license": "MIT",
   "main": "index.js",
   "types": "index.d.ts",
   "files": [
     "lib",
+    "client",
     "index.js",
     "index.d.ts",
     "defineConfig.js",
-    "client",
+    "defineConfig.d.ts",
+    "cli/types.d.ts",
+    "eleventyConfig/types.d.ts",
     "client.js"
   ],
   "homepage": "https://slinkity.dev",
@@ -64,7 +67,6 @@
     "esbuild-css-modules-plugin": "^2.0.7",
     "fs-extra": "^10.0.0",
     "glob": "^7.1.7",
-    "html-react-parser": "^1.2.7",
     "javascript-stringify": "^2.1.0",
     "require-from-string": "^2.0.2",
     "sass": "^1.36.0",
@@ -72,10 +74,11 @@
     "vite": "^2.7.10"
   },
   "peerDependencies": {
-    "@11ty/eleventy": "^1.0.0-beta.3"
+    "@11ty/eleventy": "^1.0.0"
   },
   "devDependencies": {
     "browser-sync": "^2.27.5",
+    "chalk": "4.1.2",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^3.4.0",
@@ -83,16 +86,12 @@
     "faker": "^5.5.3",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.3.2",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
     "typescript": "^4.4.4"
   },
   "scripts": {
-    "build:src": "node build.js",
-    "build:types": "tsc",
-    "build": "run-s build:src build:types",
+    "build": "node build.js",
     "dev": "node build.js --watch",
-    "watch": "babel src -d lib -w",
+    "prepare": "npm run build",
     "lint": "eslint \"*.{js,jsx,mjs}\"",
     "lint:fix": "eslint --fix \"*.{js,jsx,mjs}\""
   },

@@ -1,68 +1,41 @@
-/**
- * @typedef SlinkityConfigOptions
- * @property {{
- *  input: string;
- *  output: string;
- *  includes: string;
- *  layouts: string;
- * }} dir - paths to all significant directories, as specified in 11ty's "dir" documentation
- * @property {import('../cli/toViteSSR').ViteSSR | null} viteSSR - utility to import components as Node-friendly modules
- * @property {import('../defineConfig').UserSlinkityConfig} userSlinkityConfig - Slinkity config options (either from user config or defaults)
- * @property {import('browser-sync').Options} browserSyncOptions - Slinkity's own browser sync server for dev environments
- * @property {'dev' | 'prod'} environment - whether we want a dev server or a production build
- */
-
 const browserSync = require('browser-sync')
 const { normalizePath } = require('vite')
-const { relative, join } = require('path')
-const reactPlugin = require('./reactPlugin')
+const { relative } = require('path')
 const toSlashesTrimmed = require('../utils/toSlashesTrimmed')
 const { getResolvedAliases } = require('../cli/vite')
 const { toComponentAttrStore } = require('./componentAttrStore')
 const { applyViteHtmlTransform } = require('./applyViteHtmlTransform')
+const addComponentPages = require('./addComponentPages')
+const addComponentShortcodes = require('./addComponentShortcodes')
 const { SLINKITY_HEAD_STYLES } = require('../utils/consts')
-
-// TODO: abstract based on renderer plugins configured
-// https://github.com/slinkity/slinkity/issues/55
-const extensions = [
-  {
-    extension: 'jsx',
-    isTemplateFormat: true,
-    isIgnoredFromIncludes: true,
-  },
-  {
-    extension: 'css',
-    isTemplateFormat: false,
-    isIgnoredFromIncludes: true,
-  },
-  {
-    extension: 'scss',
-    isTemplateFormat: false,
-    isIgnoredFromIncludes: true,
-  },
-]
-
-function toEleventyIgnored(userEleventyIgnores, dir) {
-  const defaultIgnoredExts = extensions
-    .filter((entry) => entry.isIgnoredFromIncludes)
-    .map((entry) => join(dir.input, dir.includes, `**/*.${entry.extension}`))
-  return typeof userEleventyIgnores === 'function'
-    ? userEleventyIgnores(defaultIgnoredExts)
-    : userEleventyIgnores ?? defaultIgnoredExts
-}
+const { toEleventyIgnored, defaultExtensions } = require('./handleTemplateExtensions')
 
 /**
- * @param {SlinkityConfigOptions} options - all Slinkity plugin options
+ * @typedef {import('./types').EleventyConfigParams} EleventyConfigParams
+ */
+
+/**
+ * @param {EleventyConfigParams} options - all Slinkity plugin options
  * @returns (eleventyConfig: Object) => Object - config we'll apply to the Eleventy object
  */
 module.exports = function toEleventyConfig({ userSlinkityConfig, ...options }) {
   const { dir, viteSSR, browserSyncOptions, environment } = options
-  const eleventyIgnored = toEleventyIgnored(userSlinkityConfig.eleventyIgnores, dir)
+
+  /** @type {import('./handleTemplateExtensions').ExtensionMeta[]} */
+  const ignoredFromRenderers = userSlinkityConfig.renderers.flatMap((renderer) =>
+    renderer.extensions.map((extension) => ({
+      extension,
+      isTemplateFormat: typeof renderer.page === 'function',
+      isIgnoredFromIncludes: true,
+    })),
+  )
+  const extensionMeta = [...defaultExtensions, ...ignoredFromRenderers]
+  const eleventyIgnored = toEleventyIgnored(userSlinkityConfig.eleventyIgnores, dir, extensionMeta)
   const componentAttrStore = toComponentAttrStore()
 
   return function (eleventyConfig) {
     eleventyConfig.addTemplateFormats(
-      extensions.filter((ext) => ext.isTemplateFormat).map((ext) => ext.extension),
+      extensionMeta.filter((ext) => ext.isTemplateFormat).map((ext) => ext.extension),
     )
     for (const ignored of eleventyIgnored) {
       eleventyConfig.ignores.add(ignored)
@@ -72,13 +45,26 @@ module.exports = function toEleventyConfig({ userSlinkityConfig, ...options }) {
       head: SLINKITY_HEAD_STYLES,
     })
 
-    eleventyConfig.addPlugin(reactPlugin, {
-      viteSSR,
+    const resolvedImportAliases = getResolvedAliases(dir)
+    addComponentShortcodes({
+      renderers: userSlinkityConfig.renderers,
+      eleventyConfig,
+      resolvedImportAliases,
       componentAttrStore,
-      resolvedImportAliases: getResolvedAliases(dir),
     })
+    for (const renderer of userSlinkityConfig.renderers) {
+      if (renderer.page) {
+        addComponentPages({
+          renderer,
+          viteSSR,
+          eleventyConfig,
+          resolvedImportAliases,
+          componentAttrStore,
+        })
+      }
+    }
 
-    if (environment === 'dev') {
+    if (environment === 'development') {
       const urlToOutputHtmlMap = {}
 
       eleventyConfig.on('beforeBuild', () => {
@@ -98,10 +84,13 @@ module.exports = function toEleventyConfig({ userSlinkityConfig, ...options }) {
                 if (page) {
                   const { content, outputPath } = page
                   res.write(
-                    await applyViteHtmlTransform(
-                      { content, outputPath, componentAttrStore },
-                      options,
-                    ),
+                    await applyViteHtmlTransform({
+                      content,
+                      outputPath,
+                      componentAttrStore,
+                      renderers: userSlinkityConfig.renderers,
+                      ...options,
+                    }),
                   )
                   res.end()
                 } else {
@@ -132,9 +121,15 @@ module.exports = function toEleventyConfig({ userSlinkityConfig, ...options }) {
       )
     }
 
-    if (environment === 'prod') {
+    if (environment === 'production') {
       eleventyConfig.addTransform('apply-vite', async function (content, outputPath) {
-        return await applyViteHtmlTransform({ content, outputPath, componentAttrStore }, options)
+        return await applyViteHtmlTransform({
+          content,
+          outputPath,
+          componentAttrStore,
+          renderers: userSlinkityConfig.renderers,
+          ...options,
+        })
       })
     }
     return {}

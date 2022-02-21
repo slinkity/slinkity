@@ -155,6 +155,53 @@ export default config
 
 ### Configurable options
 
+#### renderers
+
+These are the bread and butter of your component pages and shortcodes. You can pass our built-in renderers as an array like so:
+
+```js
+// slinkity.config.js
+import { defineConfig } from 'slinkity'
+import rendererReact from '@slinkity/renderer-react'
+import rendererVue from '@slinkity/renderer-vue'
+import rendererSvelte from '@slinkity/renderer-svelte'
+
+export default defineConfig({
+  renderers: [rendererReact, rendererVue, rendererSvelte],
+})
+```
+
+Just be sure to install associated dependencies for each of these (see either [component shortcodes](/docs/component-shortcodes) or [component pages](/docs/component-pages-layouts) for more). 
+
+Each renderer should implement the `Renderer` interface. If you plan to write your own, we recommend following our `Renderer` type as a guide:
+
+```ts
+type Renderer = {
+  /** name of renderer - used for diff-ing renderers internally */
+  name: string;
+  /** file extensions this renderer can handle */
+  extensions: string[];
+  /** path to module used for clientside hydration - browser code */
+  client: string;
+  /** path to module used for server rendering - NodeJS code */
+  server: string;
+  /** inject CSS imported by component module into document head */
+  injectImportedStyles: boolean;
+  /** config to append to Vite server and production builds */
+  viteConfig?(): UserConfigExport | Promise<UserConfigExport>;
+  /** config to render as a component page */
+  page({ toCommonJSModule }: {
+    toCommonJSModule: ViteSSR['toCommonJSModule'];
+  }): PageReturn | Promise<PageReturn>;
+  /** NOT YET SUPPORTED: Adds polyfills to Node's global object */
+  polyfills: never;
+  /** NOT YET SUPPORTED: List of imports to add as scripts on the client */
+  hydrationPolyfills: never;
+}
+```
+
+You can also [follow the source code](https://github.com/slinkity/slinkity/tree/main/packages) of our existing renderer packages. Don't worry, the code is fairly simple!
+
 #### eleventyIgnores
 
 Expects: `string[]` or `(ignores: string[]) => string[]`
