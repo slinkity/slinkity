@@ -152,18 +152,29 @@ export default {
 
 ### Pass multiple props
 
-You're free to pass as many key / value pairs as you want! The names and ordering of your keys shouldn't matter.
+You're free to pass as many key / value pairs as you want. The names and ordering of your keys shouldn't matter, since they're all crunched into a single "props" object for your component.
+
+{% slottedComponent 'Tabs.svelte', hydrate='eager', id='shortcode-basics', store='templates', tabs=['nunjucks', 'liquid'] %}
+{% renderTemplate 'md' %}
+<section>
 
 ```html
-<!--for nunjucks templates-->
-{% raw %}{% react 'components/DisplayAllTheThings', date=page.date,
-url=page.url, fileSlug=page.fileSlug %}{% endraw %}
-
-<!--for liquid templates-->
-{% raw %}{% react 'components/DisplayAllTheThings' 'date' page.date
-'url' page.url 'fileSlug' page.fileSlug %}{% endraw %}
+{% component 'Apropcalypse.jsx|vue|svelte', date=page.date,
+url=page.url, hydrate='eager', fileSlug=page.fileSlug %}
 ```
+</section>
+<section hidden>
 
-Injecting components into templates is nice... but what if we want to build the entire route using a component framework?
+```html
+{% component 'Apropcalypse.jsx|vue|svelte' 'date' page.date
+'url' page.url 'hydrate' 'eager' 'fileSlug' page.fileSlug %}
+```
+</section>
+{% endrenderTemplate %}
+{% endslottedComponent %}
+
+> Is that a "hydrate" flag sandwiched between the other props? Yep! Do we care? Nope.
+
+So injecting components into templates is nice... but what if we want to build the entire route using a component framework?
 
 **[Learn about page-level components →](/docs/component-pages-layouts)**
