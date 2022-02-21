@@ -12,7 +12,7 @@ You can embed React, Vue, Svelte, and more into your existing templates. Let's l
 
 Using the `component` [shortcode](https://www.11ty.dev/docs/shortcodes/), you can insert components into any static template that 11ty supports.
 
-First, ensure your component is **located in your includes directory** This defaults to `_includes` for new 11ty projects, but you can [override this from your eleventy config](https://www.11ty.dev/docs/config/#directory-for-includes).
+First, ensure your component is **located in your includes directory.** This defaults to `_includes` for new 11ty projects, but you can [override this from your eleventy config](https://www.11ty.dev/docs/config/#directory-for-includes).
 
 For instance, say you've written a Vue component under `_includes/Component.vue`. You can insert this component into your templates like so:
 
@@ -36,7 +36,7 @@ For instance, say you've written a Vue component under `_includes/Component.vue`
 > These examples work from markdown (`.md`) and HTML (`.html`) files as well! You can use liquid syntax within either of these by default, though we recommend using Nunjucks instead. See [our recommend config options](/docs/config/#recommended-config-options) for more.
 
 This will do a few things:
-1. Find `_includes/GlassCounter.*`. Note that we'll always look inside the `_includes` directory to find your components.
+1. Find `_includes/Component.vue`. Note that 1) we'll always look inside the `_includes` directory to find your components, and 2) the file extension is _required_ (`.jsx`, `.tsx`, `.svelte`, etc).
 2. [Prerender](https://jamstack.org/glossary/pre-render/) your component at build time. This means you'll always see your component, even when disabling JS in your browser ([try it!](https://developer.chrome.com/docs/devtools/javascript/disable/)).
 
 One feature we _won't_ provide automatically: hydrating on the client. In other words, your React `useState`, Vue `refs`, or Svelte stores won't work immediately. You'll need to opt-in to sending JavaScript to the browser, which brings us to our next section...
@@ -109,16 +109,20 @@ Note that you can pass the `hydrate` flag alongside this prop as well. `hydrate`
 {% endrenderTemplate %}
 {% endslottedComponent %}
 
-"date" is the key for our prop here, and `page.date` is the value passed by 11ty. You can access that `date` inside your component like so:
+You can access either of these props inside your component like so:
 
 {% slottedComponent "Tabs.svelte", hydrate="eager", id="component-props", tabs=["React", "Vue", "Svelte"] %}
 {% renderTemplate "md" %}
 <section>
 
 ```jsx
-export default function ViewDate({ date }) {
+export default function ViewDate({ date, hydrate }) {
   return (
-    <span>{date}</span>
+    <>
+      <span>{date}</span>
+      {/* ex. only show a button when the component is hydrated */}
+      {hydrate ? <button>Something interactive!</button> : null}
+    </>
   )
 }
 ```
@@ -128,11 +132,13 @@ export default function ViewDate({ date }) {
 ```html
 <template>
   <span>{{ date }}</span>
+  <!--ex. only show a button when the component is hydrated-->
+  <button v-if="hydrate">Something interactive!</button>
 </template>
 
 <script>
 export default {
-  props: ["date"],
+  props: ["date", "hydrate"],
 }
 </script>
 ```
@@ -142,9 +148,14 @@ export default {
 ```html
 <script>
   export let date = '';
+  export let hydrate = '';
 </script>
 
 <span>{date}</span>
+{#if hydrate}
+<!--ex. only show a button when the component is hydrated-->
+<button>Something interactive!</button>
+{/if}
 ```
 </section>
 {% endrenderTemplate %}
