@@ -47,7 +47,7 @@ Slinkity requires a special `hydrate` prop to ship JavaScript alongside your com
 
 To hydrate that `Component.vue` from earlier, you can apply the `hydrate='eager'` flag:
 
-{% slottedComponent 'Tabs.svelte', hydrate='eager', id='shortcode-basics', store='templates', tabs=['nunjucks', 'liquid'] %}
+{% slottedComponent 'Tabs.svelte', hydrate='eager', id='shortcode-hydration', store='templates', tabs=['nunjucks', 'liquid'] %}
 {% renderTemplate 'md' %}
 <section>
 
@@ -80,7 +80,7 @@ You can also pass data to your components as key / value pairs.
 
 Let's say you have a date component written in your favorite framework (`_includes/Date.jsx|vue|svelte`) that wants to use [11ty's supplied `date` object](https://www.11ty.dev/docs/data-eleventy-supplied/). You can pass this "date" prop like so:
 
-{% slottedComponent 'Tabs.svelte', hydrate='eager', id='shortcode-basics', store='templates', tabs=['nunjucks', 'liquid'] %}
+{% slottedComponent 'Tabs.svelte', hydrate='eager', id='shortcode-date-prop', store='templates', tabs=['nunjucks', 'liquid'] %}
 {% renderTemplate 'md' %}
 <section>
 
@@ -165,7 +165,7 @@ export default {
 
 You're free to pass as many key / value pairs as you want. The names and ordering of your keys shouldn't matter, since they're all crunched into a single "props" object for your component.
 
-{% slottedComponent 'Tabs.svelte', hydrate='eager', id='shortcode-basics', store='templates', tabs=['nunjucks', 'liquid'] %}
+{% slottedComponent 'Tabs.svelte', hydrate='eager', id='shortcode-multiple-props', store='templates', tabs=['nunjucks', 'liquid'] %}
 {% renderTemplate 'md' %}
 <section>
 
