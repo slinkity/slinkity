@@ -19,12 +19,10 @@ Want to bring Slinkity to your current 11ty project? No sweat! Slinkity is built
 First, install Slinkity + the latest 11ty into your project:
 
 ```bash
-npm i --save-dev slinkity @11ty/eleventy@beta
+npm i --save-dev slinkity @11ty/eleventy
 ```
 
 > Slinkity requires Node v14 and up. You can check your version by running `node -v` in your terminal before trying Slinkity.
-
-> Slinkity also relies on 11ty's [latest 1.0 beta build](https://www.npmjs.com/package/@11ty/eleventy/v/beta) to work properly. Yes, this could involve some gotchas with existing 11ty plugins! If anything unexpected happens, let us know on our [GitHub issues page](https://github.com/slinkity/slinkity/issues).
 
 ### Using the `slinkity` CLI
 
