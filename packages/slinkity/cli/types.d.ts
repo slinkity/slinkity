@@ -41,13 +41,9 @@ type PageReturn = {
 }
 
 export type Renderer = {
-  /** name of renderer - used for shortcodes */
+  /** name of renderer - used for diff-ing renderers internally */
   name: string;
-  /**
-   * file extensions this renderer can handle
-   * - used for component pages
-   * - used to autocomplete file extensions on component shortcodes
-   */
+  /** file extensions this renderer can handle */
   extensions: string[];
   /** path to module used for clientside hydration - browser code */
   client: string;
@@ -61,9 +57,9 @@ export type Renderer = {
   page({ toCommonJSModule }: {
     toCommonJSModule: ViteSSR['toCommonJSModule'];
   }): PageReturn | Promise<PageReturn>;
-  /** TODO: Adds polyfills to Node's global object */
+  /** NOT YET SUPPORTED: Adds polyfills to Node's global object */
   polyfills: never;
-  /** TODO: List of imports to add as scripts on the client */
+  /** NOT YET SUPPORTED: List of imports to add as scripts on the client */
   hydrationPolyfills: never;
 }
 
