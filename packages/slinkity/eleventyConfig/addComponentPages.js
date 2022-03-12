@@ -9,7 +9,7 @@ const { log } = require('../utils/logger')
  * @property {import('../cli/vite').ResolvedImportAliases} resolvedImportAliases
  * @property {import('../cli/toViteSSR').ViteSSR} viteSSR
  * @property {any} eleventyConfig
- * @property {import('../cli/types').Renderer} renderer
+ * @property {import('../@types').Renderer} renderer
  * @param {AddComponentPagesParams}
  */
 module.exports = async function addComponentPages({
@@ -59,7 +59,7 @@ module.exports = async function addComponentPages({
           const absInputPath = path.join(resolvedImportAliases.root, inputPath)
           let props
 
-          /** @type {{ hydrate: import('../cli/types').Hydrate }} */
+          /** @type {{ hydrate: import('../@types').Hydrate }} */
           const { hydrate = 'none' } = data
           if (typeof hydrate !== 'string' && typeof hydrate.props === 'function') {
             // if there's a "props" function,

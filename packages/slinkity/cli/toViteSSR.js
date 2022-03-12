@@ -43,7 +43,7 @@ module.exports.collectCSS = collectCSS
  * @typedef ViteBuildParams
  * @property {import('vite').UserConfigExport} ssrViteConfig
  * @property {string} filePath
- * @property {import('../eleventyConfig/types').Environment} environment
+ * @property {import('../@types').Environment} environment
  * @param {ViteBuildParams}
  * @returns {DefaultModule}
  */
@@ -86,16 +86,16 @@ async function viteBuild({ ssrViteConfig, filePath, environment }) {
 
 /**
  * @typedef ViteSSRParams
- * @property {import('../eleventyConfig/types').Environment} environment
- * @property {import('../eleventyConfig/types').Dir} dir
- * @property {import('./types').UserSlinkityConfig} userSlinkityConfig
+ * @property {import('../@types').Environment} environment
+ * @property {import('../@types').Dir} dir
+ * @property {import('../@types').UserSlinkityConfig} userSlinkityConfig
  * @param {ViteSSRParams}
  *
  * @typedef DefaultModule
  * @property {() => any} default
  * @property {Set<string>} __importedStyles
  *
- * @typedef {import('./types').ViteSSR} ViteSSR
+ * @typedef {import('../@types').ViteSSR} ViteSSR
  *
  * @returns {ViteSSR} viteSSR
  */
