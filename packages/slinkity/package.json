@@ -73,7 +73,7 @@
     "vite": "^2.7.10"
   },
   "peerDependencies": {
-    "@11ty/eleventy": "^1.0.0"
+    "@11ty/eleventy": "2.0.0-canary.3"
   },
   "devDependencies": {
     "browser-sync": "^2.27.5",

@@ -1,4 +1,3 @@
-const browserSync = require('browser-sync')
 const { normalizePath } = require('vite')
 const { relative } = require('path')
 const toSlashesTrimmed = require('../utils/toSlashesTrimmed')
@@ -19,7 +18,7 @@ const { toEleventyIgnored, defaultExtensions } = require('./handleTemplateExtens
  * @returns (eleventyConfig: Object) => Object - config we'll apply to the Eleventy object
  */
 module.exports = function toEleventyConfig({ userSlinkityConfig, ...options }) {
-  const { dir, viteSSR, browserSyncOptions, environment } = options
+  const { dir, viteSSR, environment } = options
 
   /** @type {import('./handleTemplateExtensions').ExtensionMeta[]} */
   const ignoredFromRenderers = userSlinkityConfig.renderers.flatMap((renderer) =>
@@ -65,42 +64,46 @@ module.exports = function toEleventyConfig({ userSlinkityConfig, ...options }) {
     }
 
     if (environment === 'development') {
+      /** @type {Record<string, string>} */
       const urlToViteTransformMap = {}
+      /** @type {import('vite').ViteDevServer} */
+      let viteMiddlewareServer = null
+
+      eleventyConfig.setServerOptions({
+        async setup() {
+          if (!viteMiddlewareServer) {
+            viteMiddlewareServer = await viteSSR.createServer()
+          }
+        },
+        middleware: [
+          (...args) => {
+            return viteMiddlewareServer.middlewares(...args)
+          },
+          async function viteTransformMiddleware(req, res, next) {
+            const page = urlToViteTransformMap[toSlashesTrimmed(req.url)]
+            if (page) {
+              const { content, outputPath } = page
+              console.log({ outputPath })
+              res.write(
+                await applyViteHtmlTransform({
+                  content,
+                  outputPath,
+                  componentAttrStore,
+                  renderers: userSlinkityConfig.renderers,
+                  ...options,
+                }),
+              )
+              res.end()
+            } else {
+              res.write('')
+              res.end()
+            }
+          },
+        ],
+      })
 
       eleventyConfig.on('beforeBuild', () => {
         componentAttrStore.clear()
-      })
-
-      eleventyConfig.on('afterBuild', async () => {
-        let server = viteSSR.getServer()
-        if (!server) {
-          server = await viteSSR.createServer()
-          browserSync.create()
-          browserSync.init({
-            ...browserSyncOptions,
-            middleware: [
-              async function viteTransformMiddleware(req, res, next) {
-                const page = urlToViteTransformMap[toSlashesTrimmed(req.originalUrl)]
-                if (page) {
-                  const { content, outputPath } = page
-                  res.write(
-                    await applyViteHtmlTransform({
-                      content,
-                      outputPath,
-                      componentAttrStore,
-                      renderers: userSlinkityConfig.renderers,
-                      ...options,
-                    }),
-                  )
-                  res.end()
-                } else {
-                  next()
-                }
-              },
-              server.middlewares,
-            ],
-          })
-        }
       })
 
       eleventyConfig.addTransform(
