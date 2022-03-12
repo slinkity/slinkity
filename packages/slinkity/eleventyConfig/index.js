@@ -11,7 +11,7 @@ const { SLINKITY_HEAD_STYLES } = require('../utils/consts')
 const { toEleventyIgnored, defaultExtensions } = require('./handleTemplateExtensions')
 
 /**
- * @typedef {import('./types').EleventyConfigParams} EleventyConfigParams
+ * @typedef {import('../@types').EleventyConfigParams} EleventyConfigParams
  */
 
 /**

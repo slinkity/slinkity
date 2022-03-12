@@ -1,4 +1,7 @@
 import type { UserConfigExport, ViteDevServer } from 'vite'
+import type { Options } from 'browser-sync'
+
+export type Environment = 'development' | 'production'
 
 type ToCommonJSModuleOptions = {
   /** Whether to (attempt to) use the in-memory cache for fetching a build result. Defaults to true in production */
@@ -72,4 +75,24 @@ export type UserSlinkityConfig = {
    * Also see 11ty's ignore documentation here: https://www.11ty.dev/docs/ignores/
   */
   eleventyIgnores: string[] | ((ignores: string[]) => string[]);
-};
+}
+
+/** Paths to all significant directories, as specified in 11ty's "dir" documentation */
+export type Dir = {
+  input: string;
+  output: string;
+  includes: string;
+  layouts: string;
+}
+
+export type EleventyConfigParams = {
+  dir: Dir;
+  /** utility to import components as Node-friendly modules */
+  viteSSR: ViteSSR;
+  /** Slinkity config options (either from user config or defaults) */
+  userSlinkityConfig: UserSlinkityConfig;
+  /** Options to configure Slinkity's own browser sync server for dev environments */
+  browserSyncOptions: Options;
+  /** whether we want a dev server or a production build */
+  environment: Environment;
+}

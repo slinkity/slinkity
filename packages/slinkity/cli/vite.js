@@ -17,7 +17,7 @@ function getConfigFile() {
 /**
  * Returns object with resolved aliases.
  *
- * @typedef {import('../eleventyConfig/types').Dir} Dir
+ * @typedef {import('../@types').Dir} Dir
  * @typedef {import('../utils/consts').ImportAliases} ImportAliases
  * @typedef {Record<keyof import('../utils/consts').ImportAliases, string>} ResolvedImportAliases
  * @param {Dir} dir
@@ -37,7 +37,7 @@ function getResolvedAliases({ input, includes, layouts }) {
  *
  * @typedef SharedConfigParams
  * @property {Dir} dir
- * @property {import('./types').UserSlinkityConfig} userSlinkityConfig
+ * @property {import('../@types').UserSlinkityConfig} userSlinkityConfig
  * @param {SharedConfigParams}
  * @returns {import('vite').UserConfigExport}
  */
@@ -77,7 +77,7 @@ async function getSharedConfig({ dir, userSlinkityConfig }) {
  * @property {string} input
  * @property {string} output
  * @property {Dir} eleventyDir
- * @property {import('./types').UserSlinkityConfig} userSlinkityConfig
+ * @property {import('../@types').UserSlinkityConfig} userSlinkityConfig
  * @param {BuildParams}
  */
 async function build({ eleventyDir, userSlinkityConfig, input, output }) {

@@ -51,7 +51,7 @@ describe('applyViteHtmlTransform', () => {
   )
   describe('handleSSRComments', () => {
     const outputPath = '/handle/ssr/comments.html'
-    /** @type {import('../cli/types').Renderer[]} */
+    /** @type {import('../@types').Renderer[]} */
     const renderers = [
       {
         name: 'react',

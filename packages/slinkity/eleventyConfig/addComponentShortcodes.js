@@ -7,7 +7,7 @@ const { log } = require('../utils/logger')
  * @property {import('./componentAttrStore').ComponentAttrStore} componentAttrStore
  * @property {import('../cli/vite').ResolvedImportAliases} resolvedImportAliases
  * @property {any} eleventyConfig
- * @property {import('../cli/types').Renderer[]} renderers
+ * @property {import('../@types').Renderer[]} renderers
  * @param {AddComponentShortcodesParams}
  */
 module.exports = function addComponentShortcode({
@@ -153,7 +153,7 @@ See our docs for more: https://slinkity.dev/docs/component-shortcodes`)
     })
   }
 
-  /** @type {{ hydrate: import('../cli/types').HydrationMode }} */
+  /** @type {{ hydrate: import('../@types').HydrationMode }} */
   const { hydrate = 'none' } = props
   return {
     path: path.join(resolvedImportAliases.includes, componentPath),

@@ -64,8 +64,8 @@ function toBrowserSyncOptions({ outputDir, port }) {
 
 /**
  * @typedef StartEleventyParams
- * @property {import('../eleventyConfig/types').Dir} dir
- * @property {import('./types').UserSlinkityConfig} userSlinkityConfig
+ * @property {import('../@types').Dir} dir
+ * @property {import('../@types').UserSlinkityConfig} userSlinkityConfig
  * @property {object} options
  * @param {StartEleventyParams}
  */
@@ -85,7 +85,7 @@ async function startEleventy({ dir, userSlinkityConfig, options }) {
     errorHandler.warn(promise, 'A promise rejection was handled asynchronously')
   })
 
-  /** @type {import('../eleventyConfig/types').Environment} */
+  /** @type {import('../@types').Environment} */
   const environment = options.watch ? 'development' : 'production'
   const config = toEleventyConfig({
     dir,
