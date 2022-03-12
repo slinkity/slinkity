@@ -106,6 +106,10 @@ module.exports = function toEleventyConfig({ userSlinkityConfig, ...options }) {
       eleventyConfig.addTransform(
         'update-url-to-compiled-html-map',
         function (content, outputPath) {
+          // avoid writing content to urlToOutputHtmlMap
+          // if outputPath isn't specified (ex. permalink: false)
+          if (typeof outputPath !== 'string') return
+
           const relativePath = relative(dir.output, outputPath)
           const formattedAsUrl = toSlashesTrimmed(
             normalizePath(relativePath)
