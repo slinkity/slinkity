@@ -76,7 +76,6 @@
     "@11ty/eleventy": "2.0.0-canary.3"
   },
   "devDependencies": {
-    "browser-sync": "^2.27.5",
     "chalk": "4.1.2",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
