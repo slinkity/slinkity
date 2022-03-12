@@ -111,6 +111,7 @@ async function startEleventy({ dir, userSlinkityConfig, options }) {
   await elev.init()
   if (options.watch) {
     await elev.watch()
+    elev.serve(options.port)
   } else {
     await elev.write()
   }
