@@ -83,7 +83,6 @@ module.exports = function toEleventyConfig({ userSlinkityConfig, ...options }) {
             const page = urlToViteTransformMap[toSlashesTrimmed(req.url)]
             if (page) {
               const { content, outputPath } = page
-              console.log({ outputPath })
               res.write(
                 await applyViteHtmlTransform({
                   content,
