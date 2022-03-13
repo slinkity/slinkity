@@ -27,8 +27,8 @@ function getResolvedAliases({ input, includes, layouts }) {
   return {
     root: join(process.cwd()),
     input: join(process.cwd(), input),
-    includes: join(process.cwd(), input, includes),
-    layouts: join(process.cwd(), input, layouts),
+    includes: join(process.cwd(), includes),
+    layouts: join(process.cwd(), layouts ?? includes),
   }
 }
 
