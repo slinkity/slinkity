@@ -3,6 +3,7 @@ const path = require('path')
 const requireFromString = require('require-from-string')
 const logger = require('../utils/logger')
 const { getSharedConfig } = require('./vite')
+const { toBuilder } = require('./toBuilder')
 
 /**
  * Regex of hard-coded stylesheet extensions
@@ -103,40 +104,36 @@ async function toViteSSR({ environment, dir, userSlinkityConfig }) {
   const sharedConfig = await getSharedConfig({ dir, userSlinkityConfig })
   const ssrViteConfig = defineConfig(mergeConfig({ root: dir.output }, sharedConfig))
 
-  /** @type {Record<string, DefaultModule>} */
-  const probablyInefficientCache = {}
-
   if (environment === 'development') {
     /** @type {import('vite').ViteDevServer} */
     let server = null
+    const builder = toBuilder(async function buildModule(filePath) {
+      /** @type {DefaultModule} */
+      let viteOutput
+      if (server) {
+        const ssrModule = await server.ssrLoadModule(filePath)
+        const moduleGraph = await server.moduleGraph.getModuleByUrl(filePath)
+        /** @type {Set<string>} */
+        const __importedStyles = new Set()
+        collectCSS(moduleGraph, __importedStyles)
+        viteOutput = {
+          default: () => null,
+          __importedStyles,
+          ...ssrModule,
+        }
+      } else {
+        viteOutput = await viteBuild({
+          dir,
+          filePath,
+          ssrViteConfig,
+          environment,
+        })
+      }
+      return viteOutput
+    })
     return {
-      async toCommonJSModule(filePath, options = { useCache: false }) {
-        if (options.useCache && probablyInefficientCache[filePath]) {
-          return probablyInefficientCache[filePath]
-        }
-        /** @type {DefaultModule} */
-        let viteOutput
-        if (server) {
-          const ssrModule = await server.ssrLoadModule(filePath)
-          const moduleGraph = await server.moduleGraph.getModuleByUrl(filePath)
-          /** @type {Set<string>} */
-          const __importedStyles = new Set()
-          collectCSS(moduleGraph, __importedStyles)
-          viteOutput = {
-            default: () => null,
-            __importedStyles,
-            ...ssrModule,
-          }
-        } else {
-          viteOutput = await viteBuild({
-            dir,
-            filePath,
-            ssrViteConfig,
-            environment,
-          })
-        }
-        probablyInefficientCache[filePath] = viteOutput
-        return viteOutput
+      async toCommonJSModule(filePath) {
+        return builder.build(filePath, null, { shouldUseCache: server === null })
       },
       getServer() {
         return server
@@ -152,19 +149,18 @@ async function toViteSSR({ environment, dir, userSlinkityConfig }) {
       },
     }
   } else {
+    const builder = toBuilder(async function buildModule(filePath) {
+      const viteOutput = await viteBuild({
+        dir,
+        filePath,
+        ssrViteConfig,
+        environment,
+      })
+      return viteOutput
+    })
     return {
-      async toCommonJSModule(filePath, options = { useCache: true }) {
-        if (options.useCache && probablyInefficientCache[filePath]) {
-          return probablyInefficientCache[filePath]
-        }
-        const viteOutput = await viteBuild({
-          dir,
-          filePath,
-          ssrViteConfig,
-          environment,
-        })
-        probablyInefficientCache[filePath] = viteOutput
-        return viteOutput
+      async toCommonJSModule(filePath) {
+        return builder.build(filePath, null, { shouldUseCache: true })
       },
       getServer() {
         return null
