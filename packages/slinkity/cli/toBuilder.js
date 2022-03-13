@@ -37,7 +37,6 @@ module.exports.toBuilder = function (buildCallback) {
           resolve(buildCache[id])
           return
         }
-
         if (!awaitingBuild[id]) {
           awaitingBuild[id] = []
           startBuild(id, buildCallbackOptions)
