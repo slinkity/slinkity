@@ -3,7 +3,10 @@ const { relative } = require('path')
 const toSlashesTrimmed = require('./utils/toSlashesTrimmed')
 const { getResolvedAliases } = require('./cli/vite')
 const { toComponentAttrStore } = require('./eleventyConfig/componentAttrStore')
-const { applyViteHtmlTransform } = require('./eleventyConfig/applyViteHtmlTransform')
+const {
+  applyViteHtmlTransform,
+  isSupportedOutputPath,
+} = require('./eleventyConfig/applyViteHtmlTransform')
 const addComponentPages = require('./eleventyConfig/addComponentPages')
 const addComponentShortcodes = require('./eleventyConfig/addComponentShortcodes')
 const { SLINKITY_HEAD_STYLES } = require('./utils/consts')
@@ -92,7 +95,7 @@ module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
 
   if (environment === 'development') {
     /** @type {Record<string, string>} */
-    const urlToOutputHtmlMap = {}
+    const urlToViteTransformMap = {}
     /** @type {import('vite').ViteDevServer} */
     let viteMiddlewareServer = null
 
@@ -120,8 +123,7 @@ module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
           return viteMiddlewareServer.middlewares(req, res, next)
         },
         async function viteTransformMiddleware(req, res, next) {
-          console.log(req.url)
-          const page = urlToOutputHtmlMap[toSlashesTrimmed(req.url)]
+          const page = urlToViteTransformMap[toSlashesTrimmed(req.url)]
           if (page) {
             const { content, outputPath } = page
             res.setHeader('Content-Type', 'text/html')
@@ -148,10 +150,8 @@ module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
       componentAttrStore.clear()
     })
 
-    eleventyConfig.addTransform('update-url-to-compiled-html-map', function (content, outputPath) {
-      // avoid writing content to urlToOutputHtmlMap that Vite cannot transform
-      // ex. permalink: false, permalink: sitemap.xml
-      if (typeof outputPath !== 'string' || !outputPath.endsWith('.html')) return content
+    eleventyConfig.addTransform('update-url-to-vite-transform-map', function (content, outputPath) {
+      if (!isSupportedOutputPath(outputPath)) return content
 
       const relativePath = relative(configGlobals.dir.output, outputPath)
       const formattedAsUrl = toSlashesTrimmed(
@@ -159,7 +159,7 @@ module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
           .replace(/.html$/, '')
           .replace(/index$/, ''),
       )
-      urlToOutputHtmlMap[formattedAsUrl] = {
+      urlToViteTransformMap[formattedAsUrl] = {
         outputPath,
         content,
       }
