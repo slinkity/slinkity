@@ -1,11 +1,25 @@
 import type { UserConfigExport, ViteDevServer } from 'vite'
 import type { Options } from 'browser-sync'
+import type { ResolvedImportAliases } from './cli/vite'
 
 export type Environment = 'development' | 'production'
 
 type ToCommonJSModuleOptions = {
   /** Whether to (attempt to) use the in-memory cache for fetching a build result. Defaults to true in production */
   useCache: boolean;
+}
+
+/**
+ * Globals that are set asynchronously via 11ty's event system
+ * *Should* be wired up to a proxy object with access protection
+ */
+export type PluginConfigGlobals = {
+  /** If accessed before initialization, this will throw */
+  dir: Dir;
+  /** If accessed before initialization, this will throw */
+  viteSSR: ViteSSR;
+  /** If accessed before initialization, this will throw */
+  resolvedAliases: ResolvedImportAliases;
 }
 
 export type ViteSSR = {
@@ -98,6 +112,8 @@ export type UserSlinkityConfig = {
    * Also see 11ty's ignore documentation here: https://www.11ty.dev/docs/ignores/
   */
   eleventyIgnores: string[] | ((ignores: string[]) => string[]);
+
+  componentDir: string;
 }
 
 /** Paths to all significant directories, as specified in 11ty's "dir" documentation */
