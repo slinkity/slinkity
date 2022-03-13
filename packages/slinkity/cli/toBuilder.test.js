@@ -17,7 +17,7 @@ describe('toBuilder', () => {
     expect(homeResult).toEqual('built home')
     expect(contactResult).toEqual('built contact')
   })
-  it('does not rerun build for same id', async () => {
+  it('does not rerun build for same id while async build is resolving', async () => {
     const buildCallback = jest.fn()
     buildCallback.mockImplementation(
       (id) =>
@@ -43,5 +43,16 @@ describe('toBuilder', () => {
     buildCallback.mockClear()
     await builder.build(id)
     expect(buildCallback).toHaveBeenCalledTimes(0)
+  })
+  it('does rerun build when cache is disabled', async () => {
+    const buildCallback = jest.fn()
+    buildCallback.mockImplementation((id) => new Promise((resolve) => resolve(`built ${id}`), 10))
+    const id = 'cached-page'
+    const builder = toBuilder(buildCallback)
+    await builder.build(id)
+    expect(buildCallback).toHaveBeenCalledTimes(1)
+    buildCallback.mockClear()
+    await builder.build(id, null, { shouldUseCache: false })
+    expect(buildCallback).toHaveBeenCalledTimes(1)
   })
 })
