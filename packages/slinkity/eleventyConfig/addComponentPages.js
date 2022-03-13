@@ -6,8 +6,7 @@ const { log } = require('../utils/logger')
 /**
  * @typedef AddComponentPagesParams
  * @property {import('./componentAttrStore').ComponentAttrStore} componentAttrStore
- * @property {import('../cli/vite').ResolvedImportAliases} resolvedImportAliases
- * @property {import('../cli/toViteSSR').ViteSSR} viteSSR
+ * @property {import('../@types').PluginConfigGlobals} configGlobals
  * @property {any} eleventyConfig
  * @property {import('../@types').Renderer} renderer
  * @param {AddComponentPagesParams}
@@ -15,21 +14,24 @@ const { log } = require('../utils/logger')
 module.exports = async function addComponentPages({
   renderer,
   eleventyConfig,
-  viteSSR,
   componentAttrStore,
-  resolvedImportAliases,
+  configGlobals,
 }) {
   if (!renderer.page) return
 
   const { useFormatted11tyData = true, getData } = await renderer.page({
-    toCommonJSModule: viteSSR.toCommonJSModule,
+    toCommonJSModule(...args) {
+      return configGlobals.viteSSR.toCommonJSModule(...args)
+    },
   })
 
   for (const extension of renderer.extensions) {
+    console.log({ extension })
     eleventyConfig.addExtension(extension, {
       read: false,
       async getData(inputPath) {
-        const absInputPath = path.join(resolvedImportAliases.root, inputPath)
+        console.log({ inputPath, please: true })
+        const absInputPath = path.join(configGlobals.resolvedAliases.root, inputPath)
         return await getData(absInputPath)
       },
       compileOptions: {
@@ -56,7 +58,7 @@ module.exports = async function addComponentPages({
               fn.bind({ page: data.page }),
             ]),
           )
-          const absInputPath = path.join(resolvedImportAliases.root, inputPath)
+          const absInputPath = path.join(configGlobals.resolvedAliases.root, inputPath)
           let props
 
           /** @type {{ hydrate: import('../@types').Hydrate }} */

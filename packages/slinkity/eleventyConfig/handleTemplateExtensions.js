@@ -25,14 +25,14 @@ module.exports.defaultExtensions = [
  * @typedef {import('../@types').UserSlinkityConfig} UserSlinkityConfig
  *
  * @param {UserSlinkityConfig['eleventyIgnores']} userEleventyIgnores
- * @param {import('../@types').Dir} dir
+ * @param {string} componentDir
  * @param {ExtensionMeta[]} extensions File extensions to map to ignore statements
  * @returns {string[]} absolute paths and/or globs for eleventy to ignore
  */
-module.exports.toEleventyIgnored = function (userEleventyIgnores, dir, extensions) {
+module.exports.toEleventyIgnored = function (userEleventyIgnores, componentDir, extensions) {
   const ignoredPaths = extensions
     .filter((entry) => entry.isIgnoredFromIncludes)
-    .map((entry) => path.join(dir.input, dir.includes, `**/*.${entry.extension}`))
+    .map((entry) => path.join(componentDir, `**/*.${entry.extension}`))
   return typeof userEleventyIgnores === 'function'
     ? userEleventyIgnores(ignoredPaths)
     : userEleventyIgnores ?? ignoredPaths

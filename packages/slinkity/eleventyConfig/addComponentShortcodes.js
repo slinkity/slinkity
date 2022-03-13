@@ -5,7 +5,7 @@ const { log } = require('../utils/logger')
 /**
  * @typedef AddComponentShortcodesParams
  * @property {import('./componentAttrStore').ComponentAttrStore} componentAttrStore
- * @property {import('../cli/vite').ResolvedImportAliases} resolvedImportAliases
+ * @property {import('../@types').PluginConfigGlobals} configGlobals
  * @property {any} eleventyConfig
  * @property {import('../@types').Renderer[]} renderers
  * @param {AddComponentShortcodesParams}
@@ -13,8 +13,8 @@ const { log } = require('../utils/logger')
 module.exports = function addComponentShortcode({
   renderers,
   eleventyConfig,
-  resolvedImportAliases,
   componentAttrStore,
+  configGlobals,
 }) {
   const extensionToRendererMap = Object.fromEntries(
     renderers.flatMap(({ name, extensions }) => extensions.map((ext) => [ext, name])),
@@ -26,7 +26,7 @@ module.exports = function addComponentShortcode({
         componentPath,
         vargs,
         children: '',
-        resolvedImportAliases,
+        resolvedImportAliases: configGlobals.resolvedAliases,
         extensionToRendererMap,
         page: this.page,
       }),
@@ -52,7 +52,7 @@ module.exports = function addComponentShortcode({
         componentPath: componentPathWithExt,
         vargs,
         children: '',
-        resolvedImportAliases,
+        resolvedImportAliases: configGlobals.resolvedAliases,
         extensionToRendererMap,
         page: this.page,
       }),
@@ -69,7 +69,7 @@ module.exports = function addComponentShortcode({
           componentPath,
           vargs,
           children: content,
-          resolvedImportAliases,
+          resolvedImportAliases: configGlobals.resolvedAliases,
           extensionToRendererMap,
           page: this.page,
         }),
