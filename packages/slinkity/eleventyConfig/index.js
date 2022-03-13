@@ -4,7 +4,7 @@ const { relative } = require('path')
 const toSlashesTrimmed = require('../utils/toSlashesTrimmed')
 const { getResolvedAliases } = require('../cli/vite')
 const { toComponentAttrStore } = require('./componentAttrStore')
-const { applyViteHtmlTransform } = require('./applyViteHtmlTransform')
+const { applyViteHtmlTransform, isSupportedOutputPath } = require('./applyViteHtmlTransform')
 const addComponentPages = require('./addComponentPages')
 const addComponentShortcodes = require('./addComponentShortcodes')
 const { SLINKITY_HEAD_STYLES } = require('../utils/consts')
@@ -65,7 +65,7 @@ module.exports = function toEleventyConfig({ userSlinkityConfig, ...options }) {
     }
 
     if (environment === 'development') {
-      const urlToOutputHtmlMap = {}
+      const urlToViteTransformMap = {}
 
       eleventyConfig.on('beforeBuild', () => {
         componentAttrStore.clear()
@@ -80,7 +80,7 @@ module.exports = function toEleventyConfig({ userSlinkityConfig, ...options }) {
             ...browserSyncOptions,
             middleware: [
               async function viteTransformMiddleware(req, res, next) {
-                const page = urlToOutputHtmlMap[toSlashesTrimmed(req.originalUrl)]
+                const page = urlToViteTransformMap[toSlashesTrimmed(req.originalUrl)]
                 if (page) {
                   const { content, outputPath } = page
                   res.write(
@@ -104,11 +104,9 @@ module.exports = function toEleventyConfig({ userSlinkityConfig, ...options }) {
       })
 
       eleventyConfig.addTransform(
-        'update-url-to-compiled-html-map',
+        'update-url-to-vite-transform-map',
         function (content, outputPath) {
-          // avoid writing content to urlToOutputHtmlMap
-          // if outputPath isn't specified (ex. permalink: false)
-          if (typeof outputPath !== 'string') return
+          if (!isSupportedOutputPath(outputPath)) return content
 
           const relativePath = relative(dir.output, outputPath)
           const formattedAsUrl = toSlashesTrimmed(
@@ -116,7 +114,7 @@ module.exports = function toEleventyConfig({ userSlinkityConfig, ...options }) {
               .replace(/.html$/, '')
               .replace(/index$/, ''),
           )
-          urlToOutputHtmlMap[formattedAsUrl] = {
+          urlToViteTransformMap[formattedAsUrl] = {
             outputPath,
             content,
           }

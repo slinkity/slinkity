@@ -13,6 +13,16 @@ const toHtmlAttrString = require('../utils/toHtmlAttrString')
 const ssrRegex = RegExp(toSSRComment('([0-9]+)'), 'g')
 
 /**
+ * Test whether a route's output path is
+ * Something Vite can / should transform
+ * @param {any} outputPath
+ * @return {boolean}
+ */
+function isSupportedOutputPath(outputPath) {
+  return /\.html$/.test(outputPath)
+}
+
+/**
  * Process all SSR comments - server render components, apply scripts, inject styles into head
  * Extracted from applyViteHtmlTransform for unit testing!
  * @typedef HandleSSRCommentsParams
@@ -139,7 +149,7 @@ async function applyViteHtmlTransform({
   renderers,
   dir,
 }) {
-  if (!outputPath || !outputPath.endsWith('.html')) {
+  if (!isSupportedOutputPath(outputPath)) {
     return content
   }
   const html = await handleSSRComments({
@@ -154,4 +164,4 @@ async function applyViteHtmlTransform({
   return environment === 'development' && server ? server.transformIndexHtml(routePath, html) : html
 }
 
-module.exports = { applyViteHtmlTransform, handleSSRComments }
+module.exports = { applyViteHtmlTransform, handleSSRComments, isSupportedOutputPath }
