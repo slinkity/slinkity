@@ -7,7 +7,7 @@
  * @typedef BuilderOptions
  * @property {boolean} shouldUseCache
  * @typedef {(id: ID, buildCallbackOptions: any, builderOptions: BuilderOptions) => Promise<void>} Build
- * @param {(id: string | number, options: any)} buildCallback Function to call on build() request
+ * @param {(id: ID, buildCallbackOptions: any) => Promise<void>} buildCallback Function to call on build() request
  * @return {{ build: Build }}
  */
 module.exports.toBuilder = function (buildCallback) {
@@ -15,14 +15,14 @@ module.exports.toBuilder = function (buildCallback) {
   const buildCache = {}
 
   /**
-   *
+   * Kick off buildCallback and update cache on result
    * @param {ID} id
    * @param {any} buildCallbackOptions
    */
   function startBuild(id, buildCallbackOptions) {
     buildCallback(id, buildCallbackOptions).then((buildResult) => {
+      buildCache[id] = buildResult
       for (const cb of awaitingBuild[id]) {
-        buildCache[id] = buildResult
         cb(buildResult)
       }
       delete awaitingBuild[id]
