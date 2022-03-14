@@ -6,6 +6,7 @@ importers:
     specifiers:
       '@babel/core': ^7.15.0
       '@babel/preset-env': ^7.15.0
+      '@types/jest': ^27.4.1
       babel-jest: ^27.1.0
       eslint: ^7.32.0
       eslint-config-prettier: ^8.3.0
@@ -25,6 +26,7 @@ importers:
     devDependencies:
       '@babel/core': 7.16.12
       '@babel/preset-env': 7.16.11_@babel+core@7.16.12
+      '@types/jest': 27.4.1
       babel-jest: 27.4.6_@babel+core@7.16.12
       eslint: 7.32.0
       eslint-config-prettier: 8.3.0_eslint@7.32.0
@@ -1886,6 +1888,13 @@ packages:
     resolution: {integrity: sha512-c3mAZEuK0lvBp8tmuL74XRKn1+y2dcwOUpH7x4WrF6gk1GIgiluDRgMYQtw2OFcBvAJWlt6ASU3tSqxp0Uu0Aw==}
     dependencies:
       '@types/istanbul-lib-report': 3.0.0
+    dev: true
+
+  /@types/jest/27.4.1:
+    resolution: {integrity: sha512-23iPJADSmicDVrWk+HT58LMJtzLAnB2AgIzplQuq/bSrGaxCrlvRFjGbXmamnnk/mAmCdLStiGqggu28ocUyiw==}
+    dependencies:
+      jest-matcher-utils: 27.4.6
+      pretty-format: 27.4.6
     dev: true
 
   /@types/minimatch/3.0.5:
