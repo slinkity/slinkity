@@ -108,6 +108,7 @@ const userConfigDir = toEleventyConfigDir({
     })
   } else {
     const intermediateDir = relative('.', await mkdtemp('.11ty-build-'))
+    process.env.ELEVENTY_BUILD_OUTPUT_DIR = intermediateDir
 
     // Eleventy builds to an internal temp directory
     // For Vite to pull from in a 2 step build process
