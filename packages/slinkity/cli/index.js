@@ -101,6 +101,7 @@ const userConfigDir = toEleventyConfigDir({
   const userSlinkityConfig = await readUserSlinkityConfig()
   await emptyDir(outputDir)
   if (options.serve) {
+    process.env.ELEVENTY_BUILD_OUTPUT_DIR = userConfigDir.output
     await startEleventy({
       dir: userConfigDir,
       userSlinkityConfig,
