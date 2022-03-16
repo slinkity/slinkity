@@ -184,6 +184,8 @@ Note that the `public` directory should be **at the root level of your passthrou
 If you’re using the [Eleventy Image](https://www.11ty.dev/docs/plugins/image/) plugin to generate multiple formats, sizes or locally cached remote images you’ll need to configure it in a slinkity specific way. Slinkity generates an intermediate build folder (eg. `.11ty-build-DcNVBN`) and exposes this folder in `process.env.ELEVENTY_BUILD_OUTPUT_DIR` which you can use to generate the images to, as per:
 
 ```js
+const path = require('path')
+
 await Image(src, {
   widths: [300, 600],
   formats: ["avif", "jpeg"],
