@@ -6,7 +6,7 @@ const { v4: uuidv4 } = require('uuid')
  *
  * @typedef SlinkityAttrs
  * @property {string} id - ID to identify mount points in the DOM for hydration
- 
+
  * @type {SlinkityAttrs}
  */
 const SLINKITY_ATTRS = {
@@ -34,7 +34,7 @@ const PACKAGES = {
 /**
  * Name for the web component used to mount React
  */
-const SLINKITY_REACT_MOUNT_POINT = 'slinkity-react-mount-point'
+const SLINKITY_MOUNT_POINT = 'slinkity-mount-point'
 
 /**
  * File name for user slinkity config files
@@ -58,7 +58,7 @@ const SLINKITY_HEAD_STYLES = toSSRComment('styles')
 module.exports = {
   SLINKITY_ATTRS,
   SLINKITY_CONFIG_FILE_NAME,
-  SLINKITY_REACT_MOUNT_POINT,
+  SLINKITY_MOUNT_POINT,
   IMPORT_ALIASES,
   SLINKITY_HEAD_STYLES,
   PACKAGES,

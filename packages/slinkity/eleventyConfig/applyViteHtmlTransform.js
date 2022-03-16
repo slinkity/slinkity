@@ -2,7 +2,7 @@ const { normalizePath } = require('vite')
 const { relative } = require('path')
 const {
   SLINKITY_ATTRS,
-  SLINKITY_REACT_MOUNT_POINT,
+  SLINKITY_MOUNT_POINT,
   SLINKITY_HEAD_STYLES,
   toSSRComment,
 } = require('../utils/consts')
@@ -85,7 +85,7 @@ async function handleSSRComments({
         children,
       })
       const attrs = toHtmlAttrString({ [SLINKITY_ATTRS.id]: id })
-      return `<${SLINKITY_REACT_MOUNT_POINT} ${attrs}>${serverRenderedComponents[id]}</${SLINKITY_REACT_MOUNT_POINT}>\n${loaderScript}`
+      return `<${SLINKITY_MOUNT_POINT} ${attrs}>${serverRenderedComponents[id]}</${SLINKITY_MOUNT_POINT}>\n${loaderScript}`
     })
 
   if (html.match(ssrRegex)) {
