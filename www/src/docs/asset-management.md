@@ -181,7 +181,7 @@ module.exports = function(eleventyConfig) {
 Note that the `public` directory should be **at the root level of your passthrough copy**.
 
 ## Integrating Eleventy Image
-If you’re using the [Eleventy Image](https://www.11ty.dev/docs/plugins/image/) plugin to generate multiple formats, sizes or locally cached remote images you’ll need to configure it in a slinkity specific way. Slinkity generates an intermediate build folder (eg. `.11ty-build-DcNVBN`) and exposes this folder in `process.env.ELEVENTY_BUILD_OUTPUT_DIR` which you can use to generate the images to, as per:
+If you’re using the [Eleventy Image](https://www.11ty.dev/docs/plugins/image/) plugin to generate multiple formats, sizes or locally cached remote images, you’ll need to configure the build output in a Slinkity-specific way. Slinkity generates an intermediate build folder (eg. `.11ty-build-DcNVBN`) and exposes the path on an environment variable: `process.env.ELEVENTY_BUILD_OUTPUT_DIR`. You can use this as a destination for 11ty image and anything else that outputs to the build directory. For example:
 
 ```js
 const path = require('path')
