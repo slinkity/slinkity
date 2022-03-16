@@ -191,4 +191,4 @@ await Image(src, {
 });
 ```
 
-For further Eleventy Image configuration you can check out their [excellent docs](https://www.11ty.dev/docs/plugins/image/).
+For further Eleventy Image configuration, you can check out their [excellent docs](https://www.11ty.dev/docs/plugins/image/).
