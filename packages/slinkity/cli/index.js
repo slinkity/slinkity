@@ -101,6 +101,7 @@ const userConfigDir = toEleventyConfigDir({
   const userSlinkityConfig = await readUserSlinkityConfig()
   await emptyDir(outputDir)
   if (options.serve) {
+    process.env.ELEVENTY_BUILD_OUTPUT_DIR = userConfigDir.output
     await startEleventy({
       dir: userConfigDir,
       userSlinkityConfig,
@@ -108,6 +109,7 @@ const userConfigDir = toEleventyConfigDir({
     })
   } else {
     const intermediateDir = relative('.', await mkdtemp('.11ty-build-'))
+    process.env.ELEVENTY_BUILD_OUTPUT_DIR = intermediateDir
 
     // Eleventy builds to an internal temp directory
     // For Vite to pull from in a 2 step build process
