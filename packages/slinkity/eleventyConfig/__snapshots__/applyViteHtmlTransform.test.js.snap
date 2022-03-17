@@ -7,8 +7,8 @@ exports[`applyViteHtmlTransform handleSSRComments should inject children as stri
   <title>It's hydration time</title>
 </head>
 <body>
-<slinkity-react-mount-point data-s-id=\\"0\\"><react>Content</react>
-  <p>rendered by react</p></slinkity-react-mount-point>
+<slinkity-mount-point data-s-id=\\"0\\"><react>Content</react>
+  <p>rendered by react</p></slinkity-mount-point>
 <script type=\\"module\\">
     import Component0 from \\"nice.jsx\\";
     import renderer0 from \\"@slinkity/example/client\\";
@@ -23,8 +23,8 @@ exports[`applyViteHtmlTransform handleSSRComments should inject children as stri
 <h2>Boy do I love react!</h2>\`,
     });
   </script>
-<slinkity-react-mount-point data-s-id=\\"1\\"><svelte>Content</svelte>
-  <p>rendered by svelte</p></slinkity-react-mount-point>
+<slinkity-mount-point data-s-id=\\"1\\"><svelte>Content</svelte>
+  <p>rendered by svelte</p></slinkity-mount-point>
 <script type=\\"module\\">
     import Component1 from \\"cool.svelte\\";
     import renderer1 from \\"@slinkity/svelte/client\\";
@@ -39,8 +39,8 @@ exports[`applyViteHtmlTransform handleSSRComments should inject children as stri
 <h2>Boy do I love svelte!</h2>\`,
     });
   </script>
-<slinkity-react-mount-point data-s-id=\\"2\\"><vue>Content</vue>
-  <p>rendered by vue</p></slinkity-react-mount-point>
+<slinkity-mount-point data-s-id=\\"2\\"><vue>Content</vue>
+  <p>rendered by vue</p></slinkity-mount-point>
 <script type=\\"module\\">
     import Component2 from \\"neat.vue\\";
     import renderer2 from \\"@slinkity/vue/client\\";
@@ -66,8 +66,8 @@ exports[`applyViteHtmlTransform handleSSRComments should inject props as object 
   <title>It's hydration time</title>
 </head>
 <body>
-<slinkity-react-mount-point data-s-id=\\"0\\"><react>Content</react>
-  <p>rendered by react</p></slinkity-react-mount-point>
+<slinkity-mount-point data-s-id=\\"0\\"><react>Content</react>
+  <p>rendered by react</p></slinkity-mount-point>
 <script type=\\"module\\">
     import Component0 from \\"nice.jsx\\";
     import renderer0 from \\"@slinkity/example/client\\";
@@ -82,8 +82,8 @@ exports[`applyViteHtmlTransform handleSSRComments should inject props as object 
 \`,
     });
   </script>
-<slinkity-react-mount-point data-s-id=\\"1\\"><svelte>Content</svelte>
-  <p>rendered by svelte</p></slinkity-react-mount-point>
+<slinkity-mount-point data-s-id=\\"1\\"><svelte>Content</svelte>
+  <p>rendered by svelte</p></slinkity-mount-point>
 <script type=\\"module\\">
     import Component1 from \\"cool.svelte\\";
     import renderer1 from \\"@slinkity/svelte/client\\";
@@ -98,8 +98,8 @@ exports[`applyViteHtmlTransform handleSSRComments should inject props as object 
 \`,
     });
   </script>
-<slinkity-react-mount-point data-s-id=\\"2\\"><vue>Content</vue>
-  <p>rendered by vue</p></slinkity-react-mount-point>
+<slinkity-mount-point data-s-id=\\"2\\"><vue>Content</vue>
+  <p>rendered by vue</p></slinkity-mount-point>
 <script type=\\"module\\">
     import Component2 from \\"neat.vue\\";
     import renderer2 from \\"@slinkity/vue/client\\";
@@ -141,8 +141,8 @@ exports[`applyViteHtmlTransform handleSSRComments should replace SSR comments wi
   <title>It's hydration time</title>
 </head>
 <body>
-<slinkity-react-mount-point data-s-id=\\"0\\"><react>Content</react>
-  <p>rendered by react</p></slinkity-react-mount-point>
+<slinkity-mount-point data-s-id=\\"0\\"><react>Content</react>
+  <p>rendered by react</p></slinkity-mount-point>
 <script type=\\"module\\">
     import Component0 from \\"nice.jsx\\";
     import renderer0 from \\"@slinkity/example/client\\";
@@ -157,8 +157,8 @@ exports[`applyViteHtmlTransform handleSSRComments should replace SSR comments wi
 \`,
     });
   </script>
-<slinkity-react-mount-point data-s-id=\\"1\\"><svelte>Content</svelte>
-  <p>rendered by svelte</p></slinkity-react-mount-point>
+<slinkity-mount-point data-s-id=\\"1\\"><svelte>Content</svelte>
+  <p>rendered by svelte</p></slinkity-mount-point>
 <script type=\\"module\\">
     import Component1 from \\"cool.svelte\\";
     import renderer1 from \\"@slinkity/svelte/client\\";
@@ -173,8 +173,8 @@ exports[`applyViteHtmlTransform handleSSRComments should replace SSR comments wi
 \`,
     });
   </script>
-<slinkity-react-mount-point data-s-id=\\"2\\"><vue>Content</vue>
-  <p>rendered by vue</p></slinkity-react-mount-point>
+<slinkity-mount-point data-s-id=\\"2\\"><vue>Content</vue>
+  <p>rendered by vue</p></slinkity-mount-point>
 <script type=\\"module\\">
     import Component2 from \\"neat.vue\\";
     import renderer2 from \\"@slinkity/vue/client\\";
