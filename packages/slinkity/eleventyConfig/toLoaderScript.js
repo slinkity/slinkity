@@ -1,5 +1,6 @@
 const { stringify } = require('javascript-stringify')
 const { normalizePath } = require('vite')
+const { SLINKITY_MOUNT_POINT } = require('../utils/consts')
 
 /** @type {(client: import('../@types').ComponentLoader['client'], id: string) => string} */
 function toComponentLoaderImport(client, id) {
@@ -53,7 +54,7 @@ module.exports = function toLoaderScript({
 
   if (!componentLoader) return ''
 
-  const targetSelector = `document.querySelector(\`slinkity-mount-point[data-s-id="${id}"]\`)`
+  const targetSelector = `document.querySelector(\`${SLINKITY_MOUNT_POINT}[data-s-id="${id}"]\`)`
   const componentImportPath = JSON.stringify(normalizePath(componentPath))
   const rendererImportPath = JSON.stringify(normalizePath(clientRenderer))
   const componentLoaderImport = toComponentLoaderImport(componentLoader.client, id)
