@@ -8,7 +8,6 @@ export default async function loader({
   const mql = window.matchMedia(args)
 
   async function onMediaMatch() {
-    console.log('matches!')
     const [Component, rendererCb] = await Promise.all([mod(), renderer()])
     rendererCb({
       target,
