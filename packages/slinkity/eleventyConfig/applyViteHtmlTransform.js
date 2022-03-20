@@ -8,6 +8,8 @@ const {
 } = require('../utils/consts')
 const toSlashesTrimmed = require('../utils/toSlashesTrimmed')
 const toLoaderScript = require('./toLoaderScript')
+const loaders = require('./loaders')
+const componentLoaderMap = Object.fromEntries(loaders.map((loader) => [loader.name, loader]))
 const toHtmlAttrString = require('../utils/toHtmlAttrString')
 
 const ssrRegex = RegExp(toSSRComment('([0-9]+)'), 'g')
@@ -78,9 +80,10 @@ async function handleSSRComments({
       const clientRenderer = rendererMap[rendererName].client
       const loaderScript = toLoaderScript({
         componentPath,
-        props,
-        hydrate,
+        componentLoaderMap,
+        loader: hydrate,
         id,
+        props,
         clientRenderer,
         children,
       })

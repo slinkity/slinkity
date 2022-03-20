@@ -21,6 +21,33 @@ export type ViteSSR = {
   createServer(): void;
 }
 
+export type ComponentLoader = {
+  name: string;
+  isDynamicComponentImport: boolean;
+  client: string | {
+    mod: string;
+    name: string;
+  }
+}
+
+export type ComponentLoaderClientParams = {
+  target: string;
+  renderer: string | ((params: RendererClientParams) => void);
+  args: string;
+  component: {
+    mod: any;
+    children: string;
+    props: any;
+  }
+}
+
+export type RendererClientParams = {
+  target: string;
+  children: string;
+  props: any;
+  Component: any;
+}
+
 type HydrationMode = 'eager' | 'lazy' | 'none'
 
 export type Hydrate = HydrationMode | {
