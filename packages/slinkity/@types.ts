@@ -23,8 +23,7 @@ export type ViteSSR = {
 
 export type ComponentLoader = {
   name: string;
-  isDynamicComponentImport: boolean;
-  client: string | {
+  client: undefined | string | {
     mod: string;
     name: string;
   }
@@ -32,13 +31,10 @@ export type ComponentLoader = {
 
 export type ComponentLoaderClientParams = {
   target: string;
-  renderer: string | ((params: RendererClientParams) => void);
-  args: string;
-  component: {
-    mod: any;
-    children: string;
-    props: any;
-  }
+  loader: string;
+  loaderArgs: string;
+  children: string;
+  props: string;
 }
 
 export type RendererClientParams = {

@@ -4,24 +4,15 @@ const { PACKAGES } = require('../utils/consts')
 module.exports = [
   {
     name: 'onClientLoad',
-    isDynamicComponentImport: false,
-    client: {
-      mod: PACKAGES.client,
-      name: 'onClientLoad',
-    },
+    client: undefined,
   },
   {
     // TODO: remove for 1.0
     name: 'eager',
-    isDynamicComponentImport: false,
-    client: {
-      mod: PACKAGES.client,
-      name: 'onClientLoad',
-    },
+    client: undefined,
   },
   {
     name: 'onComponentVisible',
-    isDynamicComponentImport: true,
     client: {
       mod: PACKAGES.client,
       name: 'onComponentVisible',
@@ -30,7 +21,6 @@ module.exports = [
   {
     // TODO: remove for 1.0
     name: 'lazy',
-    isDynamicComponentImport: true,
     client: {
       mod: PACKAGES.client,
       name: 'onComponentVisible',
@@ -38,7 +28,6 @@ module.exports = [
   },
   {
     name: 'onClientIdle',
-    isDynamicComponentImport: true,
     client: {
       mod: PACKAGES.client,
       name: 'onClientIdle',
@@ -46,7 +35,6 @@ module.exports = [
   },
   {
     name: 'onClientMedia',
-    isDynamicComponentImport: true,
     client: {
       mod: PACKAGES.client,
       name: 'onClientMedia',

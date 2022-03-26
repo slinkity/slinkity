@@ -4,23 +4,16 @@ const intersectionObserverOptions = {
 }
 
 /** @type {(params: import('../@types').ComponentLoaderClientParams) => void} */
-export default async function loader({ target, renderer, component: { mod, props, children } }) {
-  let isHydrated = false
-  const observer = new IntersectionObserver(async function (entries) {
-    for (const entry of entries) {
-      if (entry.isIntersecting) {
-        if (!isHydrated) {
-          const [Component, rendererCb] = await Promise.all([mod(), renderer()])
-          await rendererCb({
-            target,
-            props,
-            children,
-            Component: Component,
-          })
-          isHydrated = true
+export default function loader({ target }) {
+  return new Promise(function (resolve) {
+    const observer = new IntersectionObserver(async function (entries) {
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          observer.disconnect()
+          resolve()
         }
       }
-    }
-  }, intersectionObserverOptions)
-  observer.observe(target)
+    }, intersectionObserverOptions)
+    observer.observe(target)
+  })
 }

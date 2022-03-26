@@ -4,7 +4,9 @@ const { SLINKITY_MOUNT_POINT } = require('../utils/consts')
 
 /** @type {(client: import('../@types').ComponentLoader['client'], id: string) => string} */
 function toComponentLoaderImport(client, id) {
-  if (typeof client === 'string') {
+  if (typeof client === 'undefined') {
+    return ''
+  } else if (typeof client === 'string') {
     return `import loader${id} from ${JSON.stringify(client)};`
   } else {
     return `import { ${client.name} as loader${id} } from ${JSON.stringify(client.mod)};`
@@ -51,51 +53,52 @@ module.exports = function toLoaderScript({
 }) {
   const [loaderName, loaderArgs] = toLoaderNameAndArgs(loader)
   const componentLoader = componentLoaderMap[loaderName]
+  console.log(componentLoaderMap)
 
   if (!componentLoader) return ''
 
   const targetSelector = `document.querySelector(\`${SLINKITY_MOUNT_POINT}[data-s-id="${id}"]\`)`
   const componentImportPath = JSON.stringify(normalizePath(componentPath))
   const rendererImportPath = JSON.stringify(normalizePath(clientRenderer))
-  const componentLoaderImport = toComponentLoaderImport(componentLoader.client, id)
   // TODO: investigate faster and lighter-weight alternatives to the "stringify" lib
   const stringifiedProps = stringify(props)
   let script = ''
 
-  if (componentLoader.isDynamicComponentImport) {
+  if (componentLoader.client) {
     script = `
-${componentLoaderImport}
+${toComponentLoaderImport(componentLoader.client, id)}
+
+const props = ${stringifiedProps};
+const children = \`
+${children ?? ''}\`;
+const target = ${targetSelector};
 
 loader${id}({
-  id: ${JSON.stringify(id)},
-  args: ${JSON.stringify(loaderArgs)},
-  target: ${targetSelector},
-  renderer: async () => (await import(${rendererImportPath})).default,
-  component: {
-    mod: async () => (await import(${componentImportPath})).default,
-    props: ${stringifiedProps},
-    children: \`
-    ${children ?? ''}\`,
-  }
+  loaderName: ${JSON.stringify(loaderName)},
+  loaderArgs: ${JSON.stringify(loaderArgs)},
+  target,
+  props,
+  children,
+}).then(async function() {
+  const [renderer, Component] = await Promise.all([
+    import(${rendererImportPath}),
+    import(${componentImportPath}),
+  ]);
+  renderer.default({ Component: Component.default, target, props, children });
 });`
   } else {
     script = `
-${componentLoaderImport}
 import Component${id} from ${componentImportPath};
 import renderer${id} from ${rendererImportPath};
 
-loader${id}({
-  id: ${JSON.stringify(id)},
-  args: ${JSON.stringify(loaderArgs)},
+renderer${id}({
+  Component: Component${id},
   target: ${targetSelector},
-  renderer: renderer${id},
-  component: {
-    mod: Component${id},
-    props: ${stringifiedProps},
-    children: \`
-    ${children ?? ''}\`,
-  }
-});`
+  props: ${stringifiedProps},
+  children: \`
+  ${children ?? ''}\`,
+});
+`
   }
 
   return ['<script type="module">', script, '</script>'].join('\n')
