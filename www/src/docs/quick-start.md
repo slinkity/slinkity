@@ -5,6 +5,7 @@ title: Quick start
 {% include 'npm-init-slinkity-snippet.md' %}
 
 It includes:
+
 - component(s) embedded into a static `.md` template → [more on component shortcodes here](/docs/component-shortcodes/)
 - route(s) built using a component framework as a templating language → [more on component pages here](/docs/component-pages-layouts/)
 - a `netlify.toml` configured to deploy in a flash → [more on deployment here](/docs/deployment/)
@@ -41,7 +42,7 @@ This command will:
 1. Start up [11ty in `--watch` mode](https://www.11ty.dev/docs/usage/#re-run-eleventy-when-you-save) to listen for file changes
 2. Start up [a Vite server](https://vitejs.dev/guide/#index-html-and-project-root) pointed at your 11ty build. This helps us process all sorts of file types, including SCSS styles, React, Vue, or Svelte components, and more.
 
-[See our `slinkity` CLI docs](http://localhost:8080/docs/config/#the-slinkity-cli) for more details on how flags are processed.
+[See our `slinkity` CLI docs](/docs/config/#the-slinkity-cli) for more details on how flags are processed.
 
 ### Production builds
 
@@ -62,15 +63,15 @@ Say you have a project directory with just 1 file: `index.njk`. That file might 
 ```html
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Slinkity time</title>
-</head>
-<body>
-  <h1>Look ma, it's Slinkity!</h1>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Slinkity time</title>
+  </head>
+  <body>
+    <h1>Look ma, it's Slinkity!</h1>
+  </body>
 </html>
 ```
 
@@ -86,23 +87,24 @@ Now, we can write a component under the `_includes/` directory like so:
 
 {% slottedComponent "Tabs.svelte", hydrate="eager", id="prereqs", tabs=["React", "Vue", "Svelte"] %}
 {% renderTemplate "md" %}
+
 <section>
 
 ```jsx
 // _includes/GlassCounter.jsx
-import { useState } from 'react'
+import { useState } from "react";
 
 function GlassCounter() {
-  const [count, setCount] = useState(0)
+  const [count, setCount] = useState(0);
   return (
     <>
       <p>You've had {count} glasses of water 💧</p>
       <button onClick={() => setCount(count + 1)}>Add one</button>
     </>
-  )
+  );
 }
 
-export default GlassCounter
+export default GlassCounter;
 ```
 
 Finally, let's place this component onto our page with a [component shortcode](/docs/component-shortcodes):
@@ -114,6 +116,7 @@ Finally, let's place this component onto our page with a [component shortcode](/
   {% component 'GlassCounter.jsx', hydrate='eager' %}
 </body>
 ```
+
 </section>
 <section hidden>
 
@@ -125,19 +128,19 @@ Finally, let's place this component onto our page with a [component shortcode](/
 </template>
 
 <script>
-import { ref } from "vue";
+  import { ref } from "vue";
 
-export default {
-  setup() {
-    const count = ref(0);
+  export default {
+    setup() {
+      const count = ref(0);
 
-    function add() {
-      count.value += 1;
-    }
+      function add() {
+        count.value += 1;
+      }
 
-    return { count, add };
-  },
-};
+      return { count, add };
+    },
+  };
 </script>
 ```
 
@@ -150,6 +153,7 @@ Finally, let's place this component onto our page with a [component shortcode](/
   {% component 'GlassCounter.vue', hydrate='eager' %}
 </body>
 ```
+
 </section>
 <section hidden>
 
@@ -164,7 +168,7 @@ Finally, let's place this component onto our page with a [component shortcode](/
 </script>
 
 <p>You've had {count} glasses of water 💧</p>
-<button on:click={add}>Add one</button>
+<button on:click="{add}">Add one</button>
 ```
 
 Finally, let's place this component onto our page with a [component shortcode](/docs/component-shortcodes):
@@ -176,11 +180,13 @@ Finally, let's place this component onto our page with a [component shortcode](/
   {% component 'GlassCounter.svelte', hydrate='eager' %}
 </body>
 ```
+
 </section>
 {% endrenderTemplate %}
 {% endslottedComponent %}
 
 This will do a few things:
+
 1. Find `_includes/GlassCounter.*`. Note that we'll always look inside the `_includes` directory to find your components.
 2. [Prerender](https://jamstack.org/glossary/pre-render/) your component at build time. This means you'll always see your component, even when disabling JS in your browser ([try it!](https://developer.chrome.com/docs/devtools/javascript/disable/)).
 3. ["Hydrate"](/docs/partial-hydration/) that prerendered component with JavaScript. This is thanks to our `hydrate='eager'` flag.
