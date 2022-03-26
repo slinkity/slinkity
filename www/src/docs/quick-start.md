@@ -41,7 +41,7 @@ This command will:
 1. Start up [11ty in `--watch` mode](https://www.11ty.dev/docs/usage/#re-run-eleventy-when-you-save) to listen for file changes
 2. Start up [a Vite server](https://vitejs.dev/guide/#index-html-and-project-root) pointed at your 11ty build. This helps us process all sorts of file types, including SCSS styles, React, Vue, or Svelte components, and more.
 
-[See our `slinkity` CLI docs](/config/#the-slinkity-cli) for more details on how flags are processed.
+[See our `slinkity` CLI docs](/docs/config/#the-slinkity-cli) for more details on how flags are processed.
 
 ### Production builds
 
