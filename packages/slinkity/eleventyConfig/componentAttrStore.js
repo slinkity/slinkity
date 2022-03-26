@@ -1,8 +1,8 @@
 /**
  * The componentAttrStore is the bridge between page + shortcode components
- * and our HTML transform that *hydrates* those components.
+ * and our HTML transform that *renders* those components.
  * - component mount points are ID'd by their index in the DOM for a given page (first, second, etc)
- * - by passing in an id, you'll receive all values necessary to hydrate that mount point (see ComponentAttrs type def)
+ * - by passing in an id, you'll receive all values necessary to render that mount point (see ComponentAttrs type def)
  *
  * @typedef {string} ID
  * @typedef ComponentAttrs
@@ -10,7 +10,8 @@
  * @property {string} rendererName - name of renderer to use for component
  * @property {Record<string, any>} props - all props passed to the component
  * @property {string} children - stringified HTML children
- * @property {'eager' | 'lazy' | 'static'} hydrate - mode to use when hydrating the component
+ * @property {string} loader - name of component loader for rendering or hydration
+ * @property {boolean} isSSR - whether or not to SSR
  * @property {string} pageOutputPath - the page where this component lives, based on 11ty's inputPath property (ex. src/index.html)
  * @property {ID} id - a unique identifier for later retrieval from the store
  *

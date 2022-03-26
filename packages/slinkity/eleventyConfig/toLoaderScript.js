@@ -36,7 +36,8 @@ function toLoaderNameAndArgs(loader) {
  * @property {string} componentPath - path to the component itself, used for the import statement
  * @property {string} id - the unique id for a given mount point
  * @property {Record<string, import('../@types').ComponentLoader>} componentLoaderMap
- * @property {string} loader - the raw loader value as a string (ex. "onClientMedia(...)")
+ * @property {string | undefined} loader - the raw loader value as a string (ex. "onClientMedia(...)")
+ * @property {boolean} isSSR - whether the component was rendered server-side
  * @property {Record<string, any>} props - data used when hydrating the component
  * @property {string} children - Stringified HTML children
  * @param {LoaderScriptParams}
@@ -46,6 +47,7 @@ module.exports = function toLoaderScript({
   componentPath,
   componentLoaderMap,
   loader,
+  isSSR,
   id,
   props,
   clientRenderer,
@@ -53,7 +55,6 @@ module.exports = function toLoaderScript({
 }) {
   const [loaderName, loaderArgs] = toLoaderNameAndArgs(loader)
   const componentLoader = componentLoaderMap[loaderName]
-  console.log(componentLoaderMap)
 
   if (!componentLoader) return ''
 
@@ -84,7 +85,13 @@ loader${id}({
     import(${rendererImportPath}),
     import(${componentImportPath}),
   ]);
-  renderer.default({ Component: Component.default, target, props, children });
+  renderer.default({
+    Component: Component.default,
+    target,
+    props,
+    children,
+    isSSR: ${isSSR},
+  });
 });`
   } else {
     script = `
@@ -97,6 +104,7 @@ renderer${id}({
   props: ${stringifiedProps},
   children: \`
   ${children ?? ''}\`,
+  isSSR: ${isSSR},
 });
 `
   }
