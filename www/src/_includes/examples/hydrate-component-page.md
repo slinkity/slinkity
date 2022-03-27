@@ -76,7 +76,7 @@ To render _only_ client-side without server rendering, try switching from the `h
 
 ```diff
 frontMatter: {
-- hydrate: true
-+ renderWithoutSSR: true
+- hydrate: true / "onClientIdle" / "onClientMedia(...)"
++ renderWithoutSSR: true / "onClientIdle" / "onClientMedia(...)"
 }
 ```
