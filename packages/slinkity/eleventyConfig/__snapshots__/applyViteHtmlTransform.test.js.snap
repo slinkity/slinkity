@@ -11,64 +11,52 @@ exports[`applyViteHtmlTransform handleSSRComments should inject children as stri
   <p>rendered by react</p></slinkity-mount-point>
 <script type=\\"module\\">
 
-import { onClientLoad as loader0 } from \\"slinkity/client\\";
 import Component0 from \\"nice.jsx\\";
 import renderer0 from \\"@slinkity/example/client\\";
 
-loader0({
-  id: \\"0\\",
-  args: \\"\\",
+renderer0({
+  Component: Component0,
   target: document.querySelector(\`slinkity-mount-point[data-s-id=\\"0\\"]\`),
-  renderer: renderer0,
-  component: {
-    mod: Component0,
-    props: {},
-    children: \`
-    <h2>Boy do I love react!</h2>\`,
-  }
+  props: {},
+  children: \`
+  <h2>Boy do I love react!</h2>\`,
+  isSSR: true,
 });
+
 </script>
 <slinkity-mount-point data-s-id=\\"1\\"><svelte>Content</svelte>
   <p>rendered by svelte</p></slinkity-mount-point>
 <script type=\\"module\\">
 
-import { onClientLoad as loader1 } from \\"slinkity/client\\";
 import Component1 from \\"cool.svelte\\";
 import renderer1 from \\"@slinkity/svelte/client\\";
 
-loader1({
-  id: \\"1\\",
-  args: \\"\\",
+renderer1({
+  Component: Component1,
   target: document.querySelector(\`slinkity-mount-point[data-s-id=\\"1\\"]\`),
-  renderer: renderer1,
-  component: {
-    mod: Component1,
-    props: {},
-    children: \`
-    <h2>Boy do I love svelte!</h2>\`,
-  }
+  props: {},
+  children: \`
+  <h2>Boy do I love svelte!</h2>\`,
+  isSSR: true,
 });
+
 </script>
 <slinkity-mount-point data-s-id=\\"2\\"><vue>Content</vue>
   <p>rendered by vue</p></slinkity-mount-point>
 <script type=\\"module\\">
 
-import { onClientLoad as loader2 } from \\"slinkity/client\\";
 import Component2 from \\"neat.vue\\";
 import renderer2 from \\"@slinkity/vue/client\\";
 
-loader2({
-  id: \\"2\\",
-  args: \\"\\",
+renderer2({
+  Component: Component2,
   target: document.querySelector(\`slinkity-mount-point[data-s-id=\\"2\\"]\`),
-  renderer: renderer2,
-  component: {
-    mod: Component2,
-    props: {},
-    children: \`
-    <h2>Boy do I love vue!</h2>\`,
-  }
+  props: {},
+  children: \`
+  <h2>Boy do I love vue!</h2>\`,
+  isSSR: true,
 });
+
 </script>
 </body>
 </html>"
@@ -85,64 +73,52 @@ exports[`applyViteHtmlTransform handleSSRComments should inject props as object 
   <p>rendered by react</p></slinkity-mount-point>
 <script type=\\"module\\">
 
-import { onClientLoad as loader0 } from \\"slinkity/client\\";
 import Component0 from \\"nice.jsx\\";
 import renderer0 from \\"@slinkity/example/client\\";
 
-loader0({
-  id: \\"0\\",
-  args: \\"\\",
+renderer0({
+  Component: Component0,
   target: document.querySelector(\`slinkity-mount-point[data-s-id=\\"0\\"]\`),
-  renderer: renderer0,
-  component: {
-    mod: Component0,
-    props: {rendererName:'react',outputPath:'/handle/ssr/comments.html',componentPath:'nice.jsx',nullValue:null,number:42},
-    children: \`
-    \`,
-  }
+  props: {rendererName:'react',outputPath:'/handle/ssr/comments.html',componentPath:'nice.jsx',nullValue:null,number:42},
+  children: \`
+  \`,
+  isSSR: true,
 });
+
 </script>
 <slinkity-mount-point data-s-id=\\"1\\"><svelte>Content</svelte>
   <p>rendered by svelte</p></slinkity-mount-point>
 <script type=\\"module\\">
 
-import { onClientLoad as loader1 } from \\"slinkity/client\\";
 import Component1 from \\"cool.svelte\\";
 import renderer1 from \\"@slinkity/svelte/client\\";
 
-loader1({
-  id: \\"1\\",
-  args: \\"\\",
+renderer1({
+  Component: Component1,
   target: document.querySelector(\`slinkity-mount-point[data-s-id=\\"1\\"]\`),
-  renderer: renderer1,
-  component: {
-    mod: Component1,
-    props: {rendererName:'svelte',outputPath:'/handle/ssr/comments.html',componentPath:'cool.svelte',nullValue:null,number:42},
-    children: \`
-    \`,
-  }
+  props: {rendererName:'svelte',outputPath:'/handle/ssr/comments.html',componentPath:'cool.svelte',nullValue:null,number:42},
+  children: \`
+  \`,
+  isSSR: true,
 });
+
 </script>
 <slinkity-mount-point data-s-id=\\"2\\"><vue>Content</vue>
   <p>rendered by vue</p></slinkity-mount-point>
 <script type=\\"module\\">
 
-import { onClientLoad as loader2 } from \\"slinkity/client\\";
 import Component2 from \\"neat.vue\\";
 import renderer2 from \\"@slinkity/vue/client\\";
 
-loader2({
-  id: \\"2\\",
-  args: \\"\\",
+renderer2({
+  Component: Component2,
   target: document.querySelector(\`slinkity-mount-point[data-s-id=\\"2\\"]\`),
-  renderer: renderer2,
-  component: {
-    mod: Component2,
-    props: {rendererName:'vue',outputPath:'/handle/ssr/comments.html',componentPath:'neat.vue',nullValue:null,number:42},
-    children: \`
-    \`,
-  }
+  props: {rendererName:'vue',outputPath:'/handle/ssr/comments.html',componentPath:'neat.vue',nullValue:null,number:42},
+  children: \`
+  \`,
+  isSSR: true,
 });
+
 </script>
 </body>
 </html>"
@@ -175,64 +151,52 @@ exports[`applyViteHtmlTransform handleSSRComments should replace SSR comments wi
   <p>rendered by react</p></slinkity-mount-point>
 <script type=\\"module\\">
 
-import { onClientLoad as loader0 } from \\"slinkity/client\\";
 import Component0 from \\"nice.jsx\\";
 import renderer0 from \\"@slinkity/example/client\\";
 
-loader0({
-  id: \\"0\\",
-  args: \\"\\",
+renderer0({
+  Component: Component0,
   target: document.querySelector(\`slinkity-mount-point[data-s-id=\\"0\\"]\`),
-  renderer: renderer0,
-  component: {
-    mod: Component0,
-    props: {},
-    children: \`
-    \`,
-  }
+  props: {},
+  children: \`
+  \`,
+  isSSR: true,
 });
+
 </script>
 <slinkity-mount-point data-s-id=\\"1\\"><svelte>Content</svelte>
   <p>rendered by svelte</p></slinkity-mount-point>
 <script type=\\"module\\">
 
-import { onClientLoad as loader1 } from \\"slinkity/client\\";
 import Component1 from \\"cool.svelte\\";
 import renderer1 from \\"@slinkity/svelte/client\\";
 
-loader1({
-  id: \\"1\\",
-  args: \\"\\",
+renderer1({
+  Component: Component1,
   target: document.querySelector(\`slinkity-mount-point[data-s-id=\\"1\\"]\`),
-  renderer: renderer1,
-  component: {
-    mod: Component1,
-    props: {},
-    children: \`
-    \`,
-  }
+  props: {},
+  children: \`
+  \`,
+  isSSR: true,
 });
+
 </script>
 <slinkity-mount-point data-s-id=\\"2\\"><vue>Content</vue>
   <p>rendered by vue</p></slinkity-mount-point>
 <script type=\\"module\\">
 
-import { onClientLoad as loader2 } from \\"slinkity/client\\";
 import Component2 from \\"neat.vue\\";
 import renderer2 from \\"@slinkity/vue/client\\";
 
-loader2({
-  id: \\"2\\",
-  args: \\"\\",
+renderer2({
+  Component: Component2,
   target: document.querySelector(\`slinkity-mount-point[data-s-id=\\"2\\"]\`),
-  renderer: renderer2,
-  component: {
-    mod: Component2,
-    props: {},
-    children: \`
-    \`,
-  }
+  props: {},
+  children: \`
+  \`,
+  isSSR: true,
 });
+
 </script>
 </body>
 </html>"
