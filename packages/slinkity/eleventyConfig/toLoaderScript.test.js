@@ -26,6 +26,7 @@ describe('toLoaderScript', () => {
         loader: fakeArgs ? `${loader}(${fakeArgs})` : loader,
         id,
         props: { hydrate: loader },
+        isSSR: true,
         clientRenderer: '@slinkity/renderer-react',
         children: `<p>I love the ${loader} loader!</p>`,
       }),

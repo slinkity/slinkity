@@ -12,6 +12,7 @@ renderer1({
   props: {hydrate:'eager'},
   children: \`
   <p>I love the eager loader!</p>\`,
+  isSSR: true,
 });
 
 </script>"
@@ -38,7 +39,13 @@ loader3({
     import(\\"@slinkity/renderer-react\\"),
     import(\\"/component/using/lazy/index.jsx\\"),
   ]);
-  renderer.default({ Component: Component.default, target, props, children });
+  renderer.default({
+    Component: Component.default,
+    target,
+    props,
+    children,
+    isSSR: true,
+  });
 });
 </script>"
 `;
@@ -64,7 +71,13 @@ loader4({
     import(\\"@slinkity/renderer-react\\"),
     import(\\"/component/using/onClientIdle/index.jsx\\"),
   ]);
-  renderer.default({ Component: Component.default, target, props, children });
+  renderer.default({
+    Component: Component.default,
+    target,
+    props,
+    children,
+    isSSR: true,
+  });
 });
 </script>"
 `;
@@ -81,6 +94,7 @@ renderer0({
   props: {hydrate:'onClientLoad'},
   children: \`
   <p>I love the onClientLoad loader!</p>\`,
+  isSSR: true,
 });
 
 </script>"
@@ -107,7 +121,13 @@ loader5({
     import(\\"@slinkity/renderer-react\\"),
     import(\\"/component/using/onClientMedia/index.jsx\\"),
   ]);
-  renderer.default({ Component: Component.default, target, props, children });
+  renderer.default({
+    Component: Component.default,
+    target,
+    props,
+    children,
+    isSSR: true,
+  });
 });
 </script>"
 `;
@@ -133,7 +153,13 @@ loader2({
     import(\\"@slinkity/renderer-react\\"),
     import(\\"/component/using/onComponentVisible/index.jsx\\"),
   ]);
-  renderer.default({ Component: Component.default, target, props, children });
+  renderer.default({
+    Component: Component.default,
+    target,
+    props,
+    children,
+    isSSR: true,
+  });
 });
 </script>"
 `;
