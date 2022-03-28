@@ -60,19 +60,23 @@ module.exports = async function addComponentPages({
           let props
 
           /** @type {{ hydrate: import('../@types').Hydrate }} */
-          const { hydrate = 'none' } = data
-          if (typeof hydrate !== 'string' && typeof hydrate.props === 'function') {
+          const loader = data.renderWithoutSSR ?? data.hydrate ?? 'none'
+          const isSSR = data.renderWithoutSSR === undefined
+
+          console.log({ loader, isSSR, inputPath })
+
+          if (typeof loader === 'object' && typeof loader.props === 'function') {
             // if there's a "props" function,
             // use that to determine the component props
             const formattedData = useFormatted11tyData ? toFormattedDataForProps(data) : data
             const formattedDataWithFns = { ...formattedData, __functions }
-            props = (await hydrate.props(formattedDataWithFns)) ?? {}
-          } else if (hydrate === 'none' || hydrate.mode === 'none') {
-            // if there's no "props" function and we don't hydrate the page,
+            props = (await loader.props(formattedDataWithFns)) ?? {}
+          } else if (loader === 'none' || loader.mode === 'none') {
+            // if there's no "props" function and we don't render the page client-side,
             // pass *all* 11ty data as props
             props = { ...data, __functions }
           } else {
-            // if there's no "props" function, but we *do* hydrate the page,
+            // if there's no "props" function, but we *do* render the page client-side,
             // don't pass any props
             props = {}
           }
@@ -87,7 +91,8 @@ module.exports = async function addComponentPages({
           const id = componentAttrStore.push({
             path: absInputPath,
             props,
-            hydrate: hydrate.mode ? hydrate.mode : hydrate,
+            isSSR,
+            loader: loader.mode ? loader.mode : loader,
             pageOutputPath: data.page.outputPath,
             rendererName: renderer.name,
           })

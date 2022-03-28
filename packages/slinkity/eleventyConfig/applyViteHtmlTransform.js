@@ -8,6 +8,8 @@ const {
 } = require('../utils/consts')
 const toSlashesTrimmed = require('../utils/toSlashesTrimmed')
 const toLoaderScript = require('./toLoaderScript')
+const loaders = require('./loaders')
+const componentLoaderMap = Object.fromEntries(loaders.map((loader) => [loader.name, loader]))
 const toHtmlAttrString = require('../utils/toHtmlAttrString')
 
 const ssrRegex = RegExp(toSSRComment('([0-9]+)'), 'g')
@@ -51,41 +53,53 @@ async function handleSSRComments({
   const pageComponentAttrs = componentAttrStore.getAllByPage(outputPath)
   const serverRenderedComponents = []
   for (const componentAttrs of pageComponentAttrs) {
-    const { path: componentPath, props, hydrate, rendererName, children } = componentAttrs
+    const { path: componentPath, props, isSSR, loader, rendererName, children } = componentAttrs
     const renderer = rendererMap[rendererName]
-    const { default: serverRenderer } = await viteSSR.toCommonJSModule(renderer.server)
     if (renderer.injectImportedStyles) {
       const { __importedStyles } = await viteSSR.toCommonJSModule(componentPath)
       __importedStyles.forEach((importedStyle) => importedStyles.add(importedStyle))
     }
-    const serverRendered = await serverRenderer({
-      toCommonJSModule: viteSSR.toCommonJSModule,
-      componentPath,
-      props,
-      children,
-      hydrate,
-    })
-    if (serverRendered.css) {
-      inlineStyles.add(serverRendered.css)
+    if (isSSR) {
+      const { default: serverRenderer } = await viteSSR.toCommonJSModule(renderer.server)
+      const serverRendered = await serverRenderer({
+        toCommonJSModule: viteSSR.toCommonJSModule,
+        componentPath,
+        props,
+        children,
+        loader,
+      })
+      if (serverRendered.css) {
+        inlineStyles.add(serverRendered.css)
+      }
+      serverRenderedComponents.push(serverRendered.html)
     }
-    serverRenderedComponents.push(serverRendered.html)
   }
 
   const html = content
     // server render each component
     .replace(ssrRegex, (_, id) => {
-      const { path: componentPath, props, hydrate, rendererName, children } = pageComponentAttrs[id]
+      const {
+        path: componentPath,
+        props,
+        loader,
+        isSSR,
+        rendererName,
+        children,
+      } = pageComponentAttrs[id]
       const clientRenderer = rendererMap[rendererName].client
       const loaderScript = toLoaderScript({
         componentPath,
-        props,
-        hydrate,
+        componentLoaderMap,
+        loader,
+        isSSR,
         id,
+        props,
         clientRenderer,
         children,
       })
       const attrs = toHtmlAttrString({ [SLINKITY_ATTRS.id]: id })
-      return `<${SLINKITY_MOUNT_POINT} ${attrs}>${serverRenderedComponents[id]}</${SLINKITY_MOUNT_POINT}>\n${loaderScript}`
+      const serverRenderedComponent = serverRenderedComponents[id] ?? ''
+      return `<${SLINKITY_MOUNT_POINT} ${attrs}>${serverRenderedComponent}</${SLINKITY_MOUNT_POINT}>\n${loaderScript}`
     })
 
   if (html.match(ssrRegex)) {

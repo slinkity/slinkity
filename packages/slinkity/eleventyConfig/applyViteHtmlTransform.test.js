@@ -8,7 +8,8 @@ function toComponentAttrsWithDefaults(componentAttrs) {
   for (const componentAttr of componentAttrs) {
     componentAttrStore.push({
       path: 'not-important.jsx',
-      hydrate: 'eager',
+      isSSR: true,
+      loader: 'onClientLoad',
       props: {},
       pageOutputPath: 'default.html',
       rendererName: 'react',

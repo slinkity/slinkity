@@ -153,13 +153,12 @@ See our docs for more: https://slinkity.dev/docs/component-shortcodes`)
     })
   }
 
-  /** @type {{ hydrate: import('../@types').HydrationMode }} */
-  const { hydrate = 'none' } = props
   return {
     path: path.join(resolvedImportAliases.includes, componentPath),
     rendererName: renderer,
     props: restOfProps,
-    hydrate,
+    isSSR: props.renderWithoutSSR === undefined,
+    loader: props.renderWithoutSSR ?? props.hydrate ?? 'none',
     children,
     pageOutputPath: page.outputPath,
   }

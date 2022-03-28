@@ -10,51 +10,54 @@ exports[`applyViteHtmlTransform handleSSRComments should inject children as stri
 <slinkity-mount-point data-s-id=\\"0\\"><react>Content</react>
   <p>rendered by react</p></slinkity-mount-point>
 <script type=\\"module\\">
-    import Component0 from \\"nice.jsx\\";
-    import renderer0 from \\"@slinkity/example/client\\";
-    import { eagerLoader as eagerLoader0 } from \\"slinkity/client\\";
-  
-    eagerLoader0({ 
-      id: \\"0\\",
-      Component: Component0,
-      renderer: renderer0,
-      props: {},
-      children: \`
-<h2>Boy do I love react!</h2>\`,
-    });
-  </script>
+
+import Component0 from \\"nice.jsx\\";
+import renderer0 from \\"@slinkity/example/client\\";
+
+renderer0({
+  Component: Component0,
+  target: document.querySelector(\`slinkity-mount-point[data-s-id=\\"0\\"]\`),
+  props: {},
+  children: \`
+  <h2>Boy do I love react!</h2>\`,
+  isSSR: true,
+});
+
+</script>
 <slinkity-mount-point data-s-id=\\"1\\"><svelte>Content</svelte>
   <p>rendered by svelte</p></slinkity-mount-point>
 <script type=\\"module\\">
-    import Component1 from \\"cool.svelte\\";
-    import renderer1 from \\"@slinkity/svelte/client\\";
-    import { eagerLoader as eagerLoader1 } from \\"slinkity/client\\";
-  
-    eagerLoader1({ 
-      id: \\"1\\",
-      Component: Component1,
-      renderer: renderer1,
-      props: {},
-      children: \`
-<h2>Boy do I love svelte!</h2>\`,
-    });
-  </script>
+
+import Component1 from \\"cool.svelte\\";
+import renderer1 from \\"@slinkity/svelte/client\\";
+
+renderer1({
+  Component: Component1,
+  target: document.querySelector(\`slinkity-mount-point[data-s-id=\\"1\\"]\`),
+  props: {},
+  children: \`
+  <h2>Boy do I love svelte!</h2>\`,
+  isSSR: true,
+});
+
+</script>
 <slinkity-mount-point data-s-id=\\"2\\"><vue>Content</vue>
   <p>rendered by vue</p></slinkity-mount-point>
 <script type=\\"module\\">
-    import Component2 from \\"neat.vue\\";
-    import renderer2 from \\"@slinkity/vue/client\\";
-    import { eagerLoader as eagerLoader2 } from \\"slinkity/client\\";
-  
-    eagerLoader2({ 
-      id: \\"2\\",
-      Component: Component2,
-      renderer: renderer2,
-      props: {},
-      children: \`
-<h2>Boy do I love vue!</h2>\`,
-    });
-  </script>
+
+import Component2 from \\"neat.vue\\";
+import renderer2 from \\"@slinkity/vue/client\\";
+
+renderer2({
+  Component: Component2,
+  target: document.querySelector(\`slinkity-mount-point[data-s-id=\\"2\\"]\`),
+  props: {},
+  children: \`
+  <h2>Boy do I love vue!</h2>\`,
+  isSSR: true,
+});
+
+</script>
 </body>
 </html>"
 `;
@@ -69,51 +72,54 @@ exports[`applyViteHtmlTransform handleSSRComments should inject props as object 
 <slinkity-mount-point data-s-id=\\"0\\"><react>Content</react>
   <p>rendered by react</p></slinkity-mount-point>
 <script type=\\"module\\">
-    import Component0 from \\"nice.jsx\\";
-    import renderer0 from \\"@slinkity/example/client\\";
-    import { eagerLoader as eagerLoader0 } from \\"slinkity/client\\";
-  
-    eagerLoader0({ 
-      id: \\"0\\",
-      Component: Component0,
-      renderer: renderer0,
-      props: {rendererName:'react',outputPath:'/handle/ssr/comments.html',componentPath:'nice.jsx',nullValue:null,number:42},
-      children: \`
-\`,
-    });
-  </script>
+
+import Component0 from \\"nice.jsx\\";
+import renderer0 from \\"@slinkity/example/client\\";
+
+renderer0({
+  Component: Component0,
+  target: document.querySelector(\`slinkity-mount-point[data-s-id=\\"0\\"]\`),
+  props: {rendererName:'react',outputPath:'/handle/ssr/comments.html',componentPath:'nice.jsx',nullValue:null,number:42},
+  children: \`
+  \`,
+  isSSR: true,
+});
+
+</script>
 <slinkity-mount-point data-s-id=\\"1\\"><svelte>Content</svelte>
   <p>rendered by svelte</p></slinkity-mount-point>
 <script type=\\"module\\">
-    import Component1 from \\"cool.svelte\\";
-    import renderer1 from \\"@slinkity/svelte/client\\";
-    import { eagerLoader as eagerLoader1 } from \\"slinkity/client\\";
-  
-    eagerLoader1({ 
-      id: \\"1\\",
-      Component: Component1,
-      renderer: renderer1,
-      props: {rendererName:'svelte',outputPath:'/handle/ssr/comments.html',componentPath:'cool.svelte',nullValue:null,number:42},
-      children: \`
-\`,
-    });
-  </script>
+
+import Component1 from \\"cool.svelte\\";
+import renderer1 from \\"@slinkity/svelte/client\\";
+
+renderer1({
+  Component: Component1,
+  target: document.querySelector(\`slinkity-mount-point[data-s-id=\\"1\\"]\`),
+  props: {rendererName:'svelte',outputPath:'/handle/ssr/comments.html',componentPath:'cool.svelte',nullValue:null,number:42},
+  children: \`
+  \`,
+  isSSR: true,
+});
+
+</script>
 <slinkity-mount-point data-s-id=\\"2\\"><vue>Content</vue>
   <p>rendered by vue</p></slinkity-mount-point>
 <script type=\\"module\\">
-    import Component2 from \\"neat.vue\\";
-    import renderer2 from \\"@slinkity/vue/client\\";
-    import { eagerLoader as eagerLoader2 } from \\"slinkity/client\\";
-  
-    eagerLoader2({ 
-      id: \\"2\\",
-      Component: Component2,
-      renderer: renderer2,
-      props: {rendererName:'vue',outputPath:'/handle/ssr/comments.html',componentPath:'neat.vue',nullValue:null,number:42},
-      children: \`
-\`,
-    });
-  </script>
+
+import Component2 from \\"neat.vue\\";
+import renderer2 from \\"@slinkity/vue/client\\";
+
+renderer2({
+  Component: Component2,
+  target: document.querySelector(\`slinkity-mount-point[data-s-id=\\"2\\"]\`),
+  props: {rendererName:'vue',outputPath:'/handle/ssr/comments.html',componentPath:'neat.vue',nullValue:null,number:42},
+  children: \`
+  \`,
+  isSSR: true,
+});
+
+</script>
 </body>
 </html>"
 `;
@@ -144,51 +150,54 @@ exports[`applyViteHtmlTransform handleSSRComments should replace SSR comments wi
 <slinkity-mount-point data-s-id=\\"0\\"><react>Content</react>
   <p>rendered by react</p></slinkity-mount-point>
 <script type=\\"module\\">
-    import Component0 from \\"nice.jsx\\";
-    import renderer0 from \\"@slinkity/example/client\\";
-    import { eagerLoader as eagerLoader0 } from \\"slinkity/client\\";
-  
-    eagerLoader0({ 
-      id: \\"0\\",
-      Component: Component0,
-      renderer: renderer0,
-      props: {},
-      children: \`
-\`,
-    });
-  </script>
+
+import Component0 from \\"nice.jsx\\";
+import renderer0 from \\"@slinkity/example/client\\";
+
+renderer0({
+  Component: Component0,
+  target: document.querySelector(\`slinkity-mount-point[data-s-id=\\"0\\"]\`),
+  props: {},
+  children: \`
+  \`,
+  isSSR: true,
+});
+
+</script>
 <slinkity-mount-point data-s-id=\\"1\\"><svelte>Content</svelte>
   <p>rendered by svelte</p></slinkity-mount-point>
 <script type=\\"module\\">
-    import Component1 from \\"cool.svelte\\";
-    import renderer1 from \\"@slinkity/svelte/client\\";
-    import { eagerLoader as eagerLoader1 } from \\"slinkity/client\\";
-  
-    eagerLoader1({ 
-      id: \\"1\\",
-      Component: Component1,
-      renderer: renderer1,
-      props: {},
-      children: \`
-\`,
-    });
-  </script>
+
+import Component1 from \\"cool.svelte\\";
+import renderer1 from \\"@slinkity/svelte/client\\";
+
+renderer1({
+  Component: Component1,
+  target: document.querySelector(\`slinkity-mount-point[data-s-id=\\"1\\"]\`),
+  props: {},
+  children: \`
+  \`,
+  isSSR: true,
+});
+
+</script>
 <slinkity-mount-point data-s-id=\\"2\\"><vue>Content</vue>
   <p>rendered by vue</p></slinkity-mount-point>
 <script type=\\"module\\">
-    import Component2 from \\"neat.vue\\";
-    import renderer2 from \\"@slinkity/vue/client\\";
-    import { eagerLoader as eagerLoader2 } from \\"slinkity/client\\";
-  
-    eagerLoader2({ 
-      id: \\"2\\",
-      Component: Component2,
-      renderer: renderer2,
-      props: {},
-      children: \`
-\`,
-    });
-  </script>
+
+import Component2 from \\"neat.vue\\";
+import renderer2 from \\"@slinkity/vue/client\\";
+
+renderer2({
+  Component: Component2,
+  target: document.querySelector(\`slinkity-mount-point[data-s-id=\\"2\\"]\`),
+  props: {},
+  children: \`
+  \`,
+  isSSR: true,
+});
+
+</script>
 </body>
 </html>"
 `;

@@ -20,7 +20,7 @@ about.jsx|.vue|.svelte
 
 ...And you're ready to start templating. If you're following along at home, you'll want to add some content to this file:
 
-{% slottedComponent "Tabs.svelte", hydrate="eager", id="page-templates", tabs=["React", "Vue", "Svelte"] %}
+{% slottedComponent "Tabs.svelte", hydrate=true, id="page-templates", tabs=["React", "Vue", "Svelte"] %}
 {% renderTemplate "md" %}
 <section>
 
@@ -87,7 +87,7 @@ For example, let's say you have a simple layout in your project called `_include
 
 You can apply this layout to your `/about` page using front matter:
 
-{% slottedComponent "Tabs.svelte", hydrate="eager", id="page-frontmatter", tabs=["React", "Vue", "Svelte"] %}
+{% slottedComponent "Tabs.svelte", hydrate=true, id="page-frontmatter", tabs=["React", "Vue", "Svelte"] %}
 {% renderTemplate "md" %}
 <section>
 
@@ -155,7 +155,7 @@ Say you have a list of incredible, amazing, intelligent Slinkity contributors in
 
 Since [all `_data` files are piped into 11ty's data cascade](https://www.11ty.dev/docs/data-global/), this is now available to your component page via the `contributors` prop:
 
-{% slottedComponent "Tabs.svelte", hydrate="eager", id="page-props", tabs=["React", "Vue", "Svelte"] %}
+{% slottedComponent "Tabs.svelte", hydrate=true, id="page-props", tabs=["React", "Vue", "Svelte"] %}
 {% renderTemplate "md" %}
 <section>
 
@@ -256,7 +256,7 @@ module.exports = function(eleventyConfig) {
 
 You can access this filter across your component pages like so:
 
-{% slottedComponent "Tabs.svelte", hydrate="eager", id="page-permalink-basic", tabs=["React", "Vue", "Svelte"] %}
+{% slottedComponent "Tabs.svelte", hydrate=true, id="page-permalink-basic", tabs=["React", "Vue", "Svelte"] %}
 {% renderTemplate "md" %}
 <section>
 
@@ -322,7 +322,7 @@ export default {
 
 Say you want to generate a blog post's URL from its title. Since front matter is available from the 11ty data object, you can use a `permalink()` function like so:
 
-{% slottedComponent "Tabs.svelte", hydrate="eager", id="page-permalink-basic", tabs=["React", "Vue", "Svelte"] %}
+{% slottedComponent "Tabs.svelte", hydrate=true, id="page-permalink-basic", tabs=["React", "Vue", "Svelte"] %}
 {% renderTemplate "md" %}
 <section>
 
@@ -425,7 +425,7 @@ That list of T-shirts may look like this (`_data/tshirts.json`):
 
 You can generate routes for each of these T-shirts using the `pagination` and `permalink` properties like so:
 
-{% slottedComponent "Tabs.svelte", hydrate="eager", id="page-permalink-basic", tabs=["React", "Vue", "Svelte"] %}
+{% slottedComponent "Tabs.svelte", hydrate=true, id="page-permalink-basic", tabs=["React", "Vue", "Svelte"] %}
 {% renderTemplate "md" %}
 <section>
 
@@ -536,11 +536,11 @@ Here's how your site's input / output directories will look, assuming `_site` is
 
 We've used components as build-time templating languages. Now let's add some JavaScript into the mix 🥗
 
-You can enable hydration using the `hydrate` front matter prop:
+You can enable client-side rendering using the `hydrate` front matter prop:
 
 {% include 'examples/hydrate-component-page.md' %}
 
-Like [component shortcodes](/docs/component-shortcodes), you're free to use any of [our partial hydration modes](/docs/partial-hydration) (`eager`, `lazy`, etc).
+Like [component shortcodes](/docs/component-shortcodes), you're free to use any of [our partial hydration modes](/docs/partial-hydration) (`"onComponentVisible"`, `"onClientMedia(...)"`, and more).
 
 ### Handle props on hydrated components
 
@@ -549,7 +549,7 @@ Props work a _bit_ differently now that JS is involved. In order to access 11ty 
 For instance, say you need to access that same global `contributors` list [from earlier](#use-11ty-data-as-props). You can use a special `hydrate.props` function from your front matter like so:
 
 
-{% slottedComponent "Tabs.svelte", hydrate="eager", id="page-hydrated-props", tabs=["React", "Vue", "Svelte"] %}
+{% slottedComponent "Tabs.svelte", hydrate=true, id="page-hydrated-props", tabs=["React", "Vue", "Svelte"] %}
 {% renderTemplate "md" %}
 <section>
 
@@ -557,7 +557,7 @@ For instance, say you need to access that same global `contributors` list [from 
 // about.jsx
 export const frontMatter = {
   hydrate: {
-    mode: 'eager',
+    mode: true,
     // the result of this function
     // will be passed to your component as props
     props: (eleventyData) => ({
@@ -593,7 +593,7 @@ export default {
   props: ["contributors"],
   frontMatter: {
     hydrate: {
-      mode: "eager",
+      mode: true,
       // the result of this function
       // will be passed to your component as props
       props: (eleventyData) => ({
@@ -612,7 +612,7 @@ export default {
 <script context="module">
   export const frontMatter = {
     hydrate: {
-      mode: "eager",
+      mode: true,
       // the result of this function
       // will be passed to your component as props
       props: (eleventyData) => ({
@@ -643,7 +643,7 @@ export default {
 
 A few takeaways here:
 
-1. We update `hydrate: "eager"` to `hydrate: { mode: "eager" }`
+1. We update `hydrate: true` to `hydrate: { mode: true }`
 2. We include a `hydrate.props` function for Slinkity to decide which props our component needs
 3. Slinkity runs this function _at build time_ (not on the client!) to decide which props to generate
 4. These props are accessible from the browser-rendered component

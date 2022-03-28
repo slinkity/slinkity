@@ -1,0 +1,165 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`toLoaderScript Should generate hydration script for "eager" 1`] = `
+"<script type=\\"module\\">
+
+import Component1 from \\"/component/using/eager/index.jsx\\";
+import renderer1 from \\"@slinkity/renderer-react\\";
+
+renderer1({
+  Component: Component1,
+  target: document.querySelector(\`slinkity-mount-point[data-s-id=\\"1\\"]\`),
+  props: {hydrate:'eager'},
+  children: \`
+  <p>I love the eager loader!</p>\`,
+  isSSR: true,
+});
+
+</script>"
+`;
+
+exports[`toLoaderScript Should generate hydration script for "lazy" 1`] = `
+"<script type=\\"module\\">
+
+import { onComponentVisible as loader3 } from \\"slinkity/client\\";
+
+const props = {hydrate:'lazy'};
+const children = \`
+<p>I love the lazy loader!</p>\`;
+const target = document.querySelector(\`slinkity-mount-point[data-s-id=\\"3\\"]\`);
+
+loader3({
+  loaderName: \\"lazy\\",
+  loaderArgs: \\"\\",
+  target,
+  props,
+  children,
+}).then(async function() {
+  const [renderer, Component] = await Promise.all([
+    import(\\"@slinkity/renderer-react\\"),
+    import(\\"/component/using/lazy/index.jsx\\"),
+  ]);
+  renderer.default({
+    Component: Component.default,
+    target,
+    props,
+    children,
+    isSSR: true,
+  });
+});
+</script>"
+`;
+
+exports[`toLoaderScript Should generate hydration script for "onClientIdle" 1`] = `
+"<script type=\\"module\\">
+
+import { onClientIdle as loader4 } from \\"slinkity/client\\";
+
+const props = {hydrate:'onClientIdle'};
+const children = \`
+<p>I love the onClientIdle loader!</p>\`;
+const target = document.querySelector(\`slinkity-mount-point[data-s-id=\\"4\\"]\`);
+
+loader4({
+  loaderName: \\"onClientIdle\\",
+  loaderArgs: \\"\\",
+  target,
+  props,
+  children,
+}).then(async function() {
+  const [renderer, Component] = await Promise.all([
+    import(\\"@slinkity/renderer-react\\"),
+    import(\\"/component/using/onClientIdle/index.jsx\\"),
+  ]);
+  renderer.default({
+    Component: Component.default,
+    target,
+    props,
+    children,
+    isSSR: true,
+  });
+});
+</script>"
+`;
+
+exports[`toLoaderScript Should generate hydration script for "onClientLoad" 1`] = `
+"<script type=\\"module\\">
+
+import Component0 from \\"/component/using/onClientLoad/index.jsx\\";
+import renderer0 from \\"@slinkity/renderer-react\\";
+
+renderer0({
+  Component: Component0,
+  target: document.querySelector(\`slinkity-mount-point[data-s-id=\\"0\\"]\`),
+  props: {hydrate:'onClientLoad'},
+  children: \`
+  <p>I love the onClientLoad loader!</p>\`,
+  isSSR: true,
+});
+
+</script>"
+`;
+
+exports[`toLoaderScript Should generate hydration script for "onClientMedia" 1`] = `
+"<script type=\\"module\\">
+
+import { onClientMedia as loader5 } from \\"slinkity/client\\";
+
+const props = {hydrate:'onClientMedia'};
+const children = \`
+<p>I love the onClientMedia loader!</p>\`;
+const target = document.querySelector(\`slinkity-mount-point[data-s-id=\\"5\\"]\`);
+
+loader5({
+  loaderName: \\"onClientMedia\\",
+  loaderArgs: \\"screen (max-width: 500px)\\",
+  target,
+  props,
+  children,
+}).then(async function() {
+  const [renderer, Component] = await Promise.all([
+    import(\\"@slinkity/renderer-react\\"),
+    import(\\"/component/using/onClientMedia/index.jsx\\"),
+  ]);
+  renderer.default({
+    Component: Component.default,
+    target,
+    props,
+    children,
+    isSSR: true,
+  });
+});
+</script>"
+`;
+
+exports[`toLoaderScript Should generate hydration script for "onComponentVisible" 1`] = `
+"<script type=\\"module\\">
+
+import { onComponentVisible as loader2 } from \\"slinkity/client\\";
+
+const props = {hydrate:'onComponentVisible'};
+const children = \`
+<p>I love the onComponentVisible loader!</p>\`;
+const target = document.querySelector(\`slinkity-mount-point[data-s-id=\\"2\\"]\`);
+
+loader2({
+  loaderName: \\"onComponentVisible\\",
+  loaderArgs: \\"\\",
+  target,
+  props,
+  children,
+}).then(async function() {
+  const [renderer, Component] = await Promise.all([
+    import(\\"@slinkity/renderer-react\\"),
+    import(\\"/component/using/onComponentVisible/index.jsx\\"),
+  ]);
+  renderer.default({
+    Component: Component.default,
+    target,
+    props,
+    children,
+    isSSR: true,
+  });
+});
+</script>"
+`;

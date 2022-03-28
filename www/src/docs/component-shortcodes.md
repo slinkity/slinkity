@@ -16,7 +16,7 @@ First, ensure your component is **located in your includes directory.** This def
 
 For instance, say you've written a Vue component under `_includes/Component.vue`. You can insert this component into your templates like so:
 
-{% slottedComponent 'Tabs.svelte', hydrate='eager', id='shortcode-basics', store='templates', tabs=['nunjucks', 'liquid'] %}
+{% slottedComponent 'Tabs.svelte', hydrate=true, id='shortcode-basics', store='templates', tabs=['nunjucks', 'liquid'] %}
 {% renderTemplate 'md' %}
 <section>
 
@@ -43,9 +43,9 @@ One feature we _won't_ provide automatically: hydrating on the client. In other 
 
 ## Choose how and when to hydrate
 
-Slinkity requires a special `hydrate` prop to ship JavaScript alongside your components. This lets you use your favorite component framework for templating guilt-free, and opt-in to JS bundles when the need arises.
+Slinkity requires a special `hydrate` or `renderWithoutSSR` prop to ship JavaScript alongside your components. This lets you use your favorite component framework for templating guilt-free, and opt-in to JS bundles when the need arises.
 
-To hydrate that `Component.vue` from earlier, you can apply the `hydrate='eager'` flag:
+To hydrate that `Component.vue` from earlier, you can apply the `hydrate=true` flag:
 
 {% include 'examples/hydrate-component-shortcodes.md' %}
 
@@ -59,7 +59,7 @@ You can also pass data to your components as key / value pairs.
 
 Let's say you have a date component written in your favorite framework (`_includes/Date.jsx|vue|svelte`) that wants to use [11ty's supplied `date` object](https://www.11ty.dev/docs/data-eleventy-supplied/). You can pass this "date" prop like so:
 
-{% slottedComponent 'Tabs.svelte', hydrate='eager', id='shortcode-date-prop', store='templates', tabs=['nunjucks', 'liquid'] %}
+{% slottedComponent 'Tabs.svelte', hydrate=true, id='shortcode-date-prop', store='templates', tabs=['nunjucks', 'liquid'] %}
 {% renderTemplate 'md' %}
 <section>
 
@@ -67,10 +67,10 @@ Let's say you have a date component written in your favorite framework (`_includ
 {% component 'Date.jsx|vue|svelte', date=page.date %}
 ```
 
-Note that you can pass the `hydrate` flag alongside this prop as well. `hydrate` is considered just another prop, like any other! This should work fine for instance:
+Note that you can pass the `hydrate` flag alongside this prop as well. `hydrate` and `renderWithoutSSR` are considered just another prop, like any other! This should work fine for instance:
 
 ```html
-{% component 'Date.jsx|vue|svelte', date=page.date, hydrate='eager' %}
+{% component 'Date.jsx|vue|svelte', date=page.date, hydrate=true %}
 ```
 </section>
 <section hidden>
@@ -82,7 +82,7 @@ Note that you can pass the `hydrate` flag alongside this prop as well. `hydrate`
 Note that you can pass the `hydrate` flag alongside this prop as well. `hydrate` is considered just another prop, like any other! This should work fine for instance:
 
 ```html
-{% component 'Date.jsx|vue|svelte' 'date' page.date 'hydrate' 'eager' %}
+{% component 'Date.jsx|vue|svelte' 'date' page.date 'hydrate' true %}
 ```
 </section>
 {% endrenderTemplate %}
@@ -144,20 +144,20 @@ export default {
 
 You're free to pass as many key / value pairs as you want. The names and ordering of your keys shouldn't matter, since they're all crunched into a single "props" object for your component.
 
-{% slottedComponent 'Tabs.svelte', hydrate='eager', id='shortcode-multiple-props', store='templates', tabs=['nunjucks', 'liquid'] %}
+{% slottedComponent 'Tabs.svelte', hydrate=true, id='shortcode-multiple-props', store='templates', tabs=['nunjucks', 'liquid'] %}
 {% renderTemplate 'md' %}
 <section>
 
 ```html
 {% component 'Apropcalypse.jsx|vue|svelte', date=page.date,
-url=page.url, hydrate='eager', fileSlug=page.fileSlug %}
+url=page.url, hydrate=true, fileSlug=page.fileSlug %}
 ```
 </section>
 <section hidden>
 
 ```html
 {% component 'Apropcalypse.jsx|vue|svelte' 'date' page.date
-'url' page.url 'hydrate' 'eager' 'fileSlug' page.fileSlug %}
+'url' page.url 'hydrate' true 'fileSlug' page.fileSlug %}
 ```
 </section>
 {% endrenderTemplate %}
@@ -221,7 +221,7 @@ export default {
 
 You can use this component the same way as the `component` shortcode, now with children:
 
-{% slottedComponent 'Tabs.svelte', hydrate='eager', id='slotted-shortcode-usage', store='templates', tabs=['nunjucks', 'liquid'] %}
+{% slottedComponent 'Tabs.svelte', hydrate=true, id='slotted-shortcode-usage', store='templates', tabs=['nunjucks', 'liquid'] %}
 {% renderTemplate 'md' %}
 <section>
 
