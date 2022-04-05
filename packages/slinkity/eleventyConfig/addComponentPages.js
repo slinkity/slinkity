@@ -63,8 +63,6 @@ module.exports = async function addComponentPages({
           const loader = data.renderWithoutSSR ?? data.hydrate ?? 'none'
           const isSSR = data.renderWithoutSSR === undefined
 
-          console.log({ loader, isSSR, inputPath })
-
           if (typeof loader === 'object' && typeof loader.props === 'function') {
             // if there's a "props" function,
             // use that to determine the component props
