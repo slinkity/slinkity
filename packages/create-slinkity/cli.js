@@ -28,7 +28,7 @@ const componentFlavorMeta = {
       href: '/react-page',
       text: 'React',
     },
-    shortcode: '{% component "Slinky.jsx", hydrate="eager" %}',
+    shortcode: '{% component "Slinky.jsx", hydrate=true %}',
     exclusiveTemplates: ['src/react-page.jsx', 'src/_includes/Slinky.jsx', 'styles/slinky.scss'],
   },
   vue: {
@@ -48,7 +48,7 @@ const componentFlavorMeta = {
       href: '/vue-page',
       text: 'Vue',
     },
-    shortcode: '{% component "Slinky.vue", hydrate="eager" %}',
+    shortcode: '{% component "Slinky.vue", hydrate=true %}',
     exclusiveTemplates: ['src/vue-page.vue', 'src/_includes/Slinky.vue'],
   },
   svelte: {
@@ -68,7 +68,7 @@ const componentFlavorMeta = {
       href: '/svelte-page',
       text: 'Svelte',
     },
-    shortcode: '{% component "Slinky.svelte", hydrate="eager" %}',
+    shortcode: '{% component "Slinky.svelte", hydrate=true %}',
     exclusiveTemplates: ['src/svelte-page.svelte', 'src/_includes/Slinky.svelte'],
   },
 }
