@@ -123,6 +123,7 @@ module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
             await viteMiddlewareServer.restart()
           }
         },
+        domdiff: false,
         middleware: [
           (req, res, next) => {
             // Some Vite server middlewares are missing content types
@@ -162,7 +163,6 @@ module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
           // across all 11ty built routes
           await viteMiddlewareServer.restart()
         }
-        console.log('done!')
       })
 
       eleventyConfig.setBrowserSyncConfig({
