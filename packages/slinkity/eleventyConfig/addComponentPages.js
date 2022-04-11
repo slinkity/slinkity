@@ -12,7 +12,7 @@ const { log } = require('../utils/logger')
  * @property {import('../@types').Renderer} renderer
  * @param {AddComponentPagesParams}
  */
-module.exports = async function addComponentPages({
+module.exports = function addComponentPages({
   renderer,
   eleventyConfig,
   componentAttrStore,
@@ -21,16 +21,20 @@ module.exports = async function addComponentPages({
 }) {
   if (!renderer.page) return
 
-  const { useFormatted11tyData = true, getData } = await renderer.page({
-    toCommonJSModule(...args) {
-      return viteSSR.toCommonJSModule(...args)
-    },
-  })
+  let useFormatted11tyData = false
+  let getData = () => ({})
 
   for (const extension of renderer.extensions) {
     console.log({ extension })
     eleventyConfig.addExtension(extension, {
       read: false,
+      async init() {
+        const rendererPageConfig = await renderer.page({
+          toCommonJSModule: viteSSR.toCommonJSModule,
+        })
+        useFormatted11tyData = rendererPageConfig.useFormatted11tyData
+        getData = rendererPageConfig.getData
+      },
       async getData(inputPath) {
         console.log({ inputPath, please: true })
         const absInputPath = path.join(importAliases.root, inputPath)
