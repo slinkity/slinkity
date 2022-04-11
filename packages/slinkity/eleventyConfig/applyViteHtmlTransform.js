@@ -141,16 +141,14 @@ async function handleSSRComments({
 }
 
 /**
- * @typedef {import('../@types').EleventyConfigParams} EleventyConfigParams
- *
  * @typedef ApplyViteHtmlTransformParams
  * @property {string} content - the original HTML content to transform
  * @property {string} outputPath - the output path this HTML content will be written to
  * @property {import('./componentAttrStore').ComponentAttrStore} componentAttrStore
  * @property {import('../@types').Renderer[]} renderers
- * @property {EleventyConfigParams['environment']} environment
- * @property {EleventyConfigParams['dir']} dir
- * @property {EleventyConfigParams['viteSSR']} viteSSR
+ * @property {import('../@types').Environment} environment
+ * @property {import('../@types').Dir} dir
+ * @property {import('../@types').ViteSSR} viteSSR
  * @param {ApplyViteHtmlTransformParams}
  * @returns {Promise<string>} - HTML with statically rendered content and Vite transforms applied
  */
