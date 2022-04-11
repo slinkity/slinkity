@@ -86,6 +86,18 @@ async function viteBuild({ ssrViteConfig, filePath, environment }) {
 }
 
 /**
+ * @typedef ToViteConfigParams
+ * @property {import('../@types').Dir} dir
+ * @property {import('../@types').UserSlinkityConfig} userSlinkityConfig
+ * @param {ToViteConfigParams} params
+ * @returns {import('vite').UserConfigExport}
+ */
+async function toViteConfig({ dir, userSlinkityConfig }) {
+  const sharedConfig = await getSharedConfig({ dir, userSlinkityConfig })
+  return defineConfig(mergeConfig({ root: dir.output }, sharedConfig))
+}
+
+/**
  * @typedef ViteSSRParams
  * @property {import('../@types').Environment} environment
  * @property {import('../@types').Dir} dir
@@ -100,10 +112,7 @@ async function viteBuild({ ssrViteConfig, filePath, environment }) {
  *
  * @returns {ViteSSR} viteSSR
  */
-async function toViteSSR({ environment, dir, userSlinkityConfig }) {
-  const sharedConfig = await getSharedConfig({ dir, userSlinkityConfig })
-  const ssrViteConfig = defineConfig(mergeConfig({ root: dir.output }, sharedConfig))
-
+function toViteSSR({ environment, dir, userSlinkityConfig }) {
   if (environment === 'development') {
     /** @type {import('vite').ViteDevServer} */
     let server = null
@@ -125,7 +134,7 @@ async function toViteSSR({ environment, dir, userSlinkityConfig }) {
         viteOutput = await viteBuild({
           dir,
           filePath,
-          ssrViteConfig,
+          ssrViteConfig: await toViteConfig({ dir, userSlinkityConfig }),
           environment,
         })
       }
@@ -139,6 +148,7 @@ async function toViteSSR({ environment, dir, userSlinkityConfig }) {
         return server
       },
       async createServer() {
+        const ssrViteConfig = await toViteConfig({ dir, userSlinkityConfig })
         server = await createServer({
           ...ssrViteConfig,
           server: {
@@ -153,7 +163,7 @@ async function toViteSSR({ environment, dir, userSlinkityConfig }) {
       const viteOutput = await viteBuild({
         dir,
         filePath,
-        ssrViteConfig,
+        ssrViteConfig: await toViteConfig({ dir, userSlinkityConfig }),
         environment,
       })
       return viteOutput

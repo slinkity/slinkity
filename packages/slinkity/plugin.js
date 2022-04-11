@@ -29,7 +29,11 @@ module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
   /** @type {{ dir: import('./@types').Dir }} */
   const { dir } = eleventyConfig
   /** @type {import('./@types').ViteSSR} */
-  let viteSSR = null
+  const viteSSR = toViteSSR({
+    dir,
+    environment,
+    userSlinkityConfig,
+  })
 
   /** @type {import('./eleventyConfig/handleTemplateExtensions').ExtensionMeta[]} */
   const ignoredFromRenderers = userSlinkityConfig.renderers.flatMap((renderer) =>
@@ -73,6 +77,7 @@ module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
         eleventyConfig,
         componentAttrStore,
         importAliases: getResolvedImportAliases(dir),
+        viteSSR,
       })
     }
   }
@@ -86,13 +91,6 @@ module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
     eleventyConfig.setServerOptions({
       async setup() {
         if (!viteMiddlewareServer) {
-          if (!viteSSR) {
-            viteSSR = await toViteSSR({
-              dir,
-              environment,
-              userSlinkityConfig,
-            })
-          }
           viteMiddlewareServer = await viteSSR.createServer()
         }
       },
