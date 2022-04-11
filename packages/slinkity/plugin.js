@@ -26,7 +26,7 @@ module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
 
   /** @type {{ dir: import('./@types').Dir }} */
   const { dir } = eleventyConfig
-  /** @type {import('./@types').ViteSSR} */
+  const importAliases = getResolvedImportAliases(dir)
   const viteSSR = toViteSSR({
     dir,
     environment,
@@ -50,7 +50,7 @@ module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
 
   const eleventyIgnored = toEleventyIgnored(
     userSlinkityConfig.eleventyIgnores,
-    getResolvedImportAliases(dir).includes,
+    importAliases.includes,
     extensionMeta,
   )
 
@@ -66,7 +66,7 @@ module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
     renderers: userSlinkityConfig.renderers,
     eleventyConfig,
     componentAttrStore,
-    importAliases: getResolvedImportAliases(dir),
+    importAliases,
   })
   for (const renderer of userSlinkityConfig.renderers) {
     if (renderer.page) {
@@ -74,7 +74,7 @@ module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
         renderer,
         eleventyConfig,
         componentAttrStore,
-        importAliases: getResolvedImportAliases(dir),
+        importAliases,
         viteSSR,
       })
     }
