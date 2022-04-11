@@ -4,7 +4,7 @@ const fs = require('fs')
 const { promisify } = require('util')
 const glob = promisify(require('glob'))
 const { resolveConfigFilePath } = require('../utils/resolveConfigFilePath')
-const { IMPORT_ALIASES, ELEVENTY_TEMP_BUILD_DIR } = require('../utils/consts')
+const { IMPORT_ALIASES, ELEVENTY_TEMP_BUILD_DIR, PACKAGES } = require('../utils/consts')
 
 /**
  * Returns config file path or undefined if config file does not exist.
@@ -62,7 +62,7 @@ async function getSharedConfig({ dir, userSlinkityConfig }) {
       alias: Object.fromEntries(importAliasesToResolvedPath),
     },
     optimizeDeps: {
-      include: ['slinkity/client'],
+      include: userSlinkityConfig.renderers.length ? [PACKAGES.client] : [],
     },
   }
 
