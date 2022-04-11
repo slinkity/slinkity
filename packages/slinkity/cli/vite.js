@@ -24,7 +24,7 @@ function getResolvedImportAliases({ input, includes, layouts }) {
   return {
     root: join(process.cwd()),
     input: join(process.cwd(), input),
-    includes: join(process.cwd(), includes),
+    includes: join(process.cwd(), input, includes),
     layouts: join(process.cwd(), layouts ?? includes),
   }
 }
