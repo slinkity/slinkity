@@ -1,0 +1,16 @@
+{
+  "0 debug pnpm:scope": {
+    "selected": 1,
+    "workspacePrefix": "/Users/benholmes/Repositories/slinkity"
+  },
+  "1 error pnpm": {
+    "code": "ERR_PNPM_CANNOT_REMOVE_MISSING_DEPS",
+    "hint": "Available dependencies: @babel/core, @babel/preset-env, @types/jest, babel-jest, eslint, eslint-config-prettier, eslint-plugin-prettier, eslint-plugin-react, faker, husky, jest, lint-staged, npm-run-all, prettier, react, react-dom, stylelint, stylelint-config-standard-scss, typescript",
+    "err": {
+      "name": "pnpm",
+      "message": "Cannot remove 'esbuild-css-modules-plugin': no such dependency found",
+      "code": "ERR_PNPM_CANNOT_REMOVE_MISSING_DEPS",
+      "stack": "pnpm: Cannot remove 'esbuild-css-modules-plugin': no such dependency found\n    at Object.handler (/snapshot/dist/pnpm.cjs)\n    at async /snapshot/dist/pnpm.cjs\n    at async run (/snapshot/dist/pnpm.cjs)\n    at async runPnpm (/snapshot/dist/pnpm.cjs)\n    at async /snapshot/dist/pnpm.cjs"
+    }
+  }
+}
