@@ -1,25 +1,11 @@
 import type { UserConfigExport, ViteDevServer } from 'vite'
 import type { Options } from 'browser-sync'
-import type { ResolvedImportAliases } from './cli/vite'
 
 export type Environment = 'development' | 'production'
 
 type ToCommonJSModuleOptions = {
   /** Whether to (attempt to) use the in-memory cache for fetching a build result. Defaults to true in production */
   useCache: boolean;
-}
-
-/**
- * Globals that are set asynchronously via 11ty's event system
- * *Should* be wired up to a proxy object with access protection
- */
-export type PluginConfigGlobals = {
-  /** If accessed before initialization, this will throw */
-  dir: Dir;
-  /** If accessed before initialization, this will throw */
-  viteSSR: ViteSSR;
-  /** If accessed before initialization, this will throw */
-  resolvedAliases: ResolvedImportAliases;
 }
 
 export type ViteSSR = {
@@ -121,6 +107,17 @@ export type Dir = {
   input: string;
   output: string;
   includes: string;
+  layouts: string;
+}
+
+export type ImportAliases = {
+  /** alias for importing resources from the project root (`process.cwd()`) */
+  root: string;
+  /** alias for importing from the project input directory, as specified in 11ty's dir.input */
+  input: string;
+  /** alias for importing from the project includes directory, as specified in 11ty's dir.includes */
+  includes: string;
+  /** alias for importing from the project layouts directory, as specified in 11ty's dir.layouts */
   layouts: string;
 }
 

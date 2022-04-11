@@ -1,7 +1,7 @@
 const { normalizePath } = require('vite')
 const { relative } = require('path')
 const toSlashesTrimmed = require('./utils/toSlashesTrimmed')
-const { getResolvedAliases } = require('./cli/vite')
+const { getResolvedImportAliases } = require('./cli/vite')
 const { toComponentAttrStore } = require('./eleventyConfig/componentAttrStore')
 const {
   applyViteHtmlTransform,
@@ -24,23 +24,12 @@ module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
   // TODO: infer from CLI flags
   let environment = 'development'
 
-  /** @type {import('./@types').PluginConfigGlobals} */
-  const configGlobals = new Proxy(
-    {
-      viteSSR: null,
-      dir: null,
-      resolvedAliases: null,
-    },
-    {
-      get(target, prop) {
-        if (target[prop] === null) {
-          throw `Tried to access ${prop} before initialization`
-        } else {
-          return target[prop]
-        }
-      },
-    },
-  )
+  console.log({ dir: eleventyConfig.dir })
+
+  /** @type {{ dir: import('./@types').Dir }} */
+  const { dir } = eleventyConfig
+  /** @type {import('./@types').ViteSSR} */
+  let viteSSR = null
 
   /** @type {import('./eleventyConfig/handleTemplateExtensions').ExtensionMeta[]} */
   const ignoredFromRenderers = userSlinkityConfig.renderers.flatMap((renderer) =>
@@ -59,18 +48,13 @@ module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
 
   const eleventyIgnored = toEleventyIgnored(
     userSlinkityConfig.eleventyIgnores,
-    userSlinkityConfig.componentDir,
+    getResolvedImportAliases(dir).includes,
     extensionMeta,
   )
 
   for (const ignored of eleventyIgnored) {
     eleventyConfig.ignores.add(ignored)
   }
-
-  eleventyConfig.on('eleventy.directories', async function (eleventyDirs) {
-    configGlobals.dir = eleventyDirs
-    configGlobals.resolvedAliases = getResolvedAliases(eleventyDirs)
-  })
 
   eleventyConfig.addGlobalData('__slinkity', {
     head: SLINKITY_HEAD_STYLES,
@@ -80,7 +64,7 @@ module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
     renderers: userSlinkityConfig.renderers,
     eleventyConfig,
     componentAttrStore,
-    configGlobals,
+    importAliases: getResolvedImportAliases(dir),
   })
   for (const renderer of userSlinkityConfig.renderers) {
     if (renderer.page) {
@@ -88,7 +72,7 @@ module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
         renderer,
         eleventyConfig,
         componentAttrStore,
-        configGlobals,
+        importAliases: getResolvedImportAliases(dir),
       })
     }
   }
@@ -102,17 +86,14 @@ module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
     eleventyConfig.setServerOptions({
       async setup() {
         if (!viteMiddlewareServer) {
-          try {
-            configGlobals.viteSSR
-          } catch {
-            // if we fail to access viteSSR, it wasn't initialized
-            configGlobals.viteSSR = await toViteSSR({
-              dir: configGlobals.dir,
+          if (!viteSSR) {
+            viteSSR = await toViteSSR({
+              dir,
               environment,
               userSlinkityConfig,
             })
           }
-          viteMiddlewareServer = await configGlobals.viteSSR.createServer()
+          viteMiddlewareServer = await viteSSR.createServer()
         }
       },
       middleware: [
@@ -133,8 +114,8 @@ module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
                 outputPath,
                 componentAttrStore,
                 renderers: userSlinkityConfig.renderers,
-                dir: configGlobals.dir,
-                viteSSR: configGlobals.viteSSR,
+                dir,
+                viteSSR,
                 environment,
               }),
             )
@@ -153,7 +134,7 @@ module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
     eleventyConfig.addTransform('update-url-to-vite-transform-map', function (content, outputPath) {
       if (!isSupportedOutputPath(outputPath)) return content
 
-      const relativePath = relative(configGlobals.dir.output, outputPath)
+      const relativePath = relative(dir.output, outputPath)
       const formattedAsUrl = toSlashesTrimmed(
         normalizePath(relativePath)
           .replace(/.html$/, '')

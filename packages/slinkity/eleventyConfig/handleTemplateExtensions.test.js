@@ -1,17 +1,11 @@
 const { toEleventyIgnored } = require('./handleTemplateExtensions')
 const path = require('path')
 
-const toPathGenerator = (input, includes) => (extension) =>
-  path.join(input, includes, `**/*.${extension}`)
+const toPathGenerator = (includes) => (extension) => path.join(includes, `**/*.${extension}`)
 
 describe('toEleventyIgnored', () => {
-  const dir = {
-    input: 'src',
-    output: '_site',
-    includes: '_includes',
-    layouts: '_layouts',
-  }
-  const toPath = toPathGenerator(dir.input, dir.includes)
+  const includes = 'src/_includes'
+  const toPath = toPathGenerator(includes)
   it('generates ignored paths when userEleventyIgnores is null', () => {
     const extensions = [
       {
@@ -25,7 +19,7 @@ describe('toEleventyIgnored', () => {
         isIgnoredFromIncludes: true,
       },
     ]
-    expect(toEleventyIgnored(null, dir, extensions)).toEqual(
+    expect(toEleventyIgnored(null, includes, extensions)).toEqual(
       extensions.map(({ extension }) => toPath(extension)),
     )
   })
@@ -43,7 +37,9 @@ describe('toEleventyIgnored', () => {
         isIgnoredFromIncludes: true,
       },
     ]
-    expect(toEleventyIgnored(userEleventyIgnores, dir, extensions)).toEqual(userEleventyIgnores)
+    expect(toEleventyIgnored(userEleventyIgnores, includes, extensions)).toEqual(
+      userEleventyIgnores,
+    )
   })
   it('generates ignored paths when userEleventyIgnores is a function', () => {
     function userEleventyIgnores(defaultIgnores) {
@@ -66,7 +62,7 @@ describe('toEleventyIgnored', () => {
         isIgnoredFromIncludes: true,
       },
     ]
-    expect(toEleventyIgnored(userEleventyIgnores, dir, extensions)).toEqual([toPath('css.js')])
+    expect(toEleventyIgnored(userEleventyIgnores, includes, extensions)).toEqual([toPath('css.js')])
   })
   it('omits entries that should not be ignored from includes', () => {
     const includedExtensions = [
@@ -93,8 +89,8 @@ describe('toEleventyIgnored', () => {
         isIgnoredFromIncludes: false,
       },
     ]
-    expect(toEleventyIgnored(null, dir, [...includedExtensions, ...omittedExtensions])).toEqual(
-      includedExtensions.map(({ extension }) => toPath(extension)),
-    )
+    expect(
+      toEleventyIgnored(null, includes, [...includedExtensions, ...omittedExtensions]),
+    ).toEqual(includedExtensions.map(({ extension }) => toPath(extension)))
   })
 })
