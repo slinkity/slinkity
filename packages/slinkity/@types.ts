@@ -97,8 +97,6 @@ export type UserSlinkityConfig = {
    * Also see 11ty's ignore documentation here: https://www.11ty.dev/docs/ignores/
   */
   eleventyIgnores: string[] | ((ignores: string[]) => string[]);
-
-  componentDir: string;
 }
 
 /** Paths to all significant directories, as specified in 11ty's "dir" documentation */
