@@ -1,5 +1,6 @@
 const { normalizePath } = require('vite')
-const { relative } = require('path')
+const { productionBuild } = require('./cli/vite')
+const path = require('path')
 const toSlashesTrimmed = require('./utils/toSlashesTrimmed')
 const { getResolvedImportAliases } = require('./cli/vite')
 const { toComponentAttrStore } = require('./eleventyConfig/componentAttrStore')
@@ -22,7 +23,7 @@ const { toViteSSR } = require('./cli/toViteSSR')
  */
 module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
   // TODO: infer from CLI flags
-  let environment = 'development'
+  let environment = 'production'
 
   /** @type {{ dir: import('./@types').Dir }} */
   const { dir } = eleventyConfig
@@ -130,7 +131,7 @@ module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
     eleventyConfig.addTransform('update-url-to-vite-transform-map', function (content, outputPath) {
       if (!isSupportedOutputPath(outputPath)) return content
 
-      const relativePath = relative(dir.output, outputPath)
+      const relativePath = path.relative(dir.output, outputPath)
       const formattedAsUrl = toSlashesTrimmed(
         normalizePath(relativePath)
           .replace(/.html$/, '')
@@ -144,25 +145,23 @@ module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
     })
   }
 
-  // if (environment === 'production') {
-  //   eleventyConfig.addTransform('apply-vite', async function (content, outputPath) {
-  //     return await applyViteHtmlTransform({
-  //       content,
-  //       outputPath,
-  //       componentAttrStore,
-  //       renderers: userSlinkityConfig.renderers,
-  //       ...options,
-  //     })
-  //   })
-  //   eleventyConfig.on('after-build', async function viteProductionBuild() {
-  //     const intermediateDir = relative('.', await mkdtemp('.11ty-build-'))
-  //     await viteBuild({
-  //       userSlinkityConfig,
-  //       eleventyDir: userConfigDir,
-  //       input: intermediateDir,
-  //       output: outputDir,
-  //     })
-  //   })
-  // }
-  return {}
+  if (environment === 'production') {
+    eleventyConfig.addTransform('apply-vite', async function (content, outputPath) {
+      return await applyViteHtmlTransform({
+        content,
+        outputPath,
+        componentAttrStore,
+        renderers: userSlinkityConfig.renderers,
+        dir,
+        viteSSR,
+        environment,
+      })
+    })
+    eleventyConfig.on('afterBuild', async function viteProductionBuild() {
+      await productionBuild({
+        userSlinkityConfig,
+        eleventyConfigDir: dir,
+      })
+    })
+  }
 }
