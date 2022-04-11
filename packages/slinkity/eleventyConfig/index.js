@@ -1,7 +1,7 @@
 const { normalizePath } = require('vite')
 const { relative } = require('path')
 const toSlashesTrimmed = require('../utils/toSlashesTrimmed')
-const { getResolvedAliases } = require('../cli/vite')
+const { getResolvedImportAliases } = require('../cli/vite')
 const { toComponentAttrStore } = require('./componentAttrStore')
 const { applyViteHtmlTransform, isSupportedOutputPath } = require('./applyViteHtmlTransform')
 const addComponentPages = require('./addComponentPages')
@@ -44,7 +44,7 @@ module.exports = function toEleventyConfig({ userSlinkityConfig, ...options }) {
       head: SLINKITY_HEAD_STYLES,
     })
 
-    const resolvedImportAliases = getResolvedAliases(dir)
+    const resolvedImportAliases = getResolvedImportAliases(dir)
     addComponentShortcodes({
       renderers: userSlinkityConfig.renderers,
       eleventyConfig,
@@ -79,7 +79,7 @@ module.exports = function toEleventyConfig({ userSlinkityConfig, ...options }) {
           (...args) => {
             return viteMiddlewareServer.middlewares(...args)
           },
-          async function viteTransformMiddleware(req, res, next) {
+          async function viteTransformMiddleware(req, res) {
             const page = urlToViteTransformMap[toSlashesTrimmed(req.url)]
             if (page) {
               const { content, outputPath } = page

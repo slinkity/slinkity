@@ -17,13 +17,10 @@ function getConfigFile() {
 /**
  * Returns object with resolved aliases.
  *
- * @typedef {import('../@types').Dir} Dir
- * @typedef {import('../utils/consts').ImportAliases} ImportAliases
- * @typedef {Record<keyof import('../utils/consts').ImportAliases, string>} ResolvedImportAliases
- * @param {Dir} dir
- * @returns {ResolvedImportAliases}
+ * @param {import('../@types').Dir} dir
+ * @returns {import('../@types').ImportAliases}
  */
-function getResolvedAliases({ input, includes, layouts }) {
+function getResolvedImportAliases({ input, includes, layouts }) {
   return {
     root: join(process.cwd()),
     input: join(process.cwd(), input),
@@ -52,7 +49,7 @@ async function getSharedConfig({ dir, userSlinkityConfig }) {
     }, {}),
   )
 
-  const importAliasesToResolvedPath = Object.entries(getResolvedAliases(dir)).map(
+  const importAliasesToResolvedPath = Object.entries(getResolvedImportAliases(dir)).map(
     ([key, value]) => [IMPORT_ALIASES[key], value],
   )
 
@@ -102,4 +99,4 @@ async function build({ eleventyDir, userSlinkityConfig, input, output }) {
   }
 }
 
-module.exports = { build, getConfigFile, getSharedConfig, getResolvedAliases }
+module.exports = { build, getConfigFile, getSharedConfig, getResolvedImportAliases }
