@@ -10,12 +10,29 @@ const {
 } = require('./eleventyConfig/applyViteHtmlTransform')
 const addComponentPages = require('./eleventyConfig/addComponentPages')
 const addComponentShortcodes = require('./eleventyConfig/addComponentShortcodes')
-const { SLINKITY_HEAD_STYLES } = require('./utils/consts')
+const { SLINKITY_HEAD_STYLES, ELEVENTY_DEFAULT_DIRS } = require('./utils/consts')
 const {
   toEleventyIgnored,
   defaultExtensions,
 } = require('./eleventyConfig/handleTemplateExtensions')
 const { toViteSSR } = require('./cli/toViteSSR')
+
+/**
+ * TODO: remove once 11ty 2.0 is baselined
+ * required as fallback for 11ty 1.X
+ *
+ * Apply default values for missing dirs
+ * @param {any} dir dir supplied by 11ty config
+ * @returns {import('./@types').Dir}
+ */
+function applyDefaultDirs(dir = {}) {
+  return {
+    input: dir.input ?? ELEVENTY_DEFAULT_DIRS.input,
+    output: dir.output ?? ELEVENTY_DEFAULT_DIRS.output,
+    includes: dir.includes ?? ELEVENTY_DEFAULT_DIRS.includes,
+    layouts: dir.layouts ?? ELEVENTY_DEFAULT_DIRS.layouts,
+  }
+}
 
 /**
  * @param {any} eleventyConfig
@@ -30,7 +47,7 @@ module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
     : 'production'
 
   /** @type {{ dir: import('./@types').Dir }} */
-  const { dir } = eleventyConfig
+  const dir = applyDefaultDirs(eleventyConfig.dir)
   const importAliases = getResolvedImportAliases(dir)
   const viteSSR = toViteSSR({
     dir,
@@ -96,45 +113,91 @@ module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
       await viteSSR.createServer()
     })
 
-    eleventyConfig.setServerOptions({
-      async setup() {
+    if (typeof eleventyConfig.setServerOptions === 'function') {
+      eleventyConfig.setServerOptions({
+        async setup() {
+          if (!viteMiddlewareServer) {
+            viteMiddlewareServer = viteSSR.getServer()
+            // restart server to avoid "page reload" logs
+            // across all 11ty built routes
+            await viteMiddlewareServer.restart()
+          }
+        },
+        middleware: [
+          (req, res, next) => {
+            // Some Vite server middlewares are missing content types
+            // Set to text/plain as a safe default
+            res.setHeader('Content-Type', 'text/plain')
+            return viteMiddlewareServer.middlewares(req, res, next)
+          },
+          async function viteTransformMiddleware(req, res, next) {
+            const page = urlToViteTransformMap[toSlashesTrimmed(req.url)]
+            if (page) {
+              const { content, outputPath } = page
+              res.setHeader('Content-Type', 'text/html')
+              res.write(
+                await applyViteHtmlTransform({
+                  content,
+                  outputPath,
+                  componentAttrStore,
+                  renderers: userSlinkityConfig.renderers,
+                  dir,
+                  viteSSR,
+                  environment,
+                }),
+              )
+              res.end()
+            } else {
+              next()
+            }
+          },
+        ],
+      })
+    } else {
+      // TODO: remove once 11ty 2.0 is stable
+      eleventyConfig.on('afterBuild', async function () {
         if (!viteMiddlewareServer) {
           viteMiddlewareServer = viteSSR.getServer()
           // restart server to avoid "page reload" logs
           // across all 11ty built routes
           await viteMiddlewareServer.restart()
         }
-      },
-      middleware: [
-        (req, res, next) => {
-          // Some Vite server middlewares are missing content types
-          // Set to text/plain as a safe default
-          res.setHeader('Content-Type', 'text/plain')
-          return viteMiddlewareServer.middlewares(req, res, next)
-        },
-        async function viteTransformMiddleware(req, res, next) {
-          const page = urlToViteTransformMap[toSlashesTrimmed(req.url)]
-          if (page) {
-            const { content, outputPath } = page
-            res.setHeader('Content-Type', 'text/html')
-            res.write(
-              await applyViteHtmlTransform({
-                content,
-                outputPath,
-                componentAttrStore,
-                renderers: userSlinkityConfig.renderers,
-                dir,
-                viteSSR,
-                environment,
-              }),
-            )
-            res.end()
-          } else {
-            next()
-          }
-        },
-      ],
-    })
+        console.log('done!')
+      })
+
+      eleventyConfig.setBrowserSyncConfig({
+        snippet: false,
+        middleware: [
+          async (req, res, next) => {
+            // Some Vite server middlewares are missing content types
+            // Set to text/plain as a safe default
+            res.setHeader('Content-Type', 'text/plain')
+            return viteMiddlewareServer.middlewares(req, res, next)
+          },
+          async function viteTransformMiddleware(req, res, next) {
+            const page = urlToViteTransformMap[toSlashesTrimmed(req.url)]
+            if (page) {
+              const { content, outputPath } = page
+              res.setHeader('Content-Type', 'text/html')
+              res.write(
+                await applyViteHtmlTransform({
+                  content,
+                  outputPath,
+                  componentAttrStore,
+                  renderers: userSlinkityConfig.renderers,
+                  dir,
+                  viteSSR,
+                  environment,
+                }),
+              )
+              res.end()
+            } else {
+              next()
+            }
+          },
+        ],
+      })
+    }
 
     eleventyConfig.addTransform('update-url-to-vite-transform-map', function (content, outputPath) {
       if (!isSupportedOutputPath(outputPath)) return content
