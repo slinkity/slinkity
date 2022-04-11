@@ -22,8 +22,12 @@ const { toViteSSR } = require('./cli/toViteSSR')
  * @param {import('./@types').UserSlinkityConfig} userSlinkityConfig
  */
 module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
-  // TODO: infer from CLI flags
-  let environment = 'production'
+  /** @type {import('./@types').Environment} */
+  const environment = process.argv
+    .slice(2)
+    .find((arg) => arg.startsWith('--serve') || arg.startsWith('--watch'))
+    ? 'development'
+    : 'production'
 
   /** @type {{ dir: import('./@types').Dir }} */
   const { dir } = eleventyConfig
