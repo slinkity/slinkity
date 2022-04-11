@@ -1,4 +1,4 @@
-const { getConfigFile, getResolvedAliases } = require('./vite')
+const { getConfigFile, getResolvedImportAliases } = require('./vite')
 const { resolve } = require('path')
 
 describe('vite', () => {
@@ -8,7 +8,7 @@ describe('vite', () => {
     })
   })
 
-  describe('getResolvedAliases', () => {
+  describe('getResolvedImportAliases', () => {
     it('returns object with resolved aliases', () => {
       const empty = {
         input: '',
@@ -32,8 +32,8 @@ describe('vite', () => {
         includes: resolve(config.input, config.includes),
         layouts: resolve(config.input, config.layouts),
       }
-      expect(getResolvedAliases(empty)).toStrictEqual(emptyExpected)
-      expect(getResolvedAliases(config)).toStrictEqual(configExpected)
+      expect(getResolvedImportAliases(empty)).toStrictEqual(emptyExpected)
+      expect(getResolvedImportAliases(config)).toStrictEqual(configExpected)
     })
   })
 })
