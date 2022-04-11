@@ -87,10 +87,18 @@ module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
     /** @type {import('vite').ViteDevServer} */
     let viteMiddlewareServer = null
 
+    eleventyConfig.on('beforeBuild', async () => {
+      componentAttrStore.clear()
+      await viteSSR.createServer()
+    })
+
     eleventyConfig.setServerOptions({
       async setup() {
         if (!viteMiddlewareServer) {
-          viteMiddlewareServer = await viteSSR.createServer()
+          viteMiddlewareServer = viteSSR.getServer()
+          // restart server to avoid "page reload" logs
+          // across all 11ty built routes
+          await viteMiddlewareServer.restart()
         }
       },
       middleware: [
@@ -124,10 +132,6 @@ module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
       ],
     })
 
-    eleventyConfig.on('beforeBuild', () => {
-      componentAttrStore.clear()
-    })
-
     eleventyConfig.addTransform('update-url-to-vite-transform-map', function (content, outputPath) {
       if (!isSupportedOutputPath(outputPath)) return content
 
@@ -158,10 +162,7 @@ module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
       })
     })
     eleventyConfig.on('afterBuild', async function viteProductionBuild() {
-      await productionBuild({
-        userSlinkityConfig,
-        eleventyConfigDir: dir,
-      })
+      await productionBuild({ userSlinkityConfig, eleventyConfigDir: dir })
     })
   }
 }

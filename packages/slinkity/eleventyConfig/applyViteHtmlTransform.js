@@ -31,7 +31,7 @@ function isSupportedOutputPath(outputPath) {
  * @property {string} content - the original HTML content to transform
  * @property {string} outputPath - the output path this HTML content will be written to
  * @property {import('./componentAttrStore').ComponentAttrStore} componentAttrStore
- * @property {import('.').SlinkityConfigOptions['viteSSR']} viteSSR
+ * @property {import('../@types').ViteSSR} viteSSR
  * @property {import('../@types').Renderer[]} renderers
  * @property {Set<string>} importedStyles Styles imported by components on page
  * @property {Set<string>} inlineStyles Compiled styles to be injected as <style> tags
