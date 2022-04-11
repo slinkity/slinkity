@@ -117,32 +117,29 @@ function toViteSSR({ environment, dir, userSlinkityConfig }) {
     /** @type {import('vite').ViteDevServer} */
     let server = null
     const builder = toBuilder(async function buildModule(filePath) {
+      if (!server) {
+        throw new Error(
+          `Attempted to build "${filePath}" before Vite was started! If you're using Slinkity as a plugin, check that you're using 11ty v2.0 or later.`,
+        )
+      }
+
+      const ssrModule = await server.ssrLoadModule(filePath)
+      const moduleGraph = await server.moduleGraph.getModuleByUrl(filePath)
+      /** @type {Set<string>} */
+      const __importedStyles = new Set()
+      collectCSS(moduleGraph, __importedStyles)
+
       /** @type {DefaultModule} */
-      let viteOutput
-      if (server) {
-        const ssrModule = await server.ssrLoadModule(filePath)
-        const moduleGraph = await server.moduleGraph.getModuleByUrl(filePath)
-        /** @type {Set<string>} */
-        const __importedStyles = new Set()
-        collectCSS(moduleGraph, __importedStyles)
-        viteOutput = {
-          default: () => null,
-          __importedStyles,
-          ...ssrModule,
-        }
-      } else {
-        viteOutput = await viteBuild({
-          dir,
-          filePath,
-          ssrViteConfig: await toViteConfig({ dir, userSlinkityConfig }),
-          environment,
-        })
+      const viteOutput = {
+        default: () => null,
+        __importedStyles,
+        ...ssrModule,
       }
       return viteOutput
     })
     return {
       async toCommonJSModule(filePath) {
-        return builder.build(filePath, null, { shouldUseCache: server === null })
+        return builder.build(filePath, null, { shouldUseCache: false })
       },
       getServer() {
         return server
@@ -175,7 +172,9 @@ function toViteSSR({ environment, dir, userSlinkityConfig }) {
       getServer() {
         return null
       },
-      createServer() {},
+      createServer() {
+        return null
+      },
     }
   }
 }
