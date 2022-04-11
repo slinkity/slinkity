@@ -1,11 +1,8 @@
 #!/usr/bin/env node
 const { program } = require('commander')
-const { relative, resolve, sep } = require('path')
-const { emptyDir, mkdtemp, remove } = require('fs-extra')
 const { startEleventy, toEleventyConfigDir } = require('./eleventy')
 const readUserSlinkityConfig = require('./readUserSlinkityConfig')
 const meta = require('../../../package.json')
-const { build: viteBuild } = require('./vite')
 
 const eleventyArgs = {
   input: {
@@ -15,6 +12,11 @@ const eleventyArgs = {
   output: {
     flag: '--output <output>',
     description: 'Write HTML output to this folder (defaults to eleventy config or `_site`)',
+  },
+  serve: {
+    flag: '--serve',
+    description:
+      'Run Vite server and watch for file changes. Configure server options + production build options by creating a vite.config.js at the base of your project',
   },
   watch: {
     flag: '--watch',
@@ -53,14 +55,6 @@ const eleventyArgs = {
   },
 }
 
-const slinkityArgs = {
-  serve: {
-    flag: '--serve',
-    description:
-      'Run Vite server and watch for file changes. Configure server options + production build options by creating a vite.config.js at the base of your project',
-  },
-}
-
 const applyOption = (option) => program.option(option.flag, option.description, option.defaultValue)
 const toEleventyOptions = (allOptions) => {
   const eleventyOptions = {}
@@ -79,7 +73,7 @@ program.version(meta.version)
 applyOption(eleventyArgs.input)
 applyOption(eleventyArgs.output)
 applyOption(eleventyArgs.watch)
-applyOption(slinkityArgs.serve)
+applyOption(eleventyArgs.serve)
 applyOption(eleventyArgs.port)
 applyOption(eleventyArgs.incremental)
 applyOption(eleventyArgs.formats)
@@ -97,33 +91,10 @@ const userConfigDir = toEleventyConfigDir({
 })
 
 ;(async () => {
-  const outputDir = resolve(userConfigDir.output)
   const userSlinkityConfig = await readUserSlinkityConfig()
-  await emptyDir(outputDir)
-  if (options.serve) {
-    process.env.ELEVENTY_BUILD_OUTPUT_DIR = userConfigDir.output
-    await startEleventy({
-      dir: userConfigDir,
-      userSlinkityConfig,
-      options: toEleventyOptions(options),
-    })
-  } else {
-    const intermediateDir = relative('.', await mkdtemp('.11ty-build-'))
-    process.env.ELEVENTY_BUILD_OUTPUT_DIR = intermediateDir
-
-    // Eleventy builds to an internal temp directory
-    // For Vite to pull from in a 2 step build process
-    await startEleventy({
-      dir: { ...userConfigDir, output: intermediateDir.split(sep).join('/') },
-      userSlinkityConfig,
-      options: toEleventyOptions(options),
-    })
-    await viteBuild({
-      userSlinkityConfig,
-      eleventyDir: userConfigDir,
-      input: intermediateDir,
-      output: outputDir,
-    })
-    await remove(intermediateDir)
-  }
+  await startEleventy({
+    dir: userConfigDir,
+    userSlinkityConfig,
+    options: toEleventyOptions(options),
+  })
 })()
