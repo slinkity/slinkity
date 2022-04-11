@@ -30,9 +30,10 @@ module.exports.defaultExtensions = [
  * @returns {string[]} absolute paths and/or globs for eleventy to ignore
  */
 module.exports.toEleventyIgnored = function (userEleventyIgnores, includesDir, extensions) {
+  const relativeIncludesDir = path.relative(process.cwd(), includesDir)
   const ignoredPaths = extensions
     .filter((entry) => entry.isIgnoredFromIncludes)
-    .map((entry) => path.join(includesDir, `**/*.${entry.extension}`))
+    .map((entry) => path.join(relativeIncludesDir, `**/*.${entry.extension}`))
   return typeof userEleventyIgnores === 'function'
     ? userEleventyIgnores(ignoredPaths)
     : userEleventyIgnores ?? ignoredPaths
