@@ -25,7 +25,6 @@ module.exports = function addComponentPages({
   let getData = () => ({})
 
   for (const extension of renderer.extensions) {
-    console.log({ extension })
     eleventyConfig.addExtension(extension, {
       read: false,
       async init() {
@@ -36,7 +35,6 @@ module.exports = function addComponentPages({
         getData = rendererPageConfig.getData
       },
       async getData(inputPath) {
-        console.log({ inputPath, please: true })
         const absInputPath = path.join(importAliases.root, inputPath)
         return await getData(absInputPath)
       },

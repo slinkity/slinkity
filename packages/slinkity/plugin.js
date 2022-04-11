@@ -24,8 +24,6 @@ module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
   // TODO: infer from CLI flags
   let environment = 'development'
 
-  console.log({ dir: eleventyConfig.dir })
-
   /** @type {{ dir: import('./@types').Dir }} */
   const { dir } = eleventyConfig
   /** @type {import('./@types').ViteSSR} */
