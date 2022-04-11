@@ -13,6 +13,8 @@ const SLINKITY_ATTRS = {
   id: 'data-s-id',
 }
 
+const ELEVENTY_TEMP_BUILD_DIR = '.eleventy-temp-build'
+
 /**
  * @type {import('../@types').ImportAliases}
  */
@@ -53,6 +55,7 @@ const SLINKITY_HEAD_STYLES = toSSRComment('styles')
 
 module.exports = {
   SLINKITY_ATTRS,
+  ELEVENTY_TEMP_BUILD_DIR,
   SLINKITY_CONFIG_FILE_NAME,
   SLINKITY_MOUNT_POINT,
   IMPORT_ALIASES,

@@ -1,9 +1,10 @@
 const vite = require('vite')
-const { join } = require('path')
+const path = require('path')
+const fs = require('fs')
 const { promisify } = require('util')
 const glob = promisify(require('glob'))
 const { resolveConfigFilePath } = require('../utils/resolveConfigFilePath')
-const { IMPORT_ALIASES } = require('../utils/consts')
+const { IMPORT_ALIASES, ELEVENTY_TEMP_BUILD_DIR } = require('../utils/consts')
 
 /**
  * Returns config file path or undefined if config file does not exist.
@@ -22,10 +23,10 @@ function getConfigFile() {
  */
 function getResolvedImportAliases({ input, includes, layouts }) {
   return {
-    root: join(process.cwd()),
-    input: join(process.cwd(), input),
-    includes: join(process.cwd(), input, includes),
-    layouts: join(process.cwd(), input, layouts ?? includes),
+    root: path.join(process.cwd()),
+    input: path.join(process.cwd(), input),
+    includes: path.join(process.cwd(), input, includes),
+    layouts: path.join(process.cwd(), input, layouts ?? includes),
   }
 }
 
@@ -71,32 +72,42 @@ async function getSharedConfig({ dir, userSlinkityConfig }) {
 /**
  * Build production bundle
  * @typedef BuildParams
- * @property {string} input
- * @property {string} output
- * @property {Dir} eleventyDir
+ * @property {import('../@types').Dir} eleventyConfigDir
  * @property {import('../@types').UserSlinkityConfig} userSlinkityConfig
  * @param {BuildParams}
  */
-async function build({ eleventyDir, userSlinkityConfig, input, output }) {
-  const inputFiles = await glob(`${input}/**/*.html`, { absolute: true })
-  if (inputFiles.length) {
-    await vite.build(
-      vite.mergeConfig(
-        {
-          root: input,
-          mode: 'production',
-          build: {
-            outDir: output,
-            emptyOutDir: true,
-            rollupOptions: {
-              input: inputFiles,
+async function productionBuild({ eleventyConfigDir, userSlinkityConfig }) {
+  const eleventyTempBuildDir = path.relative('.', ELEVENTY_TEMP_BUILD_DIR)
+  const resolvedOutput = path.resolve(eleventyConfigDir.output)
+  await fs.promises.rename(resolvedOutput, eleventyTempBuildDir)
+  try {
+    const inputFiles = await glob(`${eleventyTempBuildDir}/**/*.html`, { absolute: true })
+    if (inputFiles.length) {
+      await vite.build(
+        vite.mergeConfig(
+          {
+            root: eleventyTempBuildDir,
+            mode: 'production',
+            build: {
+              outDir: resolvedOutput,
+              emptyOutDir: true,
+              rollupOptions: {
+                input: inputFiles,
+              },
             },
           },
-        },
-        await getSharedConfig({ dir: eleventyDir, userSlinkityConfig }),
-      ),
-    )
+          await getSharedConfig({ dir: eleventyConfigDir, userSlinkityConfig }),
+        ),
+      )
+    }
+  } finally {
+    await fs.promises.rmdir(eleventyTempBuildDir, { recursive: true, force: true })
   }
 }
 
-module.exports = { build, getConfigFile, getSharedConfig, getResolvedImportAliases }
+module.exports = {
+  productionBuild,
+  getConfigFile,
+  getSharedConfig,
+  getResolvedImportAliases,
+}
