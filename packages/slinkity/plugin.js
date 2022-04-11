@@ -105,6 +105,8 @@ module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
   if (environment === 'development') {
     /** @type {Record<string, string>} */
     const urlToViteTransformMap = {}
+    /** @type {Set<string>} */
+    const serverlessInputs = new Set()
     /** @type {import('vite').ViteDevServer} */
     let viteMiddlewareServer = null
 
@@ -134,7 +136,6 @@ module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
           async function viteTransformMiddleware(req, res, next) {
             const page = urlToViteTransformMap[toSlashesTrimmed(req.url)]
             if (page) {
-              console.log({ url: req.url })
               const { content, outputPath } = page
               res.setHeader('Content-Type', 'text/html')
               res.write(
@@ -201,7 +202,7 @@ module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
     }
 
     eleventyConfig.on('eleventy.serverlessUrlMap', (templateMap) => {
-      let outputMap = {}
+      let outputToInputMap = {}
 
       for (let entry of templateMap) {
         for (let key in entry.serverless) {
@@ -211,34 +212,48 @@ module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
           }
           for (let eligibleUrl of urls) {
             // ignore duplicates that have the same input file, via Pagination.
-            if (outputMap[eligibleUrl] === entry.inputPath) {
+            if (outputToInputMap[eligibleUrl] === entry.inputPath) {
               continue
             }
 
             // duplicates that don’t use the same input file, throw an error.
-            if (outputMap[eligibleUrl]) {
+            if (outputToInputMap[eligibleUrl]) {
               throw new Error(
-                `Serverless URL conflict: multiple input files are using the same URL path (in \`permalink\`): ${outputMap[eligibleUrl]} and ${entry.inputPath}`,
+                `Serverless URL conflict: multiple input files are using the same URL path (in \`permalink\`): ${outputToInputMap[eligibleUrl]} and ${entry.inputPath}`,
               )
             }
 
-            outputMap[eligibleUrl] = entry.inputPath
+            outputToInputMap[eligibleUrl] = entry.inputPath
           }
         }
       }
 
-      // TODO: set up reverse map to fill "content" on HTML transform
-      for (const [inputPath, outputPath] of Object.entries(outputMap)) {
-        urlToViteTransformMap[outputPath] = {
-          outputPath,
-          content: null,
-          inputPath,
-        }
+      for (const [outputPath, inputPath] of Object.entries(outputToInputMap)) {
+        serverlessInputs[inputPath] = outputPath
       }
     })
 
+    eleventyConfig.addTransform(
+      'transform-serverless-request',
+      async function (content, outputPath) {
+        const serverlessOutput = serverlessInputs[this.inputPath]
+        if (!outputPath && serverlessOutput) {
+          const transformed = await applyViteHtmlTransform({
+            content,
+            outputPath: serverlessOutput,
+            componentAttrStore,
+            renderers: userSlinkityConfig.renderers,
+            dir,
+            viteSSR,
+            environment,
+          })
+          return transformed
+        }
+        return content
+      },
+    )
+
     eleventyConfig.addTransform('update-url-to-vite-transform-map', function (content, outputPath) {
-      console.log({ content, outputPath, hm: this })
       if (!isSupportedOutputPath(outputPath)) return content
 
       const relativePath = path.relative(dir.output, outputPath)

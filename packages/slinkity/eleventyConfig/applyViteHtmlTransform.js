@@ -161,9 +161,6 @@ async function applyViteHtmlTransform({
   renderers,
   dir,
 }) {
-  if (!isSupportedOutputPath(outputPath)) {
-    return content
-  }
   const html = await handleSSRComments({
     content,
     outputPath,
