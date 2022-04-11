@@ -39,9 +39,9 @@ module.exports = function addComponentPages({
         return await getData(absInputPath)
       },
       compileOptions: {
-        permalink() {
+        permalink(permalink) {
           const __functions = this
-          return function render({ permalink, ...data }) {
+          return function render(data) {
             if (typeof permalink === 'function') {
               return permalink({ ...data, __functions })
             } else {

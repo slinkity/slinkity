@@ -134,6 +134,7 @@ module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
           async function viteTransformMiddleware(req, res, next) {
             const page = urlToViteTransformMap[toSlashesTrimmed(req.url)]
             if (page) {
+              console.log({ url: req.url })
               const { content, outputPath } = page
               res.setHeader('Content-Type', 'text/html')
               res.write(
@@ -199,7 +200,45 @@ module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
       })
     }
 
+    eleventyConfig.on('eleventy.serverlessUrlMap', (templateMap) => {
+      let outputMap = {}
+
+      for (let entry of templateMap) {
+        for (let key in entry.serverless) {
+          let urls = entry.serverless[key]
+          if (!Array.isArray(urls)) {
+            urls = [entry.serverless[key]]
+          }
+          for (let eligibleUrl of urls) {
+            // ignore duplicates that have the same input file, via Pagination.
+            if (outputMap[eligibleUrl] === entry.inputPath) {
+              continue
+            }
+
+            // duplicates that don’t use the same input file, throw an error.
+            if (outputMap[eligibleUrl]) {
+              throw new Error(
+                `Serverless URL conflict: multiple input files are using the same URL path (in \`permalink\`): ${outputMap[eligibleUrl]} and ${entry.inputPath}`,
+              )
+            }
+
+            outputMap[eligibleUrl] = entry.inputPath
+          }
+        }
+      }
+
+      // TODO: set up reverse map to fill "content" on HTML transform
+      for (const [inputPath, outputPath] of Object.entries(outputMap)) {
+        urlToViteTransformMap[outputPath] = {
+          outputPath,
+          content: null,
+          inputPath,
+        }
+      }
+    })
+
     eleventyConfig.addTransform('update-url-to-vite-transform-map', function (content, outputPath) {
+      console.log({ content, outputPath, hm: this })
       if (!isSupportedOutputPath(outputPath)) return content
 
       const relativePath = path.relative(dir.output, outputPath)
