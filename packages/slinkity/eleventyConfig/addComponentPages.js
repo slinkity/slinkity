@@ -97,7 +97,7 @@ module.exports = function addComponentPages({
             props,
             isSSR,
             loader: loader.mode ? loader.mode : loader,
-            pageOutputPath: data.page.outputPath,
+            pageOutputPath: data.page.url,
             rendererName: renderer.name,
           })
 

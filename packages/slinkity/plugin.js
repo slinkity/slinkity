@@ -1,7 +1,6 @@
 const { normalizePath } = require('vite')
 const { productionBuild } = require('./cli/vite')
 const path = require('path')
-const toSlashesTrimmed = require('./utils/toSlashesTrimmed')
 const { getResolvedImportAliases } = require('./cli/vite')
 const { toComponentAttrStore } = require('./eleventyConfig/componentAttrStore')
 const {
@@ -134,14 +133,13 @@ module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
             return viteMiddlewareServer.middlewares(req, res, next)
           },
           async function viteTransformMiddleware(req, res, next) {
-            const page = urlToViteTransformMap[toSlashesTrimmed(req.url)]
-            if (page) {
-              const { content, outputPath } = page
+            const content = urlToViteTransformMap[req.url]
+            if (content) {
               res.setHeader('Content-Type', 'text/html')
               res.write(
                 await applyViteHtmlTransform({
                   content,
-                  outputPath,
+                  outputUrl: req.url,
                   componentAttrStore,
                   renderers: userSlinkityConfig.renderers,
                   dir,
@@ -177,14 +175,13 @@ module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
             return viteMiddlewareServer.middlewares(req, res, next)
           },
           async function viteTransformMiddleware(req, res, next) {
-            const page = urlToViteTransformMap[toSlashesTrimmed(req.url)]
-            if (page) {
-              const { content, outputPath } = page
+            const content = urlToViteTransformMap[req.url]
+            if (content) {
               res.setHeader('Content-Type', 'text/html')
               res.write(
                 await applyViteHtmlTransform({
                   content,
-                  outputPath,
+                  outputUrl: req.url,
                   componentAttrStore,
                   renderers: userSlinkityConfig.renderers,
                   dir,
@@ -228,53 +225,51 @@ module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
         }
       }
 
-      for (const [outputPath, inputPath] of Object.entries(outputToInputMap)) {
-        serverlessInputs[inputPath] = outputPath
+      for (const [outputUrl, inputPath] of Object.entries(outputToInputMap)) {
+        serverlessInputs[inputPath] = outputUrl
       }
     })
 
-    eleventyConfig.addTransform(
-      'transform-serverless-request',
-      async function (content, outputPath) {
-        const serverlessOutput = serverlessInputs[this.inputPath]
-        if (!outputPath && serverlessOutput) {
-          const transformed = await applyViteHtmlTransform({
-            content,
-            outputPath: serverlessOutput,
-            componentAttrStore,
-            renderers: userSlinkityConfig.renderers,
-            dir,
-            viteSSR,
-            environment,
-          })
-          return transformed
-        }
-        return content
-      },
-    )
+    eleventyConfig.addTransform('transform-serverless-request', async function (content) {
+      const serverlessOutput = serverlessInputs[this.inputPath]
+      if (serverlessOutput) {
+        const transformed = await applyViteHtmlTransform({
+          content,
+          outputUrl: serverlessOutput,
+          componentAttrStore,
+          renderers: userSlinkityConfig.renderers,
+          dir,
+          viteSSR,
+          environment,
+        })
+        return transformed
+      }
+      return content
+    })
 
     eleventyConfig.addTransform('update-url-to-vite-transform-map', function (content, outputPath) {
       if (!isSupportedOutputPath(outputPath)) return content
 
       const relativePath = path.relative(dir.output, outputPath)
-      const formattedAsUrl = toSlashesTrimmed(
-        normalizePath(relativePath)
-          .replace(/.html$/, '')
-          .replace(/index$/, ''),
-      )
-      urlToViteTransformMap[formattedAsUrl] = {
-        outputPath,
-        content,
-      }
+      const outputUrl = normalizePath(path.join('/', relativePath))
+        .replace(/.html$/, '')
+        .replace(/index$/, '')
+
+      urlToViteTransformMap[outputUrl] = content
       return content
     })
   }
 
   if (environment === 'production') {
     eleventyConfig.addTransform('apply-vite', async function (content, outputPath) {
+      const relativePath = path.relative(dir.output, outputPath)
+      const outputUrl = normalizePath(path.join('/', relativePath))
+        .replace(/.html$/, '')
+        .replace(/index$/, '')
+
       return await applyViteHtmlTransform({
         content,
-        outputPath,
+        outputUrl,
         componentAttrStore,
         renderers: userSlinkityConfig.renderers,
         dir,

@@ -104,7 +104,7 @@ module.exports.argsArrayToPropsObj = argsArrayToPropsObj
  * @property {Record<string, string>} extensionToRendererMap
  * @property {{
  *  inputPath: string;
- *  outputPath: string;
+ *  url: string;
  * }} page
  * @param {ToComponentAttrStoreEntryParams}
  * @returns {import('./componentAttrStore').ComponentAttrs}
@@ -160,6 +160,6 @@ See our docs for more: https://slinkity.dev/docs/component-shortcodes`)
     isSSR: props.renderWithoutSSR === undefined,
     loader: props.renderWithoutSSR ?? props.hydrate ?? 'none',
     children,
-    pageOutputPath: page.outputPath,
+    pageOutputPath: page.url,
   }
 }
