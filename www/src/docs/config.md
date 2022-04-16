@@ -13,27 +13,22 @@ Let's break down configuration for each.
 
 Read the rest of this doc for all options available to you! In our experience though, there are few easy recommendations we can make:
 
-1. **Use the `--incremental` CLI flag** when running `slinkity` in development. This helps to prevent any [flashes of unstyled content (FOUC)](https://webkit.org/blog/66/the-fouc-problem/#:~:text=FOUC%20stands%20for%20Flash%20of,having%20any%20style%20information%20yet.&text=When%20a%20browser%20loads%20a,file%20from%20the%20Web%20site.) while working. It'll also speed up your reloads quite a bit!
+1. **Use the `--incremental` and `--quiet` CLI flags** when running the development server via `--serve`. "Incremental" will prevent any [flashes of unstyled content (FOUC)](https://webkit.org/blog/66/the-fouc-problem/#:~:text=FOUC%20stands%20for%20Flash%20of,having%20any%20style%20information%20yet.&text=When%20a%20browser%20loads%20a,file%20from%20the%20Web%20site.) while working, and "quiet" will silence duplicate logs from 11ty that Vite already handles
 2. **Specify an input directory** for 11ty to work from. 11ty defaults to the base of your project directory, which could cause 11ty to accidentally process config files, your `README.md`, etc (unless you [update your 11ty ignores](https://www.11ty.dev/docs/ignores/)). You can do so using the `--input="[dir]"` CLI flag, or [by exporting a `dir` from your `.eleventy.js` config](https://www.11ty.dev/docs/config/):
 
 ```js
-// .eleventy.js
+// .eleventy.js or eleventy.config.js
 module.exports = function(eleventyConfig) {
   return { dir: { input: '[dir]' } }
 }
 ```
-
-3. **Inject the React import** when using React in your project. This prevents you from having to import React by hand in every component, in keeping with React's [new JSX transform](https://reactjs.org/blog/2020/09/22/introducing-the-new-jsx-transform.html). You can do so [using the `jsxInject` property](https://vitejs.dev/config/#esbuild) in a `vite.config.js`:
+3. If you're using our [component shortcodes](/docs/component-shortcodes), **set nunjucks to your default templating language** for markdown (`.md`) and html (`.html`) files. Nunjucks offers a nicer shortcode syntax for passing data to your components as props. You can find side-by-side comparisons in our [component shortcode documentation](/docs/component-shortcodes/#choose-how-and-when-to-hydrate). If you like what you see, add this to your 11ty config:
 
 ```js
-// vite.config.js
-import { defineConfig } from 'vite'
+// .eleventy.js or eleventy.config.js
+module.exports = function(eleventyConfig) {
 
-export default defineConfig({
-  esbuild: {
-    jsxInject: `import React from 'react'`,
-  },
-})
+}
 ```
 
 ## The Slinkity CLI
