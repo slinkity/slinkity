@@ -42,6 +42,21 @@ module.exports = function(eleventyConfig) {
 
 You may want one of our pre-built component renderers for React, Vue, or Svelte support too. To setup those config options, jump to the ["add your first component shortcode" section](#add-your-first-component-shortcode).
 
+### Development server
+
+Slinkity attaches Vite to 11ty's built-in development server [as middleware](https://vitejs.dev/guide/ssr.html#setting-up-the-dev-server), so you can keep using the `--serve` CLI flag as you'd expect. Still, we recommend starting your server with the following CLI flags:
+
+```bash
+eleventy --serve --incremental --quiet
+```
+
+- **--incremental** will prevent any [flashes of unstyled content (FOUC)](https://webkit.org/blog/66/the-fouc-problem/#:~:text=FOUC%20stands%20for%20Flash%20of,having%20any%20style%20information%20yet.&text=When%20a%20browser%20loads%20a,file%20from%20the%20Web%20site.) during Vite's page reloads. It'll also show your changes in the browser much faster!
+- **--quiet** will hide extraneous logs in your console. Since Vite already describes changes with informative live reload and HMR logs, it's best to silence duplicate information from 11ty.
+
+For more configuration details, head to:
+
+**[The Slinkity configuration guide →](/docs/config)**
+
 ### Production builds
 
 With Slinkity in the mix, your production builds will now complete in 2 steps:
@@ -71,7 +86,7 @@ Let's try adding components to your 11ty project. Say you have a project directo
 </html>
 ```
 
-If you run this using the `slinkity --serve --incremental` command, you'll just see the gloriously static text "Look ma, it's Slinkity!"
+If you run this using the `eleventy --serve --incremental` command, you'll just see the gloriously static text "Look ma, it's Slinkity!"
 
 But what if we want something... interactive? For instance, say we're tracking how many glasses of water we've had today (because [hydration is important](https://www.gatsbyjs.com/docs/conceptual/react-hydration/)!). If we know a little JavaScript, we can whip up a counter using our favorite flavor of components.
 
