@@ -11,13 +11,15 @@ npm i -D react react-dom @slinkity/renderer-react
 Then, add this renderer to a `slinkity.config.js` at the base of your project:
 
 ```js
-// slinkity.config.js
-import { defineConfig } from 'slinkity'
-import rendererReact from '@slinkity/renderer-react'
+// .eleventy.js or eleventy.config.js
+const slinkity = require('slinkity')
+const react = require('@slinkity/renderer-react')
 
-export default defineConfig({
-  renderers: [rendererReact],
-})
+module.exports = function(eleventyConfig) {
+  eleventyConfig.addPlugin(slinkity.plugin, slinkity.defineConfig({
+    renderers: [react],
+  }))
+}
 ```
 </section>
 <section hidden>
@@ -33,13 +35,15 @@ npm i -D vue@3 @slinkity/renderer-vue
 Then, add this renderer to a `slinkity.config.js` at the base of your project:
 
 ```js
-// slinkity.config.js
-import { defineConfig } from 'slinkity'
-import rendererVue from '@slinkity/renderer-vue'
+// .eleventy.js or eleventy.config.js
+const slinkity = require('slinkity')
+const vue = require('@slinkity/renderer-vue')
 
-export default defineConfig({
-  renderers: [rendererVue],
-})
+module.exports = function(eleventyConfig) {
+  eleventyConfig.addPlugin(slinkity.plugin, slinkity.defineConfig({
+    renderers: [vue],
+  }))
+}
 ```
 </section>
 <section hidden>
@@ -53,13 +57,15 @@ npm i -D svelte @slinkity/renderer-svelte
 Then, add this renderer to a `slinkity.config.js` at the base of your project:
 
 ```js
-// slinkity.config.js
-import { defineConfig } from 'slinkity'
-import rendererSvelte from '@slinkity/renderer-svelte'
+// .eleventy.js or eleventy.config.js
+const slinkity = require('slinkity')
+const svelte = require('@slinkity/renderer-svelte')
 
-export default defineConfig({
-  renderers: [rendererSvelte],
-})
+module.exports = function(eleventyConfig) {
+  eleventyConfig.addPlugin(slinkity.plugin, slinkity.defineConfig({
+    renderers: [svelte],
+  }))
+}
 ```
 </section>
 {% endrenderTemplate %}
