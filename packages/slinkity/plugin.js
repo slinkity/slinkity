@@ -217,7 +217,7 @@ module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
               res.write(
                 await applyViteHtmlTransform({
                   content,
-                  url: outputPath,
+                  outputPath,
                   componentAttrStore,
                   renderers: userSlinkityConfig.renderers,
                   dir,
