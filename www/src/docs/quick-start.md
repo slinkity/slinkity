@@ -24,40 +24,37 @@ npm i --save-dev slinkity @11ty/eleventy
 
 > Slinkity requires Node v14 and up. You can check your version by running `node -v` in your terminal before trying Slinkity.
 
-### Using the `slinkity` CLI
+### Apply Slinkity as a plugin
 
-We supply our own CLI in place of `eleventy`. This spins up Vite and 11ty in a single command, while using the _exact same CLI flags_ you would use with `eleventy` today. So if you have any `"scripts"` in your `package.json`, [feel free to find-and-replace](https://twitter.com/slinkitydotdev/status/1431371307036336128) `eleventy` with `slinkity`.
+Slinkity is an [11ty plugin](https://www.11ty.dev/docs/plugins/) you can add to your existing 11ty config. You can apply the plugin along with our config helper like so:
 
-Let's spin up a dev server for example. This uses the same set of flags as eleventy:
+```js
+// .eleventy.js or eleventy.config.js
+const slinkity = require('slinkity')
 
-```bash
-npx slinkity --serve --incremental
-# we recommend the --incremental flag
-# for faster builds during development
+module.exports = function(eleventyConfig) {
+  eleventyConfig.addPlugin(slinkity.plugin, slinkity.defineConfig({
+    // optional: use slinkity.defineConfig for some handy autocomplete
+    // of config options in your editor
+  }))
+}
 ```
 
-This command will:
-
-1. Start up [11ty in `--watch` mode](https://www.11ty.dev/docs/usage/#re-run-eleventy-when-you-save) to listen for file changes
-2. Start up [a Vite server](https://vitejs.dev/guide/#index-html-and-project-root) pointed at your 11ty build. This helps us process all sorts of file types, including SCSS styles, React, Vue, or Svelte components, and more.
-
-[See our `slinkity` CLI docs](/docs/config/#the-slinkity-cli) for more details on how flags are processed.
+You may want one of our pre-built component renderers for React, Vue, or Svelte support too. To setup those config options, jump to the ["add your first component shortcode" section](#add-your-first-component-shortcode).
 
 ### Production builds
 
-When you're ready for a production build, just run:
+With Slinkity in the mix, your production builds will now complete in 2 steps:
+1. 11ty's standard production build
+2. Vite's production build to bundle JS and CSS assets
 
-```bash
-npx slinkity
-```
+Don't worry, your output directory and build config options won't be affected! Though you may need to move static assets to a separate `/public` directory (including your `robots.txt`, sitemap, and other related assets). To learn more about asset handling, head to:
 
-...and your shiny new site will appear in the `_site` folder (or [wherever you tell 11ty to build your site](https://www.11ty.dev/docs/config/#output-directory)).
+**[Managing assets for production builds →](/docs/asset-management)**
 
-But wait, we haven't tried any of Slinkity's features yet! Let's change that.
+### Add your first component shortcode
 
-### Adding your first component shortcode
-
-Say you have a project directory with just 1 file: `index.njk`. That file might look like this:
+Let's try adding components to your 11ty project. Say you have a project directory with just 1 file: `index.njk`. That file might look like this:
 
 ```html
 <!DOCTYPE html>
