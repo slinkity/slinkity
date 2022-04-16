@@ -178,6 +178,9 @@ module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
         }
       })
 
+      // legacy: since we don't know the web URL for a given output path,
+      // we need to compute our best guess using normalizePath and replace
+      // this is no longer necessary in the v2 code above!
       eleventyConfig.addTransform(
         'update-url-to-rendered-content-map',
         function (content, outputPath) {
