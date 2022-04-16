@@ -112,7 +112,9 @@ module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
 
     eleventyConfig.on('beforeBuild', async () => {
       componentAttrStore.clear()
-      await viteSSR.createServer()
+      if (!viteSSR.getServer()) {
+        await viteSSR.createServer()
+      }
     })
 
     if (isEleventyV2) {
