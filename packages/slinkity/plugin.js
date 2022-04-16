@@ -39,6 +39,8 @@ function applyDefaultDirs(dir = {}) {
  * @param {import('./@types').UserSlinkityConfig} userSlinkityConfig
  */
 module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
+  const isEleventyV2 = typeof eleventyConfig.setServerOptions === 'function'
+
   /** @type {import('./@types').Environment} */
   const environment = process.argv
     .slice(2)
@@ -104,7 +106,7 @@ module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
 
   if (environment === 'development') {
     /** @type {Record<string, string>} */
-    const urlToViteTransformMap = {}
+    const urlToRenderedContentMap = {}
     /** @type {import('vite').ViteDevServer} */
     let viteMiddlewareServer = null
 
@@ -113,7 +115,18 @@ module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
       await viteSSR.createServer()
     })
 
-    if (typeof eleventyConfig.setServerOptions === 'function') {
+    if (isEleventyV2) {
+      eleventyConfig.on('eleventy.after', async function ({ results, runMode }) {
+        if (runMode === 'serve') {
+          for (let { content, outputPath, url } of results) {
+            // used for serving content within dev server middleware
+            urlToRenderedContentMap[url] = {
+              content,
+              outputPath,
+            }
+          }
+        }
+      })
       eleventyConfig.setServerOptions({
         async setup() {
           if (!viteMiddlewareServer) {
@@ -132,7 +145,7 @@ module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
             return viteMiddlewareServer.middlewares(req, res, next)
           },
           async function viteTransformMiddleware(req, res, next) {
-            const page = urlToViteTransformMap[toSlashesTrimmed(req.url)]
+            const page = urlToRenderedContentMap[req.url]
             if (page) {
               const { content, outputPath } = page
               res.setHeader('Content-Type', 'text/html')
@@ -155,7 +168,7 @@ module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
         ],
       })
     } else {
-      // TODO: remove once 11ty 2.0 is stable
+      // TODO: remove this entire "else" block once 11ty 2.0 is stable
       eleventyConfig.on('afterBuild', async function () {
         if (!viteMiddlewareServer) {
           viteMiddlewareServer = viteSSR.getServer()
@@ -164,6 +177,25 @@ module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
           await viteMiddlewareServer.restart()
         }
       })
+
+      eleventyConfig.addTransform(
+        'update-url-to-rendered-content-map',
+        function (content, outputPath) {
+          if (!isSupportedOutputPath(outputPath)) return content
+
+          const relativePath = path.relative(dir.output, outputPath)
+          const formattedAsUrl = toSlashesTrimmed(
+            normalizePath(relativePath)
+              .replace(/.html$/, '')
+              .replace(/index$/, ''),
+          )
+          urlToRenderedContentMap[formattedAsUrl] = {
+            outputPath,
+            content,
+          }
+          return content
+        },
+      )
 
       eleventyConfig.setBrowserSyncConfig({
         snippet: false,
@@ -175,14 +207,14 @@ module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
             return viteMiddlewareServer.middlewares(req, res, next)
           },
           async function viteTransformMiddleware(req, res, next) {
-            const page = urlToViteTransformMap[toSlashesTrimmed(req.url)]
+            const page = urlToRenderedContentMap[toSlashesTrimmed(req.url)]
             if (page) {
               const { content, outputPath } = page
               res.setHeader('Content-Type', 'text/html')
               res.write(
                 await applyViteHtmlTransform({
                   content,
-                  outputPath,
+                  url: outputPath,
                   componentAttrStore,
                   renderers: userSlinkityConfig.renderers,
                   dir,
@@ -198,22 +230,6 @@ module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
         ],
       })
     }
-
-    eleventyConfig.addTransform('update-url-to-vite-transform-map', function (content, outputPath) {
-      if (!isSupportedOutputPath(outputPath)) return content
-
-      const relativePath = path.relative(dir.output, outputPath)
-      const formattedAsUrl = toSlashesTrimmed(
-        normalizePath(relativePath)
-          .replace(/.html$/, '')
-          .replace(/index$/, ''),
-      )
-      urlToViteTransformMap[formattedAsUrl] = {
-        outputPath,
-        content,
-      }
-      return content
-    })
   }
 
   if (environment === 'production') {
