@@ -119,7 +119,8 @@ module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
 
     if (isEleventyV2) {
       eleventyConfig.on('eleventy.after', async function ({ results, runMode }) {
-        if (runMode === 'serve') {
+        // TODO: remove '--serve' flag check once slinkity CLI is removed
+        if (runMode === 'serve' || process.argv.slice(2).find((arg) => arg.startsWith('--serve'))) {
           for (let { content, outputPath, url } of results) {
             // used for serving content within dev server middleware
             urlToRenderedContentMap[url] = {
