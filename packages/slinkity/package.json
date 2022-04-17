@@ -1,7 +1,7 @@
 {
   "name": "slinkity",
   "description": "To 11ty and beyond! The all-in-one tool for templates where you want them, component frameworks where you need them",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "license": "MIT",
   "main": "index.js",
   "types": "index.d.ts",
@@ -10,6 +10,8 @@
     "client",
     "index.js",
     "index.d.ts",
+    "plugin.js",
+    "plugin.d.ts",
     "defineConfig.js",
     "defineConfig.d.ts",
     "@types.ts",

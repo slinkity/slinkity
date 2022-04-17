@@ -1,5 +1,11 @@
 # slinkity
 
+## 0.8.1
+
+### Patch Changes
+
+- Fix: export "plugin" on slinkity package to access from eleventy configs
+
 ## 0.8.0
 
 ### Minor Changes
@@ -7,6 +13,7 @@
 - 72a3594
 
 ## Slinkity as a plugin
+
 Now, you ditch the `slinkity` CLI and apply Slinkity as a standard 11ty plugin. This includes a few major changes:
 
 - no need for a separate `slinkity.config.js` for configuration options. These are now configured on the plugin itself
