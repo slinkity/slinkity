@@ -86,6 +86,18 @@ async function viteBuild({ ssrViteConfig, filePath, environment }) {
 }
 
 /**
+ * @typedef ToViteConfigParams
+ * @property {import('../@types').Dir} dir
+ * @property {import('../@types').UserSlinkityConfig} userSlinkityConfig
+ * @param {ToViteConfigParams} params
+ * @returns {import('vite').UserConfigExport}
+ */
+async function toViteConfig({ dir, userSlinkityConfig }) {
+  const sharedConfig = await getSharedConfig({ dir, userSlinkityConfig })
+  return defineConfig(mergeConfig({ root: dir.output }, sharedConfig))
+}
+
+/**
  * @typedef ViteSSRParams
  * @property {import('../@types').Environment} environment
  * @property {import('../@types').Dir} dir
@@ -100,45 +112,40 @@ async function viteBuild({ ssrViteConfig, filePath, environment }) {
  *
  * @returns {ViteSSR} viteSSR
  */
-async function toViteSSR({ environment, dir, userSlinkityConfig }) {
-  const sharedConfig = await getSharedConfig({ dir, userSlinkityConfig })
-  const ssrViteConfig = defineConfig(mergeConfig({ root: dir.output }, sharedConfig))
-
+function toViteSSR({ environment, dir, userSlinkityConfig }) {
   if (environment === 'development') {
     /** @type {import('vite').ViteDevServer} */
     let server = null
     const builder = toBuilder(async function buildModule(filePath) {
+      if (!server) {
+        throw new Error(
+          `Attempted to build "${filePath}" before Vite was started! If you're using Slinkity as a plugin, check that you're using 11ty v2.0 or later.`,
+        )
+      }
+
+      const ssrModule = await server.ssrLoadModule(filePath)
+      const moduleGraph = await server.moduleGraph.getModuleByUrl(filePath)
+      /** @type {Set<string>} */
+      const __importedStyles = new Set()
+      collectCSS(moduleGraph, __importedStyles)
+
       /** @type {DefaultModule} */
-      let viteOutput
-      if (server) {
-        const ssrModule = await server.ssrLoadModule(filePath)
-        const moduleGraph = await server.moduleGraph.getModuleByUrl(filePath)
-        /** @type {Set<string>} */
-        const __importedStyles = new Set()
-        collectCSS(moduleGraph, __importedStyles)
-        viteOutput = {
-          default: () => null,
-          __importedStyles,
-          ...ssrModule,
-        }
-      } else {
-        viteOutput = await viteBuild({
-          dir,
-          filePath,
-          ssrViteConfig,
-          environment,
-        })
+      const viteOutput = {
+        default: () => null,
+        __importedStyles,
+        ...ssrModule,
       }
       return viteOutput
     })
     return {
       async toCommonJSModule(filePath) {
-        return builder.build(filePath, null, { shouldUseCache: server === null })
+        return builder.build(filePath, null, { shouldUseCache: false })
       },
       getServer() {
         return server
       },
       async createServer() {
+        const ssrViteConfig = await toViteConfig({ dir, userSlinkityConfig })
         server = await createServer({
           ...ssrViteConfig,
           server: {
@@ -153,7 +160,7 @@ async function toViteSSR({ environment, dir, userSlinkityConfig }) {
       const viteOutput = await viteBuild({
         dir,
         filePath,
-        ssrViteConfig,
+        ssrViteConfig: await toViteConfig({ dir, userSlinkityConfig }),
         environment,
       })
       return viteOutput
@@ -165,7 +172,9 @@ async function toViteSSR({ environment, dir, userSlinkityConfig }) {
       getServer() {
         return null
       },
-      createServer() {},
+      createServer() {
+        return null
+      },
     }
   }
 }

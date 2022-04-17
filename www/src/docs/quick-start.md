@@ -24,40 +24,52 @@ npm i --save-dev slinkity @11ty/eleventy
 
 > Slinkity requires Node v14 and up. You can check your version by running `node -v` in your terminal before trying Slinkity.
 
-### Using the `slinkity` CLI
+### Apply Slinkity as a plugin
 
-We supply our own CLI in place of `eleventy`. This spins up Vite and 11ty in a single command, while using the _exact same CLI flags_ you would use with `eleventy` today. So if you have any `"scripts"` in your `package.json`, [feel free to find-and-replace](https://twitter.com/slinkitydotdev/status/1431371307036336128) `eleventy` with `slinkity`.
+Slinkity is an [11ty plugin](https://www.11ty.dev/docs/plugins/) you can add and configure in your existing 11ty config:
 
-Let's spin up a dev server for example. This uses the same set of flags as eleventy:
+```js
+// .eleventy.js or eleventy.config.js
+const slinkity = require('slinkity')
 
-```bash
-npx slinkity --serve --incremental
-# we recommend the --incremental flag
-# for faster builds during development
+module.exports = function(eleventyConfig) {
+  eleventyConfig.addPlugin(slinkity.plugin, slinkity.defineConfig({
+    // optional: use slinkity.defineConfig
+    // for some handy autocomplete in your editor
+  }))
+}
 ```
 
-This command will:
+You may want one of our pre-built component renderers for React, Vue, or Svelte support too. To setup those config options, jump to the ["add your first component shortcode" section](#add-your-first-component-shortcode).
 
-1. Start up [11ty in `--watch` mode](https://www.11ty.dev/docs/usage/#re-run-eleventy-when-you-save) to listen for file changes
-2. Start up [a Vite server](https://vitejs.dev/guide/#index-html-and-project-root) pointed at your 11ty build. This helps us process all sorts of file types, including SCSS styles, React, Vue, or Svelte components, and more.
+### Development server
 
-[See our `slinkity` CLI docs](/docs/config/#the-slinkity-cli) for more details on how flags are processed.
+Slinkity attaches Vite to 11ty's built-in development server [as middleware](https://vitejs.dev/guide/ssr.html#setting-up-the-dev-server), so you can keep using the `--serve` CLI flag as you'd expect. Still, we recommend starting your server with the following CLI flags:
+
+```bash
+eleventy --serve --incremental --quiet
+```
+
+- **--incremental** will prevent any [flashes of unstyled content (FOUC)](https://webkit.org/blog/66/the-fouc-problem/#:~:text=FOUC%20stands%20for%20Flash%20of,having%20any%20style%20information%20yet.&text=When%20a%20browser%20loads%20a,file%20from%20the%20Web%20site.) during Vite's page reloads. It'll also show your changes in the browser much faster!
+- **--quiet** will hide extraneous logs in your console. Since Vite already describes changes with informative live reload and HMR logs, it's best to silence duplicate information from 11ty.
+
+For more configuration details, head to:
+
+**[The Slinkity configuration guide →](/docs/config)**
 
 ### Production builds
 
-When you're ready for a production build, just run:
+With Slinkity in the mix, your production builds will now complete in 2 steps:
+1. 11ty's standard production build
+2. Vite's production build to bundle JS and CSS assets
 
-```bash
-npx slinkity
-```
+Don't worry, your output directory and build config options won't be affected! Though you may need to move static assets to a separate `/public` directory (including your `robots.txt`, sitemap, and other related assets). To learn more about asset handling, head to:
 
-...and your shiny new site will appear in the `_site` folder (or [wherever you tell 11ty to build your site](https://www.11ty.dev/docs/config/#output-directory)).
+**[Managing assets for production builds →](/docs/asset-management)**
 
-But wait, we haven't tried any of Slinkity's features yet! Let's change that.
+### Add your first component shortcode
 
-### Adding your first component shortcode
-
-Say you have a project directory with just 1 file: `index.njk`. That file might look like this:
+Let's try adding components to your 11ty project. Say you have a project directory with just 1 file: `index.njk`. That file might look like this:
 
 ```html
 <!DOCTYPE html>
@@ -74,7 +86,7 @@ Say you have a project directory with just 1 file: `index.njk`. That file might 
 </html>
 ```
 
-If you run this using the `slinkity --serve --incremental` command, you'll just see the gloriously static text "Look ma, it's Slinkity!"
+If you run this using the `eleventy --serve --incremental` command, you'll just see the gloriously static text "Look ma, it's Slinkity!"
 
 But what if we want something... interactive? For instance, say we're tracking how many glasses of water we've had today (because [hydration is important](https://www.gatsbyjs.com/docs/conceptual/react-hydration/)!). If we know a little JavaScript, we can whip up a counter using our favorite flavor of components.
 

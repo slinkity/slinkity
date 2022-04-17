@@ -5,16 +5,16 @@ const { log } = require('../utils/logger')
 /**
  * @typedef AddComponentShortcodesParams
  * @property {import('./componentAttrStore').ComponentAttrStore} componentAttrStore
- * @property {import('../cli/vite').ResolvedImportAliases} resolvedImportAliases
  * @property {any} eleventyConfig
  * @property {import('../@types').Renderer[]} renderers
+ * @property {import('../@types').ImportAliases} importAliases
  * @param {AddComponentShortcodesParams}
  */
 module.exports = function addComponentShortcode({
   renderers,
   eleventyConfig,
-  resolvedImportAliases,
   componentAttrStore,
+  importAliases,
 }) {
   const extensionToRendererMap = Object.fromEntries(
     renderers.flatMap(({ name, extensions }) => extensions.map((ext) => [ext, name])),
@@ -26,7 +26,7 @@ module.exports = function addComponentShortcode({
         componentPath,
         vargs,
         children: '',
-        resolvedImportAliases,
+        importAliases,
         extensionToRendererMap,
         page: this.page,
       }),
@@ -52,7 +52,7 @@ module.exports = function addComponentShortcode({
         componentPath: componentPathWithExt,
         vargs,
         children: '',
-        resolvedImportAliases,
+        importAliases,
         extensionToRendererMap,
         page: this.page,
       }),
@@ -69,7 +69,7 @@ module.exports = function addComponentShortcode({
           componentPath,
           vargs,
           children: content,
-          resolvedImportAliases,
+          importAliases,
           extensionToRendererMap,
           page: this.page,
         }),
@@ -100,7 +100,7 @@ module.exports.argsArrayToPropsObj = argsArrayToPropsObj
  * @property {string} componentPath
  * @property {any[]} vargs
  * @property {string} children
- * @property {import('../cli/vite').ResolvedImportAliases} resolvedImportAliases
+ * @property {import('../@types').ImportAliases} importAliases
  * @property {Record<string, string>} extensionToRendererMap
  * @property {{
  *  inputPath: string;
@@ -113,7 +113,7 @@ function toComponentAttrStoreEntry({
   componentPath,
   vargs,
   children,
-  resolvedImportAliases,
+  importAliases,
   extensionToRendererMap,
   page,
 }) {
@@ -154,7 +154,7 @@ See our docs for more: https://slinkity.dev/docs/component-shortcodes`)
   }
 
   return {
-    path: path.join(resolvedImportAliases.includes, componentPath),
+    path: path.join(importAliases.includes, componentPath),
     rendererName: renderer,
     props: restOfProps,
     isSSR: props.renderWithoutSSR === undefined,

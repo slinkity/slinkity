@@ -1,5 +1,4 @@
 import type { UserConfigExport, ViteDevServer } from 'vite'
-import type { Options } from 'browser-sync'
 
 export type Environment = 'development' | 'production'
 
@@ -108,14 +107,13 @@ export type Dir = {
   layouts: string;
 }
 
-export type EleventyConfigParams = {
-  dir: Dir;
-  /** utility to import components as Node-friendly modules */
-  viteSSR: ViteSSR;
-  /** Slinkity config options (either from user config or defaults) */
-  userSlinkityConfig: UserSlinkityConfig;
-  /** Options to configure Slinkity's own browser sync server for dev environments */
-  browserSyncOptions: Options;
-  /** whether we want a dev server or a production build */
-  environment: Environment;
+export type ImportAliases = {
+  /** alias for importing resources from the project root (`process.cwd()`) */
+  root: string;
+  /** alias for importing from the project input directory, as specified in 11ty's dir.input */
+  input: string;
+  /** alias for importing from the project includes directory, as specified in 11ty's dir.includes */
+  includes: string;
+  /** alias for importing from the project layouts directory, as specified in 11ty's dir.layouts */
+  layouts: string;
 }

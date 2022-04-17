@@ -6,30 +6,36 @@ const { log } = require('../utils/logger')
 /**
  * @typedef AddComponentPagesParams
  * @property {import('./componentAttrStore').ComponentAttrStore} componentAttrStore
- * @property {import('../cli/vite').ResolvedImportAliases} resolvedImportAliases
- * @property {import('../cli/toViteSSR').ViteSSR} viteSSR
+ * @property {import('../@types').ViteSSR} viteSSR
+ * @property {import('../@types').ImportAliases} importAliases
  * @property {any} eleventyConfig
  * @property {import('../@types').Renderer} renderer
  * @param {AddComponentPagesParams}
  */
-module.exports = async function addComponentPages({
+module.exports = function addComponentPages({
   renderer,
   eleventyConfig,
-  viteSSR,
   componentAttrStore,
-  resolvedImportAliases,
+  viteSSR,
+  importAliases,
 }) {
   if (!renderer.page) return
 
-  const { useFormatted11tyData = true, getData } = await renderer.page({
-    toCommonJSModule: viteSSR.toCommonJSModule,
-  })
+  let useFormatted11tyData = false
+  let getData = () => ({})
 
   for (const extension of renderer.extensions) {
     eleventyConfig.addExtension(extension, {
       read: false,
+      async init() {
+        const rendererPageConfig = await renderer.page({
+          toCommonJSModule: viteSSR.toCommonJSModule,
+        })
+        useFormatted11tyData = rendererPageConfig.useFormatted11tyData
+        getData = rendererPageConfig.getData
+      },
       async getData(inputPath) {
-        const absInputPath = path.join(resolvedImportAliases.root, inputPath)
+        const absInputPath = path.join(importAliases.root, inputPath)
         return await getData(absInputPath)
       },
       compileOptions: {
@@ -56,7 +62,7 @@ module.exports = async function addComponentPages({
               fn.bind({ page: data.page }),
             ]),
           )
-          const absInputPath = path.join(resolvedImportAliases.root, inputPath)
+          const absInputPath = path.join(importAliases.root, inputPath)
           let props
 
           /** @type {{ hydrate: import('../@types').Hydrate }} */

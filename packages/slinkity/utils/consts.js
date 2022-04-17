@@ -13,12 +13,19 @@ const SLINKITY_ATTRS = {
   id: 'data-s-id',
 }
 
+const ELEVENTY_TEMP_BUILD_DIR = '.eleventy-temp-build'
+
+// TODO: remove once 11ty 2.0 is baselined
+// required as fallback for 11ty 1.X
+const ELEVENTY_DEFAULT_DIRS = {
+  input: '.',
+  output: '_site',
+  includes: '_includes',
+  layouts: '_includes',
+}
+
 /**
- * @typedef ImportAliases
- * @property {string} root - alias for importing resources from the project root (`process.cwd()`)
- * @property {string} input - alias for importing from the project input directory, as specified in 11ty's dir.input
- * @property {string} includes - alias for importing from the project includes directory, as specified in 11ty's dir.includes
- * @property {string} layouts - alias for importing from the project layouts directory, as specified in 11ty's dir.layouts
+ * @type {import('../@types').ImportAliases}
  */
 const IMPORT_ALIASES = {
   root: '/@root',
@@ -57,6 +64,8 @@ const SLINKITY_HEAD_STYLES = toSSRComment('styles')
 
 module.exports = {
   SLINKITY_ATTRS,
+  ELEVENTY_TEMP_BUILD_DIR,
+  ELEVENTY_DEFAULT_DIRS,
   SLINKITY_CONFIG_FILE_NAME,
   SLINKITY_MOUNT_POINT,
   IMPORT_ALIASES,
