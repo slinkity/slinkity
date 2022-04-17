@@ -4,10 +4,14 @@ const fs = require('fs')
 const { yellow, red } = require('kolorist')
 const prompts = require('prompts')
 
+const ELEVENTY_CONFIG = '.eleventy.js'
 const INDEX_MD = 'src/index.md'
 const LAYOUT_NJK = 'src/_includes/layout.njk'
 const PKG = 'package.json'
-const filesToPreprocess = new Set([INDEX_MD, PKG, LAYOUT_NJK])
+const filesToPreprocess = new Set([ELEVENTY_CONFIG, INDEX_MD, PKG, LAYOUT_NJK])
+
+const RENDERER_IMPORT_COMMENT = '// insert renderer imports here'
+const RENDERER_CONFIG_COMMENT = '/* apply component renderers here */'
 
 const componentFlavorMeta = {
   react: {
@@ -17,12 +21,12 @@ const componentFlavorMeta = {
         'react-dom': '^17.0.2',
       },
       devDependencies: {
-        '@slinkity/renderer-react': '^0.1.0',
+        '@slinkity/renderer-react': '^1.0.0',
       },
     },
     slinkityConfig: {
-      renderer: 'reactRenderer',
-      importStatement: "import reactRenderer from '@slinkity/renderer-react'",
+      renderer: 'react',
+      importStatement: "const react = require('@slinkity/renderer-react')",
     },
     navLink: {
       href: '/react-page',
@@ -37,12 +41,12 @@ const componentFlavorMeta = {
         vue: '^3.2.28',
       },
       devDependencies: {
-        '@slinkity/renderer-vue': '^0.1.0',
+        '@slinkity/renderer-vue': '^1.0.0',
       },
     },
     slinkityConfig: {
-      renderer: 'vueRenderer',
-      importStatement: "import vueRenderer from '@slinkity/renderer-vue'",
+      renderer: 'vue',
+      importStatement: "const vue = require('@slinkity/renderer-vue')",
     },
     navLink: {
       href: '/vue-page',
@@ -57,12 +61,12 @@ const componentFlavorMeta = {
         svelte: '^3.46.2',
       },
       devDependencies: {
-        '@slinkity/renderer-svelte': '^0.1.0',
+        '@slinkity/renderer-svelte': '^1.0.0',
       },
     },
     slinkityConfig: {
-      renderer: 'svelteRenderer',
-      importStatement: "import svelteRenderer from '@slinkity/renderer-svelte'",
+      renderer: 'svelte',
+      importStatement: "const svelte = require('@slinkity/renderer-svelte')",
     },
     navLink: {
       href: '/svelte-page',
@@ -73,20 +77,22 @@ const componentFlavorMeta = {
   },
 }
 
-function toSlinkityConfigContents(selectedComponentFlavors) {
+function applyRenderersToEleventyConfig(eleventyConfigContents, selectedComponentFlavors) {
+  let updatedEleventyConfig = eleventyConfigContents
   const renderers = selectedComponentFlavors.map(
     (flavor) => componentFlavorMeta[flavor].slinkityConfig.renderer,
   )
+  if (renderers) {
+    updatedEleventyConfig = updatedEleventyConfig.replace(
+      RENDERER_CONFIG_COMMENT,
+      renderers.join(', '),
+    )
+  }
   const imports = selectedComponentFlavors.map(
-    (flavor) => componentFlavorMeta[flavor].slinkityConfig.importStatement,
+    (flavor) => '\n' + componentFlavorMeta[flavor].slinkityConfig.importStatement,
   )
-  return `import { defineConfig } from 'slinkity'
-${imports.join('\n')}
-
-export default defineConfig({
-  renderers: [${renderers.join(', ')}],
-})
-`
+  updatedEleventyConfig = updatedEleventyConfig.replace(RENDERER_IMPORT_COMMENT, imports.join(''))
+  return updatedEleventyConfig
 }
 
 ;(async () => {
@@ -179,13 +185,12 @@ export default defineConfig({
     layoutNjk.replace('<!--insert-nav-links-here-->', navLinks.join('\n      ')),
   )
 
-  // slinkity.config.js
-  if (promptResponses.components.length) {
-    fs.writeFileSync(
-      path.join(destResolved, 'slinkity.config.js'),
-      toSlinkityConfigContents(promptResponses.components),
-    )
-  }
+  // slinkity plugin config
+  const eleventyConfig = fs.readFileSync(path.join(srcResolved, ELEVENTY_CONFIG)).toString()
+  fs.writeFileSync(
+    path.join(destResolved, ELEVENTY_CONFIG),
+    applyRenderersToEleventyConfig(eleventyConfig, promptResponses.components),
+  )
 
   console.log(`Welcome to your first ${yellow('Slinkity site!')}`)
   console.log('Step 1: run these commands to install and serve locally 👇')
