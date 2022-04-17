@@ -4,9 +4,9 @@
   "description": "A splendid starter for my Slinkity site!",
   "main": ".eleventy.js",
   "scripts": {
-    "dev": "slinkity --serve --incremental",
-    "start": "slinkity --serve --incremental",
-    "build": "slinkity"
+    "dev": "eleventy --serve --incremental",
+    "start": "eleventy --serve --incremental",
+    "build": "eleventy"
   },
   "dependencies": {},
   "devDependencies": {
