@@ -1,4 +1,10 @@
+const slinkity = require('slinkity')// insert renderer imports here
+
 module.exports = function (eleventyConfig) {
+  eleventyConfig.addPlugin(slinkity.plugin, slinkity.defineConfig({
+    renderers: [/* apply component renderers here */],
+  }))
+
   /**
    * Why copy the /public directory?
    * 

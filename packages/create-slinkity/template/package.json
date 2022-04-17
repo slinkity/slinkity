@@ -11,6 +11,6 @@
   "dependencies": {},
   "devDependencies": {
     "@11ty/eleventy": "^1.0.0",
-    "slinkity": "^0.7.0"
+    "slinkity": "^0.8.0"
   }
 }
