@@ -1,5 +1,5 @@
 const { defineConfig } = require('./defineConfig')
-const { plugin } = require('./plugin')
+const { plugin } = require('./lib/plugin')
 
 module.exports = {
   plugin,

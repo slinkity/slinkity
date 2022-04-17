@@ -11,7 +11,7 @@ const makeAllPackagesExternalPlugin = {
   },
 }
 
-const entryPoints = ['cli/index.js']
+const entryPoints = ['cli/index.js', 'plugin.js']
 const isWatchEnabled = process.argv.includes('--watch')
 let watch = false
 if (isWatchEnabled) {
@@ -36,7 +36,7 @@ if (isWatchEnabled) {
     plugins: [makeAllPackagesExternalPlugin],
     platform: 'node',
     target: 'node14',
-    outfile: path.resolve(__dirname, 'lib/cli/index.js'),
+    outdir: path.resolve(__dirname, 'lib'),
     watch,
   })
   console.log(`✅ Built ${entryPoints}`)

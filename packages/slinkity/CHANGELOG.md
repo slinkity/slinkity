@@ -1,5 +1,11 @@
 # slinkity
 
+## 0.8.2
+
+### Patch Changes
+
+- Fix: build plugin as part of esbuild process to resolve dependencies
+
 ## 0.8.1
 
 ### Patch Changes
