@@ -1,12 +1,9 @@
-const { normalizePath } = require('vite')
-const { relative } = require('path')
 const {
   SLINKITY_ATTRS,
   SLINKITY_MOUNT_POINT,
   SLINKITY_HEAD_STYLES,
   toSSRComment,
 } = require('../utils/consts')
-const toSlashesTrimmed = require('../utils/toSlashesTrimmed')
 const toLoaderScript = require('./toLoaderScript')
 const loaders = require('./loaders')
 const componentLoaderMap = Object.fromEntries(loaders.map((loader) => [loader.name, loader]))
@@ -29,7 +26,7 @@ function isSupportedOutputPath(outputPath) {
  * Extracted from applyViteHtmlTransform for unit testing!
  * @typedef HandleSSRCommentsParams
  * @property {string} content - the original HTML content to transform
- * @property {string} outputPath - the output path this HTML content will be written to
+ * @property {import('./componentAttrStore').ComponentLookupId} componentLookupId - identifier to lookup components from componentAttrStore
  * @property {import('./componentAttrStore').ComponentAttrStore} componentAttrStore
  * @property {import('../@types').ViteSSR} viteSSR
  * @property {import('../@types').Renderer[]} renderers
@@ -40,7 +37,7 @@ function isSupportedOutputPath(outputPath) {
  */
 async function handleSSRComments({
   content,
-  outputPath,
+  componentLookupId,
   componentAttrStore,
   viteSSR,
   renderers,
@@ -50,7 +47,7 @@ async function handleSSRComments({
   /** @type {Record<string, any>} */
   const rendererMap = Object.fromEntries(renderers.map((renderer) => [renderer.name, renderer]))
 
-  const pageComponentAttrs = componentAttrStore.getAllByPage(outputPath)
+  const pageComponentAttrs = componentAttrStore.getAllByPage(componentLookupId)
   const serverRenderedComponents = []
   for (const componentAttrs of pageComponentAttrs) {
     const { path: componentPath, props, isSSR, loader, rendererName, children } = componentAttrs
@@ -108,7 +105,7 @@ async function handleSSRComments({
     // recursively render until all SSR comments are resolved.
     return handleSSRComments({
       content: html,
-      outputPath,
+      componentLookupId,
       componentAttrStore,
       viteSSR,
       renderers,
@@ -143,37 +140,33 @@ async function handleSSRComments({
 /**
  * @typedef ApplyViteHtmlTransformParams
  * @property {string} content - the original HTML content to transform
- * @property {string} outputPath - the output path this HTML content will be written to
+ * @property {import('./componentAttrStore').ComponentLookupId} componentLookupId - identifier to lookup components from componentAttrStore
  * @property {import('./componentAttrStore').ComponentAttrStore} componentAttrStore
  * @property {import('../@types').Renderer[]} renderers
- * @property {import('../@types').Environment} environment
- * @property {import('../@types').Dir} dir
  * @property {import('../@types').ViteSSR} viteSSR
  * @param {ApplyViteHtmlTransformParams}
  * @returns {Promise<string>} - HTML with statically rendered content and Vite transforms applied
  */
 async function applyViteHtmlTransform({
   content,
-  outputPath,
+  componentLookupId,
   componentAttrStore,
-  environment,
   viteSSR,
   renderers,
-  dir,
 }) {
-  if (!isSupportedOutputPath(outputPath)) {
-    return content
-  }
   const html = await handleSSRComments({
     content,
-    outputPath,
+    componentLookupId,
     componentAttrStore,
     viteSSR,
     renderers,
   })
   const server = viteSSR.getServer()
-  const routePath = '/' + toSlashesTrimmed(normalizePath(relative(dir.output, outputPath)))
-  return environment === 'development' && server ? server.transformIndexHtml(routePath, html) : html
+  if (server && componentLookupId.type === 'url') {
+    return server.transformIndexHtml(componentLookupId.id, html)
+  } else {
+    return html
+  }
 }
 
 module.exports = { applyViteHtmlTransform, handleSSRComments, isSupportedOutputPath }

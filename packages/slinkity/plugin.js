@@ -34,6 +34,12 @@ function applyDefaultDirs(dir = {}) {
   }
 }
 
+// initiating store outside of plugin to avoid stale closure problem:
+// in serverless, 11ty evaluates the plugin *twice* while attaching
+// shortcodes and page extensions *once.* This causes all shortcodes / extensions
+// to reference an old store if we init that store inside the plugin
+const componentAttrStore = toComponentAttrStore()
+
 /**
  * @param {any} eleventyConfig
  * @param {import('./@types').UserSlinkityConfig} userSlinkityConfig
@@ -66,7 +72,6 @@ module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
     })),
   )
   const extensionMeta = [...defaultExtensions, ...ignoredFromRenderers]
-  const componentAttrStore = toComponentAttrStore()
 
   eleventyConfig.addTemplateFormats(
     extensionMeta.filter((ext) => ext.isTemplateFormat).map((ext) => ext.extension),
@@ -117,15 +122,45 @@ module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
       }
     })
 
+    /** @type {Record<string, string>} */
+    let serverlessInputPathToUrlMap = {}
+    eleventyConfig.on('eleventy.serverlessUrlMap', async (templateMap) => {
+      for (let entry of templateMap) {
+        for (let key in entry.serverless) {
+          let urls = entry.serverless[key]
+          if (!Array.isArray(urls)) {
+            urls = [entry.serverless[key]]
+          }
+          // We'll assume all urls will contain the same components
+          // and take the first url as the source of truth.
+          // This is imported during the "componentLookupId" step later
+          serverlessInputPathToUrlMap[entry.inputPath] = urls[0]
+        }
+      }
+    })
+
+    eleventyConfig.addTransform('slinkity:handle-serverless-transform', async function (content) {
+      const serverlessUrl = serverlessInputPathToUrlMap[this.inputPath]
+      if (serverlessUrl) {
+        return await applyViteHtmlTransform({
+          content,
+          componentLookupId: { type: 'url', id: serverlessUrl },
+          componentAttrStore,
+          renderers: userSlinkityConfig.renderers,
+          viteSSR,
+        })
+      }
+      return content
+    })
+
     if (isEleventyV2) {
-      eleventyConfig.on('eleventy.after', async function ({ results, runMode }) {
+      eleventyConfig.on('eleventy.after', function ({ results, runMode }) {
         // TODO: remove '--serve' flag check once slinkity CLI is removed
         if (runMode === 'serve' || process.argv.slice(2).find((arg) => arg.startsWith('--serve'))) {
           for (let { content, outputPath, url } of results) {
             // used for serving content within dev server middleware
-            urlToRenderedContentMap[url] = {
-              content,
-              outputPath,
+            if (isSupportedOutputPath(outputPath)) {
+              urlToRenderedContentMap[url] = content
             }
           }
         }
@@ -148,19 +183,16 @@ module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
             return viteMiddlewareServer.middlewares(req, res, next)
           },
           async function viteTransformMiddleware(req, res, next) {
-            const page = urlToRenderedContentMap[req.url]
-            if (page) {
-              const { content, outputPath } = page
+            const content = urlToRenderedContentMap[req.url]
+            if (content) {
               res.setHeader('Content-Type', 'text/html')
               res.write(
                 await applyViteHtmlTransform({
                   content,
-                  outputPath,
+                  componentLookupId: { type: 'url', id: req.url },
                   componentAttrStore,
                   renderers: userSlinkityConfig.renderers,
-                  dir,
                   viteSSR,
-                  environment,
                 }),
               )
               res.end()
@@ -195,10 +227,7 @@ module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
               .replace(/.html$/, '')
               .replace(/index$/, ''),
           )
-          urlToRenderedContentMap[formattedAsUrl] = {
-            outputPath,
-            content,
-          }
+          urlToRenderedContentMap[formattedAsUrl] = content
           return content
         },
       )
@@ -213,19 +242,16 @@ module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
             return viteMiddlewareServer.middlewares(req, res, next)
           },
           async function viteTransformMiddleware(req, res, next) {
-            const page = urlToRenderedContentMap[toSlashesTrimmed(req.url)]
-            if (page) {
-              const { content, outputPath } = page
+            const content = urlToRenderedContentMap[toSlashesTrimmed(req.url)]
+            if (content) {
               res.setHeader('Content-Type', 'text/html')
               res.write(
                 await applyViteHtmlTransform({
                   content,
-                  outputPath,
+                  componentLookupId: { type: 'url', id: req.url },
                   componentAttrStore,
                   renderers: userSlinkityConfig.renderers,
-                  dir,
                   viteSSR,
-                  environment,
                 }),
               )
               res.end()
@@ -242,12 +268,10 @@ module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
     eleventyConfig.addTransform('apply-vite', async function (content, outputPath) {
       return await applyViteHtmlTransform({
         content,
-        outputPath,
+        componentLookupId: { type: 'outputPath', id: outputPath },
         componentAttrStore,
         renderers: userSlinkityConfig.renderers,
-        dir,
         viteSSR,
-        environment,
       })
     })
     eleventyConfig.on('afterBuild', async function viteProductionBuild() {
