@@ -26,7 +26,7 @@ npm i --save-dev slinkity @11ty/eleventy
 
 ### Apply Slinkity as a plugin
 
-Slinkity is an [11ty plugin](https://www.11ty.dev/docs/plugins/) you can add to your existing 11ty config. You can apply the plugin along with our config helper like so:
+Slinkity is an [11ty plugin](https://www.11ty.dev/docs/plugins/) you can add and configure in your existing 11ty config:
 
 ```js
 // .eleventy.js or eleventy.config.js
@@ -34,8 +34,8 @@ const slinkity = require('slinkity')
 
 module.exports = function(eleventyConfig) {
   eleventyConfig.addPlugin(slinkity.plugin, slinkity.defineConfig({
-    // optional: use slinkity.defineConfig for some handy autocomplete
-    // of config options in your editor
+    // optional: use slinkity.defineConfig
+    // for some handy autocomplete in your editor
   }))
 }
 ```
