@@ -48,6 +48,7 @@
   "devDependencies": {
     "@babel/core": "^7.15.0",
     "@babel/preset-env": "^7.15.0",
+    "@changesets/cli": "^2.22.0",
     "@types/jest": "^27.4.1",
     "babel-jest": "^27.1.0",
     "eslint": "^7.32.0",
@@ -78,7 +79,9 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "www:build": "npm -C www run build",
-    "www:dev": "npm -C www run dev"
+    "www:dev": "npm -C www run dev",
+    "changeset": "changeset",
+    "changeset:publish": "changeset publish"
   },
   "jest": {
     "roots": [
