@@ -113,11 +113,9 @@ permalink: /sitemap.xml
 ---
 ```
 
-When _plain_ 11ty builds your site, it processes this template file and spits out a file named `_site/sitemap.xml`.
+⚠️ **This won't work in Slinkity production builds!** Remember that Vite will post-process everything built by 11ty. In this example, Vite will:
 
-⚠️ **This won't work in Slinkity production builds!** Since we build to a temporary output, the sitemap will get written to `.11ty-build-<hash>/sitemap.xml`. In the follow-up steps, Vite will:
-
-1. Process this temporary build directory.
+1. Process the 11ty build directory.
 2. See that a) `sitemap.xml` is not referenced by any other file and b) isn't in the dedicated `public` folder.
 3. Exclude it from the final output that it writes to `_site`.
 
@@ -134,8 +132,8 @@ permalink: /public/sitemap.xml
 
 Now this happens:
 
-1. 11ty processes the template and writes it to a `public` folder: `.11ty-build-<hash>/public/sitemap.xml`.
-2. Vite sees the `public` folder and copies it into your final build output directory, giving you `_site/sitemap.xml`. Note that the nested `/public` directory disappears from the final build output!
+1. 11ty processes the template and writes it to a `public` folder: `_site/public/sitemap.xml`.
+2. Vite sees this `public` folder and copies it into your final build output directory, giving you `_site/sitemap.xml`. Note that the nested `/public` directory disappears from the final build output!
 
 ### Scenario 2: Passthrough-copied files
 
@@ -178,4 +176,4 @@ module.exports = function(eleventyConfig) {
 }
 ```
 
-Note that the `public` directory should be **at the root level of your passthrough copy**.
+Note that the `public` directory should be **at the root level of your project**.
