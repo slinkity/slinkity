@@ -79,7 +79,9 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "www:build": "npm -C www run build",
-    "www:dev": "npm -C www run dev"
+    "www:dev": "npm -C www run dev",
+    "changeset": "changeset",
+    "changeset:publish": "changeset publish"
   },
   "jest": {
     "roots": [
