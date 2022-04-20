@@ -34,24 +34,28 @@ styles:
   <main class="docs__container">
     <ul class="docs__side-nav  is-hidden" role="list" data-menu>
       <li>
-        <span class="category">{{ navLinksSorted.guides.label }}</span>
-        <ul role="list">
-          {%- for link in navLinksSorted.guides.links -%}
-            <li>
-              <a href="{{ link.href }}" {% if link.href === page.url %}aria-current="page"{% endif %}>{{ link.title }}</a>
-            </li>
-          {%- endfor -%}
-        </ul>
+        <nav aria-labelledby="side-nav-links-guides">
+          <span class="category" id="side-nav-links-guides">{{ navLinksSorted.guides.label }}</span>
+          <ul role="list">
+            {%- for link in navLinksSorted.guides.links -%}
+              <li>
+                <a href="{{ link.href }}" {% if link.href === page.url %}aria-current="page"{% endif %}>{{ link.title }}</a>
+              </li>
+            {%- endfor -%}
+          </ul>
+        </nav>
       </li>
       <li>
-        <span class="category">{{ navLinksSorted.reference.label }}</span>
-        <ul role="list">
-          {%- for link in navLinksSorted.reference.links -%}
-            <li>
-              <a href="{{ link.href }}" {% if link.href === page.url %}aria-current="page"{% endif %}>{{ link.title }}</a>
-            </li>
-          {%- endfor -%}
-        </ul>
+        <nav aria-labelledby="side-nav-links-references">
+          <span class="category" id="side-nav-links-references">{{ navLinksSorted.reference.label }}</span>
+          <ul role="list">
+            {%- for link in navLinksSorted.reference.links -%}
+              <li>
+                <a href="{{ link.href }}" {% if link.href === page.url %}aria-current="page"{% endif %}>{{ link.title }}</a>
+              </li>
+            {%- endfor -%}
+          </ul>
+        </nav>
       </li>
     </ul>
     <div class="docs__toc  toc-container">
