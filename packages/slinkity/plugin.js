@@ -40,6 +40,11 @@ function applyDefaultDirs(dir = {}) {
 // to reference an old store if we init that store inside the plugin
 const componentAttrStore = toComponentAttrStore()
 
+// Similar problem with our Vite middleware server.
+// Store as a global to use the same middleware across environments
+/** @type {import('./@types').ViteSSR} */
+let viteSSR = null
+
 /**
  * @param {any} eleventyConfig
  * @param {import('./@types').UserSlinkityConfig} userSlinkityConfig
@@ -57,11 +62,13 @@ module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
   /** @type {{ dir: import('./@types').Dir }} */
   const dir = applyDefaultDirs(eleventyConfig.dir)
   const importAliases = getResolvedImportAliases(dir)
-  const viteSSR = toViteSSR({
-    dir,
-    environment,
-    userSlinkityConfig,
-  })
+  if (!viteSSR) {
+    viteSSR = toViteSSR({
+      dir,
+      environment,
+      userSlinkityConfig,
+    })
+  }
 
   /** @type {import('./eleventyConfig/handleTemplateExtensions').ExtensionMeta[]} */
   const ignoredFromRenderers = userSlinkityConfig.renderers.flatMap((renderer) =>
@@ -116,7 +123,9 @@ module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
     let viteMiddlewareServer = null
 
     eleventyConfig.on('beforeBuild', async () => {
-      componentAttrStore.clear()
+      // TODO: separate static vs serverless stores
+      // to avoid clearing problem
+      // componentAttrStore.clear()
       if (!viteSSR.getServer()) {
         await viteSSR.createServer()
       }
@@ -180,7 +189,7 @@ module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
             // Some Vite server middlewares are missing content types
             // Set to text/plain as a safe default
             res.setHeader('Content-Type', 'text/plain')
-            return viteMiddlewareServer.middlewares(req, res, next)
+            viteMiddlewareServer.middlewares(req, res, next)
           },
           async function viteTransformMiddleware(req, res, next) {
             const content = urlToRenderedContentMap[req.url]
