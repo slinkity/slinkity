@@ -26,7 +26,7 @@ function isSupportedOutputPath(outputPath) {
  * Extracted from applyViteHtmlTransform for unit testing!
  * @typedef HandleSSRCommentsParams
  * @property {string} content - the original HTML content to transform
- * @property {import('./componentAttrStore').ComponentLookupId} componentLookupId - identifier to lookup components from componentAttrStore
+ * @property {string} componentLookupId - identifier to lookup components from componentAttrStore
  * @property {import('./componentAttrStore').ComponentAttrStore} componentAttrStore
  * @property {import('../@types').ViteSSR} viteSSR
  * @property {import('../@types').Renderer[]} renderers
@@ -140,7 +140,7 @@ async function handleSSRComments({
 /**
  * @typedef ApplyViteHtmlTransformParams
  * @property {string} content - the original HTML content to transform
- * @property {import('./componentAttrStore').ComponentLookupId} componentLookupId - identifier to lookup components from componentAttrStore
+ * @property {string} componentLookupId - identifier to lookup components from componentAttrStore
  * @property {import('./componentAttrStore').ComponentAttrStore} componentAttrStore
  * @property {import('../@types').Renderer[]} renderers
  * @property {import('../@types').ViteSSR} viteSSR
@@ -162,8 +162,8 @@ async function applyViteHtmlTransform({
     renderers,
   })
   const server = viteSSR.getServer()
-  if (server && componentLookupId.type === 'url') {
-    return server.transformIndexHtml(componentLookupId.id, html)
+  if (server) {
+    return server.transformIndexHtml(componentLookupId, html)
   } else {
     return html
   }

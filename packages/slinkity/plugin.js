@@ -38,7 +38,8 @@ function applyDefaultDirs(dir = {}) {
 // in serverless, 11ty evaluates the plugin *twice* while attaching
 // shortcodes and page extensions *once.* This causes all shortcodes / extensions
 // to reference an old store if we init that store inside the plugin
-const componentAttrStore = toComponentAttrStore()
+/** @type {import('./eleventyConfig/componentAttrStore').ComponentAttrStore} */
+let componentAttrStore = null
 
 // Similar problem with our Vite middleware server.
 // Store as a global to use the same middleware across environments
@@ -67,6 +68,12 @@ module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
       dir,
       environment,
       userSlinkityConfig,
+    })
+  }
+
+  if (!componentAttrStore) {
+    componentAttrStore = toComponentAttrStore({
+      lookupType: environment === 'development' ? 'url' : 'outputPath',
     })
   }
 
@@ -153,7 +160,7 @@ module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
       if (serverlessUrl) {
         return await applyViteHtmlTransform({
           content,
-          componentLookupId: { type: 'url', id: serverlessUrl },
+          componentLookupId: serverlessUrl,
           componentAttrStore,
           renderers: userSlinkityConfig.renderers,
           viteSSR,
@@ -198,7 +205,7 @@ module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
               res.write(
                 await applyViteHtmlTransform({
                   content,
-                  componentLookupId: { type: 'url', id: req.url },
+                  componentLookupId: req.url,
                   componentAttrStore,
                   renderers: userSlinkityConfig.renderers,
                   viteSSR,
@@ -257,7 +264,7 @@ module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
               res.write(
                 await applyViteHtmlTransform({
                   content,
-                  componentLookupId: { type: 'url', id: req.url },
+                  componentLookupId: req.url,
                   componentAttrStore,
                   renderers: userSlinkityConfig.renderers,
                   viteSSR,
@@ -277,7 +284,7 @@ module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
     eleventyConfig.addTransform('apply-vite', async function (content, outputPath) {
       return await applyViteHtmlTransform({
         content,
-        componentLookupId: { type: 'outputPath', id: outputPath },
+        componentLookupId: outputPath,
         componentAttrStore,
         renderers: userSlinkityConfig.renderers,
         viteSSR,
