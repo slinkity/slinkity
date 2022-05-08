@@ -28,8 +28,9 @@
  * @returns {ComponentAttrStore}
  */
 function toComponentAttrStore({ lookupType }) {
-  /** @type {Record<string, ComponentAttrs[]>} */
-  let componentAttrStore = {}
+  /** @type {Record<string, Record<string, ComponentAttrs[]>>} */
+  let componentAttrStoreByEnv = {}
+  let env = ''
 
   /**
    * Add a new item to the store, and receive an index used for later get() calls
@@ -40,11 +41,14 @@ function toComponentAttrStore({ lookupType }) {
     const { pageOutputPath, pageUrl } = componentAttrs
     const pageId = lookupType === 'outputPath' ? pageOutputPath : pageUrl
 
-    if (!componentAttrStore[pageId]) {
-      componentAttrStore[pageId] = []
+    if (!componentAttrStoreByEnv[env]) {
+      componentAttrStoreByEnv[env] = {}
     }
-    const id = componentAttrStore[pageId].length
-    componentAttrStore[pageId].push({ ...componentAttrs, id })
+    if (!componentAttrStoreByEnv[env][pageId]) {
+      componentAttrStoreByEnv[env][pageId] = []
+    }
+    const id = componentAttrStoreByEnv[env][pageId].length
+    componentAttrStoreByEnv[env][pageId].push({ ...componentAttrs, id })
 
     return id
   }
@@ -55,7 +59,7 @@ function toComponentAttrStore({ lookupType }) {
    * @returns {ComponentAttrs[]} list of attributes for all components on the page
    */
   function getAllByPage(id) {
-    return componentAttrStore[id] ?? []
+    return componentAttrStoreByEnv[env][id] ?? []
   }
 
   /**
@@ -63,13 +67,16 @@ function toComponentAttrStore({ lookupType }) {
    * Should be used to reset between builds
    */
   function clear() {
-    componentAttrStore = {}
+    componentAttrStoreByEnv[env] = {}
   }
 
   return {
     push,
     getAllByPage,
     clear,
+    setEnv(newEnv) {
+      env = newEnv
+    },
   }
 }
 

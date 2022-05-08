@@ -50,8 +50,10 @@ let viteSSR = null
  * @param {any} eleventyConfig
  * @param {import('./@types').UserSlinkityConfig} userSlinkityConfig
  */
-module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
+module.exports.plugin = function slinkityPlugin(eleventyConfig, userSlinkityConfig) {
   const isEleventyV2 = typeof eleventyConfig.setServerOptions === 'function'
+  // arbitrary value for v1 deploys
+  let env = 'default'
 
   /** @type {import('./@types').Environment} */
   const environment = process.argv
@@ -101,6 +103,11 @@ module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
     eleventyConfig.ignores.add(ignored)
   }
 
+  eleventyConfig.on('eleventy.env', function (eleventyEnv) {
+    env = eleventyEnv.root
+    componentAttrStore.setEnv(env)
+  })
+
   eleventyConfig.addGlobalData('__slinkity', {
     head: SLINKITY_HEAD_STYLES,
   })
@@ -130,9 +137,7 @@ module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
     let viteMiddlewareServer = null
 
     eleventyConfig.on('beforeBuild', async () => {
-      // TODO: separate static vs serverless stores
-      // to avoid clearing problem
-      // componentAttrStore.clear()
+      componentAttrStore.clear()
       if (!viteSSR.getServer()) {
         await viteSSR.createServer()
       }
@@ -199,6 +204,7 @@ module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
             viteMiddlewareServer.middlewares(req, res, next)
           },
           async function viteTransformMiddleware(req, res, next) {
+            componentAttrStore.setEnv(env)
             const content = urlToRenderedContentMap[req.url]
             if (content) {
               res.setHeader('Content-Type', 'text/html')
