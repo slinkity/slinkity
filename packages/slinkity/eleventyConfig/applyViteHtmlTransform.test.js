@@ -1,4 +1,4 @@
-const { applyViteHtmlTransform, handleSSRComments } = require('./applyViteHtmlTransform')
+const { handleSSRComments } = require('./applyViteHtmlTransform')
 const { toComponentAttrStore } = require('./componentAttrStore')
 const { SLINKITY_HEAD_STYLES, toSSRComment } = require('../utils/consts')
 
@@ -36,24 +36,6 @@ function toTemplateString({ content, head }) {
 }
 
 describe('applyViteHtmlTransform', () => {
-  const environments = ['production', 'development']
-  it.each(environments)(
-    'should not try and parse files that are not html for %s',
-    async (environment) => {
-      const componentAttrStore = toComponentAttrStore({
-        lookupType: environment === 'development' ? 'url' : 'outputPath',
-      })
-      const content = '<?xml version="1.0" encoding="utf-8"?>'
-      const actual = await applyViteHtmlTransform({
-        content,
-        componentLookupId: 'feed.xml',
-        componentAttrStore,
-        renderers: [],
-        viteSSR: { getServer: () => {} },
-      })
-      expect(actual).toBe(content)
-    },
-  )
   describe('handleSSRComments', () => {
     const outputPath = '/handle/ssr/comments.html'
     /** @type {import('../@types').Renderer[]} */
