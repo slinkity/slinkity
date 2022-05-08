@@ -23,6 +23,7 @@
  *  getAllByPage: (id: string) => ComponentAttrs[];
  *  push: (componentAttrs: ComponentAttrs) => number;
  *  clear: () => void;
+ *  setEnv: (newEnv: string) => void;
  * }} ComponentAttrStore
  * @param {ComponentAttrStoreParams} params
  * @returns {ComponentAttrStore}
@@ -70,13 +71,20 @@ function toComponentAttrStore({ lookupType }) {
     componentAttrStoreByEnv[env] = {}
   }
 
+  /**
+   * Set environment based on eleventy.env event
+   * Used to namespace component stores for correct "clear" behavior
+   * @param {string} newEnv
+   */
+  function setEnv(newEnv) {
+    env = newEnv
+  }
+
   return {
     push,
     getAllByPage,
     clear,
-    setEnv(newEnv) {
-      env = newEnv
-    },
+    setEnv,
   }
 }
 
