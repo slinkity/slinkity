@@ -1,10 +1,10 @@
-const { applyViteHtmlTransform, handleSSRComments } = require('./applyViteHtmlTransform')
+const { handleSSRComments } = require('./applyViteHtmlTransform')
 const { toComponentAttrStore } = require('./componentAttrStore')
 const { SLINKITY_HEAD_STYLES, toSSRComment } = require('../utils/consts')
 
 /** @param {Partial<import('./componentAttrStore').ComponentAttrs>[]} componentAttrs */
 function toComponentAttrsWithDefaults(componentAttrs) {
-  const componentAttrStore = toComponentAttrStore()
+  const componentAttrStore = toComponentAttrStore({ lookupType: 'outputPath' })
   for (const componentAttr of componentAttrs) {
     componentAttrStore.push({
       path: 'not-important.jsx',
@@ -12,6 +12,7 @@ function toComponentAttrsWithDefaults(componentAttrs) {
       loader: 'onClientLoad',
       props: {},
       pageOutputPath: 'default.html',
+      pageUrl: '/default/',
       rendererName: 'react',
       ...componentAttr,
     })
@@ -35,21 +36,6 @@ function toTemplateString({ content, head }) {
 }
 
 describe('applyViteHtmlTransform', () => {
-  const environments = ['production', 'development']
-  it.each(environments)(
-    'should not try and parse files that are not html for %s',
-    async (environment) => {
-      const componentAttrStore = toComponentAttrStore()
-      const content = '<?xml version="1.0" encoding="utf-8"?>'
-      const actual = await applyViteHtmlTransform({
-        content,
-        outputPath: 'feed.xml',
-        componentAttrStore,
-        environment,
-      })
-      expect(actual).toBe(content)
-    },
-  )
   describe('handleSSRComments', () => {
     const outputPath = '/handle/ssr/comments.html'
     /** @type {import('../@types').Renderer[]} */
@@ -126,6 +112,7 @@ describe('applyViteHtmlTransform', () => {
       Object.entries(componentPathsToMeta).map(([componentPath, { rendererName }]) => ({
         path: componentPath,
         pageOutputPath: outputPath,
+        pageUrl: outputPath.replace('.html', ''),
         rendererName,
       })),
     )
@@ -134,7 +121,7 @@ describe('applyViteHtmlTransform', () => {
       const content = toTemplateString({ head: SLINKITY_HEAD_STYLES })
       const actual = await handleSSRComments({
         content,
-        outputPath,
+        componentLookupId: outputPath,
         componentAttrStore,
         viteSSR,
         renderers,
@@ -151,7 +138,7 @@ describe('applyViteHtmlTransform', () => {
       })
       const actual = await handleSSRComments({
         content,
-        outputPath,
+        componentLookupId: outputPath,
         componentAttrStore,
         viteSSR,
         renderers,
@@ -176,7 +163,7 @@ describe('applyViteHtmlTransform', () => {
 
       const actual = await handleSSRComments({
         content,
-        outputPath,
+        componentLookupId: outputPath,
         componentAttrStore,
         viteSSR,
         renderers,
@@ -207,7 +194,7 @@ describe('applyViteHtmlTransform', () => {
 
       const actual = await handleSSRComments({
         content,
-        outputPath,
+        componentLookupId: outputPath,
         componentAttrStore,
         viteSSR,
         renderers,

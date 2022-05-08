@@ -12,21 +12,26 @@
  * @property {string} children - stringified HTML children
  * @property {string} loader - name of component loader for rendering or hydration
  * @property {boolean} isSSR - whether or not to SSR
- * @property {string} pageOutputPath - the page where this component lives, based on 11ty's inputPath property (ex. src/index.html)
+ * @property {string} pageOutputPath - the page where this component lives, based on 11ty's page.outputPath property (ex. _site/about.html)
+ * @property {string} pageUrl - the output URL where this component is served, based on 11ty's page.url property (ex. /about/)
  * @property {ID} id - a unique identifier for later retrieval from the store
  *
+ * @typedef ComponentAttrStoreParams
+ * @property {'url' | 'outputPath'} lookupType
+ *
  * @typedef {{
- *  getAllByPage: (pageOutputPath: string) => ComponentAttrs[];
+ *  getAllByPage: (id: string) => ComponentAttrs[];
  *  push: (componentAttrs: ComponentAttrs) => number;
  *  clear: () => void;
+ *  setEnv: (newEnv: string) => void;
  * }} ComponentAttrStore
+ * @param {ComponentAttrStoreParams} params
  * @returns {ComponentAttrStore}
  */
-function toComponentAttrStore() {
-  /**
-   * @type {Record<string, ComponentAttrs[]>}
-   */
-  let componentAttrStore = {}
+function toComponentAttrStore({ lookupType }) {
+  /** @type {Record<string, Record<string, ComponentAttrs[]>>} */
+  let componentAttrStoreByEnv = {}
+  let env = ''
 
   /**
    * Add a new item to the store, and receive an index used for later get() calls
@@ -34,22 +39,28 @@ function toComponentAttrStore() {
    * @returns {string} the id of the new componentAttrs entry
    */
   function push(componentAttrs) {
-    const { pageOutputPath } = componentAttrs
-    if (!componentAttrStore[pageOutputPath]) {
-      componentAttrStore[pageOutputPath] = []
+    const { pageOutputPath, pageUrl } = componentAttrs
+    const pageId = lookupType === 'outputPath' ? pageOutputPath : pageUrl
+
+    if (!componentAttrStoreByEnv[env]) {
+      componentAttrStoreByEnv[env] = {}
     }
-    const id = `${componentAttrStore[pageOutputPath].length}`
-    componentAttrStore[pageOutputPath].push({ ...componentAttrs, id })
+    if (!componentAttrStoreByEnv[env][pageId]) {
+      componentAttrStoreByEnv[env][pageId] = []
+    }
+    const id = componentAttrStoreByEnv[env][pageId].length
+    componentAttrStoreByEnv[env][pageId].push({ ...componentAttrs, id })
+
     return id
   }
 
   /**
    * Get attributes for all components on a given page
-   * @param {string} pageOutputPath - the page where these components live, based on 11ty's outputPath property (ex. _site/index.html)
+   * @param {string} id - either the url or outputPath where this page is served, depending on the lookupType
    * @returns {ComponentAttrs[]} list of attributes for all components on the page
    */
-  function getAllByPage(pageOutputPath) {
-    return componentAttrStore[pageOutputPath] ?? []
+  function getAllByPage(id) {
+    return componentAttrStoreByEnv[env][id] ?? []
   }
 
   /**
@@ -57,13 +68,23 @@ function toComponentAttrStore() {
    * Should be used to reset between builds
    */
   function clear() {
-    componentAttrStore = {}
+    componentAttrStoreByEnv[env] = {}
+  }
+
+  /**
+   * Set environment based on eleventy.env event
+   * Used to namespace component stores for correct "clear" behavior
+   * @param {string} newEnv
+   */
+  function setEnv(newEnv) {
+    env = newEnv
   }
 
   return {
     push,
     getAllByPage,
     clear,
+    setEnv,
   }
 }
 

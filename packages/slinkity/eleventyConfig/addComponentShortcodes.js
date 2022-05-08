@@ -161,5 +161,6 @@ See our docs for more: https://slinkity.dev/docs/component-shortcodes`)
     loader: props.renderWithoutSSR ?? props.hydrate ?? 'none',
     children,
     pageOutputPath: page.outputPath,
+    pageUrl: page.url,
   }
 }
