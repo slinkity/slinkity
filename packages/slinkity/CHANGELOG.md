@@ -1,5 +1,11 @@
 # slinkity
 
+## 0.8.3
+
+### Patch Changes
+
+- bc4135e: Fix: only apply `text/plain` content type to Vite middleware, not user assets
+
 ## 0.8.2
 
 ### Patch Changes
