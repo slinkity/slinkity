@@ -142,9 +142,11 @@ module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
         domdiff: false,
         middleware: [
           (req, res, next) => {
-            // Some Vite server middlewares are missing content types
-            // Set to text/plain as a safe default
-            res.setHeader('Content-Type', 'text/plain')
+            // __vite-ping lacks a content type,
+            // which breaks 11ty's serverless response handler
+            if (req.url.endsWith('__vite_ping')) {
+              res.setHeader('Content-Type', 'text/plain')
+            }
             return viteMiddlewareServer.middlewares(req, res, next)
           },
           async function viteTransformMiddleware(req, res, next) {
@@ -206,10 +208,12 @@ module.exports.plugin = function plugin(eleventyConfig, userSlinkityConfig) {
       eleventyConfig.setBrowserSyncConfig({
         snippet: false,
         middleware: [
-          async (req, res, next) => {
-            // Some Vite server middlewares are missing content types
-            // Set to text/plain as a safe default
-            res.setHeader('Content-Type', 'text/plain')
+          (req, res, next) => {
+            // __vite-ping lacks a content type,
+            // which breaks 11ty's serverless response handler
+            if (req.url.endsWith('__vite_ping')) {
+              res.setHeader('Content-Type', 'text/plain')
+            }
             return viteMiddlewareServer.middlewares(req, res, next)
           },
           async function viteTransformMiddleware(req, res, next) {
