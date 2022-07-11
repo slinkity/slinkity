@@ -7,11 +7,11 @@
 
 > 🚧 **This project is heavily under construction!** 🚧 As excited as you may be, we don't recommend this early alpha for production use. Still, give it a try if you want to have some fun and don't mind [logging bugs](https://github.com/slinkity/slinkity/issues) along the way :)
 
-Slinkity is the simplest way to handle styles and component frameworks on your 11ty site. Once installed, this:
+[Slinkity](https://slinkity.dev) is the simplest way to handle styles and component frameworks on your 11ty site. Once installed, this:
 
 - 🚀 **Unlocks component frameworks** like React for writing page templates and layout templates. Turn an existing `.html` or `.liquid` file into a `.jsx` file, and you're off to the componentized races.
 - 🔖 **Includes powerful shortcodes** to insert components into existing pages. Add a line like this to your markdown, HTML, Nunjucks, etc, and watch the magic happen: `{% react 'path/to/component' %}`
-- 💧 **Hydrates these components** when and how you want. Use component frameworks as a static template to start, and opt-in to shipping JS as needed with our [partial hydration helpers](/docs/partial-hydration).
+- 💧 **Hydrates these components** when and how you want. Use component frameworks as a static template to start, and opt-in to shipping JS as needed with our [partial hydration helpers](https://slinkity.dev/docs/partial-hydration/).
 - 💅 **Bundles all your resources** with the power of Vite. Use your favorite CSS preprocessor, JS minifier, and more with minimal config.
 
 ### [📣 Find our full announcement post here →](https://slinkity.dev)
