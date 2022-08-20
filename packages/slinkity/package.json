@@ -59,16 +59,13 @@
   "bugs": "https://github.com/slinkity/slinkity/issues",
   "dependencies": {
     "chalk": "4.1.2",
-    "commander": "^5.1.0",
     "devalue": "^2.0.1",
     "esbuild": "^0.12.29",
     "fs-extra": "^10.1.0",
     "glob": "^7.1.7",
     "javascript-stringify": "^2.1.0",
-    "require-from-string": "^2.0.2",
-    "sass": "^1.36.0",
     "uuid": "^8.3.2",
-    "vite": "^2.7.10"
+    "vite": "^3.0.9"
   },
   "peerDependencies": {
     "@11ty/eleventy": "^2.0.0-canary.15"
