@@ -6,14 +6,22 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
+
+  <script type="module">
+    import '@11ty/is-land'
+  </script>
 </head>
 
 <body>
   <h1>Title</h1>
   <p>Hey there!!!</p>
   {% serverOnlyIsland 'test.jsx' %}
-    {% prop 'test', 2 %}
+    {% prop 'test', 5 %}
   {% endserverOnlyIsland %}
+  <hr style="margin-top: 100vh" />
+  {% clientOnlyIsland 'Counter.jsx', 'on:visible' %}
+    {% prop 'initialCount', 3 %}
+  {% endclientOnlyIsland %}
 </body>
 
 </html>
