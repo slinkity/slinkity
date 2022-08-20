@@ -36,12 +36,11 @@ module.exports = function slinkityPlugin(eleventyConfig) {
 
   eleventyConfig.on('eleventy.after', async function ({ results, runMode }) {
     if (runMode === 'serve') {
-      for (let { content, inputPath, outputPath, url } of results) {
+      for (let { content, inputPath, url } of results) {
         // used for serving content within dev server middleware
         urlToRenderedContentMap.set(url, {
           content,
           inputPath,
-          outputPath,
         })
       }
     }
@@ -89,6 +88,7 @@ module.exports = function slinkityPlugin(eleventyConfig) {
     domdiff: false,
     async setup() {
       viteServer = await vite.createServer({
+        root: '_site',
         clearScreen: false,
         appType: 'custom',
         server: {
