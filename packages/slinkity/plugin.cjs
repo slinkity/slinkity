@@ -71,6 +71,25 @@ module.exports = function slinkityPlugin(eleventyConfig, unresolvedUserConfig) {
       ssrMatches.map(async ([, islandId]) => {
         if (islands[islandId]) {
           const { islandPath, propIds } = islands[islandId]
+          const islandExt = path.extname(islandPath).replace(/^\./, '')
+          if (!islandExt) {
+            throw new Error(
+              `Missing file extension on ${JSON.stringify(islandRenderer)} in ${JSON.stringify(
+                inputPath,
+              )}! Please add a file extension, like ${JSON.stringify(
+                `${islandPath}.${extToRendererMap.keys()[0] ?? 'jsx'}`,
+              )})`,
+            )
+          }
+          const islandRenderer = extToRendererMap.get(islandExt)
+          if (!islandRenderer?.ssr) {
+            throw new Error(
+              `No SSR renderer found for ${JSON.stringify(islandPath)} in ${JSON.stringify(
+                inputPath,
+              )}! Please add a render to your Slinkity plugin config. See https://slinkity.dev/docs/component-shortcodes/#prerequisites for more.`,
+            )
+          }
+          const Component = await viteServer.ssrLoadModule(islandPath)
 
           const propsById = propsByInputPath.get(inputPath)?.props ?? {}
           const props = {}
@@ -79,10 +98,9 @@ module.exports = function slinkityPlugin(eleventyConfig, unresolvedUserConfig) {
             props[name] = value
           }
 
-          // const islandModule = await viteServer.ssrLoadModule(islandPath)
           // TODO: support slots
-          const ssrContent = `Rendered ${islandPath} successfully! ${JSON.stringify(props)}`
-          ssrContentByIslandId.set(islandId, ssrContent)
+          const { html } = islandRenderer.ssr({ Component, props })
+          ssrContentByIslandId.set(islandId, html)
         } else {
           throw new SlinkityInternalError(`Failed to find island for SSR with id "${islandId}"`)
         }
