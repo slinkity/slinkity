@@ -128,6 +128,21 @@ module.exports = function slinkityPlugin(eleventyConfig, unresolvedUserConfig) {
         server: {
           middlewareMode: true,
         },
+        plugins: [
+          {
+            name: 'vite-plugin-slinkity-inject-head',
+            transformIndexHtml() {
+              // TODO: only inject when client-side islands are used
+              return [
+                {
+                  tag: 'script',
+                  attrs: { type: 'module' },
+                  children: "import '/@id/slinkity/client';",
+                },
+              ]
+            },
+          },
+        ],
       }
 
       for (const renderer of userConfig.renderers) {

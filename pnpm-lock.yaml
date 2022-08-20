@@ -100,6 +100,7 @@ importers:
   packages/slinkity:
     specifiers:
       '@11ty/eleventy': 2.0.0-canary.15
+      '@11ty/is-land': ^1.0.0
       chalk: 4.1.2
       devalue: ^2.0.1
       esbuild: ^0.12.29
@@ -118,6 +119,7 @@ importers:
       vite: ^3.0.9
       zod: ^3.18.0
     dependencies:
+      '@11ty/is-land': 1.0.0
       chalk: 4.1.2
       devalue: 2.0.1
       esbuild: 0.12.29

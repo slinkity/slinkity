@@ -6,7 +6,8 @@
   "main": "index.cjs",
   "types": "index.d.ts",
   "exports": {
-    ".": "./index.cjs"
+    ".": "./index.cjs",
+    "./client": "./client.mjs"
   },
   "homepage": "https://slinkity.dev",
   "author": {
@@ -50,6 +51,7 @@
   },
   "bugs": "https://github.com/slinkity/slinkity/issues",
   "dependencies": {
+    "@11ty/is-land": "^1.0.0",
     "chalk": "4.1.2",
     "devalue": "^2.0.1",
     "esbuild": "^0.12.29",
