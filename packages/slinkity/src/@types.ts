@@ -29,11 +29,14 @@ export type RenderedContent = {
 
 export type UrlToRenderedContentMap = Map<PageUrl, RenderedContent>;
 
+export type ExtToRendererMap = Map<string, Renderer>;
+
 export type PluginGlobals = {
   viteServer: ViteDevServer;
   propsByInputPath: PropsByInputPath;
   ssrIslandsByInputPath: SsrIslandsByInputPath;
   urlToRenderedContentMap: UrlToRenderedContentMap;
+  extToRendererMap: ExtToRendererMap;
 }
 
 export type SlinkityStore = <T>(initialValue: T, options: never) => {

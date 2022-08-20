@@ -6,6 +6,7 @@ const {
   toSsrComment,
   toClientPropsPathFromOutputPath,
   SlinkityInternalError,
+  toIslandExt,
 } = require('./utils.cjs')
 const { defineConfig } = require('./defineConfig.cjs')
 const shortcodes = require('./shortcodes.cjs')
@@ -29,6 +30,7 @@ module.exports = function slinkityPlugin(eleventyConfig, unresolvedUserConfig) {
 
   const userConfig = defineConfig(unresolvedUserConfig)
 
+  /** @type {import('./@types').ExtToRendererMap} */
   const extToRendererMap = new Map(
     userConfig.renderers
       .map((renderer) => renderer.extensions.map((ext) => [ext, renderer]))
@@ -53,7 +55,11 @@ module.exports = function slinkityPlugin(eleventyConfig, unresolvedUserConfig) {
     }
   })
 
-  shortcodes(eleventyConfig, userConfig, { ssrIslandsByInputPath, propsByInputPath })
+  shortcodes(eleventyConfig, userConfig, {
+    ssrIslandsByInputPath,
+    propsByInputPath,
+    extToRendererMap,
+  })
 
   /**
    * Replace SSR comments with rendered component content
@@ -71,7 +77,7 @@ module.exports = function slinkityPlugin(eleventyConfig, unresolvedUserConfig) {
       ssrMatches.map(async ([, islandId]) => {
         if (islands[islandId]) {
           const { islandPath, propIds } = islands[islandId]
-          const islandExt = path.extname(islandPath).replace(/^\./, '')
+          const islandExt = toIslandExt(islandPath)
           if (!islandExt) {
             throw new Error(
               `Missing file extension on ${JSON.stringify(islandRenderer)} in ${JSON.stringify(

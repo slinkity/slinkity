@@ -57,11 +57,62 @@ function toClientPropsPathFromOutputPath(outputPath, outputDir) {
   return vite.normalizePath(path.join('/_props', relativeOutput.replace(/\.\w+$/, '.mjs')))
 }
 
+/**
+ * Return file extension for a given path without leading "." (i.e. "jsx")
+ * @param {string} islandPath
+ * @returns {string}
+ */
+function toIslandExt(islandPath) {
+  return path.extname(islandPath).replace(/^\./, '')
+}
+
+function toClientScript({
+  islandId,
+  islandPath,
+  loadConditions,
+  clientPropsPath,
+  clientRendererPath,
+  isClientOnly,
+  propIds,
+}) {
+  return `
+  <is-land ${loadConditions.join(' ')}>
+    <script type="module/island">
+      import Component from ${JSON.stringify(islandPath)};
+      import render from ${JSON.stringify('/@id/' + clientRendererPath)};
+
+      const target = document.querySelector('slinkity-root[data-root-id=${JSON.stringify(
+        islandId,
+      )}]');
+      ${
+        propIds.size
+          ? `
+      import propsById from ${JSON.stringify(clientPropsPath)};
+      const props = {};
+      for (let propId of ${JSON.stringify([...propIds])}) {
+        const { name, value } = propsById[propId];
+        props[name] = value;
+      }
+      `
+          : `
+      const props = {};
+      `
+      }
+      render({ Component, target, props, isClientOnly: ${JSON.stringify(isClientOnly)} });
+    </script>
+    <slinkity-root data-root-id=${JSON.stringify(islandId)}>
+      ${isClientOnly ? '' : toSsrComment(islandId)}
+    </slinkity-root>
+  </is-land>`
+}
+
 module.exports = {
   toPropComment,
   toSsrComment,
   toResolvedIslandPath,
+  toIslandExt,
   extractPropIdsFromHtml,
   toClientPropsPathFromOutputPath,
+  toClientScript,
   SlinkityInternalError,
 }
