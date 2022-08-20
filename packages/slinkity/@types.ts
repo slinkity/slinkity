@@ -33,3 +33,16 @@ export type SlinkityStore = <T>(initialValue: T, options: never) => {
   value: T;
   get(): T;
 }
+
+export type Renderer = {
+  name: string;
+  extensions: string[];
+  clientEntrypoint: string;
+  ssr(params: { Component: any; props: any }): { html: string };
+  viteConfig?: import('vite').InlineConfig;
+}
+
+export type UserConfig = {
+  islandsDir?: string;
+  renderers?: Renderer[];
+}
