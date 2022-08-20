@@ -12,7 +12,6 @@
   "license": "ISC",
   "dependencies": {
     "@11ty/eleventy": "2.0.0-canary.15",
-    "@11ty/is-land": "^1.0.0",
     "@slinkity/preact": "workspace:*",
     "preact": "^10.10.6",
     "slinkity": "workspace:*"

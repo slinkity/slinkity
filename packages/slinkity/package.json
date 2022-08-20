@@ -52,12 +52,8 @@
   "bugs": "https://github.com/slinkity/slinkity/issues",
   "dependencies": {
     "@11ty/is-land": "^1.0.0",
-    "chalk": "4.1.2",
     "devalue": "^2.0.1",
-    "esbuild": "^0.12.29",
     "fs-extra": "^10.1.0",
-    "glob": "^7.1.7",
-    "javascript-stringify": "^2.1.0",
     "uuid": "^8.3.2",
     "vite": "^3.0.9",
     "zod": "^3.18.0"
@@ -67,7 +63,6 @@
   },
   "devDependencies": {
     "@11ty/eleventy": "2.0.0-canary.15",
-    "chalk": "4.1.2",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^3.4.0",
