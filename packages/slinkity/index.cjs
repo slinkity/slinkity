@@ -1,5 +1,5 @@
-const plugin = require('./plugin.cjs')
-const { defineConfig } = require('./defineConfig.cjs')
+const plugin = require('./src/plugin.cjs')
+const { defineConfig } = require('./src/defineConfig.cjs')
 
 module.exports = {
   plugin,
