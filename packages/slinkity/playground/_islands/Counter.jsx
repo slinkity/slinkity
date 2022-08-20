@@ -1,3 +1,4 @@
+import './styles.css'
 import { useState } from 'preact/hooks'
 
 export default function Counter({ initialCount }) {
