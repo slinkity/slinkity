@@ -10,6 +10,9 @@ module.exports = function slinkityPreact() {
     ssr,
     viteConfig: {
       plugins: [vitePreact()],
+      optimizeDeps: {
+        include: ['preact', 'preact/devtools', 'preact/hooks', 'preact/jsx-dev-runtime'],
+      },
     },
   }
 }
