@@ -1,0 +1,28 @@
+{
+  "name": "@slinkity/preact",
+  "version": "0.1.0",
+  "description": "Preact component renderer for the legendary 11ty tool, Slinkity",
+  "main": "index.cjs",
+  "exports": {
+    "client": "./client.mjs",
+    "server": "./server.cjs"
+  },
+  "keywords": [],
+  "author": "bholmesdev",
+  "license": "ISC",
+  "peerDependencies": {
+    "preact": "^10.10.6",
+    "slinkity": "^1.0.0-canary.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/slinkity"
+  },
+  "dependencies": {
+    "@preact/preset-vite": "^2.3.0",
+    "preact-render-to-string": "^5.2.2"
+  },
+  "devDependencies": {
+    "preact": "^10.10.6"
+  }
+}
