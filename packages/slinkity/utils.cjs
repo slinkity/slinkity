@@ -2,8 +2,9 @@ const path = require('path')
 const vite = require('vite')
 
 class SlinkityInternalError extends Error {
-  set message(msg) {
-    this.message = `[Slinkity internal] ${msg}`
+  constructor(msg) {
+    super(msg)
+    this.name = '[Slinkity internal]'
   }
 }
 
