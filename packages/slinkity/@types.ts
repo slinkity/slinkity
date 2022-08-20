@@ -1,0 +1,35 @@
+type Prop = {
+  name: string;
+  value: any;
+  serializedValue: string;
+}
+
+type PageUrl = string;
+type IslandId = string;
+type InputPath = string;
+type PropId = string;
+
+export type PropsByInputPath = Map<InputPath, {
+  hasStore: boolean;
+  props: Record<PropId, Prop>;
+}>
+
+export type SsrIslandsByInputPath = Map<InputPath, Record<IslandId, {
+  islandPath: string;
+  propIds: Set<string>;
+  slots: Record<string, string>;
+}>>
+
+export type RenderedContent = {
+  content: string;
+  inputPath: string;
+}
+
+export type UrlToRenderedContentMap = Map<PageUrl, RenderedContent>;
+
+export type SlinkityStore = <T>(initialValue: T, options: never) => {
+  isSlinkityStoreFactory: true;
+  id: string;
+  value: T;
+  get(): T;
+}
