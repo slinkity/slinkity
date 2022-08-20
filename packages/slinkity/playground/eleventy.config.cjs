@@ -1,5 +1,11 @@
-const slinkity = require('../plugin.cjs')
+const slinkity = require('slinkity')
+const preact = require('@slinkity/preact')
 
 module.exports = function (eleventyConfig) {
-  eleventyConfig.addPlugin(slinkity)
+  eleventyConfig.addPlugin(
+    slinkity.plugin,
+    slinkity.defineConfig({
+      renderers: [preact()],
+    }),
+  )
 }
