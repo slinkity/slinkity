@@ -22,9 +22,6 @@
     "email": "hey@bholmes.dev",
     "url": "https://bholmes.dev/"
   },
-  "bin": {
-    "slinkity": "lib/cli/index.js"
-  },
   "engines": {
     "node": ">=14"
   },
