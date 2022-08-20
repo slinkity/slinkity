@@ -7,6 +7,7 @@ const {
   toClientPropsPathFromOutputPath,
   SlinkityInternalError,
   toIslandExt,
+  collectCSS,
 } = require('./utils.cjs')
 const { defineConfig } = require('./defineConfig.cjs')
 const shortcodes = require('./shortcodes.cjs')
@@ -24,6 +25,9 @@ module.exports = function slinkityPlugin(eleventyConfig, unresolvedUserConfig) {
 
   /** @type {import('./@types').SsrIslandsByInputPath} */
   const ssrIslandsByInputPath = new Map()
+
+  /** @type {Map<string, Set<string>>} */
+  const cssUrlsByInputPath = new Map()
 
   /** @type {import('./@types').UrlToRenderedContentMap} */
   const urlToRenderedContentMap = new Map()
@@ -96,6 +100,11 @@ module.exports = function slinkityPlugin(eleventyConfig, unresolvedUserConfig) {
             )
           }
           const Component = await viteServer.ssrLoadModule(islandPath)
+          const moduleGraph = await viteServer.moduleGraph.getModuleByUrl(islandPath)
+          const collectedCssUrls = new Set()
+          collectCSS(moduleGraph, collectedCssUrls)
+
+          cssUrlsByInputPath.set(inputPath, collectedCssUrls)
 
           const propsById = propsByInputPath.get(inputPath)?.props ?? {}
           const props = {}
@@ -131,15 +140,26 @@ module.exports = function slinkityPlugin(eleventyConfig, unresolvedUserConfig) {
         plugins: [
           {
             name: 'vite-plugin-slinkity-inject-head',
-            transformIndexHtml() {
+            transformIndexHtml(html, ctx) {
               // TODO: only inject when client-side islands are used
-              return [
+              const head = [
                 {
                   tag: 'script',
                   attrs: { type: 'module' },
                   children: "import '/@id/slinkity/client';",
                 },
               ]
+              if (!ctx.originalUrl) return head
+
+              const collectedCss = cssUrlsByInputPath.get(ctx.originalUrl)
+              if (!collectedCss) return head
+
+              return head.concat(
+                [...collectedCss].map((href) => ({
+                  tag: 'link',
+                  attrs: { rel: 'stylesheet', href },
+                })),
+              )
             },
           },
         ],
@@ -160,7 +180,7 @@ module.exports = function slinkityPlugin(eleventyConfig, unresolvedUserConfig) {
               const html = await handleSsrComments(page)
 
               res.setHeader('Content-Type', 'text/html')
-              res.write(await viteServer.transformIndexHtml(req.url, html))
+              res.write(await viteServer.transformIndexHtml(req.url, html, page.inputPath))
               res.end()
             } else {
               next()

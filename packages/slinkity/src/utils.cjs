@@ -106,6 +106,37 @@ function toClientScript({
   </is-land>`
 }
 
+/**
+ * Regex of hard-coded stylesheet extensions
+ * @param {string} imp Import to test
+ * @returns Whether this import ends with an expected CSS file extension
+ */
+function isStyleImport(imp) {
+  return /\.(css|scss|sass|less|stylus)($|\?*)/.test(imp)
+}
+
+module.exports.isStyleImport = isStyleImport
+
+/**
+ * Recursively walks through all nested imports for a given module,
+ * Searching for any CSS imported via ESM
+ * @param {import('vite').ModuleNode | undefined} mod The module node to collect CSS from
+ * @param {Set<string>} collectedCSSModUrls All CSS imports found
+ * @param {Set<string>} visitedModUrls All modules recursively crawled
+ */
+function collectCSS(mod, collectedCSSModUrls, visitedModUrls = new Set()) {
+  if (!mod || !mod.url || visitedModUrls.has(mod.url)) return
+
+  visitedModUrls.add(mod.url)
+  if (isStyleImport(mod.url)) {
+    collectedCSSModUrls.add(mod.url)
+  } else {
+    mod.importedModules.forEach((subMod) => {
+      collectCSS(subMod, collectedCSSModUrls, visitedModUrls)
+    })
+  }
+}
+
 module.exports = {
   toPropComment,
   toSsrComment,
@@ -114,5 +145,6 @@ module.exports = {
   extractPropIdsFromHtml,
   toClientPropsPathFromOutputPath,
   toClientScript,
+  collectCSS,
   SlinkityInternalError,
 }
