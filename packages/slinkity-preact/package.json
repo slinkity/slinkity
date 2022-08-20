@@ -4,15 +4,17 @@
   "description": "Preact component renderer for the legendary 11ty tool, Slinkity",
   "main": "index.cjs",
   "exports": {
-    "client": "./client.mjs",
-    "server": "./server.cjs"
+    ".": "./index.cjs",
+    "./client": "./client.mjs",
+    "./server": "./server.cjs"
   },
   "keywords": [],
   "author": "bholmesdev",
   "license": "ISC",
   "peerDependencies": {
     "preact": "^10.10.6",
-    "slinkity": "^1.0.0-canary.0"
+    "slinkity": "^1.0.0-canary.0",
+    "vite": "^3.0.0"
   },
   "repository": {
     "type": "git",
