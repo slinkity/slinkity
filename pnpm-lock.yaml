@@ -185,11 +185,13 @@ importers:
   packages/slinkity/playground:
     specifiers:
       '@11ty/eleventy': 2.0.0-canary.15
+      '@11ty/is-land': ^1.0.0
       '@slinkity/preact': workspace:*
       preact: ^10.10.6
       slinkity: workspace:*
     dependencies:
       '@11ty/eleventy': 2.0.0-canary.15
+      '@11ty/is-land': 1.0.0
       '@slinkity/preact': link:../../slinkity-preact
       preact: 10.10.6
       slinkity: link:..
@@ -432,6 +434,10 @@ packages:
       - supports-color
       - utf-8-validate
     dev: true
+
+  /@11ty/is-land/1.0.0:
+    resolution: {integrity: sha512-xv6CzEw9Bvt//U84jWPOu14jLcLcI/+tR8WB3LIcxnsoRSv0m9f3g76Tk9sTMngZBpDT4FEIjFcgnh0HvyM/uQ==}
+    dev: false
 
   /@babel/code-frame/7.12.11:
     resolution: {integrity: sha512-Zt1yodBx1UcyiePMSkWnU4hPqhwq7hGi2nFL1LeA3EUl+q2LQx16MISgJ0+z7dnmgvP9QtIleuETGOiOH1RcIw==}
