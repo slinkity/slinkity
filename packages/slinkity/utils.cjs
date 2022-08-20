@@ -19,8 +19,9 @@ function toSsrComment(id) {
 }
 
 /** @param {string} unresolvedIslandPath */
-function toResolvedIslandPath(unresolvedIslandPath) {
-  return vite.normalizePath(path.resolve('_islands', unresolvedIslandPath))
+/** @param {string} islandsDir */
+function toResolvedIslandPath(unresolvedIslandPath, islandsDir) {
+  return vite.normalizePath(path.resolve(islandsDir, unresolvedIslandPath))
 }
 
 /**

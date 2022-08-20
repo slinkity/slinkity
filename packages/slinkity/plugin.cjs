@@ -12,10 +12,11 @@ const {
   extractPropIdsFromHtml,
   SlinkityInternalError,
 } = require('./utils.cjs')
+const { defineConfig } = require('./defineConfig.cjs')
 const { BUILD_ID } = require('./consts.cjs')
 
 /** @param {import('@11ty/eleventy/src/UserConfig')} eleventyConfig */
-module.exports = function slinkityPlugin(eleventyConfig) {
+module.exports = function slinkityPlugin(eleventyConfig, unresolvedUserConfig) {
   /** @type {import('vite').ViteDevServer} */
   let viteServer
 
@@ -27,6 +28,14 @@ module.exports = function slinkityPlugin(eleventyConfig) {
 
   /** @type {import('./@types').UrlToRenderedContentMap} */
   const urlToRenderedContentMap = new Map()
+
+  const userConfig = defineConfig(unresolvedUserConfig)
+
+  const extToRendererMap = new Map(
+    userConfig.renderers
+      .map((renderer) => renderer.extensions.map((ext) => [ext, renderer]))
+      .flat(),
+  )
 
   // TODO: find way to flip back on
   // When set to "true," Vite will try to resolve emulated copies via middleware.
@@ -87,20 +96,26 @@ module.exports = function slinkityPlugin(eleventyConfig) {
     enabled: false,
     domdiff: false,
     async setup() {
-      viteServer = await vite.createServer({
+      /** @type {import('vite').InlineConfig} */
+      let viteConfig = {
         root: '_site',
         clearScreen: false,
         appType: 'custom',
         server: {
           middlewareMode: true,
         },
-      })
+      }
+
+      for (const renderer of userConfig.renderers) {
+        viteConfig = vite.mergeConfig(viteConfig, renderer.viteConfig)
+      }
+
+      viteServer = await vite.createServer(viteConfig)
 
       return {
         middleware: [
           viteServer.middlewares,
           async function applyViteHtmlTransform(req, res, next) {
-            console.log(urlToRenderedContentMap)
             const page = urlToRenderedContentMap.get(req.url)
             if (page) {
               const html = await handleSsrComments(page)
@@ -120,7 +135,7 @@ module.exports = function slinkityPlugin(eleventyConfig) {
   eleventyConfig.addPairedShortcode(
     'serverOnlyIsland',
     function (htmlWithPropComments, unresolvedIslandPath) {
-      const islandPath = toResolvedIslandPath(unresolvedIslandPath)
+      const islandPath = toResolvedIslandPath(unresolvedIslandPath, userConfig.islandsDir)
       const islandId = uuidv4()
 
       const { htmlWithoutPropComments: html, propIds } =
