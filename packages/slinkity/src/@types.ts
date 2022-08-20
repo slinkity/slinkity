@@ -1,3 +1,5 @@
+import type { ViteDevServer, InlineConfig as ViteInlineConfig } from 'vite';
+
 type Prop = {
   name: string;
   value: any;
@@ -27,6 +29,13 @@ export type RenderedContent = {
 
 export type UrlToRenderedContentMap = Map<PageUrl, RenderedContent>;
 
+export type PluginGlobals = {
+  viteServer: ViteDevServer;
+  propsByInputPath: PropsByInputPath;
+  ssrIslandsByInputPath: SsrIslandsByInputPath;
+  urlToRenderedContentMap: UrlToRenderedContentMap;
+}
+
 export type SlinkityStore = <T>(initialValue: T, options: never) => {
   isSlinkityStoreFactory: true;
   id: string;
@@ -39,7 +48,7 @@ export type Renderer = {
   extensions: string[];
   clientEntrypoint: string;
   ssr(params: { Component: any; props: any }): { html: string };
-  viteConfig?: import('vite').InlineConfig;
+  viteConfig?: ViteInlineConfig;
 }
 
 export type UserConfig = {
