@@ -1,15 +1,13 @@
 const pkg = require('./package.json')
+const ssr = require('./ssr.cjs')
 const { default: vitePreact } = require('@preact/preset-vite')
-
-const client = `${pkg.name}/client`
-const server = `${pkg.name}/server`
 
 module.exports = function slinkityPreact() {
   return {
     name: 'preact',
     extensions: ['jsx', 'tsx'],
-    client,
-    server,
+    clientEntrypoint: `${pkg.name}/client`,
+    ssr,
     viteConfig: {
       plugins: [vitePreact()],
     },
