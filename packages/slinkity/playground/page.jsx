@@ -1,3 +1,8 @@
-export default function Page() {
-  return <h1>I'm a full page!</h1>
+export const frontmatter = {
+  title: 'Slinkity 1.0',
+  layout: 'layout.njk',
+}
+
+export default function Page({ title }) {
+  return <h1>{title}</h1>
 }
