@@ -24,7 +24,7 @@ module.exports = function slinkityPlugin(eleventyConfig, unresolvedUserConfig) {
   /** @type {import('./@types').SsrIslandsByInputPath} */
   const ssrIslandsByInputPath = new Map()
 
-  /** @type {Map<string, Set<string>>} */
+  /** @type {import('./@types').CssUrlsByInputPath} */
   const cssUrlsByInputPath = new Map()
 
   /** @type {import('./@types').UrlToRenderedContentMap} */
@@ -39,7 +39,7 @@ module.exports = function slinkityPlugin(eleventyConfig, unresolvedUserConfig) {
       .flat(),
   )
 
-  const viteServer = createViteServer({ userConfig, cssUrlsByInputPath })
+  const viteServer = createViteServer(userConfig, { cssUrlsByInputPath, ssrIslandsByInputPath })
 
   // TODO: find way to flip back on
   // When set to "true," Vite will try to resolve emulated copies via middleware.

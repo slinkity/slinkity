@@ -34,6 +34,7 @@ module.exports = function shortcodes(
         [islandId]: {
           islandPath,
           propIds,
+          isUsedOnClient: false,
           slots: { default: htmlWithoutPropComments },
         },
       })
@@ -73,6 +74,7 @@ module.exports = function shortcodes(
         [islandId]: {
           islandPath,
           propIds,
+          isUsedOnClient: true,
           slots: { default: htmlWithoutPropComments },
         },
       })

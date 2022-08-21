@@ -1,6 +1,13 @@
 const vite = require('vite')
 
-module.exports.createViteServer = function ({ userConfig, cssUrlsByInputPath }) {
+/**
+ * @param {import('./@types').UserConfig} userConfig
+ * @param {Pick<import('./@types').PluginGlobals, 'ssrIslandsByInputPath' | 'cssUrlsByInputPath'>} pluginGlobals
+ */
+module.exports.createViteServer = function (
+  userConfig,
+  { cssUrlsByInputPath, ssrIslandsByInputPath },
+) {
   /** @type {import('vite').InlineConfig} */
   let viteConfig = {
     clearScreen: false,
@@ -12,17 +19,24 @@ module.exports.createViteServer = function ({ userConfig, cssUrlsByInputPath }) 
       {
         name: 'vite-plugin-slinkity-inject-head',
         transformIndexHtml(html, ctx) {
-          // TODO: only inject when client-side islands are used
-          const head = [
-            {
-              tag: 'script',
-              attrs: { type: 'module' },
-              children: "import '/@id/slinkity/client';",
-            },
-          ]
-          if (!ctx.originalUrl) return head
+          const inputPath = ctx.originalUrl
+          if (!inputPath) return []
 
-          const collectedCss = cssUrlsByInputPath.get(ctx.originalUrl)
+          const hasClientsideComponents = Object.values(
+            ssrIslandsByInputPath.get(inputPath) ?? {},
+          ).some((island) => island.isUsedOnClient)
+
+          const head = hasClientsideComponents
+            ? [
+                {
+                  tag: 'script',
+                  attrs: { type: 'module' },
+                  children: "import '/@id/slinkity/client';",
+                },
+              ]
+            : []
+
+          const collectedCss = cssUrlsByInputPath.get(inputPath)
           if (!collectedCss) return head
 
           return head.concat(

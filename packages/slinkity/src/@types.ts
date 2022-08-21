@@ -20,6 +20,7 @@ export type PropsByInputPath = Map<InputPath, {
 export type SsrIslandsByInputPath = Map<InputPath, Record<IslandId, {
   islandPath: string;
   propIds: Set<string>;
+  isUsedOnClient: boolean;
   slots: Record<string, string>;
 }>>
 
@@ -32,6 +33,8 @@ export type UrlToRenderedContentMap = Map<PageUrl, RenderedContent>;
 
 export type ExtToRendererMap = Map<string, Renderer>;
 
+export type CssUrlsByInputPath = Map<string, Set<string>>;
+
 export type PluginGlobals = {
   viteServer: {
     get(): ViteDevServer;
@@ -41,6 +44,7 @@ export type PluginGlobals = {
   ssrIslandsByInputPath: SsrIslandsByInputPath;
   urlToRenderedContentMap: UrlToRenderedContentMap;
   extToRendererMap: ExtToRendererMap;
+  cssUrlsByInputPath: CssUrlsByInputPath;
 }
 
 export type SlinkityStore = <T>(initialValue: T, options: never) => {
