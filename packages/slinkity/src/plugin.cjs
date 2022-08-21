@@ -1,6 +1,5 @@
 const fs = require('fs')
 const path = require('path')
-const vite = require('vite')
 const { outputFile } = require('fs-extra')
 const {
   toSsrComment,
@@ -9,6 +8,7 @@ const {
   toIslandExt,
   collectCSS,
 } = require('./utils.cjs')
+const { createViteServer } = require('./viteServer.cjs')
 const { defineConfig } = require('./defineConfig.cjs')
 const shortcodes = require('./shortcodes.cjs')
 
@@ -17,9 +17,6 @@ const shortcodes = require('./shortcodes.cjs')
  * @param {import('./@types').UserConfig} unresolvedUserConfig
  */
 module.exports = function slinkityPlugin(eleventyConfig, unresolvedUserConfig) {
-  /** @type {import('vite').ViteDevServer} */
-  let viteServer
-
   /** @type {import('./@types').PropsByInputPath} */
   const propsByInputPath = new Map()
 
@@ -40,6 +37,8 @@ module.exports = function slinkityPlugin(eleventyConfig, unresolvedUserConfig) {
       .map((renderer) => renderer.extensions.map((ext) => [ext, renderer]))
       .flat(),
   )
+
+  const viteServer = createViteServer({ userConfig, cssUrlsByInputPath })
 
   // TODO: find way to flip back on
   // When set to "true," Vite will try to resolve emulated copies via middleware.
@@ -99,8 +98,8 @@ module.exports = function slinkityPlugin(eleventyConfig, unresolvedUserConfig) {
               )}! Please add a render to your Slinkity plugin config. See https://slinkity.dev/docs/component-shortcodes/#prerequisites for more.`,
             )
           }
-          const Component = await viteServer.ssrLoadModule(islandPath)
-          const moduleGraph = await viteServer.moduleGraph.getModuleByUrl(islandPath)
+          const Component = await viteServer.get().ssrLoadModule(islandPath)
+          const moduleGraph = await viteServer.get().moduleGraph.getModuleByUrl(islandPath)
           const collectedCssUrls = new Set()
           collectCSS(moduleGraph, collectedCssUrls)
 
@@ -129,58 +128,17 @@ module.exports = function slinkityPlugin(eleventyConfig, unresolvedUserConfig) {
     enabled: false,
     domdiff: false,
     async setup() {
-      /** @type {import('vite').InlineConfig} */
-      let viteConfig = {
-        root: '_site',
-        clearScreen: false,
-        appType: 'custom',
-        server: {
-          middlewareMode: true,
-        },
-        plugins: [
-          {
-            name: 'vite-plugin-slinkity-inject-head',
-            transformIndexHtml(html, ctx) {
-              // TODO: only inject when client-side islands are used
-              const head = [
-                {
-                  tag: 'script',
-                  attrs: { type: 'module' },
-                  children: "import '/@id/slinkity/client';",
-                },
-              ]
-              if (!ctx.originalUrl) return head
-
-              const collectedCss = cssUrlsByInputPath.get(ctx.originalUrl)
-              if (!collectedCss) return head
-
-              return head.concat(
-                [...collectedCss].map((href) => ({
-                  tag: 'link',
-                  attrs: { rel: 'stylesheet', href },
-                })),
-              )
-            },
-          },
-        ],
-      }
-
-      for (const renderer of userConfig.renderers) {
-        viteConfig = vite.mergeConfig(viteConfig, renderer.viteConfig)
-      }
-
-      viteServer = await vite.createServer(viteConfig)
-
+      const server = viteServer.get() ?? (await viteServer.init())
       return {
         middleware: [
-          viteServer.middlewares,
+          server.middlewares,
           async function applyViteHtmlTransform(req, res, next) {
             const page = urlToRenderedContentMap.get(req.url)
             if (page) {
               const html = await handleSsrComments(page)
 
               res.setHeader('Content-Type', 'text/html')
-              res.write(await viteServer.transformIndexHtml(req.url, html, page.inputPath))
+              res.write(await server.transformIndexHtml(req.url, html, page.inputPath))
               res.end()
             } else {
               next()

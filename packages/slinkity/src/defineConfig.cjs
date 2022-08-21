@@ -9,6 +9,7 @@ const rendererSchema = z.object({
   // TODO: type when stable
   ssr: z.any(),
   viteConfig: z.any().optional(),
+  page: z.function(z.tuple([z.any()]), z.any()).optional(),
 })
 
 const userConfigSchema = z.object({

@@ -32,7 +32,10 @@ export type UrlToRenderedContentMap = Map<PageUrl, RenderedContent>;
 export type ExtToRendererMap = Map<string, Renderer>;
 
 export type PluginGlobals = {
-  viteServer: ViteDevServer;
+  viteServer: {
+    get(): ViteDevServer;
+    init(): Promise<ViteDevServer>;
+  };
   propsByInputPath: PropsByInputPath;
   ssrIslandsByInputPath: SsrIslandsByInputPath;
   urlToRenderedContentMap: UrlToRenderedContentMap;
@@ -52,6 +55,7 @@ export type Renderer = {
   clientEntrypoint: string;
   ssr(params: { Component: any; props: any }): { html: string };
   viteConfig?: ViteInlineConfig;
+  page?(params: { Component: any }): { getData(): Promise<any> };
 }
 
 export type UserConfig = {
