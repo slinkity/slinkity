@@ -61,6 +61,12 @@ module.exports = function shortcodes(
         eleventyConfig.dir.output,
       )
       const { htmlWithoutPropComments, propIds } = extractPropIdsFromHtml(htmlWithPropComments)
+      if (propIds.size && propsByInputPath.has(inputPath)) {
+        const props = propsByInputPath.get(inputPath)
+        for (const propId of propIds) {
+          props.clientPropIds.add(propId)
+        }
+      }
       const existingSsrComponents = ssrIslandsByInputPath.get(inputPath)
       ssrIslandsByInputPath.set(inputPath, {
         ...existingSsrComponents,
@@ -102,6 +108,12 @@ module.exports = function shortcodes(
         eleventyConfig.dir.output,
       )
       const { propIds } = extractPropIdsFromHtml(htmlWithPropComments)
+      if (propIds.size && propsByInputPath.has(inputPath)) {
+        const props = propsByInputPath.get(inputPath)
+        for (const propId of propIds) {
+          props.clientPropIds.add(propId)
+        }
+      }
 
       return toClientScript({
         isClientOnly: true,

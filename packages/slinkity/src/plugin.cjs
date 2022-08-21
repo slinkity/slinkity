@@ -160,12 +160,13 @@ module.exports = function slinkityPlugin(eleventyConfig, unresolvedUserConfig) {
 
   eleventyConfig.addTransform('slinkity-create-props-file', async function (content, outputPath) {
     const propInfo = propsByInputPath.get(this.inputPath)
-    if (propInfo) {
-      const { hasStore, props } = propInfo
+    if (propInfo?.clientPropIds.size) {
+      const { hasStore, props, clientPropIds } = propInfo
       let propsFileContents = 'export default {\n'
-      for (const [key, { name, serializedValue }] of Object.entries(props)) {
-        const serializedKey = JSON.stringify(key)
-        const serializedEntry = `{ name: ${JSON.stringify(name)}, value: ${serializedValue} }`
+      for (const clientPropId of clientPropIds) {
+        const { name, getSerializedValue } = props[clientPropId]
+        const serializedKey = JSON.stringify(clientPropId)
+        const serializedEntry = `{ name: ${JSON.stringify(name)}, value: ${getSerializedValue()} }`
         propsFileContents += `  ${serializedKey}: ${serializedEntry},\n`
       }
       propsFileContents += '}'

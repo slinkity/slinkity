@@ -1,8 +1,7 @@
-const { v5: uuidv5 } = require('uuid')
+const { v4: uuidv4 } = require('uuid')
 const devalue = require('devalue')
 const path = require('path')
 const vite = require('vite')
-const { BUILD_ID } = require('./consts.cjs')
 
 class SlinkityInternalError extends Error {
   constructor(msg) {
@@ -70,23 +69,24 @@ function toIslandExt(islandPath) {
 }
 
 function handleProp({ name, value, propsByInputPath, inputPath }) {
-  let serializedValue, id
+  let getSerializedValue, id
   let hasStore = Boolean(propsByInputPath.get(inputPath)?.hasStore)
   if (typeof value === 'object' && value !== null && value.isSlinkityStoreFactory) {
-    serializedValue = `new SlinkityStore(${devalue(value.value)})`
+    getSerializedValue = () => `new SlinkityStore(${devalue(value.value)})`
     id = value.id
     hasStore = true
   } else {
-    serializedValue = devalue(value)
-    id = uuidv5(`${name}${serializedValue}`, BUILD_ID)
+    getSerializedValue = () => devalue(value)
+    id = uuidv4()
   }
   const existingPropsOnPage = propsByInputPath.get(inputPath)?.props ?? {}
   propsByInputPath.set(inputPath, {
     hasStore,
     props: {
       ...existingPropsOnPage,
-      [id]: { name, value, serializedValue },
+      [id]: { name, value, getSerializedValue },
     },
+    clientPropIds: new Set(),
   })
 
   return { id }

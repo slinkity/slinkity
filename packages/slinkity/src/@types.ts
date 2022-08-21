@@ -3,7 +3,7 @@ import type { ViteDevServer, InlineConfig as ViteInlineConfig } from 'vite';
 type Prop = {
   name: string;
   value: any;
-  serializedValue: string;
+  getSerializedValue(): string;
 }
 
 type PageUrl = string;
@@ -14,6 +14,7 @@ type PropId = string;
 export type PropsByInputPath = Map<InputPath, {
   hasStore: boolean;
   props: Record<PropId, Prop>;
+  clientPropIds: Set<PropId>;
 }>
 
 export type SsrIslandsByInputPath = Map<InputPath, Record<IslandId, {
