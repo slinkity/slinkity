@@ -3,7 +3,6 @@ const vite = require('vite')
 module.exports.createViteServer = function ({ userConfig, cssUrlsByInputPath }) {
   /** @type {import('vite').InlineConfig} */
   let viteConfig = {
-    root: '_site',
     clearScreen: false,
     appType: 'custom',
     server: {
