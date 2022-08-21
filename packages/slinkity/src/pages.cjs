@@ -86,7 +86,7 @@ module.exports = function pages(
                 loadConditions =
                   typeof islandMeta === 'object' && Array.isArray(islandMeta.on)
                     ? islandMeta.on.map((loadCondition) => `on:${loadCondition}`)
-                    : ['on:load']
+                    : []
               }
             }
 
