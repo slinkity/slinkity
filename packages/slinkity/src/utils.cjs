@@ -1,5 +1,8 @@
+const { v5: uuidv5 } = require('uuid')
+const devalue = require('devalue')
 const path = require('path')
 const vite = require('vite')
+const { BUILD_ID } = require('./consts.cjs')
 
 class SlinkityInternalError extends Error {
   constructor(msg) {
@@ -66,6 +69,29 @@ function toIslandExt(islandPath) {
   return path.extname(islandPath).replace(/^\./, '')
 }
 
+function handleProp({ name, value, propsByInputPath, inputPath }) {
+  let serializedValue, id
+  let hasStore = Boolean(propsByInputPath.get(inputPath)?.hasStore)
+  if (typeof value === 'object' && value !== null && value.isSlinkityStoreFactory) {
+    serializedValue = `new SlinkityStore(${devalue(value.value)})`
+    id = value.id
+    hasStore = true
+  } else {
+    serializedValue = devalue(value)
+    id = uuidv5(`${name}${serializedValue}`, BUILD_ID)
+  }
+  const existingPropsOnPage = propsByInputPath.get(inputPath)?.props ?? {}
+  propsByInputPath.set(inputPath, {
+    hasStore,
+    props: {
+      ...existingPropsOnPage,
+      [id]: { name, value, serializedValue },
+    },
+  })
+
+  return { id }
+}
+
 function toClientScript({
   islandId,
   islandPath,
@@ -115,8 +141,6 @@ function isStyleImport(imp) {
   return /\.(css|scss|sass|less|stylus)($|\?*)/.test(imp)
 }
 
-module.exports.isStyleImport = isStyleImport
-
 /**
  * Recursively walks through all nested imports for a given module,
  * Searching for any CSS imported via ESM
@@ -139,6 +163,7 @@ function collectCSS(mod, collectedCSSModUrls, visitedModUrls = new Set()) {
 
 module.exports = {
   toPropComment,
+  handleProp,
   toSsrComment,
   toResolvedIslandPath,
   toIslandExt,

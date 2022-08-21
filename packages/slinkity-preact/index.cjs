@@ -14,5 +14,12 @@ module.exports = function slinkityPreact() {
         include: ['preact', 'preact/devtools', 'preact/hooks', 'preact/jsx-dev-runtime'],
       },
     },
+    page({ Component }) {
+      return {
+        getData() {
+          return Component.frontmatter ?? Component.frontMatter ?? {}
+        },
+      }
+    },
   }
 }

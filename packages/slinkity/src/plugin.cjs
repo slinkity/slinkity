@@ -11,6 +11,7 @@ const {
 const { createViteServer } = require('./viteServer.cjs')
 const { defineConfig } = require('./defineConfig.cjs')
 const shortcodes = require('./shortcodes.cjs')
+const pages = require('./pages.cjs')
 
 /**
  * @param {import('@11ty/eleventy/src/UserConfig')} eleventyConfig
@@ -62,6 +63,13 @@ module.exports = function slinkityPlugin(eleventyConfig, unresolvedUserConfig) {
     ssrIslandsByInputPath,
     propsByInputPath,
     extToRendererMap,
+  })
+
+  pages(eleventyConfig, userConfig, {
+    ssrIslandsByInputPath,
+    propsByInputPath,
+    extToRendererMap,
+    viteServer,
   })
 
   /**

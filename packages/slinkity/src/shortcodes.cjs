@@ -1,5 +1,4 @@
-const devalue = require('devalue')
-const { v4: uuidv4, v5: uuidv5 } = require('uuid')
+const { v4: uuidv4 } = require('uuid')
 const {
   toSsrComment,
   toPropComment,
@@ -8,8 +7,8 @@ const {
   extractPropIdsFromHtml,
   toClientScript,
   toIslandExt,
+  handleProp,
 } = require('./utils.cjs')
-const { BUILD_ID } = require('./consts.cjs')
 
 /**
  * @param {import('@11ty/eleventy/src/UserConfig')} eleventyConfig
@@ -118,23 +117,11 @@ module.exports = function shortcodes(
 
   eleventyConfig.addShortcode('prop', function (name, value) {
     const { inputPath } = this.page
-    let serializedValue, id
-    let hasStore = Boolean(propsByInputPath.get(inputPath)?.hasStore)
-    if (typeof value === 'object' && value !== null && value.isSlinkityStoreFactory) {
-      serializedValue = `new SlinkityStore(${devalue(value.value)})`
-      id = value.id
-      hasStore = true
-    } else {
-      serializedValue = devalue(value)
-      id = uuidv5(`${name}${serializedValue}`, BUILD_ID)
-    }
-    const existingPropsOnPage = propsByInputPath.get(inputPath)?.props ?? {}
-    propsByInputPath.set(inputPath, {
-      hasStore,
-      props: {
-        ...existingPropsOnPage,
-        [id]: { name, value, serializedValue },
-      },
+    const { id } = handleProp({
+      name,
+      value,
+      propsByInputPath,
+      inputPath,
     })
 
     return toPropComment(id)
