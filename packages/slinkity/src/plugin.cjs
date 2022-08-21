@@ -46,6 +46,7 @@ module.exports = function slinkityPlugin(eleventyConfig, unresolvedUserConfig) {
   // These don't exist in _site since 11ty manages via memory,
   // so Vite blows up!
   eleventyConfig.setServerPassthroughCopyBehavior(false)
+  eleventyConfig.ignores.add(userConfig.islandsDir)
 
   eleventyConfig.on('eleventy.after', async function ({ results, runMode }) {
     if (runMode === 'serve') {
