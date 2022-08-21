@@ -62,7 +62,26 @@ export type Renderer = {
   clientEntrypoint: string;
   ssr(params: { Component: any; props: any }): { html: string };
   viteConfig?: ViteInlineConfig;
-  page?(params: { Component: any }): { getData(): Promise<any> };
+  page?(params: { Component: any }): {
+    getData(): Promise<any>;
+    getIslandMeta(): Promise<any>;
+  };
+}
+
+export type IslandExport = boolean | {
+  /**
+   * Conditions to hydrate this island, including 'idle', 'media(query)', 'visible', etc
+   * Defaults to 'load'
+   */
+  on?: string[];
+  /**
+   * Props to pass to this hydrated component
+   * Defaults to an empty object, so be careful!
+   * If you're new to Slinkity, we recommend reading our "Be mindful about your data" docs first:
+   * https://slinkity.dev/docs/component-pages-layouts/#%F0%9F%9A%A8-(important!)-be-mindful-about-your-data
+   * @param eleventyData Page data from 11ty's data cascade
+   */
+  props(eleventyData: any): Record<string, any> | Promise<Record<string, any>>;
 }
 
 export type UserConfig = {

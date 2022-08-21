@@ -26,6 +26,11 @@ function toResolvedIslandPath(unresolvedIslandPath, islandsDir) {
   return vite.normalizePath(path.resolve(islandsDir, unresolvedIslandPath))
 }
 
+/** @param {string[]} pathSegments */
+function toResolvedPath(...pathSegments) {
+  return vite.normalizePath(path.resolve(...pathSegments))
+}
+
 /**
  * @typedef ExtractPropIdsFromHtmlResult
  * @property {string} htmlWithoutPropComments
@@ -68,9 +73,21 @@ function toIslandExt(islandPath) {
   return path.extname(islandPath).replace(/^\./, '')
 }
 
-function handleProp({ name, value, propsByInputPath, inputPath }) {
+/**
+ * @typedef AddPropToStoreParams
+ * @property {string} name
+ * @property {any} value
+ * @property {import('./@types').PropsByInputPath} propsByInputPath
+ * @property {string} inputPath
+ * @property {boolean | undefined} isUsedOnClient
+ *
+ * @param {AddPropToStoreParams} params
+ * @returns {{ id: string }}
+ */
+function addPropToStore({ name, value, propsByInputPath, inputPath, isUsedOnClient }) {
+  const existingPropsInfo = propsByInputPath.get(inputPath)
   let getSerializedValue, id
-  let hasStore = Boolean(propsByInputPath.get(inputPath)?.hasStore)
+  let hasStore = Boolean(existingPropsInfo?.hasStore)
   if (typeof value === 'object' && value !== null && value.isSlinkityStoreFactory) {
     getSerializedValue = () => `new SlinkityStore(${devalue(value.value)})`
     id = value.id
@@ -79,14 +96,17 @@ function handleProp({ name, value, propsByInputPath, inputPath }) {
     getSerializedValue = () => devalue(value)
     id = uuidv4()
   }
-  const existingPropsOnPage = propsByInputPath.get(inputPath)?.props ?? {}
+  const clientPropIds = new Set(existingPropsInfo?.clientPropIds ?? [])
+  if (isUsedOnClient) {
+    clientPropIds.add(id)
+  }
   propsByInputPath.set(inputPath, {
     hasStore,
+    clientPropIds,
     props: {
-      ...existingPropsOnPage,
+      ...(existingPropsInfo?.props ?? {}),
       [id]: { name, value, getSerializedValue },
     },
-    clientPropIds: new Set(),
   })
 
   return { id }
@@ -163,8 +183,9 @@ function collectCSS(mod, collectedCSSModUrls, visitedModUrls = new Set()) {
 
 module.exports = {
   toPropComment,
-  handleProp,
+  addPropToStore,
   toSsrComment,
+  toResolvedPath,
   toResolvedIslandPath,
   toIslandExt,
   extractPropIdsFromHtml,

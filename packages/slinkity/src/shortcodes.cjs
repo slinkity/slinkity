@@ -7,7 +7,7 @@ const {
   extractPropIdsFromHtml,
   toClientScript,
   toIslandExt,
-  handleProp,
+  addPropToStore,
 } = require('./utils.cjs')
 
 /**
@@ -131,7 +131,7 @@ module.exports = function shortcodes(
 
   eleventyConfig.addShortcode('prop', function (name, value) {
     const { inputPath } = this.page
-    const { id } = handleProp({
+    const { id } = addPropToStore({
       name,
       value,
       propsByInputPath,

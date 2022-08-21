@@ -19,6 +19,9 @@ module.exports = function slinkityPreact() {
         getData() {
           return Component.frontmatter ?? Component.frontMatter ?? {}
         },
+        getIslandMeta() {
+          return Component.island
+        },
       }
     },
   }
