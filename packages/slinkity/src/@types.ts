@@ -35,11 +35,13 @@ export type ExtToRendererMap = Map<string, Renderer>;
 
 export type CssUrlsByInputPath = Map<string, Set<string>>;
 
+export type ViteServerFactory = {
+  /** Get an existing Vite server, or initialize a new server if none exists */
+  getOrInitialize(): Promise<ViteDevServer>;
+};
+
 export type PluginGlobals = {
-  viteServer: {
-    get(): ViteDevServer;
-    init(): Promise<ViteDevServer>;
-  };
+  viteServer: ViteServerFactory;
   propsByInputPath: PropsByInputPath;
   ssrIslandsByInputPath: SsrIslandsByInputPath;
   urlToRenderedContentMap: UrlToRenderedContentMap;

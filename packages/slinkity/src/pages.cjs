@@ -17,7 +17,7 @@ module.exports = function pages(
       eleventyConfig.addExtension(ext, {
         read: false,
         async getData(inputPath) {
-          const server = viteServer.get() ?? (await viteServer.init())
+          const server = await viteServer.getOrInitialize()
           const Component = await server.ssrLoadModule(inputPath)
           return await renderer.page({ Component }).getData()
         },

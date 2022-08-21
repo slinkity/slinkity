@@ -107,8 +107,9 @@ module.exports = function slinkityPlugin(eleventyConfig, unresolvedUserConfig) {
               )}! Please add a render to your Slinkity plugin config. See https://slinkity.dev/docs/component-shortcodes/#prerequisites for more.`,
             )
           }
-          const Component = await viteServer.get().ssrLoadModule(islandPath)
-          const moduleGraph = await viteServer.get().moduleGraph.getModuleByUrl(islandPath)
+          const server = await viteServer.getOrInitialize()
+          const Component = await server.ssrLoadModule(islandPath)
+          const moduleGraph = await server.moduleGraph.getModuleByUrl(islandPath)
           const collectedCssUrls = new Set()
           collectCSS(moduleGraph, collectedCssUrls)
 
@@ -137,7 +138,7 @@ module.exports = function slinkityPlugin(eleventyConfig, unresolvedUserConfig) {
     enabled: false,
     domdiff: false,
     async setup() {
-      const server = viteServer.get() ?? (await viteServer.init())
+      const server = await viteServer.getOrInitialize()
       return {
         middleware: [
           server.middlewares,

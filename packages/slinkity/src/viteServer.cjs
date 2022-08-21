@@ -3,6 +3,7 @@ const vite = require('vite')
 /**
  * @param {import('./@types').UserConfig} userConfig
  * @param {Pick<import('./@types').PluginGlobals, 'ssrIslandsByInputPath' | 'cssUrlsByInputPath'>} pluginGlobals
+ * @return {import('./@types').ViteServerFactory}
  */
 module.exports.createViteServer = function (
   userConfig,
@@ -58,11 +59,8 @@ module.exports.createViteServer = function (
   let viteServer
   let awaitingServer = []
   return {
-    get() {
-      return viteServer
-    },
-    async init() {
-      if (viteServer) return viteServer
+    async getOrInitialize() {
+      if (viteServer) return new Promise((resolve) => resolve(viteServer))
 
       if (awaitingServer.length === 0) {
         vite.createServer(viteConfig).then((_viteServer) => {
