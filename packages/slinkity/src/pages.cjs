@@ -8,6 +8,7 @@ const { toSsrComment, handleProp } = require('./utils.cjs')
  */
 module.exports = function pages(
   eleventyConfig,
+  userConfig,
   { ssrIslandsByInputPath, propsByInputPath, extToRendererMap, viteServer },
 ) {
   for (const [ext, renderer] of extToRendererMap.entries()) {
