@@ -57,6 +57,7 @@ module.exports.createViteServer = function (
 
   /** @type {import('vite').ViteDevServer | undefined} */
   let viteServer
+  /** @type {((value: ViteDevServer) => void)[]} */
   let awaitingServer = []
   return {
     async getOrInitialize() {
