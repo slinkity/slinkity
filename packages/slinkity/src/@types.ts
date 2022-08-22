@@ -27,6 +27,7 @@ export type SsrIslandsByInputPath = Map<InputPath, Record<IslandId, {
 export type RenderedContent = {
   content: string;
   inputPath: string;
+  outputPath: string;
 }
 
 export type UrlToRenderedContentMap = Map<PageUrl, RenderedContent>;

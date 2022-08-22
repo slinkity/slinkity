@@ -50,11 +50,12 @@ module.exports = function slinkityPlugin(eleventyConfig, unresolvedUserConfig) {
 
   eleventyConfig.on('eleventy.after', async function ({ results, runMode }) {
     if (runMode === 'serve') {
-      for (let { content, inputPath, url } of results) {
+      for (let { content, inputPath, outputPath, url } of results) {
         // used for serving content within dev server middleware
         urlToRenderedContentMap.set(url, {
           content,
           inputPath,
+          outputPath,
         })
       }
     }
@@ -79,7 +80,7 @@ module.exports = function slinkityPlugin(eleventyConfig, unresolvedUserConfig) {
    * @param {import('./@types').RenderedContent} renderedContent
    * @returns {Promise<string>}
    */
-  async function handleSsrComments({ content, inputPath }) {
+  async function handleSsrComments({ content, inputPath, outputPath }) {
     const islands = ssrIslandsByInputPath.get(inputPath)
     const ssrRegex = new RegExp(toSsrComment('(.*)'), 'g')
     const ssrMatches = [...content.matchAll(ssrRegex)]
@@ -122,8 +123,19 @@ module.exports = function slinkityPlugin(eleventyConfig, unresolvedUserConfig) {
             props[name] = value
           }
 
+          const boundJsFns = {}
+          for (let fnName in eleventyConfig.javascriptFunctions) {
+            boundJsFns[fnName] = eleventyConfig.javascriptFunctions[fnName].bind({
+              page: { inputPath, outputPath },
+            })
+          }
           // TODO: support slots
-          const { html } = islandRenderer.ssr({ Component, props })
+          const { html } = await islandRenderer.ssr({
+            Component,
+            props,
+            ssrLoadModule: server.ssrLoadModule,
+            javascriptFunctions: boundJsFns,
+          })
           ssrContentByIslandId.set(islandId, html)
         } else {
           throw new SlinkityInternalError(`Failed to find island for SSR with id "${islandId}"`)
@@ -146,6 +158,7 @@ module.exports = function slinkityPlugin(eleventyConfig, unresolvedUserConfig) {
             const page = urlToRenderedContentMap.get(req.url)
             if (page) {
               const html = await handleSsrComments(page)
+              await createPropsFile(page)
 
               res.setHeader('Content-Type', 'text/html')
               res.write(await server.transformIndexHtml(req.url, html, page.inputPath))
@@ -159,8 +172,9 @@ module.exports = function slinkityPlugin(eleventyConfig, unresolvedUserConfig) {
     },
   })
 
-  eleventyConfig.addTransform('slinkity-create-props-file', async function (content, outputPath) {
-    const propInfo = propsByInputPath.get(this.inputPath)
+  /** @param {import('./@types').RenderedContent} params */
+  async function createPropsFile({ content, outputPath, inputPath }) {
+    const propInfo = propsByInputPath.get(inputPath)
     if (propInfo?.clientPropIds.size) {
       const { hasStore, props, clientPropIds } = propInfo
       let propsFileContents = 'export default {\n'
@@ -182,5 +196,5 @@ module.exports = function slinkityPlugin(eleventyConfig, unresolvedUserConfig) {
     }
 
     return content
-  })
+  }
 }

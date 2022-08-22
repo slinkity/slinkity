@@ -5,8 +5,10 @@
   "main": "index.cjs",
   "exports": {
     ".": "./index.cjs",
+    "./ssr": "./ssr.cjs",
     "./client": "./client.mjs",
-    "./server": "./server.cjs"
+    "./server": "./server.jsx",
+    "./FunctionsProvider": "./FunctionsProvider.jsx"
   },
   "keywords": [],
   "author": "bholmesdev",
