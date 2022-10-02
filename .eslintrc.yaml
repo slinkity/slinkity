@@ -11,14 +11,21 @@ extends:
   - "plugin:react/recommended"
   - "plugin:react/jsx-runtime"
   - "prettier"
+  - plugin:@typescript-eslint/recommended
+  - plugin:@typescript-eslint/recommended-requiring-type-checking
+parser: "@typescript-eslint/parser"
+parserOptions:
+  project: "./tsconfig.json"
+  tsconfigRootDir: "./"
+plugins:
+  - "@typescript-eslint"
+  - import
+  - "prettier"
 settings:
+  import/resolver:
+    typescript: {}
   react:
     version: detect
-plugins:
-  - "prettier"
-parserOptions:
-  ecmaVersion: 2020
-  sourceType: module
 rules:
   quotes:
     - error
@@ -35,3 +42,4 @@ rules:
     - 0
   react/no-unescaped-entities:
     - 0
+

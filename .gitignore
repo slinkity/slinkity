@@ -4,6 +4,7 @@ node_modules
 .cache
 _site
 lib
+**/dist/**/*
 
 # pnpm
 *.pnpm-debug.log

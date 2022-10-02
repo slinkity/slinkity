@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    /* Language and Environment */
+    "target": "ES2020",
+    /* Modules */
+    "module": "commonjs",
+    "moduleResolution": "Node",
+    /* Emit */
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "esModuleInterop": false,
+    "forceConsistentCasingInFileNames": true,
+    /* Type Checking */
+    "strict": true,
+    "strictNullChecks": true,
+    "skipLibCheck": true
+  }
+}
