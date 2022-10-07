@@ -1,10 +1,7 @@
 import * as fs from "fs";
-import * as path from "path";
-import { outputFile } from "fs-extra";
 import type { IncomingMessage, ServerResponse } from "http";
 import {
   toSsrComment,
-  toClientPropsPathFromOutputPath,
   SlinkityInternalError,
   toIslandExt,
   collectCSS,
@@ -17,11 +14,13 @@ import type {
   PropsByInputPath,
   RenderedContent,
   Renderer,
+  RunMode,
   SsrIslandsByInputPath,
+  TransformThis,
   UrlToRenderedContentMap,
   UserConfig,
 } from "./~types.cjs";
-import { createViteServer } from "./viteServer.cjs";
+import { createViteServer, productionBuild } from "./vite.cjs";
 import { defineConfig } from "./defineConfig.cjs";
 import { shortcodes } from "./shortcodes.cjs";
 
@@ -33,6 +32,14 @@ export function plugin(
   const ssrIslandsByInputPath: SsrIslandsByInputPath = new Map();
   const cssUrlsByInputPath: CssUrlsByInputPath = new Map();
   const urlToRenderedContentMap: UrlToRenderedContentMap = new Map();
+
+  let runMode: RunMode = "build";
+  eleventyConfig.on(
+    "eleventy.before",
+    function (params: EleventyEventParams["before"]) {
+      runMode = params.runMode;
+    }
+  );
 
   const userConfig = defineConfig(unresolvedUserConfig);
   const extToRendererMap: ExtToRendererMap = new Map(
@@ -46,27 +53,38 @@ export function plugin(
   const viteServer = createViteServer(userConfig, {
     cssUrlsByInputPath,
     ssrIslandsByInputPath,
+    propsByInputPath,
   });
 
   // TODO: find way to flip back on
   // When set to "true," Vite will try to resolve emulated copies via middleware.
-  // These don't exist in _site since 11ty manages via memory,
-  // so Vite blows up!
+  // These don't exist in _site since 11ty manages via memory.
   eleventyConfig.setServerPassthroughCopyBehavior(false);
   eleventyConfig.ignores.add(userConfig.islandsDir);
 
   eleventyConfig.on(
     "eleventy.after",
-    async function ({ results, runMode }: EleventyEventParams["after"]) {
+    async function ({ results, runMode, dir }: EleventyEventParams["after"]) {
       if (runMode === "serve") {
         for (let { content, inputPath, outputPath, url } of results) {
-          // used for serving content within dev server middleware
+          // Used for serving content within dev server middleware
           urlToRenderedContentMap.set(url, {
             content,
             inputPath,
             outputPath,
           });
         }
+      } else if (runMode === "build") {
+        // Server is used for resolving components
+        // in shortcodes and pages.
+        // Close now that this is complete.
+        const server = await viteServer.getOrInitialize();
+        await server.close();
+        await productionBuild({
+          userConfig,
+          eleventyConfigDir: dir,
+          propsByInputPath,
+        });
       }
     }
   );
@@ -184,7 +202,7 @@ export function plugin(
       return {
         middleware: [
           server.middlewares,
-          async function applyViteHtmlTransformasync(
+          async function applyViteHtmlTransform(
             req: IncomingMessage,
             res: ServerResponse,
             next: Function
@@ -196,7 +214,6 @@ export function plugin(
             const page = urlToRenderedContentMap.get(req.url);
             if (page) {
               const html = await handleSsrComments(page);
-              await createPropsFile(page);
 
               res.setHeader("Content-Type", "text/html");
               res.write(
@@ -211,6 +228,23 @@ export function plugin(
       };
     },
   });
+
+  eleventyConfig.addTransform(
+    "slinkity-prod-handle-ssr-comments",
+    async function (this: TransformThis, content: string) {
+      if (runMode !== "build") return content;
+
+      const html = await handleSsrComments({
+        content,
+        outputPath: this.outputPath,
+        inputPath: this.inputPath,
+      });
+      return html;
+      // const server = await viteServer.getOrInitialize();
+      // // Apply HTML head injection for slinkity/client
+      // return await server.transformIndexHtml(this.inputPath, html);
+    }
+  );
 
   async function createPropsFile({
     content,
@@ -234,11 +268,11 @@ export function plugin(
         propsFileContents +=
           "\n" + (await fs.promises.readFile("./utils/store.client.mjs"));
       }
-      const clientPropsPath = path.join(
-        eleventyConfig.dir.output,
-        toClientPropsPathFromOutputPath(outputPath, eleventyConfig.dir.output)
-      );
-      await outputFile(clientPropsPath, propsFileContents);
+      // const clientPropsPath = path.join(
+      //   eleventyConfig.dir.output,
+      //   toClientPropsPathFromOutputPath(outputPath, eleventyConfig.dir.output)
+      // );
+      // await outputFile(clientPropsPath, propsFileContents);
     }
 
     return content;

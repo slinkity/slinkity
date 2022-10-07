@@ -2,7 +2,6 @@ import type { PluginGlobals, UserConfig, ShortcodeThis } from "./~types.cjs";
 import {
   toSsrComment,
   toPropComment,
-  toClientPropsPathFromOutputPath,
   toResolvedIslandPath,
   extractPropIdsFromHtml,
   toClientScript,
@@ -78,10 +77,6 @@ export function shortcodes(
         unresolvedIslandPath,
         userConfig.islandsDir
       );
-      const clientPropsPath = toClientPropsPathFromOutputPath(
-        this.page.outputPath,
-        eleventyConfig.dir.output
-      );
       const { htmlWithoutPropComments, propIds } =
         extractPropIdsFromHtml(htmlWithPropComments);
 
@@ -107,7 +102,7 @@ export function shortcodes(
         islandId,
         islandPath,
         loadConditions,
-        clientPropsPath,
+        pageInputPath: inputPath,
         clientRendererPath: renderer.clientEntrypoint,
         propIds,
       });
@@ -138,10 +133,6 @@ export function shortcodes(
         unresolvedIslandPath,
         userConfig.islandsDir
       );
-      const clientPropsPath = toClientPropsPathFromOutputPath(
-        this.page.outputPath,
-        eleventyConfig.dir.output
-      );
       const { propIds } = extractPropIdsFromHtml(htmlWithPropComments);
       const props = propsByInputPath.get(inputPath);
       if (propIds.size && props) {
@@ -155,7 +146,7 @@ export function shortcodes(
         islandId,
         islandPath,
         loadConditions,
-        clientPropsPath,
+        pageInputPath: inputPath,
         clientRendererPath: renderer.clientEntrypoint,
         propIds,
       });

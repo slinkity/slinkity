@@ -53,17 +53,8 @@ export function extractPropIdsFromHtml(html: string): {
   };
 }
 
-/**
- * Generate client props path relative to output directory
- */
-export function toClientPropsPathFromOutputPath(
-  outputPath: string,
-  outputDir: string
-): string {
-  const relativeOutput = path.relative(outputDir, outputPath);
-  return vite.normalizePath(
-    path.join("/_props", relativeOutput.replace(/\.\w+$/, ".mjs"))
-  );
+export function prependForwardSlash(pathStr: string) {
+  return pathStr.startsWith("/") ? pathStr : "/" + pathStr;
 }
 
 export function toIslandExt(islandPath: string): string {
@@ -117,10 +108,10 @@ export function addPropToStore({
 }
 
 type ToClientScriptParams = {
+  pageInputPath: string;
   islandId: string;
   islandPath: string;
   loadConditions: string[];
-  clientPropsPath: string;
   clientRendererPath: string;
   isClientOnly: boolean;
   propIds: Set<string>;
@@ -129,42 +120,46 @@ type ToClientScriptParams = {
 export function toClientScript({
   islandId,
   islandPath,
+  pageInputPath,
   loadConditions,
-  clientPropsPath,
   clientRendererPath,
   isClientOnly,
   propIds,
 }: ToClientScriptParams) {
   return `
   <is-land ${loadConditions.join(" ")}>
-    <script type="module/island">
-      import Component from ${JSON.stringify(islandPath)};
-      import render from ${JSON.stringify("/@id/" + clientRendererPath)};
+    <template data-island>
+      <script type="module">
+        import Component from ${JSON.stringify(islandPath)};
+        import render from ${JSON.stringify(clientRendererPath)};
 
-      const target = document.querySelector('slinkity-root[data-root-id=${JSON.stringify(
-        islandId
-      )}]');
-      ${
-        propIds.size
-          ? `
-      import propsById from ${JSON.stringify(clientPropsPath)};
-      const props = {};
-      for (let propId of ${JSON.stringify([...propIds])}) {
-        const { name, value } = propsById[propId];
-        props[name] = value;
-      }
-      `
-          : `
-      const props = {};
-      `
-      }
-      render({ Component, target, props, isClientOnly: ${JSON.stringify(
-        isClientOnly
-      )} });
-    </script>
-    <slinkity-root data-root-id=${JSON.stringify(islandId)}>
-      ${isClientOnly ? "" : toSsrComment(islandId)}
-    </slinkity-root>
+        const target = document.querySelector('slinkity-root[data-root-id=${JSON.stringify(
+          islandId
+        )}]');
+        ${
+          propIds.size
+            ? `
+        import propsById from ${JSON.stringify(
+          `slinkity:props:${pageInputPath}`
+        )};
+        const props = {};
+        for (let propId of ${JSON.stringify([...propIds])}) {
+          const { name, value } = propsById[propId];
+          props[name] = value;
+        }
+        `
+            : `
+        const props = {};
+        `
+        }
+        render({ Component, target, props, isClientOnly: ${JSON.stringify(
+          isClientOnly
+        )} });
+      </script>
+      <slinkity-root data-root-id=${JSON.stringify(islandId)}>
+        ${isClientOnly ? "" : toSsrComment(islandId)}
+      </slinkity-root>
+    </template>
   </is-land>`;
 }
 

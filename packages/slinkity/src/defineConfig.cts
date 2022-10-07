@@ -7,7 +7,6 @@ export const rendererSchema = z.object({
   name: z.string(),
   extensions: z.array(z.string()),
   clientEntrypoint: z.string(),
-  // TODO: type when stable
   ssr: z
     .function()
     .args(
@@ -34,6 +33,7 @@ export const rendererSchema = z.object({
 export const userConfigSchema = z.object({
   renderers: z.array(rendererSchema).optional().default([]),
   islandsDir: z.string().optional().default("_islands"),
+  buildTempDir: z.string().optional().default(".eleventy-temp-build"),
 });
 
 export function defineConfig(userConfig: Partial<UserConfig>): UserConfig {

@@ -103,6 +103,11 @@ export type ShortcodeThis = {
   };
 };
 
+export type TransformThis = {
+  inputPath: string;
+  outputPath: string;
+};
+
 export type EleventyDir = {
   input: string;
   output: string;
@@ -111,10 +116,13 @@ export type EleventyDir = {
   layouts?: string;
 };
 
+export type RunMode = "build" | "watch" | "serve";
+export type OutputMode = "fs" | "json" | "ndjson";
+
 export type EleventyEventParams = {
   after: {
-    runMode: "build" | "watch" | "serve";
-    outputMode: "fs" | "json" | "ndjson";
+    runMode: RunMode;
+    outputMode: OutputMode;
     dir: EleventyDir;
     results: {
       inputPath: string;
@@ -122,5 +130,10 @@ export type EleventyEventParams = {
       url: string;
       content: string;
     }[];
+  };
+  before: {
+    runMode: RunMode;
+    outputMode: OutputMode;
+    dir: EleventyDir;
   };
 };

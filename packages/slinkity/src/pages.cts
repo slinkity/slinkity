@@ -4,7 +4,6 @@ import {
   toSsrComment,
   addPropToStore,
   toClientScript,
-  toClientPropsPathFromOutputPath,
   toResolvedPath,
   toIslandId,
 } from "./~utils.cjs";
@@ -134,17 +133,13 @@ export function pages(
             });
 
             if (isUsedOnClient) {
-              const clientPropsPath = toClientPropsPathFromOutputPath(
-                serverData.page.outputPath,
-                eleventyConfig.dir.output
-              );
               return toClientScript({
                 // Client-only page templates are not supported!
                 isClientOnly: false,
                 islandId,
                 islandPath,
                 loadConditions,
-                clientPropsPath,
+                pageInputPath: inputPath,
                 clientRendererPath: renderer.clientEntrypoint,
                 propIds,
               });
