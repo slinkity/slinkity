@@ -34,32 +34,33 @@ export async function productionBuild({
     const inputFiles = globSync(`${eleventyTempBuildDir}/**/*.html`, {
       absolute: true,
     });
-    if (inputFiles.length) {
-      await vite.build(
-        vite.mergeConfig(
-          {
-            root: eleventyTempBuildDir,
-            mode: "production",
-            plugins: [
-              slinkityPropsPlugin({ propsByInputPath }),
-              slinkityInjectHeadPlugin({
-                ssrIslandsByInputPath,
-                cssUrlsByInputPath,
-                pageByRelOutputPath,
-              }),
-            ],
-            build: {
-              outDir: resolvedOutput,
-              emptyOutDir: true,
-              rollupOptions: {
-                input: inputFiles,
-              },
-            },
+    // throw to remove temp build output in "finally" block
+    if (!inputFiles.length) throw new Error("Output directory empty!");
+    let viteConfig: vite.InlineConfig = vite.mergeConfig(
+      {
+        root: eleventyTempBuildDir,
+        mode: "production",
+        plugins: [
+          slinkityPropsPlugin({ propsByInputPath }),
+          slinkityInjectHeadPlugin({
+            ssrIslandsByInputPath,
+            cssUrlsByInputPath,
+            pageByRelOutputPath,
+          }),
+        ],
+        build: {
+          minify: false,
+          outDir: resolvedOutput,
+          emptyOutDir: true,
+          rollupOptions: {
+            input: inputFiles,
           },
-          userConfig
-        )
-      );
-    }
+        },
+      },
+      userConfig
+    );
+    viteConfig = mergeRendererConfigs({ viteConfig, userConfig });
+    await vite.build(viteConfig);
   } finally {
     await fs.promises.rm(eleventyTempBuildDir, {
       recursive: true,
@@ -98,9 +99,7 @@ export function createViteServer(
     ],
   };
 
-  for (const renderer of userConfig?.renderers ?? []) {
-    viteConfig = vite.mergeConfig(viteConfig, renderer.viteConfig ?? {});
-  }
+  viteConfig = mergeRendererConfigs({ viteConfig, userConfig });
 
   let viteServer: vite.ViteDevServer;
   let awaitingServer: ((value: vite.ViteDevServer) => void)[] = [];
@@ -143,7 +142,6 @@ function slinkityPropsPlugin({
           inputPath,
           propsByInputPath,
         });
-        console.log({ mod });
         return { code: mod };
       }
     },
@@ -228,4 +226,17 @@ function slinkityInjectHeadPlugin({
       },
     },
   };
+}
+
+function mergeRendererConfigs({
+  viteConfig,
+  userConfig,
+}: {
+  viteConfig: vite.InlineConfig;
+  userConfig: UserConfig;
+}) {
+  for (const renderer of userConfig?.renderers ?? []) {
+    viteConfig = vite.mergeConfig(viteConfig, renderer.viteConfig ?? {});
+  }
+  return viteConfig;
 }
