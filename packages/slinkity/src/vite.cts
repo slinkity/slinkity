@@ -10,32 +10,117 @@ import * as path from "path";
 import * as fs from "fs";
 import { sync as globSync } from "fast-glob";
 
-async function getPropsModContents({
-  inputPath,
+export async function productionBuild({
+  userConfig,
+  eleventyConfigDir,
   propsByInputPath,
-}: Pick<RenderedContent, "inputPath"> &
-  Pick<PluginGlobals, "propsByInputPath">) {
-  let propsFileContents = "export default {\n";
-  const propInfo = propsByInputPath.get(inputPath);
-  if (propInfo?.clientPropIds.size) {
-    const { hasStore, props, clientPropIds } = propInfo;
-    for (const clientPropId of clientPropIds) {
-      const { name, getSerializedValue } = props[clientPropId];
-      const serializedKey = JSON.stringify(clientPropId);
-      const serializedEntry = `{ name: ${JSON.stringify(
-        name
-      )}, value: ${getSerializedValue()} }`;
-      propsFileContents += `  ${serializedKey}: ${serializedEntry},\n`;
+  ssrIslandsByInputPath,
+  cssUrlsByInputPath,
+  pageByRelOutputPath,
+}: {
+  userConfig: UserConfig;
+  eleventyConfigDir: EleventyDir;
+} & Pick<
+  PluginGlobals,
+  | "propsByInputPath"
+  | "cssUrlsByInputPath"
+  | "ssrIslandsByInputPath"
+  | "pageByRelOutputPath"
+>) {
+  const eleventyTempBuildDir = path.relative(".", userConfig.buildTempDir);
+  const resolvedOutput = path.resolve(eleventyConfigDir.output);
+  await fs.promises.rename(resolvedOutput, eleventyTempBuildDir);
+  try {
+    const inputFiles = globSync(`${eleventyTempBuildDir}/**/*.html`, {
+      absolute: true,
+    });
+    if (inputFiles.length) {
+      await vite.build(
+        vite.mergeConfig(
+          {
+            root: eleventyTempBuildDir,
+            mode: "production",
+            plugins: [
+              slinkityPropsPlugin({ propsByInputPath }),
+              slinkityInjectHeadPlugin({
+                ssrIslandsByInputPath,
+                cssUrlsByInputPath,
+                pageByRelOutputPath,
+              }),
+            ],
+            build: {
+              outDir: resolvedOutput,
+              emptyOutDir: true,
+              rollupOptions: {
+                input: inputFiles,
+              },
+            },
+          },
+          userConfig
+        )
+      );
     }
-    propsFileContents += "}";
-    if (hasStore) {
-      // TODO: make this better
-      propsFileContents +=
-        "\n" + (await fs.promises.readFile("./utils/store.client.mjs"));
-    }
+  } finally {
+    await fs.promises.rm(eleventyTempBuildDir, {
+      recursive: true,
+    });
+  }
+}
+
+export function createViteServer(
+  userConfig: UserConfig,
+  {
+    cssUrlsByInputPath,
+    ssrIslandsByInputPath,
+    propsByInputPath,
+    pageByRelOutputPath,
+  }: Pick<
+    PluginGlobals,
+    | "cssUrlsByInputPath"
+    | "ssrIslandsByInputPath"
+    | "propsByInputPath"
+    | "pageByRelOutputPath"
+  >
+): ViteServerFactory {
+  let viteConfig: vite.InlineConfig = {
+    clearScreen: false,
+    appType: "custom",
+    server: {
+      middlewareMode: true,
+    },
+    plugins: [
+      slinkityPropsPlugin({ propsByInputPath }),
+      slinkityInjectHeadPlugin({
+        ssrIslandsByInputPath,
+        cssUrlsByInputPath,
+        pageByRelOutputPath,
+      }),
+    ],
+  };
+
+  for (const renderer of userConfig?.renderers ?? []) {
+    viteConfig = vite.mergeConfig(viteConfig, renderer.viteConfig ?? {});
   }
 
-  return propsFileContents;
+  let viteServer: vite.ViteDevServer;
+  let awaitingServer: ((value: vite.ViteDevServer) => void)[] = [];
+  return {
+    async getOrInitialize() {
+      if (viteServer) return new Promise((resolve) => resolve(viteServer));
+
+      if (awaitingServer.length === 0) {
+        vite.createServer(viteConfig).then((_viteServer) => {
+          viteServer = _viteServer;
+          for (const resolve of awaitingServer) {
+            resolve(viteServer);
+          }
+        });
+      }
+      return new Promise((resolve) => {
+        awaitingServer.push(resolve);
+      });
+    },
+  };
 }
 
 function slinkityPropsPlugin({
@@ -65,122 +150,82 @@ function slinkityPropsPlugin({
   };
 }
 
-export async function productionBuild({
-  userConfig,
-  eleventyConfigDir,
+async function getPropsModContents({
+  inputPath,
   propsByInputPath,
-}: {
-  userConfig: UserConfig;
-  eleventyConfigDir: EleventyDir;
-} & Pick<PluginGlobals, "propsByInputPath">) {
-  const eleventyTempBuildDir = path.relative(".", userConfig.buildTempDir);
-  const resolvedOutput = path.resolve(eleventyConfigDir.output);
-  await fs.promises.rename(resolvedOutput, eleventyTempBuildDir);
-  try {
-    const inputFiles = globSync(`${eleventyTempBuildDir}/**/*.html`, {
-      absolute: true,
-    });
-    if (inputFiles.length) {
-      await vite.build(
-        vite.mergeConfig(
-          {
-            root: eleventyTempBuildDir,
-            mode: "production",
-            plugins: [slinkityPropsPlugin({ propsByInputPath })],
-            build: {
-              outDir: resolvedOutput,
-              emptyOutDir: true,
-              rollupOptions: {
-                input: inputFiles,
-              },
-            },
-          },
-          userConfig
-        )
-      );
+}: Pick<RenderedContent, "inputPath"> &
+  Pick<PluginGlobals, "propsByInputPath">) {
+  let propsFileContents = "export default {\n";
+  const propInfo = propsByInputPath.get(inputPath);
+  if (propInfo?.clientPropIds.size) {
+    const { hasStore, props, clientPropIds } = propInfo;
+    for (const clientPropId of clientPropIds) {
+      const { name, getSerializedValue } = props[clientPropId];
+      const serializedKey = JSON.stringify(clientPropId);
+      const serializedEntry = `{ name: ${JSON.stringify(
+        name
+      )}, value: ${getSerializedValue()} }`;
+      propsFileContents += `  ${serializedKey}: ${serializedEntry},\n`;
     }
-  } finally {
-    await fs.promises.rm(eleventyTempBuildDir, {
-      recursive: true,
-    });
+    propsFileContents += "}";
+    if (hasStore) {
+      // TODO: make this better
+      propsFileContents +=
+        "\n" + (await fs.promises.readFile("./utils/store.client.mjs"));
+    }
   }
+
+  return propsFileContents;
 }
 
-export function createViteServer(
-  userConfig: UserConfig,
-  {
-    cssUrlsByInputPath,
-    ssrIslandsByInputPath,
-    propsByInputPath,
-  }: Pick<
-    PluginGlobals,
-    "cssUrlsByInputPath" | "ssrIslandsByInputPath" | "propsByInputPath"
-  >
-): ViteServerFactory {
-  let viteConfig: vite.InlineConfig = {
-    clearScreen: false,
-    appType: "custom",
-    server: {
-      middlewareMode: true,
-    },
-    plugins: [
-      slinkityPropsPlugin({ propsByInputPath }),
-      {
-        name: "vite-plugin-slinkity-inject-head",
-        transformIndexHtml(html, ctx) {
-          console.log("transforming...");
-          const inputPath = ctx.originalUrl;
-          if (!inputPath) return [];
-
-          const hasClientsideComponents = Object.values(
-            ssrIslandsByInputPath.get(inputPath) ?? {}
-          ).some((island) => island.isUsedOnClient);
-
-          const head: vite.HtmlTagDescriptor[] = hasClientsideComponents
-            ? [
-                {
-                  tag: "script",
-                  attrs: { type: "module" },
-                  children: "import '/@id/slinkity/client';",
-                },
-              ]
-            : [];
-
-          const collectedCss = cssUrlsByInputPath.get(inputPath);
-          if (!collectedCss) return head;
-
-          return head.concat(
-            [...collectedCss].map((href) => ({
-              tag: "link",
-              attrs: { rel: "stylesheet", href },
-            }))
-          );
-        },
-      },
-    ],
-  };
-
-  for (const renderer of userConfig?.renderers ?? []) {
-    viteConfig = vite.mergeConfig(viteConfig, renderer.viteConfig ?? {});
-  }
-
-  let viteServer: vite.ViteDevServer;
-  let awaitingServer: ((value: vite.ViteDevServer) => void)[] = [];
+function slinkityInjectHeadPlugin({
+  ssrIslandsByInputPath,
+  cssUrlsByInputPath,
+  pageByRelOutputPath,
+}: Pick<
+  PluginGlobals,
+  "ssrIslandsByInputPath" | "cssUrlsByInputPath" | "pageByRelOutputPath"
+>): vite.Plugin {
   return {
-    async getOrInitialize() {
-      if (viteServer) return new Promise((resolve) => resolve(viteServer));
+    name: "vite-plugin-slinkity-inject-head",
+    transformIndexHtml: {
+      enforce: "pre",
+      transform(html, ctx) {
+        let inputPath: string | undefined;
+        if (ctx.originalUrl) {
+          // Dev server flow
+          inputPath = ctx.originalUrl;
+        } else {
+          // Production build flow
+          const pageInfo = pageByRelOutputPath.get(ctx.path);
+          inputPath = pageInfo?.inputPath;
+        }
+        if (!inputPath) return [];
 
-      if (awaitingServer.length === 0) {
-        vite.createServer(viteConfig).then((_viteServer) => {
-          viteServer = _viteServer;
-          for (const resolve of awaitingServer) {
-            resolve(viteServer);
-          }
-        });
-      }
-      return new Promise((resolve) => {
-        awaitingServer.push(resolve);
-      });
+        const hasClientsideComponents = Object.values(
+          ssrIslandsByInputPath.get(inputPath) ?? {}
+        ).some((island) => island.isUsedOnClient);
+
+        const head: vite.HtmlTagDescriptor[] = hasClientsideComponents
+          ? [
+              {
+                tag: "script",
+                attrs: { type: "module" },
+                children: "import 'slinkity/client';",
+              },
+            ]
+          : [];
+
+        const collectedCss = cssUrlsByInputPath.get(inputPath);
+        if (!collectedCss) return head;
+
+        return head.concat(
+          [...collectedCss].map((href) => ({
+            tag: "link",
+            attrs: { rel: "stylesheet", href },
+          }))
+        );
+      },
     },
   };
 }

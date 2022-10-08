@@ -1,5 +1,6 @@
 import * as fs from "fs";
 import type { IncomingMessage, ServerResponse } from "http";
+import * as path from "path";
 import {
   toSsrComment,
   SlinkityInternalError,
@@ -11,6 +12,7 @@ import type {
   CssUrlsByInputPath,
   EleventyEventParams,
   ExtToRendererMap,
+  PageByRelOutputPath,
   PropsByInputPath,
   RenderedContent,
   Renderer,
@@ -31,6 +33,8 @@ export function plugin(
   const propsByInputPath: PropsByInputPath = new Map();
   const ssrIslandsByInputPath: SsrIslandsByInputPath = new Map();
   const cssUrlsByInputPath: CssUrlsByInputPath = new Map();
+  const pageByRelOutputPath: PageByRelOutputPath = new Map();
+  /** Used to serve content within dev server middleware */
   const urlToRenderedContentMap: UrlToRenderedContentMap = new Map();
 
   let runMode: RunMode = "build";
@@ -54,6 +58,7 @@ export function plugin(
     cssUrlsByInputPath,
     ssrIslandsByInputPath,
     propsByInputPath,
+    pageByRelOutputPath,
   });
 
   // TODO: find way to flip back on
@@ -65,16 +70,21 @@ export function plugin(
   eleventyConfig.on(
     "eleventy.after",
     async function ({ results, runMode, dir }: EleventyEventParams["after"]) {
-      if (runMode === "serve") {
-        for (let { content, inputPath, outputPath, url } of results) {
-          // Used for serving content within dev server middleware
+      for (let { content, inputPath, outputPath, url } of results) {
+        pageByRelOutputPath.set("/" + path.relative(dir.output, outputPath), {
+          inputPath,
+          outputPath,
+          url,
+        });
+        if (runMode === "serve") {
           urlToRenderedContentMap.set(url, {
             content,
             inputPath,
             outputPath,
           });
         }
-      } else if (runMode === "build") {
+      }
+      if (runMode === "build") {
         // Server is used for resolving components
         // in shortcodes and pages.
         // Close now that this is complete.
@@ -84,6 +94,9 @@ export function plugin(
           userConfig,
           eleventyConfigDir: dir,
           propsByInputPath,
+          ssrIslandsByInputPath,
+          cssUrlsByInputPath,
+          pageByRelOutputPath,
         });
       }
     }

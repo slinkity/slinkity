@@ -47,6 +47,12 @@ export type ExtToRendererMap = Map<string, Renderer>;
 
 export type CssUrlsByInputPath = Map<string, Set<string>>;
 
+/** Key: output path relative to output dir (i.e. "/about/index.html", not "/_site/about/index.html") */
+export type PageByRelOutputPath = Map<
+  string,
+  { inputPath: string; outputPath: string; url: string }
+>;
+
 export type ViteServerFactory = {
   /** Get an existing Vite server, or initialize a new server if none exists */
   getOrInitialize(): Promise<ViteDevServer>;
@@ -57,6 +63,7 @@ export type PluginGlobals = {
   propsByInputPath: PropsByInputPath;
   ssrIslandsByInputPath: SsrIslandsByInputPath;
   urlToRenderedContentMap: UrlToRenderedContentMap;
+  pageByRelOutputPath: PageByRelOutputPath;
   extToRendererMap: ExtToRendererMap;
   cssUrlsByInputPath: CssUrlsByInputPath;
 };
