@@ -6,7 +6,8 @@
   "scripts": {
     "start": "eleventy --serve --incremental",
     "dev": "eleventy --serve --incremental",
-    "build": "eleventy"
+    "build": "eleventy",
+    "preview": "serve _site"
   },
   "keywords": [],
   "author": "",
@@ -16,5 +17,8 @@
     "@slinkity/preact": "workspace:*",
     "preact": "^10.10.6",
     "slinkity": "workspace:*"
+  },
+  "devDependencies": {
+    "serve": "^14.0.1"
   }
 }
