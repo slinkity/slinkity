@@ -9,6 +9,7 @@ import * as vite from "vite";
 import * as path from "path";
 import * as fs from "fs";
 import { sync as globSync } from "fast-glob";
+import { toIslandScriptId } from "./~utils.cjs";
 
 export async function productionBuild({
   userConfig,
@@ -36,29 +37,44 @@ export async function productionBuild({
     });
     // throw to remove temp build output in "finally" block
     if (!inputFiles.length) throw new Error("Output directory empty!");
-    let viteConfig: vite.InlineConfig = vite.mergeConfig(
-      {
-        root: eleventyTempBuildDir,
-        mode: "production",
-        plugins: [
-          slinkityPropsPlugin({ propsByInputPath }),
-          slinkityInjectHeadPlugin({
-            ssrIslandsByInputPath,
-            cssUrlsByInputPath,
-            pageByRelOutputPath,
-          }),
-        ],
-        build: {
-          minify: false,
-          outDir: resolvedOutput,
-          emptyOutDir: true,
-          rollupOptions: {
-            input: inputFiles,
+    let viteConfig: vite.InlineConfig = {
+      root: eleventyTempBuildDir,
+      mode: "production",
+      plugins: [
+        slinkityPropsPlugin({ propsByInputPath }),
+        slinkityInjectHeadPlugin({
+          ssrIslandsByInputPath,
+          cssUrlsByInputPath,
+          pageByRelOutputPath,
+        }),
+      ],
+      build: {
+        minify: false,
+        outDir: resolvedOutput,
+        emptyOutDir: true,
+        rollupOptions: {
+          input: inputFiles,
+          output: {
+            manualChunks(id, { getModuleInfo }) {
+              // Check if it's an inline script
+              if (!id.includes(".html?html-proxy&index")) return;
+              const code = getModuleInfo(id)?.code;
+              if (!code) return;
+
+              const islandScriptMatch = code.match(
+                new RegExp(toIslandScriptId(".+"))
+              );
+              if (!islandScriptMatch) return;
+
+              const [islandScriptId] = islandScriptMatch;
+              // If the script contains our special "toIslandScriptId",
+              // It's an island script! Split to a separate chunk.
+              return islandScriptId;
+            },
           },
         },
       },
-      userConfig
-    );
+    };
     viteConfig = mergeRendererConfigs({ viteConfig, userConfig });
     await vite.build(viteConfig);
   } finally {

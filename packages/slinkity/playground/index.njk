@@ -15,9 +15,9 @@
     {% prop 'test', 5 %}
   {% endserverOnlyIsland %}
   <hr style="margin-top: 100vh" />
-  {% island 'Counter.jsx', 'on:visible' %}
+  {% clientOnlyIsland 'Counter.jsx', 'on:visible' %}
     {% prop 'initialCount', 3 %}
-  {% endisland %}
+  {% endclientOnlyIsland %}
 </body>
 
 </html>

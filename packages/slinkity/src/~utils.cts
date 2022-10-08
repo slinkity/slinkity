@@ -20,6 +20,11 @@ export function toIslandId() {
   return nanoid(6);
 }
 
+/** Used to manually split island loaders to separate chunks during prod builds */
+export function toIslandScriptId(islandIdOrRegExp: string) {
+  return `slinkity-island-script-${islandIdOrRegExp}`;
+}
+
 /** @param {string} id Either a prop ID or regex to concat */
 export function toSsrComment(id: string) {
   return `<!--slinkity-ssr ${id}-->`;
@@ -126,10 +131,11 @@ export function toClientScript({
   isClientOnly,
   propIds,
 }: ToClientScriptParams) {
-  return `
+  const clientScript = `
   <is-land ${loadConditions.join(" ")}>
     <template data-island>
       <script type="module">
+        // ${toIslandScriptId(islandId)}
         import Component from ${JSON.stringify(islandPath)};
         import render from ${JSON.stringify(clientRendererPath)};
 
@@ -161,6 +167,7 @@ export function toClientScript({
       </slinkity-root>
     </template>
   </is-land>`;
+  return clientScript;
 }
 
 /**
