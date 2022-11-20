@@ -1,6 +1,33 @@
 import { rendererSchema, userConfigSchema } from "./defineConfig.cjs";
 import type { ViteDevServer, InlineConfig as ViteInlineConfig } from "vite";
 import { z } from "zod";
+import { LOADERS } from "./~consts.cjs";
+
+export const islandMetaSchema = z.union([
+  z.boolean(),
+  z.object({
+    /**
+     * Conditions to hydrate this island, including 'client:idle' and 'client:visible'
+     * Defaults to 'client:load'
+     * https://slinkity.dev/docs/partial-hydration/
+     */
+    when: z
+      .union([z.enum(LOADERS), z.array(z.enum(LOADERS))])
+      .default(["client:load"]),
+    /**
+     * Generates props to pass to your hydrated component.
+     * If you're new to Slinkity, we recommend reading our "Be mindful about your data" docs first:
+     * https://slinkity.dev/docs/component-pages-layouts/#%F0%9F%9A%A8-(important!)-be-mindful-about-your-data
+     * @param eleventyData Page data from 11ty's data cascade
+     */
+    props: z
+      .function(
+        z.tuple([z.any()]),
+        z.union([z.record(z.any()), z.promise(z.record(z.any()))])
+      )
+      .default(() => ({})),
+  }),
+]);
 
 type Prop = {
   name: string;
@@ -80,25 +107,7 @@ export type SlinkityStore = <T>(
 
 export type Renderer = z.infer<typeof rendererSchema>;
 
-export type IslandExport =
-  | boolean
-  | {
-      /**
-       * Conditions to hydrate this island, including 'idle', 'media(query)', 'visible', etc
-       * Defaults to 'load'
-       */
-      on?: string[];
-      /**
-       * Props to pass to this hydrated component
-       * Defaults to an empty object, so be careful!
-       * If you're new to Slinkity, we recommend reading our "Be mindful about your data" docs first:
-       * https://slinkity.dev/docs/component-pages-layouts/#%F0%9F%9A%A8-(important!)-be-mindful-about-your-data
-       * @param eleventyData Page data from 11ty's data cascade
-       */
-      props(
-        eleventyData: any
-      ): Record<string, any> | Promise<Record<string, any>>;
-    };
+export type IslandExport = boolean | z.infer<typeof islandMetaSchema>;
 
 export type UserConfig = z.infer<typeof userConfigSchema>;
 

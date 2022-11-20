@@ -104,7 +104,6 @@ importers:
   packages/slinkity:
     specifiers:
       '@11ty/eleventy': 2.0.0-canary.15
-      '@11ty/is-land': ^2.0.3
       '@types/fs-extra': ^9.0.13
       '@types/node': ^18.7.23
       devalue: ^2.0.1
@@ -123,7 +122,6 @@ importers:
       vite: ^3.0.9
       zod: ^3.18.0
     dependencies:
-      '@11ty/is-land': 2.0.3
       devalue: 2.0.1
       fs-extra: 10.1.0
       nanoid: 3.3.4
@@ -441,10 +439,6 @@ packages:
       - supports-color
       - utf-8-validate
     dev: true
-
-  /@11ty/is-land/2.0.3:
-    resolution: {integrity: sha512-XFZbODzs0kRbo4KEnSmCGmTMaqQhfKxFRMeA2wQiqqLq7P85RtHMbKhrLrR+nYmcwJUyMu/SUgl7b4B9+nnTJw==}
-    dev: false
 
   /@babel/code-frame/7.12.11:
     resolution: {integrity: sha512-Zt1yodBx1UcyiePMSkWnU4hPqhwq7hGi2nFL1LeA3EUl+q2LQx16MISgJ0+z7dnmgvP9QtIleuETGOiOH1RcIw==}

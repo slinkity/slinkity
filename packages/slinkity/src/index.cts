@@ -54,9 +54,9 @@ export function plugin(
       .flat()
   );
 
-  const viteServer = createViteServer(userConfig, {
+  const viteServer = createViteServer({
+    userConfig,
     cssUrlsByInputPath,
-    ssrIslandsByInputPath,
     propsByInputPath,
     pageByRelOutputPath,
   });
@@ -94,7 +94,6 @@ export function plugin(
           userConfig,
           eleventyConfigDir: dir,
           propsByInputPath,
-          ssrIslandsByInputPath,
           cssUrlsByInputPath,
           pageByRelOutputPath,
         });

@@ -1,5 +1,5 @@
-import { z } from "zod";
-import type { PluginGlobals, UserConfig } from "./~types.cjs";
+import { LOADERS } from "./~consts.cjs";
+import { islandMetaSchema, PluginGlobals, UserConfig } from "./~types.cjs";
 import {
   toSsrComment,
   addPropToStore,
@@ -7,19 +7,6 @@ import {
   toResolvedPath,
   toIslandId,
 } from "./~utils.cjs";
-
-const islandMetaSchema = z.union([
-  z.boolean(),
-  z.object({
-    on: z.array(z.string()).optional(),
-    props: z
-      .function(
-        z.tuple([z.any()]),
-        z.union([z.record(z.any()), z.promise(z.record(z.any()))])
-      )
-      .optional(),
-  }),
-]);
 
 export function pages(
   eleventyConfig: any,
@@ -65,7 +52,7 @@ export function pages(
           },
         },
         compile(dataOrPermalink: any, inputPath: string) {
-          return async function render(serverData: any) {
+          return async function render(serverData: Record<string, any>) {
             const islandId = toIslandId();
             const islandPath = toResolvedPath(inputPath);
             const existingSsrComponents = ssrIslandsByInputPath.get(inputPath);
@@ -77,35 +64,29 @@ export function pages(
               .getIslandMeta();
 
             let isUsedOnClient = false;
-            let loadConditions: string[] = [];
-            /** @type {Record<string, any>} */
+            let loadConditions: typeof LOADERS[number][] = [];
             let props = serverData;
 
             if (unparsedIslandMeta) {
-              let islandMeta;
-              try {
-                islandMeta = islandMetaSchema.parse(unparsedIslandMeta);
-              } catch {
+              const islandMetaRes =
+                islandMetaSchema.safeParse(unparsedIslandMeta);
+              if (!islandMetaRes.success) {
                 throw new Error(
-                  `Unable to parse the "island" export from ${JSON.stringify(
+                  `"island" export in ${JSON.stringify(
                     inputPath
-                  )}. Try importing the "IslandExport" type from "slinkity" for some helpful autocomplete. See our docs for usage: https://slinkity.dev/docs/component-pages-layouts/#handle-props-on-hydrated-components`
+                  )} is invalid. Try importing the "IslandExport" type from "slinkity." Usage: https://slinkity.dev/docs/component-pages-layouts/#handle-props-on-hydrated-components`
                 );
               }
-              isUsedOnClient =
-                islandMeta === true || typeof islandMeta === "object";
-              if (isUsedOnClient) {
-                props =
-                  typeof islandMeta === "object" &&
-                  typeof islandMeta.props === "function"
-                    ? await islandMeta.props(serverData)
-                    : {};
+              const islandMeta = islandMetaRes.data;
+              if (islandMeta === true) {
+                props = {};
+                loadConditions = ["client:load"];
+              } else if (typeof islandMeta === "object") {
+                props = await islandMeta.props(serverData);
                 loadConditions =
-                  typeof islandMeta === "object" && Array.isArray(islandMeta.on)
-                    ? islandMeta.on.map(
-                        (loadCondition) => `on:${loadCondition}`
-                      )
-                    : [];
+                  typeof islandMeta.when === "string"
+                    ? [islandMeta.when]
+                    : islandMeta.when;
               }
             }
 

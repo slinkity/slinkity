@@ -3,6 +3,8 @@ import devalue from "devalue";
 import * as path from "path";
 import * as vite from "vite";
 import type { PropsByInputPath } from "./~types.cjs";
+import { z } from "zod";
+import { LOADERS } from "./~consts.cjs";
 
 export class SlinkityInternalError extends Error {
   constructor(msg: string) {
@@ -126,47 +128,80 @@ export function toClientScript({
   islandId,
   islandPath,
   pageInputPath,
-  loadConditions,
+  loadConditions: rawLoadConditions = ["client:load"],
   clientRendererPath,
   isClientOnly,
   propIds,
 }: ToClientScriptParams) {
-  const clientScript = `
-  <is-land ${loadConditions.join(" ")}>
-    <template data-island>
-      <script type="module">
-        // ${toIslandScriptId(islandId)}
-        import Component from ${JSON.stringify(islandPath)};
-        import render from ${JSON.stringify(clientRendererPath)};
+  const targetId = JSON.stringify("island-" + islandId);
+  const loadConditions: [client: typeof LOADERS[number], options: string][] =
+    rawLoadConditions.map((loadCondition) => {
+      const firstEqualsIdx = loadCondition.indexOf("=");
+      const rawKey =
+        firstEqualsIdx === -1
+          ? loadCondition
+          : loadCondition.slice(0, firstEqualsIdx);
+      const options =
+        firstEqualsIdx === -1 ? "" : loadCondition.slice(firstEqualsIdx);
+      const key = z.enum(LOADERS).safeParse(rawKey);
+      if (!key.success) {
+        throw new Error(
+          `[slinkity] ${JSON.stringify(rawKey)} in ${JSON.stringify(
+            pageInputPath
+          )} is not a valid client directive. Try client:load, client:idle, or other valid directives (https://slinkity.dev/docs/partial-hydration/).`
+        );
+      }
+      return [key.data, options];
+    });
 
-        const target = document.querySelector('slinkity-root[data-root-id=${JSON.stringify(
-          islandId
-        )}]');
-        ${
-          propIds.size
-            ? `
-        import propsById from ${JSON.stringify(
-          `slinkity:props:${pageInputPath}`
-        )};
-        const props = {};
-        for (let propId of ${JSON.stringify([...propIds])}) {
-          const { name, value } = propsById[propId];
-          props[name] = value;
-        }
-        `
-            : `
-        const props = {};
-        `
-        }
-        render({ Component, target, props, isClientOnly: ${JSON.stringify(
-          isClientOnly
-        )} });
-      </script>
-      <slinkity-root data-root-id=${JSON.stringify(islandId)}>
-        ${isClientOnly ? "" : toSsrComment(islandId)}
-      </slinkity-root>
-    </template>
-  </is-land>`;
+  function toImportName(client: typeof LOADERS[number]) {
+    return client.replace("client:", "");
+  }
+  const clientScript = `
+  <slinkity-root id=${targetId}>
+    ${isClientOnly ? "" : toSsrComment(islandId)}
+  </slinkity-root>
+  <script type="module">
+    ${loadConditions
+      .map(([client]) => {
+        const importName = toImportName(client);
+        return `import ${importName} from "slinkity/client/${importName}";`;
+      })
+      .join("\n")}
+    ${
+      propIds.size
+        ? `
+    import propsById from ${JSON.stringify(`slinkity:props:${pageInputPath}`)};
+    const props = {};
+    for (let propId of ${JSON.stringify([...propIds])}) {
+      const { name, value } = propsById[propId];
+      props[name] = value;
+    }
+    `
+        : `
+    const props = {};
+    `
+    }
+    const target = document.querySelector('slinkity-root[id=${targetId}]');
+    Promise.race([
+      ${loadConditions
+        .map(([client, options]) => {
+          const importName = toImportName(client);
+          return `${importName}({ target, options: ${JSON.stringify(
+            options
+          )} })`;
+        })
+        .join(",\n")}
+    ]).then(async function () {
+      const [{ default: Component }, { default: renderer }] = await Promise.all([
+        import(${JSON.stringify(islandPath)}),
+        import(${JSON.stringify(clientRendererPath)}),
+      ]);
+      renderer({ Component, target, props, isClientOnly: ${JSON.stringify(
+        isClientOnly
+      )} });
+    });
+  </script>`;
   return clientScript;
 }
 

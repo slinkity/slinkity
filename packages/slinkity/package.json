@@ -7,7 +7,7 @@
   "types": "index.d.ts",
   "exports": {
     ".": "./index.cjs",
-    "./client": "./client.mjs"
+    "./client/*": "./client/*.mjs"
   },
   "homepage": "https://slinkity.dev",
   "author": {
@@ -51,7 +51,6 @@
   },
   "bugs": "https://github.com/slinkity/slinkity/issues",
   "dependencies": {
-    "@11ty/is-land": "^2.0.3",
     "devalue": "^2.0.1",
     "fs-extra": "^10.1.0",
     "nanoid": "3.3.4",

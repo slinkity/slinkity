@@ -1,3 +1,6 @@
-import { nanoid } from "nanoid";
-
-export const BUILD_ID = nanoid();
+export const LOADERS = [
+  "client:load",
+  "client:idle",
+  "client:media",
+  "client:visible",
+] as const;

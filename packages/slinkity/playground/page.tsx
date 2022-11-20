@@ -7,7 +7,7 @@ export const frontmatter = {
 };
 
 export const island: IslandExport = {
-  on: ["load"],
+  when: "client:idle",
   props(eleventyData) {
     return {
       title: eleventyData.title,
