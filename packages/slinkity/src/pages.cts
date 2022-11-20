@@ -6,6 +6,7 @@ import {
   toClientScript,
   toResolvedPath,
   toIslandId,
+  toIslandWrapper,
 } from "./~utils.cjs";
 
 const islandMetaSchema = z.union([
@@ -29,12 +30,14 @@ export function pages(
     propsByInputPath,
     extToRendererMap,
     viteServer,
+    htmlFragmentByIslandId,
   }: Pick<
     PluginGlobals,
     | "ssrIslandsByInputPath"
     | "propsByInputPath"
     | "extToRendererMap"
     | "viteServer"
+    | "htmlFragmentByIslandId"
   >
 ) {
   for (const [ext, renderer] of extToRendererMap.entries()) {
@@ -133,16 +136,27 @@ export function pages(
             });
 
             if (isUsedOnClient) {
-              return toClientScript({
-                // Client-only page templates are not supported!
-                isClientOnly: false,
+              // Client-only page templates not supported!
+              const isClientOnly = false;
+
+              htmlFragmentByIslandId.set(
                 islandId,
-                islandPath,
+                toClientScript({
+                  pageInputPath: inputPath,
+                  clientRendererPath: renderer.clientEntrypoint,
+                  islandPath,
+                  islandId,
+                  isClientOnly,
+                  propIds,
+                })
+              );
+
+              const islandWrapper = toIslandWrapper({
+                islandId,
                 loadConditions,
-                pageInputPath: inputPath,
-                clientRendererPath: renderer.clientEntrypoint,
-                propIds,
+                isClientOnly,
               });
+              return islandWrapper;
             } else {
               return toSsrComment(islandId);
             }

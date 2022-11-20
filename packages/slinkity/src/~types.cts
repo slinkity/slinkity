@@ -47,6 +47,8 @@ export type ExtToRendererMap = Map<string, Renderer>;
 
 export type CssUrlsByInputPath = Map<string, Set<string>>;
 
+export type HtmlFragmentByIslandId = Map<string, string>;
+
 /** Key: output path relative to output dir (i.e. "/about/index.html", not "/_site/about/index.html") */
 export type PageByRelOutputPath = Map<
   string,
@@ -66,6 +68,7 @@ export type PluginGlobals = {
   pageByRelOutputPath: PageByRelOutputPath;
   extToRendererMap: ExtToRendererMap;
   cssUrlsByInputPath: CssUrlsByInputPath;
+  htmlFragmentByIslandId: HtmlFragmentByIslandId;
 };
 
 export type SlinkityStore = <T>(

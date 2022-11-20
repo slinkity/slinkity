@@ -12,6 +12,7 @@ import type {
   CssUrlsByInputPath,
   EleventyEventParams,
   ExtToRendererMap,
+  HtmlFragmentByIslandId,
   PageByRelOutputPath,
   PropsByInputPath,
   RenderedContent,
@@ -36,6 +37,7 @@ export function plugin(
   const pageByRelOutputPath: PageByRelOutputPath = new Map();
   /** Used to serve content within dev server middleware */
   const urlToRenderedContentMap: UrlToRenderedContentMap = new Map();
+  const htmlFragmentByIslandId: HtmlFragmentByIslandId = new Map();
 
   let runMode: RunMode = "build";
   eleventyConfig.on(
@@ -54,11 +56,13 @@ export function plugin(
       .flat()
   );
 
-  const viteServer = createViteServer(userConfig, {
+  const viteServer = createViteServer({
+    userConfig,
     cssUrlsByInputPath,
     ssrIslandsByInputPath,
     propsByInputPath,
     pageByRelOutputPath,
+    htmlFragmentByIslandId,
   });
 
   // TODO: find way to flip back on
@@ -97,6 +101,7 @@ export function plugin(
           ssrIslandsByInputPath,
           cssUrlsByInputPath,
           pageByRelOutputPath,
+          htmlFragmentByIslandId,
         });
       }
     }
@@ -106,6 +111,7 @@ export function plugin(
     ssrIslandsByInputPath,
     propsByInputPath,
     extToRendererMap,
+    htmlFragmentByIslandId,
   });
 
   pages(eleventyConfig, userConfig, {
@@ -113,6 +119,7 @@ export function plugin(
     propsByInputPath,
     extToRendererMap,
     viteServer,
+    htmlFragmentByIslandId,
   });
 
   /**

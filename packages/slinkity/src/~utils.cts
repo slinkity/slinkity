@@ -20,14 +20,21 @@ export function toIslandId() {
   return nanoid(6);
 }
 
+export function toIslandVirtualModId(islandIdOrRegExp: string) {
+  return `slinkity:island:${islandIdOrRegExp}.html`;
+}
+
 /** Used to manually split island loaders to separate chunks during prod builds */
 export function toIslandScriptId(islandIdOrRegExp: string) {
   return `slinkity-island-script-${islandIdOrRegExp}`;
 }
 
-/** @param {string} id Either a prop ID or regex to concat */
-export function toSsrComment(id: string) {
-  return `<!--slinkity-ssr ${id}-->`;
+export function toSsrComment(idOrRegExp: string) {
+  return `<!--slinkity-ssr ${idOrRegExp}-->`;
+}
+
+export function toIslandComment(id: string) {
+  return `<!--slinkity-script ${id}-->`;
 }
 
 export function toResolvedIslandPath(
@@ -112,62 +119,67 @@ export function addPropToStore({
   return { id };
 }
 
-type ToClientScriptParams = {
-  pageInputPath: string;
-  islandId: string;
-  islandPath: string;
-  loadConditions: string[];
-  clientRendererPath: string;
-  isClientOnly: boolean;
-  propIds: Set<string>;
-};
-
 export function toClientScript({
   islandId,
   islandPath,
   pageInputPath,
-  loadConditions,
   clientRendererPath,
   isClientOnly,
   propIds,
-}: ToClientScriptParams) {
-  const clientScript = `
-  <is-land ${loadConditions.join(" ")}>
-    <template data-island>
-      <script type="module">
-        // ${toIslandScriptId(islandId)}
-        import Component from ${JSON.stringify(islandPath)};
-        import render from ${JSON.stringify(clientRendererPath)};
+}: {
+  pageInputPath: string;
+  islandId: string;
+  islandPath: string;
+  clientRendererPath: string;
+  isClientOnly: boolean;
+  propIds: Set<string>;
+}) {
+  const clientScript = `<script type="module">
+  // ${toIslandScriptId(islandId)}
+  import Component from ${JSON.stringify(islandPath)};
+  import render from ${JSON.stringify(clientRendererPath)};
+  ${
+    propIds.size
+      ? `
+  import propsById from ${JSON.stringify(`slinkity:props:${pageInputPath}`)};
+  const props = {};
+  for (let propId of ${JSON.stringify([...propIds])}) {
+    const { name, value } = propsById[propId];
+    props[name] = value;
+  }
+  `
+      : `
+  const props = {};
+  `
+  }
+  const target = document.querySelector('is-land[data-root-id=${JSON.stringify(
+    islandId
+  )}]');
+  render({ Component, target, props, isClientOnly: ${JSON.stringify(
+    isClientOnly
+  )} });
+</script>`;
 
-        const target = document.querySelector('slinkity-root[data-root-id=${JSON.stringify(
-          islandId
-        )}]');
-        ${
-          propIds.size
-            ? `
-        import propsById from ${JSON.stringify(
-          `slinkity:props:${pageInputPath}`
-        )};
-        const props = {};
-        for (let propId of ${JSON.stringify([...propIds])}) {
-          const { name, value } = propsById[propId];
-          props[name] = value;
-        }
-        `
-            : `
-        const props = {};
-        `
-        }
-        render({ Component, target, props, isClientOnly: ${JSON.stringify(
-          isClientOnly
-        )} });
-      </script>
-      <slinkity-root data-root-id=${JSON.stringify(islandId)}>
-        ${isClientOnly ? "" : toSsrComment(islandId)}
-      </slinkity-root>
-    </template>
-  </is-land>`;
   return clientScript;
+}
+
+export function toIslandWrapper({
+  islandId,
+  loadConditions,
+  isClientOnly,
+}: {
+  islandId: string;
+  loadConditions: string[];
+  isClientOnly: boolean;
+}) {
+  const islandScript = `
+  <is-land data-root-id=${JSON.stringify(islandId)} ${loadConditions.join(" ")}>
+    <template data-island>
+      ${toIslandComment(toIslandVirtualModId(islandId))}
+    </template>
+    ${isClientOnly ? "" : toSsrComment(islandId)}
+  </is-land>`;
+  return islandScript;
 }
 
 /**

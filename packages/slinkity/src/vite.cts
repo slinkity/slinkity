@@ -9,15 +9,18 @@ import * as vite from "vite";
 import * as path from "path";
 import * as fs from "fs";
 import { sync as globSync } from "fast-glob";
-import { toIslandScriptId } from "./~utils.cjs";
+import {
+  toIslandScriptId,
+  toIslandVirtualModId,
+  toIslandComment,
+  SlinkityInternalError,
+} from "./~utils.cjs";
+import virtual from "@rollup/plugin-virtual";
 
 export async function productionBuild({
   userConfig,
   eleventyConfigDir,
-  propsByInputPath,
-  ssrIslandsByInputPath,
-  cssUrlsByInputPath,
-  pageByRelOutputPath,
+  ...globals
 }: {
   userConfig: UserConfig;
   eleventyConfigDir: EleventyDir;
@@ -27,6 +30,7 @@ export async function productionBuild({
   | "cssUrlsByInputPath"
   | "ssrIslandsByInputPath"
   | "pageByRelOutputPath"
+  | "htmlFragmentByIslandId"
 >) {
   const eleventyTempBuildDir = path.relative(".", userConfig.buildTempDir);
   const resolvedOutput = path.resolve(eleventyConfigDir.output);
@@ -37,46 +41,69 @@ export async function productionBuild({
     });
     // throw to remove temp build output in "finally" block
     if (!inputFiles.length) throw new Error("Output directory empty!");
-    let viteConfig: vite.InlineConfig = {
-      root: eleventyTempBuildDir,
-      mode: "production",
-      plugins: [
-        slinkityPropsPlugin({ propsByInputPath }),
-        slinkityInjectHeadPlugin({
-          ssrIslandsByInputPath,
-          cssUrlsByInputPath,
-          pageByRelOutputPath,
-        }),
-      ],
-      build: {
-        minify: false,
-        outDir: resolvedOutput,
-        emptyOutDir: true,
-        rollupOptions: {
-          input: inputFiles,
-          output: {
-            manualChunks(id, { getModuleInfo }) {
-              // Check if it's an inline script
-              if (!id.includes(".html?html-proxy&index")) return;
-              const code = getModuleInfo(id)?.code;
-              if (!code) return;
 
-              const islandScriptMatch = code.match(
-                new RegExp(toIslandScriptId(".+"))
-              );
-              if (!islandScriptMatch) return;
-
-              const [islandScriptId] = islandScriptMatch;
-              // If the script contains our special "toIslandScriptId",
-              // It's an island script! Split to a separate chunk.
-              return islandScriptId;
+    const islandVirtualMods = getIslandVirtualMods(globals);
+    for (let islandVirtualModId of Object.keys(islandVirtualMods)) {
+      inputFiles.push(islandVirtualModId);
+    }
+    console.log("🏝 Building islands");
+    const islandBuildResult = await vite.build(
+      mergeRendererConfigs({
+        userConfig,
+        viteConfig: {
+          mode: "production",
+          plugins: [slinkityPropsPlugin(globals), virtual(islandVirtualMods)],
+          build: {
+            write: false,
+            minify: false,
+            rollupOptions: {
+              input: inputFiles,
             },
           },
         },
-      },
-    };
-    viteConfig = mergeRendererConfigs({ viteConfig, userConfig });
-    await vite.build(viteConfig);
+      })
+    );
+    let islandTemplatesToInject = new Map<string, string>();
+    let filesToWrite = new Map<string, string>();
+    if ("output" in islandBuildResult) {
+      for (let entry of islandBuildResult.output) {
+        const outputName = entry.fileName.replace("\x00virtual:", "");
+        if (entry.type === "asset") {
+          if (Object.keys(islandVirtualMods).includes(outputName)) {
+            islandTemplatesToInject.set(outputName, entry.source.toString());
+          } else {
+            filesToWrite.set(outputName, entry.source.toString());
+          }
+        } else {
+          filesToWrite.set(outputName, entry.code);
+        }
+      }
+    }
+
+    console.log("📝 Building pages");
+    await vite.build(
+      mergeRendererConfigs({
+        userConfig,
+        viteConfig: {
+          root: eleventyTempBuildDir,
+          mode: "production",
+          plugins: [
+            slinkityInjectHeadPlugin(globals),
+            slinkityInjectIslandsPlugin({
+              islandTemplatesMap: islandTemplatesToInject,
+            }),
+          ],
+          build: {
+            minify: false,
+            outDir: resolvedOutput,
+            emptyOutDir: true,
+            rollupOptions: {
+              input: inputFiles,
+            },
+          },
+        },
+      })
+    );
   } finally {
     await fs.promises.rm(eleventyTempBuildDir, {
       recursive: true,
@@ -84,35 +111,34 @@ export async function productionBuild({
   }
 }
 
-export function createViteServer(
-  userConfig: UserConfig,
-  {
-    cssUrlsByInputPath,
-    ssrIslandsByInputPath,
-    propsByInputPath,
-    pageByRelOutputPath,
-  }: Pick<
-    PluginGlobals,
-    | "cssUrlsByInputPath"
-    | "ssrIslandsByInputPath"
-    | "propsByInputPath"
-    | "pageByRelOutputPath"
-  >
-): ViteServerFactory {
+function getIslandVirtualMods({
+  htmlFragmentByIslandId,
+}: Pick<PluginGlobals, "htmlFragmentByIslandId">): Record<string, string> {
+  const virtualMods: Record<string, string> = {};
+  for (let [islandId, scriptHtml] of htmlFragmentByIslandId.entries()) {
+    virtualMods[toIslandVirtualModId(islandId)] = scriptHtml;
+  }
+  return virtualMods;
+}
+
+export function createViteServer({
+  userConfig,
+  ...globals
+}: { userConfig: UserConfig } & Pick<
+  PluginGlobals,
+  | "cssUrlsByInputPath"
+  | "ssrIslandsByInputPath"
+  | "propsByInputPath"
+  | "pageByRelOutputPath"
+  | "htmlFragmentByIslandId"
+>): ViteServerFactory {
   let viteConfig: vite.InlineConfig = {
     clearScreen: false,
     appType: "custom",
     server: {
       middlewareMode: true,
     },
-    plugins: [
-      slinkityPropsPlugin({ propsByInputPath }),
-      slinkityInjectHeadPlugin({
-        ssrIslandsByInputPath,
-        cssUrlsByInputPath,
-        pageByRelOutputPath,
-      }),
-    ],
+    plugins: [slinkityPropsPlugin(globals), slinkityInjectHeadPlugin(globals)],
   };
 
   viteConfig = mergeRendererConfigs({ viteConfig, userConfig });
@@ -192,14 +218,41 @@ async function getPropsModContents({
   return propsFileContents;
 }
 
-function slinkityInjectHeadPlugin({
-  ssrIslandsByInputPath,
-  cssUrlsByInputPath,
-  pageByRelOutputPath,
-}: Pick<
-  PluginGlobals,
-  "ssrIslandsByInputPath" | "cssUrlsByInputPath" | "pageByRelOutputPath"
->): vite.Plugin {
+function slinkityInjectIslandsPlugin({
+  islandTemplatesMap,
+}: {
+  islandTemplatesMap: Map<string, string>;
+}): vite.Plugin {
+  return {
+    name: "vite-plugin-slinkity-inject-islands",
+    transformIndexHtml: {
+      enforce: "post",
+      transform(html) {
+        const transformed = html.replace(
+          toIslandComment("(.+)"),
+          (_, islandVirtualModId: string) => {
+            const template = islandTemplatesMap.get(islandVirtualModId);
+            console.log({ islandVirtualModId, template });
+            if (!template) {
+              throw new SlinkityInternalError(
+                `${islandVirtualModId} could not be built.`
+              );
+            }
+            return template;
+          }
+        );
+        return transformed;
+      },
+    },
+  };
+}
+
+function slinkityInjectHeadPlugin(
+  globals: Pick<
+    PluginGlobals,
+    "ssrIslandsByInputPath" | "cssUrlsByInputPath" | "pageByRelOutputPath"
+  >
+): vite.Plugin {
   return {
     name: "vite-plugin-slinkity-inject-head",
     transformIndexHtml: {
@@ -211,13 +264,13 @@ function slinkityInjectHeadPlugin({
           inputPath = ctx.originalUrl;
         } else {
           // Production build flow
-          const pageInfo = pageByRelOutputPath.get(ctx.path);
+          const pageInfo = globals.pageByRelOutputPath.get(ctx.path);
           inputPath = pageInfo?.inputPath;
         }
         if (!inputPath) return [];
 
         const hasClientsideComponents = Object.values(
-          ssrIslandsByInputPath.get(inputPath) ?? {}
+          globals.ssrIslandsByInputPath.get(inputPath) ?? {}
         ).some((island) => island.isUsedOnClient);
 
         const head: vite.HtmlTagDescriptor[] = hasClientsideComponents
@@ -230,7 +283,7 @@ function slinkityInjectHeadPlugin({
             ]
           : [];
 
-        const collectedCss = cssUrlsByInputPath.get(inputPath);
+        const collectedCss = globals.cssUrlsByInputPath.get(inputPath);
         if (!collectedCss) return head;
 
         return head.concat(

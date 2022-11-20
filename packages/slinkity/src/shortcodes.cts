@@ -8,6 +8,7 @@ import {
   toIslandExt,
   addPropToStore,
   toIslandId,
+  toIslandWrapper,
 } from "./~utils.cjs";
 
 export function shortcodes(
@@ -17,9 +18,13 @@ export function shortcodes(
     ssrIslandsByInputPath,
     propsByInputPath,
     extToRendererMap,
+    htmlFragmentByIslandId,
   }: Pick<
     PluginGlobals,
-    "ssrIslandsByInputPath" | "propsByInputPath" | "extToRendererMap"
+    | "ssrIslandsByInputPath"
+    | "propsByInputPath"
+    | "extToRendererMap"
+    | "htmlFragmentByIslandId"
   >
 ) {
   eleventyConfig.addPairedShortcode(
@@ -97,15 +102,26 @@ export function shortcodes(
         },
       });
 
-      return toClientScript({
-        isClientOnly: false,
+      const isClientOnly = false;
+
+      htmlFragmentByIslandId.set(
         islandId,
-        islandPath,
+        toClientScript({
+          pageInputPath: inputPath,
+          clientRendererPath: renderer.clientEntrypoint,
+          islandPath,
+          islandId,
+          isClientOnly,
+          propIds,
+        })
+      );
+
+      const islandWrapper = toIslandWrapper({
+        islandId,
         loadConditions,
-        pageInputPath: inputPath,
-        clientRendererPath: renderer.clientEntrypoint,
-        propIds,
+        isClientOnly,
       });
+      return islandWrapper;
     }
   );
 
@@ -141,15 +157,26 @@ export function shortcodes(
         }
       }
 
-      return toClientScript({
-        isClientOnly: true,
+      const isClientOnly = true;
+
+      htmlFragmentByIslandId.set(
         islandId,
-        islandPath,
+        toClientScript({
+          pageInputPath: inputPath,
+          clientRendererPath: renderer.clientEntrypoint,
+          islandPath,
+          islandId,
+          isClientOnly,
+          propIds,
+        })
+      );
+
+      const islandWrapper = toIslandWrapper({
+        islandId,
         loadConditions,
-        pageInputPath: inputPath,
-        clientRendererPath: renderer.clientEntrypoint,
-        propIds,
+        isClientOnly,
       });
+      return islandWrapper;
     }
   );
 
