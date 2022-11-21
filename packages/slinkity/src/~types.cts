@@ -80,6 +80,17 @@ export type PageByRelOutputPath = Map<
   { inputPath: string; outputPath: string; url: string }
 >;
 
+export type IslandIdToLoaderParams = Map<
+  string,
+  {
+    islandPath: string;
+    pageInputPath: string;
+    loadConditions: string[];
+    propIds: string[];
+    isClientOnly: boolean;
+  }
+>;
+
 export type ViteServerFactory = {
   /** Get an existing Vite server, or initialize a new server if none exists */
   getOrInitialize(): Promise<ViteDevServer>;
@@ -93,6 +104,7 @@ export type PluginGlobals = {
   pageByRelOutputPath: PageByRelOutputPath;
   extToRendererMap: ExtToRendererMap;
   cssUrlsByInputPath: CssUrlsByInputPath;
+  islandIdToLoaderParams: IslandIdToLoaderParams;
 };
 
 export type SlinkityStore = <T>(

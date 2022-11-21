@@ -4,24 +4,22 @@ import {
   toPropComment,
   toResolvedIslandPath,
   extractPropIdsFromHtml,
-  toClientScript,
-  toIslandExt,
+  toIslandRoot,
   addPropToStore,
   toIslandId,
 } from "./~utils.cjs";
 
-export function shortcodes(
-  eleventyConfig: any,
-  userConfig: UserConfig,
-  {
-    ssrIslandsByInputPath,
-    propsByInputPath,
-    extToRendererMap,
-  }: Pick<
-    PluginGlobals,
-    "ssrIslandsByInputPath" | "propsByInputPath" | "extToRendererMap"
-  >
-) {
+export function shortcodes({
+  eleventyConfig,
+  userConfig,
+  ...globals
+}: {
+  eleventyConfig: any;
+  userConfig: UserConfig;
+} & Pick<
+  PluginGlobals,
+  "ssrIslandsByInputPath" | "propsByInputPath" | "islandIdToLoaderParams"
+>) {
   eleventyConfig.addPairedShortcode(
     "serverOnlyIsland",
     function (
@@ -38,8 +36,9 @@ export function shortcodes(
       const { htmlWithoutPropComments, propIds } =
         extractPropIdsFromHtml(htmlWithPropComments);
 
-      const existingSsrComponents = ssrIslandsByInputPath.get(inputPath);
-      ssrIslandsByInputPath.set(inputPath, {
+      const existingSsrComponents =
+        globals.ssrIslandsByInputPath.get(inputPath);
+      globals.ssrIslandsByInputPath.set(inputPath, {
         ...existingSsrComponents,
         [islandId]: {
           islandPath,
@@ -62,16 +61,6 @@ export function shortcodes(
       ...loadConditions: string[]
     ) {
       const { inputPath } = this.page;
-      const renderer = extToRendererMap.get(toIslandExt(unresolvedIslandPath));
-      if (typeof renderer?.clientEntrypoint !== "string") {
-        throw new Error(
-          `No client renderer found for ${JSON.stringify(
-            unresolvedIslandPath
-          )} in ${JSON.stringify(
-            inputPath
-          )}! Please add a renderer to your Slinkity plugin config. See https://slinkity.dev/docs/component-shortcodes/#prerequisites for more.`
-        );
-      }
       const islandId = toIslandId();
       const islandPath = toResolvedIslandPath(
         unresolvedIslandPath,
@@ -80,14 +69,15 @@ export function shortcodes(
       const { htmlWithoutPropComments, propIds } =
         extractPropIdsFromHtml(htmlWithPropComments);
 
-      const props = propsByInputPath.get(inputPath);
+      const props = globals.propsByInputPath.get(inputPath);
       if (propIds.size && props) {
         for (const propId of propIds) {
           props.clientPropIds.add(propId);
         }
       }
-      const existingSsrComponents = ssrIslandsByInputPath.get(inputPath);
-      ssrIslandsByInputPath.set(inputPath, {
+      const existingSsrComponents =
+        globals.ssrIslandsByInputPath.get(inputPath);
+      globals.ssrIslandsByInputPath.set(inputPath, {
         ...existingSsrComponents,
         [islandId]: {
           islandPath,
@@ -96,16 +86,15 @@ export function shortcodes(
           slots: { default: htmlWithoutPropComments },
         },
       });
-
-      return toClientScript({
-        isClientOnly: false,
-        islandId,
+      const isClientOnly = false;
+      globals.islandIdToLoaderParams.set(islandId, {
         islandPath,
         loadConditions,
         pageInputPath: inputPath,
-        clientRendererPath: renderer.clientEntrypoint,
-        propIds,
+        propIds: [...propIds],
+        isClientOnly,
       });
+      return toIslandRoot({ isClientOnly, islandId });
     }
   );
 
@@ -118,38 +107,28 @@ export function shortcodes(
       ...loadConditions: string[]
     ) {
       const { inputPath } = this.page;
-      const renderer = extToRendererMap.get(toIslandExt(unresolvedIslandPath));
-      if (typeof renderer?.clientEntrypoint !== "string") {
-        throw new Error(
-          `No client renderer found for ${JSON.stringify(
-            unresolvedIslandPath
-          )} in ${JSON.stringify(
-            inputPath
-          )}! Please add a renderer to your Slinkity plugin config. See https://slinkity.dev/docs/component-shortcodes/#prerequisites for more.`
-        );
-      }
       const islandId = toIslandId();
       const islandPath = toResolvedIslandPath(
         unresolvedIslandPath,
         userConfig.islandsDir
       );
       const { propIds } = extractPropIdsFromHtml(htmlWithPropComments);
-      const props = propsByInputPath.get(inputPath);
+      const props = globals.propsByInputPath.get(inputPath);
       if (propIds.size && props) {
         for (const propId of propIds) {
           props.clientPropIds.add(propId);
         }
       }
 
-      return toClientScript({
-        isClientOnly: true,
-        islandId,
+      const isClientOnly = true;
+      globals.islandIdToLoaderParams.set(islandId, {
         islandPath,
         loadConditions,
         pageInputPath: inputPath,
-        clientRendererPath: renderer.clientEntrypoint,
-        propIds,
+        propIds: [...propIds],
+        isClientOnly,
       });
+      return toIslandRoot({ isClientOnly, islandId });
     }
   );
 
@@ -160,7 +139,7 @@ export function shortcodes(
       const { id } = addPropToStore({
         name,
         value,
-        propsByInputPath,
+        propsByInputPath: globals.propsByInputPath,
         inputPath,
       });
 

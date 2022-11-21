@@ -3,34 +3,29 @@ import { islandMetaSchema, PluginGlobals, UserConfig } from "./~types.cjs";
 import {
   toSsrComment,
   addPropToStore,
-  toClientScript,
+  toIslandRoot,
   toResolvedPath,
   toIslandId,
 } from "./~utils.cjs";
 
-export function pages(
-  eleventyConfig: any,
-  userConfig: UserConfig,
-  {
-    ssrIslandsByInputPath,
-    propsByInputPath,
-    extToRendererMap,
-    viteServer,
-  }: Pick<
-    PluginGlobals,
-    | "ssrIslandsByInputPath"
-    | "propsByInputPath"
-    | "extToRendererMap"
-    | "viteServer"
-  >
-) {
-  for (const [ext, renderer] of extToRendererMap.entries()) {
+export function pages({
+  eleventyConfig,
+  ...globals
+}: { eleventyConfig: any } & Pick<
+  PluginGlobals,
+  | "ssrIslandsByInputPath"
+  | "propsByInputPath"
+  | "extToRendererMap"
+  | "viteServer"
+  | "islandIdToLoaderParams"
+>) {
+  for (const [ext, renderer] of globals.extToRendererMap.entries()) {
     if (renderer.page) {
       eleventyConfig.addTemplateFormats(ext);
       eleventyConfig.addExtension(ext, {
         read: false,
         async getData(inputPath: string) {
-          const server = await viteServer.getOrInitialize();
+          const server = await globals.viteServer.getOrInitialize();
           const Component = await server.ssrLoadModule(inputPath);
           return await renderer.page?.({ Component }).getData();
         },
@@ -55,9 +50,10 @@ export function pages(
           return async function render(serverData: Record<string, any>) {
             const islandId = toIslandId();
             const islandPath = toResolvedPath(inputPath);
-            const existingSsrComponents = ssrIslandsByInputPath.get(inputPath);
+            const existingSsrComponents =
+              globals.ssrIslandsByInputPath.get(inputPath);
 
-            const server = await viteServer.getOrInitialize();
+            const server = await globals.viteServer.getOrInitialize();
             const Component = await server.ssrLoadModule(inputPath);
             const unparsedIslandMeta = await renderer
               .page?.({ Component })
@@ -96,14 +92,14 @@ export function pages(
               const { id } = addPropToStore({
                 name,
                 value,
-                propsByInputPath,
+                propsByInputPath: globals.propsByInputPath,
                 inputPath,
                 isUsedOnClient,
               });
               propIds.add(id);
             }
 
-            ssrIslandsByInputPath.set(inputPath, {
+            globals.ssrIslandsByInputPath.set(inputPath, {
               ...existingSsrComponents,
               [islandId]: {
                 islandPath,
@@ -114,16 +110,16 @@ export function pages(
             });
 
             if (isUsedOnClient) {
-              return toClientScript({
-                // Client-only page templates are not supported!
-                isClientOnly: false,
-                islandId,
+              // Client-only page templates are not supported!
+              const isClientOnly = false;
+              globals.islandIdToLoaderParams.set(islandId, {
                 islandPath,
                 loadConditions,
                 pageInputPath: inputPath,
-                clientRendererPath: renderer.clientEntrypoint,
-                propIds,
+                propIds: [...propIds],
+                isClientOnly,
               });
+              return toIslandRoot({ isClientOnly, islandId });
             } else {
               return toSsrComment(islandId);
             }

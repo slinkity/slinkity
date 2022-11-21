@@ -1,17 +1,10 @@
-import * as fs from "fs";
 import type { IncomingMessage, ServerResponse } from "http";
 import * as path from "path";
-import {
-  toSsrComment,
-  SlinkityInternalError,
-  toIslandExt,
-  collectCSS,
-} from "./~utils.cjs";
-import { pages } from "./pages.cjs";
 import type {
   CssUrlsByInputPath,
   EleventyEventParams,
   ExtToRendererMap,
+  IslandIdToLoaderParams,
   PageByRelOutputPath,
   PropsByInputPath,
   RenderedContent,
@@ -22,9 +15,18 @@ import type {
   UrlToRenderedContentMap,
   UserConfig,
 } from "./~types.cjs";
-import { createViteServer, productionBuild } from "./vite.cjs";
+import {
+  toSsrComment,
+  SlinkityInternalError,
+  toIslandExt,
+  collectCSS,
+  toResolveViteVirtualMod,
+} from "./~utils.cjs";
 import { defineConfig } from "./defineConfig.cjs";
+import { pages } from "./pages.cjs";
 import { shortcodes } from "./shortcodes.cjs";
+import { createViteServer, productionBuild } from "./vite.cjs";
+import { PROPS_VIRTUAL_MOD } from "./~consts.cjs";
 
 export function plugin(
   eleventyConfig: any,
@@ -36,6 +38,7 @@ export function plugin(
   const pageByRelOutputPath: PageByRelOutputPath = new Map();
   /** Used to serve content within dev server middleware */
   const urlToRenderedContentMap: UrlToRenderedContentMap = new Map();
+  const islandIdToLoaderParams: IslandIdToLoaderParams = new Map();
 
   let runMode: RunMode = "build";
   eleventyConfig.on(
@@ -59,6 +62,8 @@ export function plugin(
     cssUrlsByInputPath,
     propsByInputPath,
     pageByRelOutputPath,
+    extToRendererMap,
+    islandIdToLoaderParams,
   });
 
   // TODO: find way to flip back on
@@ -96,22 +101,28 @@ export function plugin(
           propsByInputPath,
           cssUrlsByInputPath,
           pageByRelOutputPath,
+          extToRendererMap,
+          islandIdToLoaderParams,
         });
       }
     }
   );
 
-  shortcodes(eleventyConfig, userConfig, {
+  shortcodes({
+    eleventyConfig,
+    userConfig,
     ssrIslandsByInputPath,
     propsByInputPath,
-    extToRendererMap,
+    islandIdToLoaderParams,
   });
 
-  pages(eleventyConfig, userConfig, {
+  pages({
+    eleventyConfig,
     ssrIslandsByInputPath,
     propsByInputPath,
     extToRendererMap,
     viteServer,
+    islandIdToLoaderParams,
   });
 
   /**
@@ -226,6 +237,15 @@ export function plugin(
             const page = urlToRenderedContentMap.get(req.url);
             if (page) {
               const html = await handleSsrComments(page);
+              // Invalidate props virtual module for page
+              const mod = await server.moduleGraph.getModuleByUrl(
+                `${toResolveViteVirtualMod(
+                  PROPS_VIRTUAL_MOD
+                )}?${new URLSearchParams({
+                  inputPath: page.inputPath,
+                })}`
+              );
+              if (mod) server.moduleGraph.invalidateModule(mod);
 
               res.setHeader("Content-Type", "text/html");
               res.write(
@@ -252,41 +272,6 @@ export function plugin(
         inputPath: this.inputPath,
       });
       return html;
-      // const server = await viteServer.getOrInitialize();
-      // // Apply HTML head injection for slinkity/client
-      // return await server.transformIndexHtml(this.inputPath, html);
     }
   );
-
-  async function createPropsFile({
-    content,
-    outputPath,
-    inputPath,
-  }: RenderedContent) {
-    const propInfo = propsByInputPath.get(inputPath);
-    if (propInfo?.clientPropIds.size) {
-      const { hasStore, props, clientPropIds } = propInfo;
-      let propsFileContents = "export default {\n";
-      for (const clientPropId of clientPropIds) {
-        const { name, getSerializedValue } = props[clientPropId];
-        const serializedKey = JSON.stringify(clientPropId);
-        const serializedEntry = `{ name: ${JSON.stringify(
-          name
-        )}, value: ${getSerializedValue()} }`;
-        propsFileContents += `  ${serializedKey}: ${serializedEntry},\n`;
-      }
-      propsFileContents += "}";
-      if (hasStore) {
-        propsFileContents +=
-          "\n" + (await fs.promises.readFile("./utils/store.client.mjs"));
-      }
-      // const clientPropsPath = path.join(
-      //   eleventyConfig.dir.output,
-      //   toClientPropsPathFromOutputPath(outputPath, eleventyConfig.dir.output)
-      // );
-      // await outputFile(clientPropsPath, propsFileContents);
-    }
-
-    return content;
-  }
 }
