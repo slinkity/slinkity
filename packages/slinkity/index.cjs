@@ -1,4 +1,4 @@
-const { plugin } = require('./dist/plugin.cjs')
+const { plugin } = require('./dist/index.cjs')
 const { defineConfig } = require('./dist/defineConfig.cjs')
 
 module.exports = {
