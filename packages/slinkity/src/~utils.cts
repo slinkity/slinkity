@@ -168,7 +168,7 @@ export function toIslandRoot({
     inputPath: loaderParams.pageInputPath,
   });
 
-  const clientScript = `
+  return `
   <slinkity-root data-id=${JSON.stringify(islandId)}>
     ${loaderParams.isClientOnly ? "" : toSsrComment(islandId)}
   </slinkity-root>
@@ -217,7 +217,6 @@ export function toIslandRoot({
       )} });
     });
   </script>`;
-  return clientScript;
 }
 
 /**
