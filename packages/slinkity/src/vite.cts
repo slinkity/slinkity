@@ -11,7 +11,7 @@ import * as fs from "fs";
 import { sync as globSync } from "fast-glob";
 import { ISLAND_VIRTUAL_MOD, LOADERS, PROPS_VIRTUAL_MOD } from "./~consts.cjs";
 import { z } from "zod";
-import { toIslandExt, toResolveViteVirtualMod } from "./~utils.cjs";
+import { toIslandExt, toResolvedVirtualModId } from "./~utils.cjs";
 
 export async function productionBuild({
   userConfig,
@@ -115,7 +115,7 @@ export function createViteServer({
 function slinkityPropsPlugin({
   propsByInputPath,
 }: Pick<PluginGlobals, "propsByInputPath">): vite.Plugin {
-  const resolvedVirtualModuleId = toResolveViteVirtualMod(PROPS_VIRTUAL_MOD);
+  const resolvedVirtualModuleId = toResolvedVirtualModId(PROPS_VIRTUAL_MOD);
 
   return {
     name: "slinkity-props-plugin",
@@ -159,13 +159,13 @@ function slinkityPropsPlugin({
 function slinkityIslandLoaderPlugin(
   globals: Pick<PluginGlobals, "extToRendererMap" | "islandIdToLoaderParams">
 ): vite.Plugin {
-  const resolvedVirtualModuleId = toResolveViteVirtualMod(ISLAND_VIRTUAL_MOD);
+  const resolvedVirtualModuleId = toResolvedVirtualModId(ISLAND_VIRTUAL_MOD);
 
   return {
     name: "slinkity-island-loader-plugin",
     resolveId(id) {
       if (id.startsWith(ISLAND_VIRTUAL_MOD)) {
-        return id.replace(ISLAND_VIRTUAL_MOD, toResolveViteVirtualMod);
+        return id.replace(ISLAND_VIRTUAL_MOD, toResolvedVirtualModId);
       }
     },
     async load(id) {

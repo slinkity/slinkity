@@ -13,7 +13,7 @@ export class SlinkityInternalError extends Error {
   }
 }
 
-export function toResolveViteVirtualMod(id: string) {
+export function toResolvedVirtualModId(id: string) {
   return "\0" + id;
 }
 

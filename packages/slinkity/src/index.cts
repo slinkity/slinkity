@@ -20,13 +20,14 @@ import {
   SlinkityInternalError,
   toIslandExt,
   collectCSS,
-  toResolveViteVirtualMod,
+  toResolvedVirtualModId,
 } from "./~utils.cjs";
 import { defineConfig } from "./defineConfig.cjs";
 import { pages } from "./pages.cjs";
 import { shortcodes } from "./shortcodes.cjs";
 import { createViteServer, productionBuild } from "./vite.cjs";
 import { PROPS_VIRTUAL_MOD } from "./~consts.cjs";
+import { ModuleNode, normalizePath } from "vite";
 
 export function plugin(
   eleventyConfig: any,
@@ -75,20 +76,50 @@ export function plugin(
   eleventyConfig.on(
     "eleventy.after",
     async function ({ results, runMode, dir }: EleventyEventParams["after"]) {
-      for (let { content, inputPath, outputPath, url } of results) {
-        pageByRelOutputPath.set("/" + path.relative(dir.output, outputPath), {
+      // Dev: Invalidate virtual modules across pages. Ex. inline scripts, component props
+      const urlsToInvalidate: string[] = [];
+
+      for (const { content, inputPath, outputPath, url } of results) {
+        const relOutputPath =
+          "/" + normalizePath(path.relative(dir.output, outputPath));
+        pageByRelOutputPath.set(relOutputPath, {
           inputPath,
           outputPath,
           url,
         });
+
         if (runMode === "serve") {
           urlToRenderedContentMap.set(url, {
             content,
             inputPath,
             outputPath,
           });
+
+          const server = await viteServer.getOrInitialize();
+          const inlineScriptBase = toResolvedVirtualModId(relOutputPath);
+          for (let key of server.moduleGraph.urlToModuleMap.keys()) {
+            if (key.startsWith(inlineScriptBase)) {
+              urlsToInvalidate.push(key);
+            }
+          }
+          const islandPropsUrl = `${toResolvedVirtualModId(
+            PROPS_VIRTUAL_MOD
+          )}?${new URLSearchParams({
+            inputPath,
+          })}`;
+          urlsToInvalidate.push(islandPropsUrl);
         }
       }
+      if (runMode === "serve") {
+        const server = await viteServer.getOrInitialize();
+        await Promise.all(
+          urlsToInvalidate.map(async (url) => {
+            const mod = await server.moduleGraph.getModuleByUrl(url);
+            if (mod) server.moduleGraph.invalidateModule(mod);
+          })
+        );
+      }
+
       if (runMode === "build") {
         // Server is used for resolving components
         // in shortcodes and pages.
@@ -237,15 +268,6 @@ export function plugin(
             const page = urlToRenderedContentMap.get(req.url);
             if (page) {
               const html = await handleSsrComments(page);
-              // Invalidate props virtual module for page
-              const mod = await server.moduleGraph.getModuleByUrl(
-                `${toResolveViteVirtualMod(
-                  PROPS_VIRTUAL_MOD
-                )}?${new URLSearchParams({
-                  inputPath: page.inputPath,
-                })}`
-              );
-              if (mod) server.moduleGraph.invalidateModule(mod);
 
               res.setHeader("Content-Type", "text/html");
               res.write(
