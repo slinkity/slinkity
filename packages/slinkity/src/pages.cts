@@ -6,6 +6,7 @@ import {
   toIslandRoot,
   toResolvedPath,
   toIslandId,
+  toIslandExt,
 } from "./~utils.cjs";
 
 export function pages({
@@ -17,7 +18,6 @@ export function pages({
   | "propsByInputPath"
   | "extToRendererMap"
   | "viteServer"
-  | "islandIdToLoaderParams"
 >) {
   for (const [ext, renderer] of globals.extToRendererMap.entries()) {
     if (renderer.page) {
@@ -112,14 +112,18 @@ export function pages({
             if (isUsedOnClient) {
               // Client-only page templates are not supported!
               const isClientOnly = false;
-              globals.islandIdToLoaderParams.set(islandId, {
+              const renderer = globals.extToRendererMap.get(
+                toIslandExt(islandPath)
+              );
+              return toIslandRoot({
+                islandId,
                 islandPath,
                 loadConditions,
                 pageInputPath: inputPath,
                 propIds: [...propIds],
                 isClientOnly,
+                renderer,
               });
-              return toIslandRoot({ isClientOnly, islandId });
             } else {
               return toSsrComment(islandId);
             }

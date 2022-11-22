@@ -4,7 +4,6 @@ import type {
   CssUrlsByInputPath,
   EleventyEventParams,
   ExtToRendererMap,
-  IslandIdToLoaderParams,
   PageByRelOutputPath,
   PropsByInputPath,
   RenderedContent,
@@ -27,7 +26,7 @@ import { pages } from "./pages.cjs";
 import { shortcodes } from "./shortcodes.cjs";
 import { createViteServer, productionBuild } from "./vite.cjs";
 import { PROPS_VIRTUAL_MOD } from "./~consts.cjs";
-import { ModuleNode, normalizePath } from "vite";
+import { normalizePath } from "vite";
 
 export function plugin(
   eleventyConfig: any,
@@ -39,7 +38,6 @@ export function plugin(
   const pageByRelOutputPath: PageByRelOutputPath = new Map();
   /** Used to serve content within dev server middleware */
   const urlToRenderedContentMap: UrlToRenderedContentMap = new Map();
-  const islandIdToLoaderParams: IslandIdToLoaderParams = new Map();
 
   let runMode: RunMode = "build";
   eleventyConfig.on(
@@ -64,7 +62,6 @@ export function plugin(
     propsByInputPath,
     pageByRelOutputPath,
     extToRendererMap,
-    islandIdToLoaderParams,
   });
 
   // TODO: find way to flip back on
@@ -133,7 +130,6 @@ export function plugin(
           cssUrlsByInputPath,
           pageByRelOutputPath,
           extToRendererMap,
-          islandIdToLoaderParams,
         });
       }
     }
@@ -144,7 +140,7 @@ export function plugin(
     userConfig,
     ssrIslandsByInputPath,
     propsByInputPath,
-    islandIdToLoaderParams,
+    extToRendererMap,
   });
 
   pages({
@@ -153,7 +149,6 @@ export function plugin(
     propsByInputPath,
     extToRendererMap,
     viteServer,
-    islandIdToLoaderParams,
   });
 
   /**

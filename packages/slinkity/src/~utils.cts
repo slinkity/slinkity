@@ -2,9 +2,9 @@ import { nanoid } from "nanoid";
 import devalue from "devalue";
 import * as path from "path";
 import * as vite from "vite";
-import type { PropsByInputPath } from "./~types.cjs";
+import type { PropsByInputPath, Renderer } from "./~types.cjs";
 import { z } from "zod";
-import { ISLAND_VIRTUAL_MOD } from "./~consts.cjs";
+import { LOADERS, PROPS_VIRTUAL_MOD } from "./~consts.cjs";
 
 export class SlinkityInternalError extends Error {
   constructor(msg: string) {
@@ -120,16 +120,103 @@ export function addPropToStore({
 
 export function toIslandRoot({
   islandId,
-  isClientOnly,
+  renderer,
+  ...loaderParams
 }: {
   islandId: string;
+  islandPath: string;
+  pageInputPath: string;
+  loadConditions: string[];
+  propIds: string[];
   isClientOnly: boolean;
+  renderer?: Renderer;
 }) {
+  if (typeof renderer?.clientEntrypoint !== "string") {
+    throw new Error(
+      `No client renderer found for ${JSON.stringify(
+        loaderParams.islandPath
+      )} in ${JSON.stringify(
+        loaderParams.pageInputPath
+      )}! Please add a renderer to your Slinkity plugin config. See https://slinkity.dev/docs/component-shortcodes/#prerequisites for more.`
+    );
+  }
+  const { clientEntrypoint } = renderer;
+  const loadConditions: [client: typeof LOADERS[number], options: string][] =
+    loaderParams.loadConditions.map((loadCondition) => {
+      const firstEqualsIdx = loadCondition.indexOf("=");
+      const rawKey =
+        firstEqualsIdx === -1
+          ? loadCondition
+          : loadCondition.slice(0, firstEqualsIdx);
+      const options =
+        firstEqualsIdx === -1 ? "" : loadCondition.slice(firstEqualsIdx);
+      const key = z.enum(LOADERS).safeParse(rawKey);
+      if (!key.success) {
+        throw new Error(
+          `[slinkity] ${JSON.stringify(rawKey)} in ${JSON.stringify(
+            loaderParams.pageInputPath
+          )} is not a valid client directive. Try client:load, client:idle, or other valid directives (https://slinkity.dev/docs/partial-hydration/).`
+        );
+      }
+      return [key.data, options];
+    });
+
+  function toImportName(client: typeof LOADERS[number]) {
+    return client.replace("client:", "");
+  }
+  const propsImportParams = new URLSearchParams({
+    inputPath: loaderParams.pageInputPath,
+  });
+
   const clientScript = `
   <slinkity-root data-id=${JSON.stringify(islandId)}>
-    ${isClientOnly ? "" : toSsrComment(islandId)}
+    ${loaderParams.isClientOnly ? "" : toSsrComment(islandId)}
   </slinkity-root>
-  <script type="module" src="/@id/${ISLAND_VIRTUAL_MOD}?id=${islandId}"></script>`;
+  <script type="module">
+  ${loadConditions
+    .map(([client]) => {
+      const importName = toImportName(client);
+      return `import ${importName} from "slinkity/client/${importName}";`;
+    })
+    .join("\n")}
+      ${
+        loaderParams.propIds.length
+          ? `
+      import propsById from ${JSON.stringify(
+        `${PROPS_VIRTUAL_MOD}?${propsImportParams}`
+      )};
+      const props = {};
+      for (let propId of ${JSON.stringify(loaderParams.propIds)}) {
+        const { name, value } = propsById[propId];
+        props[name] = value;
+      }
+      `
+          : `
+      const props = {};
+      `
+      }
+    const target = document.querySelector('slinkity-root[data-id=${JSON.stringify(
+      islandId
+    )}]');
+    Promise.race([
+      ${loadConditions
+        .map(([client, options]) => {
+          const importName = toImportName(client);
+          return `${importName}({ target, options: ${JSON.stringify(
+            options
+          )} })`;
+        })
+        .join(",\n")}
+    ]).then(async function () {
+      const [{ default: Component }, { default: renderer }] = await Promise.all([
+        import(${JSON.stringify(loaderParams.islandPath)}),
+        import(${JSON.stringify(clientEntrypoint)}),
+      ]);
+      renderer({ Component, target, props, isClientOnly: ${JSON.stringify(
+        loaderParams.isClientOnly
+      )} });
+    });
+  </script>`;
   return clientScript;
 }
 

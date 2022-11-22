@@ -7,6 +7,7 @@ import {
   toIslandRoot,
   addPropToStore,
   toIslandId,
+  toIslandExt,
 } from "./~utils.cjs";
 
 export function shortcodes({
@@ -18,7 +19,7 @@ export function shortcodes({
   userConfig: UserConfig;
 } & Pick<
   PluginGlobals,
-  "ssrIslandsByInputPath" | "propsByInputPath" | "islandIdToLoaderParams"
+  "ssrIslandsByInputPath" | "propsByInputPath" | "extToRendererMap"
 >) {
   eleventyConfig.addPairedShortcode(
     "serverOnlyIsland",
@@ -87,14 +88,16 @@ export function shortcodes({
         },
       });
       const isClientOnly = false;
-      globals.islandIdToLoaderParams.set(islandId, {
+      const renderer = globals.extToRendererMap.get(toIslandExt(islandPath));
+      return toIslandRoot({
+        islandId,
         islandPath,
         loadConditions,
         pageInputPath: inputPath,
         propIds: [...propIds],
         isClientOnly,
+        renderer,
       });
-      return toIslandRoot({ isClientOnly, islandId });
     }
   );
 
@@ -121,14 +124,16 @@ export function shortcodes({
       }
 
       const isClientOnly = true;
-      globals.islandIdToLoaderParams.set(islandId, {
+      const renderer = globals.extToRendererMap.get(toIslandExt(islandPath));
+      return toIslandRoot({
+        islandId,
         islandPath,
         loadConditions,
         pageInputPath: inputPath,
         propIds: [...propIds],
         isClientOnly,
+        renderer,
       });
-      return toIslandRoot({ isClientOnly, islandId });
     }
   );
 
