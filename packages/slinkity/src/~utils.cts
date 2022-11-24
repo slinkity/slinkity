@@ -13,27 +13,24 @@ export class SlinkityInternalError extends Error {
   }
 }
 
+/**
+ * Resolve virtual module ID using Vite's convention
+ * https://vitejs.dev/guide/api-plugin.html#virtual-modules-convention
+ */
 export function toResolvedVirtualModId(id: string) {
   return "\0" + id;
 }
 
-/** @param {string} id Either a prop ID or regex to concat */
-export function toPropComment(id: string) {
-  return `<!--slinkity-prop ${id}-->`;
+export function toPropComment(orRegExp: string) {
+  return `<!--slinkity-prop ${orRegExp}-->`;
 }
 
 export function toIslandId() {
   return nanoid(6);
 }
 
-/** Used to manually split island loaders to separate chunks during prod builds */
-export function toIslandScriptId(islandIdOrRegExp: string) {
-  return `slinkity-island-script-${islandIdOrRegExp}`;
-}
-
-/** @param {string} id Either a prop ID or regex to concat */
-export function toSsrComment(id: string) {
-  return `<!--slinkity-ssr ${id}-->`;
+export function toSsrComment(orRegExp: string) {
+  return `<!--slinkity-ssr ${orRegExp}-->`;
 }
 
 export function toResolvedIslandPath(
@@ -220,8 +217,7 @@ export function toIslandRoot({
 }
 
 /**
- * Regex of hard-coded stylesheet extensions
- * @returns Whether this import ends with an expected CSS file extension
+ * Based on regex of hard-coded stylesheet extensions
  */
 export function isStyleImport(imp: string): boolean {
   return /\.(css|scss|sass|less|stylus)($|\?*)/.test(imp);
@@ -231,7 +227,7 @@ export function isStyleImport(imp: string): boolean {
  * Recursively walks through all nested imports for a given module,
  * Searching for any CSS imported via ESM
  */
-export function collectCSS(
+export function collectCSSImportedViaEsm(
   mod: vite.ModuleNode,
   collectedCSSModUrls: Set<string>,
   visitedModUrls: Set<string> = new Set()
@@ -243,7 +239,7 @@ export function collectCSS(
     collectedCSSModUrls.add(mod.url);
   } else {
     mod.importedModules.forEach((subMod) => {
-      collectCSS(subMod, collectedCSSModUrls, visitedModUrls);
+      collectCSSImportedViaEsm(subMod, collectedCSSModUrls, visitedModUrls);
     });
   }
 }

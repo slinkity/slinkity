@@ -18,8 +18,9 @@ import {
   toSsrComment,
   SlinkityInternalError,
   toIslandExt,
-  collectCSS,
+  collectCSSImportedViaEsm,
   toResolvedVirtualModId,
+  prependForwardSlash,
 } from "./~utils.cjs";
 import { defineConfig } from "./defineConfig.cjs";
 import { pages } from "./pages.cjs";
@@ -77,8 +78,9 @@ export function plugin(
       const urlsToInvalidate: string[] = [];
 
       for (const { content, inputPath, outputPath, url } of results) {
-        const relOutputPath =
-          "/" + normalizePath(path.relative(dir.output, outputPath));
+        const relOutputPath = prependForwardSlash(
+          normalizePath(path.relative(dir.output, outputPath))
+        );
         pageByRelOutputPath.set(relOutputPath, {
           inputPath,
           outputPath,
@@ -202,7 +204,7 @@ export function plugin(
             islandPath
           );
           if (moduleGraph) {
-            collectCSS(moduleGraph, collectedCssUrls);
+            collectCSSImportedViaEsm(moduleGraph, collectedCssUrls);
           }
 
           cssUrlsByInputPath.set(inputPath, collectedCssUrls);
