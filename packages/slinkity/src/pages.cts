@@ -14,12 +14,9 @@ export function pages({
   ...globals
 }: { eleventyConfig: any } & Pick<
   PluginGlobals,
-  | "ssrIslandsByInputPath"
-  | "propsByInputPath"
-  | "extToRendererMap"
-  | "viteServer"
+  "ssrIslandsByInputPath" | "propsByInputPath" | "rendererByExt" | "viteServer"
 >) {
-  for (const [ext, renderer] of globals.extToRendererMap.entries()) {
+  for (const [ext, renderer] of globals.rendererByExt.entries()) {
     if (renderer.page) {
       eleventyConfig.addTemplateFormats(ext);
       eleventyConfig.addExtension(ext, {
@@ -112,7 +109,7 @@ export function pages({
             if (isUsedOnClient) {
               // Client-only page templates are not supported!
               const isClientOnly = false;
-              const renderer = globals.extToRendererMap.get(
+              const renderer = globals.rendererByExt.get(
                 toIslandExt(islandPath)
               );
               return toIslandRoot({

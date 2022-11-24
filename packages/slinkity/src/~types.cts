@@ -68,9 +68,9 @@ export type RenderedContent = {
   outputPath: string;
 };
 
-export type UrlToRenderedContentMap = Map<PageUrl, RenderedContent>;
+export type RenderedContentByUrl = Map<PageUrl, RenderedContent>;
 
-export type ExtToRendererMap = Map<string, Renderer>;
+export type RendererByExt = Map<string, Renderer>;
 
 export type CssUrlsByInputPath = Map<string, Set<string>>;
 
@@ -89,9 +89,9 @@ export type PluginGlobals = {
   viteServer: ViteServerFactory;
   propsByInputPath: PropsByInputPath;
   ssrIslandsByInputPath: SsrIslandsByInputPath;
-  urlToRenderedContentMap: UrlToRenderedContentMap;
+  RenderedContentByUrl: RenderedContentByUrl;
   pageByRelOutputPath: PageByRelOutputPath;
-  extToRendererMap: ExtToRendererMap;
+  rendererByExt: RendererByExt;
   cssUrlsByInputPath: CssUrlsByInputPath;
 };
 

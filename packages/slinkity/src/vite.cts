@@ -23,7 +23,7 @@ export async function productionBuild({
   | "propsByInputPath"
   | "cssUrlsByInputPath"
   | "pageByRelOutputPath"
-  | "extToRendererMap"
+  | "rendererByExt"
 >) {
   const eleventyTempBuildDir = path.relative(".", userConfig.buildTempDir);
   const resolvedOutput = path.resolve(eleventyConfigDir.output);
@@ -69,7 +69,7 @@ export function createViteServer({
   | "cssUrlsByInputPath"
   | "propsByInputPath"
   | "pageByRelOutputPath"
-  | "extToRendererMap"
+  | "rendererByExt"
 >): ViteServerFactory {
   let viteConfig: vite.InlineConfig = {
     clearScreen: false,

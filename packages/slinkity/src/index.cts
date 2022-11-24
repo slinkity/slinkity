@@ -3,7 +3,7 @@ import * as path from "path";
 import type {
   CssUrlsByInputPath,
   EleventyEventParams,
-  ExtToRendererMap,
+  RendererByExt,
   PageByRelOutputPath,
   PropsByInputPath,
   RenderedContent,
@@ -11,7 +11,7 @@ import type {
   RunMode,
   SsrIslandsByInputPath,
   TransformThis,
-  UrlToRenderedContentMap,
+  RenderedContentByUrl,
   UserConfig,
 } from "./~types.cjs";
 import {
@@ -38,7 +38,7 @@ export function plugin(
   const cssUrlsByInputPath: CssUrlsByInputPath = new Map();
   const pageByRelOutputPath: PageByRelOutputPath = new Map();
   /** Used to serve content within dev server middleware */
-  const urlToRenderedContentMap: UrlToRenderedContentMap = new Map();
+  const renderedContentByUrl: RenderedContentByUrl = new Map();
 
   let runMode: RunMode = "build";
   eleventyConfig.on(
@@ -49,7 +49,7 @@ export function plugin(
   );
 
   const userConfig = defineConfig(unresolvedUserConfig);
-  const extToRendererMap: ExtToRendererMap = new Map(
+  const rendererByExt: RendererByExt = new Map(
     userConfig.renderers
       .map((renderer) =>
         renderer.extensions.map((ext): [string, Renderer] => [ext, renderer])
@@ -62,7 +62,7 @@ export function plugin(
     cssUrlsByInputPath,
     propsByInputPath,
     pageByRelOutputPath,
-    extToRendererMap,
+    rendererByExt,
   });
 
   // TODO: find way to flip back on
@@ -88,7 +88,7 @@ export function plugin(
         });
 
         if (runMode === "serve") {
-          urlToRenderedContentMap.set(url, {
+          renderedContentByUrl.set(url, {
             content,
             inputPath,
             outputPath,
@@ -131,7 +131,7 @@ export function plugin(
           propsByInputPath,
           cssUrlsByInputPath,
           pageByRelOutputPath,
-          extToRendererMap,
+          rendererByExt: rendererByExt,
         });
       }
     }
@@ -142,14 +142,14 @@ export function plugin(
     userConfig,
     ssrIslandsByInputPath,
     propsByInputPath,
-    extToRendererMap,
+    rendererByExt: rendererByExt,
   });
 
   pages({
     eleventyConfig,
     ssrIslandsByInputPath,
     propsByInputPath,
-    extToRendererMap,
+    rendererByExt: rendererByExt,
     viteServer,
   });
 
@@ -183,11 +183,11 @@ export function plugin(
               )} in ${JSON.stringify(
                 inputPath
               )}! Please add a file extension, like ${JSON.stringify(
-                `${islandPath}.${[...extToRendererMap.keys()][0] ?? "jsx"}`
+                `${islandPath}.${[...rendererByExt.keys()][0] ?? "jsx"}`
               )})`
             );
           }
-          const islandRenderer = extToRendererMap.get(islandExt);
+          const islandRenderer = rendererByExt.get(islandExt);
           if (!islandRenderer?.ssr) {
             throw new Error(
               `No SSR renderer found for ${JSON.stringify(
@@ -262,7 +262,7 @@ export function plugin(
               next();
               return;
             }
-            const page = urlToRenderedContentMap.get(req.url);
+            const page = renderedContentByUrl.get(req.url);
             if (page) {
               const html = await handleSsrComments(page);
 
