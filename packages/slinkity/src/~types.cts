@@ -89,7 +89,6 @@ export type PluginGlobals = {
   viteServer: ViteServerFactory;
   propsByInputPath: PropsByInputPath;
   ssrIslandsByInputPath: SsrIslandsByInputPath;
-  RenderedContentByUrl: RenderedContentByUrl;
   pageByRelOutputPath: PageByRelOutputPath;
   rendererByExt: RendererByExt;
   cssUrlsByInputPath: CssUrlsByInputPath;
