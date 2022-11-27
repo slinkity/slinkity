@@ -140,7 +140,6 @@ function slinkityPropsPlugin({
               "\n" + (await fs.promises.readFile("./utils/store.client.mjs"));
           }
         }
-        console.log({ id, code });
         return { code };
       }
     },
