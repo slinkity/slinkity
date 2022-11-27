@@ -1,0 +1,13 @@
+---
+layout: 'layout.njk'
+---
+
+<h1>Title</h1>
+<p>Hey there!!!</p>
+{% serverOnlyIsland 'test.jsx' %}
+  {% prop 'test', 5 %}
+{% endserverOnlyIsland %}
+<hr style="margin-top: 100vh" />
+{% island 'Counter.jsx', 'client:visible' %}
+  {% prop 'initialCount', 3 %}
+{% endisland %}

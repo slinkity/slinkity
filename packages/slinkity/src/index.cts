@@ -51,6 +51,10 @@ export function plugin(
   );
 
   const userConfig = defineConfig(unresolvedUserConfig);
+  userConfig.islandsDir = path.resolve(
+    eleventyDir.input,
+    userConfig.islandsDir
+  );
   const rendererByExt: RendererByExt = new Map(
     userConfig.renderers
       .map((renderer) =>

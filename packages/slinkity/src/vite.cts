@@ -203,13 +203,14 @@ function getAliases({
 }: {
   eleventyDir: EleventyDir;
 }): vite.AliasOptions {
+  const resolvedInput = path.resolve(process.cwd(), eleventyDir.input);
   return {
     "/@root": process.cwd(),
-    "/@input": path.resolve(process.cwd(), eleventyDir.input),
+    "/@input": resolvedInput,
     "/@layouts": path.resolve(
-      process.cwd(),
+      resolvedInput,
       eleventyDir.layouts ?? eleventyDir.includes
     ),
-    "/@includes": path.resolve(process.cwd(), eleventyDir.includes),
+    "/@includes": path.resolve(resolvedInput, eleventyDir.includes),
   };
 }

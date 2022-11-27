@@ -8,4 +8,10 @@ module.exports = function (eleventyConfig) {
       renderers: [preact()],
     }),
   )
+
+  return {
+    dir: {
+      input: 'src',
+    }
+  }
 }
