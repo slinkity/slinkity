@@ -77,7 +77,10 @@ export function plugin(
   // These don't exist in _site since 11ty manages via memory.
   eleventyConfig.setServerPassthroughCopyBehavior(false);
   // TODO: handle _includes
-  eleventyConfig.ignores.add(userConfig.islandsDir);
+  // 11ty ignores can't handle absolute paths. No, I don't know why.
+  eleventyConfig.ignores.add(
+    path.relative(process.cwd(), userConfig.islandsDir)
+  );
 
   eleventyConfig.on(
     "eleventy.beforeWatch",
