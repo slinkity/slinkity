@@ -86,6 +86,7 @@ export function plugin(
     async function ({ results, runMode, dir }: EleventyEventParams["after"]) {
       // Dev: Invalidate virtual modules across pages. Ex. inline scripts, component props
       const urlsToInvalidate: string[] = [];
+      const server = await viteServer.getOrInitialize();
 
       for (const { content, inputPath, outputPath, url } of results) {
         const relOutputPath = prependForwardSlash(
@@ -104,7 +105,6 @@ export function plugin(
             outputPath,
           });
 
-          const server = await viteServer.getOrInitialize();
           const inlineScriptBase = toResolvedVirtualModId(relOutputPath);
           for (let key of server.moduleGraph.urlToModuleMap.keys()) {
             if (key.startsWith(inlineScriptBase)) {
@@ -120,7 +120,6 @@ export function plugin(
         }
       }
       if (runMode === "serve") {
-        const server = await viteServer.getOrInitialize();
         await Promise.all(
           urlsToInvalidate.map(async (url) => {
             const mod = await server.moduleGraph.getModuleByUrl(url);
@@ -133,7 +132,6 @@ export function plugin(
         // Server is used for resolving components
         // in shortcodes and pages.
         // Close now that this is complete.
-        const server = await viteServer.getOrInitialize();
         await server.close();
         await productionBuild({
           userConfig,
