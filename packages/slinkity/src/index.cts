@@ -72,6 +72,16 @@ export function plugin(
   eleventyConfig.ignores.add(userConfig.islandsDir);
 
   eleventyConfig.on(
+    "eleventy.beforeWatch",
+    async function (changedFiles: string[]) {
+      for (const changedFile of changedFiles) {
+        // Empty props before shortcodes repopulate
+        propsByInputPath.delete(changedFile);
+      }
+    }
+  );
+
+  eleventyConfig.on(
     "eleventy.after",
     async function ({ results, runMode, dir }: EleventyEventParams["after"]) {
       // Dev: Invalidate virtual modules across pages. Ex. inline scripts, component props
