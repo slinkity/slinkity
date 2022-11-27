@@ -1,5 +1,5 @@
 import { LOADERS } from "./~consts.cjs";
-import { islandMetaSchema, PluginGlobals, UserConfig } from "./~types.cjs";
+import { islandMetaSchema, PluginGlobals } from "./~types.cjs";
 import {
   toSsrComment,
   addPropToStore,

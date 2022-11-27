@@ -13,6 +13,7 @@ import type {
   TransformThis,
   RenderedContentByUrl,
   UserConfig,
+  EleventyDir,
 } from "./~types.cjs";
 import {
   toSsrComment,
@@ -40,6 +41,7 @@ export function plugin(
   /** Used to serve content within dev server middleware */
   const renderedContentByUrl: RenderedContentByUrl = new Map();
 
+  const eleventyDir: EleventyDir = eleventyConfig.dir;
   let runMode: RunMode = "build";
   eleventyConfig.on(
     "eleventy.before",
@@ -63,12 +65,14 @@ export function plugin(
     propsByInputPath,
     pageByRelOutputPath,
     rendererByExt,
+    eleventyDir,
   });
 
   // TODO: find way to flip back on
   // When set to "true," Vite will try to resolve emulated copies via middleware.
   // These don't exist in _site since 11ty manages via memory.
   eleventyConfig.setServerPassthroughCopyBehavior(false);
+  // TODO: handle _includes
   eleventyConfig.ignores.add(userConfig.islandsDir);
 
   eleventyConfig.on(
@@ -83,14 +87,14 @@ export function plugin(
 
   eleventyConfig.on(
     "eleventy.after",
-    async function ({ results, runMode, dir }: EleventyEventParams["after"]) {
+    async function ({ results, runMode }: EleventyEventParams["after"]) {
       // Dev: Invalidate virtual modules across pages. Ex. inline scripts, component props
       const urlsToInvalidate: string[] = [];
       const server = await viteServer.getOrInitialize();
 
       for (const { content, inputPath, outputPath, url } of results) {
         const relOutputPath = prependForwardSlash(
-          normalizePath(path.relative(dir.output, outputPath))
+          normalizePath(path.relative(eleventyDir.output, outputPath))
         );
         pageByRelOutputPath.set(relOutputPath, {
           inputPath,
@@ -135,7 +139,7 @@ export function plugin(
         await server.close();
         await productionBuild({
           userConfig,
-          eleventyConfigDir: dir,
+          eleventyDir,
           propsByInputPath,
           cssUrlsByInputPath,
           pageByRelOutputPath,

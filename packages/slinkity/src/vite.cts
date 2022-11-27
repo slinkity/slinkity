@@ -13,11 +13,11 @@ import { toResolvedVirtualModId } from "./~utils.cjs";
 
 export async function productionBuild({
   userConfig,
-  eleventyConfigDir,
+  eleventyDir,
   ...globals
 }: {
   userConfig: UserConfig;
-  eleventyConfigDir: EleventyDir;
+  eleventyDir: EleventyDir;
 } & Pick<
   PluginGlobals,
   | "propsByInputPath"
@@ -26,7 +26,7 @@ export async function productionBuild({
   | "rendererByExt"
 >) {
   const eleventyTempBuildDir = path.relative(".", userConfig.buildTempDir);
-  const resolvedOutput = path.resolve(eleventyConfigDir.output);
+  const resolvedOutput = path.resolve(eleventyDir.output);
   await fs.promises.rename(resolvedOutput, eleventyTempBuildDir);
   try {
     const inputFiles = globSync(`${eleventyTempBuildDir}/**/*.html`, {
@@ -41,6 +41,9 @@ export async function productionBuild({
         slinkityPropsPlugin(globals),
         slinkityInjectHeadPlugin(globals),
       ],
+      resolve: {
+        alias: getAliases({ eleventyDir }),
+      },
       build: {
         minify: false,
         outDir: resolvedOutput,
@@ -61,9 +64,11 @@ export async function productionBuild({
 
 export function createViteServer({
   userConfig,
+  eleventyDir,
   ...globals
 }: {
   userConfig: UserConfig;
+  eleventyDir: EleventyDir;
 } & Pick<
   PluginGlobals,
   | "cssUrlsByInputPath"
@@ -78,6 +83,9 @@ export function createViteServer({
       middlewareMode: true,
     },
     plugins: [slinkityPropsPlugin(globals), slinkityInjectHeadPlugin(globals)],
+    resolve: {
+      alias: getAliases({ eleventyDir }),
+    },
   };
 
   viteConfig = mergeRendererConfigs({ viteConfig, userConfig });
@@ -188,4 +196,20 @@ function mergeRendererConfigs({
     viteConfig = vite.mergeConfig(viteConfig, renderer.viteConfig ?? {});
   }
   return viteConfig;
+}
+
+function getAliases({
+  eleventyDir,
+}: {
+  eleventyDir: EleventyDir;
+}): vite.AliasOptions {
+  return {
+    "/@root": process.cwd(),
+    "/@input": path.resolve(process.cwd(), eleventyDir.input),
+    "/@layouts": path.resolve(
+      process.cwd(),
+      eleventyDir.layouts ?? eleventyDir.includes
+    ),
+    "/@includes": path.resolve(process.cwd(), eleventyDir.includes),
+  };
 }
