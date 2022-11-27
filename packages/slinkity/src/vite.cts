@@ -42,7 +42,7 @@ export async function productionBuild({
         slinkityInjectHeadPlugin(globals),
       ],
       resolve: {
-        alias: getAliases({ eleventyDir }),
+        alias: getAliases({ eleventyDir, userConfig }),
       },
       build: {
         minify: false,
@@ -84,7 +84,7 @@ export function createViteServer({
     },
     plugins: [slinkityPropsPlugin(globals), slinkityInjectHeadPlugin(globals)],
     resolve: {
-      alias: getAliases({ eleventyDir }),
+      alias: getAliases({ eleventyDir, userConfig }),
     },
   };
 
@@ -200,7 +200,9 @@ function mergeRendererConfigs({
 
 function getAliases({
   eleventyDir,
+  userConfig,
 }: {
+  userConfig: UserConfig;
   eleventyDir: EleventyDir;
 }): vite.AliasOptions {
   const resolvedInput = path.resolve(process.cwd(), eleventyDir.input);
@@ -212,5 +214,6 @@ function getAliases({
       eleventyDir.layouts ?? eleventyDir.includes
     ),
     "/@includes": path.resolve(resolvedInput, eleventyDir.includes),
+    "/@islands": path.resolve(process.cwd(), userConfig.islandsDir),
   };
 }
