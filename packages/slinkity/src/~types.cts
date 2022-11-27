@@ -22,8 +22,14 @@ export const islandMetaSchema = z.union([
      */
     props: z
       .function(
-        z.tuple([z.any()]),
+        z.tuple([z.record(z.any()), z.record(z.any())]),
         z.union([z.record(z.any()), z.promise(z.record(z.any()))])
+      )
+      .args(
+        z.record(z.any(), { description: "eleventy data" }),
+        z.record(z.any(), {
+          description: "univeral shortcodes and javascript functions",
+        })
       )
       .default(() => ({})),
   }),

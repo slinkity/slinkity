@@ -1,5 +1,5 @@
 import { IslandExport } from "slinkity";
-import { useFunctions } from "@slinkity/preact/server";
+import Counter from "./_islands/Counter";
 
 export const frontmatter = {
   title: "Slinkity 1.0",
@@ -8,18 +8,18 @@ export const frontmatter = {
 
 export const island: IslandExport = {
   when: "client:idle",
-  props(eleventyData) {
+  props(eleventyData, { slugify }) {
     return {
-      title: eleventyData.title,
+      title: slugify(eleventyData.title),
     };
   },
 };
 
 export default function Page({ title }) {
-  const { slugify } = useFunctions();
   return (
     <section>
-      <h1>{slugify(title)}</h1>
+      <h1>{title}</h1>
+      <Counter />
       <hr style={{ marginTop: "100vh" }} />
     </section>
   );

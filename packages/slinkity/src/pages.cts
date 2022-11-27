@@ -56,7 +56,6 @@ export function pages({
               .page?.({ Component })
               .getIslandMeta();
 
-            let isUsedOnClient = false;
             let loadConditions: typeof LOADERS[number][] = [];
             let props = serverData;
 
@@ -75,7 +74,10 @@ export function pages({
                 props = {};
                 loadConditions = ["client:load"];
               } else if (typeof islandMeta === "object") {
-                props = await islandMeta.props(serverData);
+                props = await islandMeta.props(
+                  serverData,
+                  eleventyConfig.javascriptFunctions
+                );
                 loadConditions =
                   typeof islandMeta.when === "string"
                     ? [islandMeta.when]
@@ -84,6 +86,7 @@ export function pages({
             }
 
             const propIds: Set<string> = new Set();
+            const isUsedOnClient = loadConditions.length > 0;
 
             for (const [name, value] of Object.entries(props)) {
               const { id } = addPropToStore({
