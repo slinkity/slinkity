@@ -4,6 +4,9 @@ layout: 'layout.njk'
 
 <h1>Title</h1>
 <p>Hey there!!!</p>
+{% island 'Slinky.jsx', 'client:load' %}
+{%endisland%}
+
 {% serverOnlyIsland 'test.jsx' %}
   {% prop 'test', 5 %}
 {% endserverOnlyIsland %}

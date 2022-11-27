@@ -1,4 +1,4 @@
-import '/@includes/Counter.css'
+import '/@islands/Counter.css'
 import { useState } from 'preact/hooks'
 
 export default function Counter({ initialCount }) {
