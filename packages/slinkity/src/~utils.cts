@@ -146,7 +146,7 @@ export function toIslandRoot({
           ? loadCondition
           : loadCondition.slice(0, firstEqualsIdx);
       const options =
-        firstEqualsIdx === -1 ? "" : loadCondition.slice(firstEqualsIdx);
+        firstEqualsIdx === -1 ? "" : loadCondition.slice(firstEqualsIdx + 1);
       const key = z.enum(LOADERS).safeParse(rawKey);
       if (!key.success) {
         throw new Error(
