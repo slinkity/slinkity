@@ -181,10 +181,7 @@ export function plugin(
     outputPath,
   }: RenderedContent): Promise<string> {
     const islands = ssrIslandsByInputPath.get(inputPath);
-    if (!islands)
-      throw new SlinkityInternalError(
-        `No islands found for inputPath ${JSON.stringify(inputPath)}`
-      );
+    if (!islands) return content;
 
     const ssrRegex = new RegExp(toSsrComment("(.*)"), "g");
     const ssrMatches = [...content.matchAll(ssrRegex)];
