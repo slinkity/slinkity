@@ -1,5 +1,7 @@
+import path = require("node:path");
 import { z } from "zod";
 import type { UserConfig } from "./~types.cjs";
+import { getRoot } from "./~utils.cjs";
 
 // Recreation of types in `@types`
 // TODO: refactor to "ts-to-zod" when ESM is support
@@ -32,7 +34,7 @@ export const rendererSchema = z.object({
 
 export const userConfigSchema = z.object({
   renderers: z.array(rendererSchema).optional().default([]),
-  islandsDir: z.string().optional().default("_islands"),
+  islandsDir: z.string().default("_islands"),
   buildTempDir: z.string().optional().default(".eleventy-temp-build"),
 });
 

@@ -22,6 +22,7 @@ import {
   collectCSSImportedViaEsm,
   toResolvedVirtualModId,
   prependForwardSlash,
+  getRoot,
 } from "./~utils.cjs";
 import { defineConfig } from "./defineConfig.cjs";
 import { pages } from "./pages.cjs";
@@ -52,9 +53,11 @@ export function plugin(
 
   const userConfig = defineConfig(unresolvedUserConfig);
   userConfig.islandsDir = path.resolve(
+    getRoot(),
     eleventyDir.input,
     userConfig.islandsDir
   );
+  userConfig.buildTempDir = path.resolve(getRoot(), userConfig.buildTempDir);
   const rendererByExt: RendererByExt = new Map(
     userConfig.renderers
       .map((renderer) =>
@@ -78,9 +81,7 @@ export function plugin(
   eleventyConfig.setServerPassthroughCopyBehavior(false);
   // TODO: handle _includes
   // 11ty ignores can't handle absolute paths. No, I don't know why.
-  eleventyConfig.ignores.add(
-    path.relative(process.cwd(), userConfig.islandsDir)
-  );
+  eleventyConfig.ignores.add(path.relative(getRoot(), userConfig.islandsDir));
 
   eleventyConfig.on(
     "eleventy.beforeWatch",

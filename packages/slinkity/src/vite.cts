@@ -9,7 +9,7 @@ import * as path from "path";
 import * as fs from "fs";
 import { sync as globSync } from "fast-glob";
 import { PROPS_VIRTUAL_MOD } from "./~consts.cjs";
-import { toResolvedVirtualModId } from "./~utils.cjs";
+import { getRoot, toResolvedVirtualModId } from "./~utils.cjs";
 
 export async function productionBuild({
   userConfig,
@@ -25,8 +25,9 @@ export async function productionBuild({
   | "pageByRelOutputPath"
   | "rendererByExt"
 >) {
-  const eleventyTempBuildDir = path.relative(".", userConfig.buildTempDir);
-  const resolvedOutput = path.resolve(eleventyDir.output);
+  const eleventyTempBuildDir = userConfig.buildTempDir;
+  const resolvedOutput = path.resolve(getRoot(), eleventyDir.output);
+  const root = getRoot();
   await fs.promises.rename(resolvedOutput, eleventyTempBuildDir);
   try {
     const inputFiles = globSync(`${eleventyTempBuildDir}/**/*.html`, {
@@ -42,7 +43,7 @@ export async function productionBuild({
         slinkityInjectHeadPlugin(globals),
       ],
       resolve: {
-        alias: getAliases({ eleventyDir, userConfig }),
+        alias: getAliases({ eleventyDir, userConfig, root }),
       },
       build: {
         minify: false,
@@ -53,6 +54,7 @@ export async function productionBuild({
         },
       },
     };
+
     viteConfig = mergeRendererConfigs({ viteConfig, userConfig });
     await vite.build(viteConfig);
   } finally {
@@ -76,7 +78,10 @@ export function createViteServer({
   | "pageByRelOutputPath"
   | "rendererByExt"
 >): ViteServerFactory {
+  const root = getRoot();
+
   let viteConfig: vite.InlineConfig = {
+    root,
     clearScreen: false,
     appType: "custom",
     server: {
@@ -84,7 +89,7 @@ export function createViteServer({
     },
     plugins: [slinkityPropsPlugin(globals), slinkityInjectHeadPlugin(globals)],
     resolve: {
-      alias: getAliases({ eleventyDir, userConfig }),
+      alias: getAliases({ eleventyDir, userConfig, root }),
     },
   };
 
@@ -201,19 +206,21 @@ function mergeRendererConfigs({
 function getAliases({
   eleventyDir,
   userConfig,
+  root,
 }: {
   userConfig: UserConfig;
   eleventyDir: EleventyDir;
+  root: string;
 }): vite.AliasOptions {
-  const resolvedInput = path.resolve(process.cwd(), eleventyDir.input);
+  const resolvedInput = path.resolve(root, eleventyDir.input);
   return {
-    "/@root": process.cwd(),
+    "/@root": root,
     "/@input": resolvedInput,
     "/@layouts": path.resolve(
       resolvedInput,
       eleventyDir.layouts ?? eleventyDir.includes
     ),
     "/@includes": path.resolve(resolvedInput, eleventyDir.includes),
-    "/@islands": path.resolve(process.cwd(), userConfig.islandsDir),
+    "/@islands": userConfig.islandsDir,
   };
 }

@@ -243,3 +243,7 @@ export function collectCSSImportedViaEsm(
     });
   }
 }
+
+export function getRoot() {
+  return process.env.ELEVENTY_ROOT ?? process.cwd();
+}
