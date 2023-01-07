@@ -79,6 +79,7 @@
     "build:src": "esbuild ./src/*.cts --outdir=dist --loader:.cts=ts --out-extension:.js=.cjs --format=cjs",
     "build:types": "tsc",
     "build": "run-p build:*",
+    "test:e2e": "cd e2e && playwright test",
     "dev": "run-s \"build:src --watch\"",
     "play": "cd playground && eleventy --serve --incremental",
     "lint": "eslint \"*.{js,jsx,mjs}\"",
