@@ -1,0 +1,33 @@
+{
+  "name": "@slinkity/react",
+  "version": "0.1.0",
+  "description": "React component renderer for the legendary 11ty tool, Slinkity",
+  "main": "index.cjs",
+  "exports": {
+    ".": "./index.cjs",
+    "./ssr": "./ssr.cjs",
+    "./client": "./client.mjs",
+    "./server": "./server.jsx",
+    "./FunctionsProvider": "./FunctionsProvider.jsx"
+  },
+  "keywords": [],
+  "author": "bholmesdev",
+  "license": "ISC",
+  "peerDependencies": {
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "slinkity": "^1.0.0-canary.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/slinkity"
+  },
+  "devDependencies": {
+    "preact": "^10.10.6",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "^3.0.1"
+  }
+}
