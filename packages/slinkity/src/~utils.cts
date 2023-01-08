@@ -166,9 +166,9 @@ export function toIslandRoot({
   });
 
   return `
-  <slinkity-root data-id=${JSON.stringify(islandId)}>
-    ${loaderParams.isClientOnly ? "" : toSsrComment(islandId)}
-  </slinkity-root>
+  <slinkity-root data-id=${JSON.stringify(islandId)}>${
+    loaderParams.isClientOnly ? "" : toSsrComment(islandId)
+  }</slinkity-root>
   <script type="module">
   ${loadConditions
     .map(([client]) => {
