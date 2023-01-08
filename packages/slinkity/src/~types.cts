@@ -3,37 +3,20 @@ import type { ViteDevServer, InlineConfig as ViteInlineConfig } from "vite";
 import { z } from "zod";
 import { LOADERS } from "./~consts.cjs";
 
-export const islandMetaSchema = z.union([
-  z.boolean(),
-  z.object({
-    /**
-     * Conditions to hydrate this island, including 'client:idle' and 'client:visible'
-     * Defaults to 'client:load'
-     * https://slinkity.dev/docs/partial-hydration/
-     */
-    when: z
-      .union([z.enum(LOADERS), z.array(z.enum(LOADERS))])
-      .default(["client:load"]),
-    /**
-     * Generates props to pass to your hydrated component.
-     * If you're new to Slinkity, we recommend reading our "Be mindful about your data" docs first:
-     * https://slinkity.dev/docs/component-pages-layouts/#%F0%9F%9A%A8-(important!)-be-mindful-about-your-data
-     * @param eleventyData Page data from 11ty's data cascade
-     */
+export const islandMetaSchema = z
+  .object({
+    when: z.union([z.enum(LOADERS), z.array(z.enum(LOADERS))]),
     props: z
       .function(
         z.tuple([z.record(z.any()), z.record(z.any())]),
         z.union([z.record(z.any()), z.promise(z.record(z.any()))])
       )
-      .args(
-        z.record(z.any(), { description: "eleventy data" }),
-        z.record(z.any(), {
-          description: "univeral shortcodes and javascript functions",
-        })
-      )
-      .default(() => ({})),
-  }),
-]);
+      .args(z.record(z.any()), z.record(z.any()))
+      .returns(z.record(z.any())),
+  })
+  .partial({
+    props: true,
+  });
 
 type Prop = {
   name: string;
@@ -112,7 +95,22 @@ export type SlinkityStore = <T>(
 
 export type Renderer = z.infer<typeof rendererSchema>;
 
-export type IslandExport = boolean | z.infer<typeof islandMetaSchema>;
+export type IslandExport = {
+  /**
+   * Conditions to hydrate this island, including 'client:idle' and 'client:visible'
+   * Defaults to 'client:load'
+   * https://slinkity.dev/docs/partial-hydration/
+   */
+  when: z.infer<typeof islandMetaSchema>["when"];
+  /**
+   * Generates props to pass to your hydrated component.
+   * If you're new to Slinkity, we recommend reading our "Be mindful about your data" docs first:
+   * https://slinkity.dev/docs/component-pages-layouts/#%F0%9F%9A%A8-(important!)-be-mindful-about-your-data
+   * @param eleventyData Page data from 11ty's data cascade
+   * @param functions Univeral shortcodes and javascript functions
+   */
+  props?: z.infer<typeof islandMetaSchema>["props"];
+};
 
 export type UserConfig = z.infer<typeof userConfigSchema>;
 

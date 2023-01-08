@@ -1,3 +1,4 @@
+import { ZodError } from "zod";
 import { LOADERS } from "./~consts.cjs";
 import { islandMetaSchema, PluginGlobals } from "./~types.cjs";
 import {
@@ -70,19 +71,24 @@ export function pages({
                 );
               }
               const islandMeta = islandMetaRes.data;
-              if (islandMeta === true) {
-                props = {};
-                loadConditions = ["client:load"];
-              } else if (typeof islandMeta === "object") {
-                props = await islandMeta.props(
-                  serverData,
-                  eleventyConfig.javascriptFunctions
-                );
-                loadConditions =
-                  typeof islandMeta.when === "string"
-                    ? [islandMeta.when]
-                    : islandMeta.when;
+              try {
+                props = islandMeta.props
+                  ? await islandMeta.props(
+                      serverData,
+                      eleventyConfig.javascriptFunctions
+                    )
+                  : {};
+              } catch (e) {
+                if (e instanceof ZodError) {
+                  throw new Error(
+                    'Props functions must return an object. Check the "props" function in your "island" export.'
+                  );
+                } else throw e;
               }
+              loadConditions =
+                typeof islandMeta.when === "string"
+                  ? [islandMeta.when]
+                  : islandMeta.when;
             }
 
             const propIds: Set<string> = new Set();
