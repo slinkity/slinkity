@@ -6,7 +6,17 @@ const markdownItAnchor = require('markdown-it-anchor')
 const toc = require('eleventy-plugin-nesting-toc')
 const convertEmojiToAccessibleProgress = require('./src/utils/feature-progress-shortcode')
 
+const slinkity = require('slinkity')
+const svelte = require('@slinkity/svelte')
+
 module.exports = function config(eleventyConfig) {
+  eleventyConfig.addPlugin(
+    slinkity.plugin,
+    slinkity.defineConfig({
+      renderers: [svelte()],
+    })
+  )
+
   // Render headline anchors in the most accessible way, according to Amber Wilson: https://amberwilson.co.uk/blog/are-your-anchor-links-accessible/#accessibility-check
   const linkAfterHeader = markdownItAnchor.permalink.linkAfterHeader({
     style: 'visually-hidden',

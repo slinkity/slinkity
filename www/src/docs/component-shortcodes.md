@@ -14,33 +14,18 @@ Using the `component` [shortcode](https://www.11ty.dev/docs/shortcodes/), you ca
 
 First, ensure your component is **located in your includes directory.** This defaults to `_includes` for new 11ty projects, but you can [override this from your eleventy config](https://www.11ty.dev/docs/config/#directory-for-includes).
 
-For instance, say you've written a Vue component under `_includes/Component.vue`. You can insert this component into your templates like so:
-
-{% island 'Tabs.svelte', 'client:load' %}
-{% prop 'id', 'shortcode-basics' %}
-{% prop 'store', 'templates' %}
-{% prop 'tabs', ['nunjucks', 'liquid'] %}
-
-{% renderTemplate 'md' %}
-<section>
+For instance, say you've written a Vue component under `_includes/Component.vue`. You can insert this component into your Nunjucks and Liquid templates like so:
 
 ```html
-{% island 'Component.vue' %}
+{% raw %}{% island 'Component.vue' %}{% endisland %}{% endraw %}
 ```
-</section>
-<section hidden>
-
-```html
-{% island 'Component.vue' %}
-```
-</section>
-{% endrenderTemplate %}
-{% endisland %}
 
 > These examples work from markdown (`.md`) and HTML (`.html`) files as well! You can use liquid syntax within either of these by default, though we recommend using Nunjucks instead. See [our recommend config options](/docs/config/#recommended-config-options) for more.
 
 This will do a few things:
-1. Find `_includes/Component.vue`. Note that 1) we'll always look inside the `_includes` directory to find your components, and 2) the file extension is _required_ (`.jsx`, `.tsx`, `.svelte`, etc).
+
+1. Find `_islands/Component.vue`. Note that 1) we'll always look inside the `_islands` directory to find your components, and 2) the file extension is _required_ (`.jsx`, `.tsx`, `.svelte`, etc).
+
 2. [Prerender](https://jamstack.org/glossary/pre-render/) your component at build time. This means you'll always see your component, even when disabling JS in your browser ([try it!](https://developer.chrome.com/docs/devtools/javascript/disable/)).
 
 One feature we _won't_ provide automatically: hydrating on the client. In other words, your React `useState`, Vue `refs`, or Svelte stores won't work immediately. You'll need to opt-in to sending JavaScript to the browser, which brings us to our next section...
@@ -63,40 +48,13 @@ You can also pass data to your components as key / value pairs.
 
 Let's say you have a date component written in your favorite framework (`_includes/Date.jsx|vue|svelte`) that wants to use [11ty's supplied `date` object](https://www.11ty.dev/docs/data-eleventy-supplied/). You can pass this "date" prop like so:
 
-{% island 'Tabs.svelte', 'client:load' %}
-{% prop 'id', 'shortcode-data-prop' %}
-{% prop 'store', 'templates' %}
-{% prop 'tabs', ['nunjucks', 'liquid'] %}
-
-{% renderTemplate 'md' %}
-<section>
-
 ```html
-{% island 'Date.jsx|vue|svelte', date=page.date %}
+{% raw %}{% island 'Date.jsx|vue|svelte', 'client:load' %}
+  {% prop 'date', page.date %}
+{% endisland %}{% endraw %}
 ```
 
-Note that you can pass the `hydrate` flag alongside this prop as well. `hydrate` and `renderWithoutSSR` are considered just another prop, like any other! This should work fine for instance:
-
-```html
-{% island 'Date.jsx|vue|svelte', date=page.date, 'client:load' %}
-```
-</section>
-<section hidden>
-
-```html
-{% island 'Date.jsx|vue|svelte' 'date' page.date %}
-```
-
-Note that you can pass the `hydrate` flag alongside this prop as well. `hydrate` is considered just another prop, like any other! This should work fine for instance:
-
-```html
-{% island 'Date.jsx|vue|svelte' 'date' page.date 'hydrate' true %}
-```
-</section>
-{% endrenderTemplate %}
-{% endisland %}
-
-You can access either of these props inside your component like so:
+You can access either of this prop inside your component like any other prop:
 
 {% island 'Tabs.svelte', 'client:load' %}
 {% prop 'id', 'prereqs' %}
@@ -105,13 +63,9 @@ You can access either of these props inside your component like so:
 <section>
 
 ```jsx
-export default function ViewDate({ date, hydrate }) {
+export default function ViewDate({ date }) {
   return (
-    <>
-      <span>{date}</span>
-      {/* ex. only show a button when the component is hydrated */}
-      {hydrate ? <button>Something interactive!</button> : null}
-    </>
+    <time datetime={date}>{date}</time>
   )
 }
 ```
@@ -120,14 +74,12 @@ export default function ViewDate({ date, hydrate }) {
 
 ```html
 <template>
-  <span>{{ date }}</span>
-  <!--ex. only show a button when the component is hydrated-->
-  <button v-if="hydrate">Something interactive!</button>
+  <time :datetime="date">{{ date }}</time>
 </template>
 
 <script>
 export default {
-  props: ["date", "hydrate"],
+  props: ["date"],
 }
 </script>
 ```
@@ -137,14 +89,9 @@ export default {
 ```html
 <script>
   export let date = '';
-  export let hydrate = '';
 </script>
 
-<span>{date}</span>
-{#if hydrate}
-<!--ex. only show a button when the component is hydrated-->
-<button>Something interactive!</button>
-{/if}
+<time datetime={date}>{date}</time>
 ```
 </section>
 {% endrenderTemplate %}

@@ -1,5 +1,4 @@
 <script>
-  import { onDestroy } from "svelte";
   import { currentTabIdx } from "./currentTabStore.js";
 
   /** Labels for each tab button */
