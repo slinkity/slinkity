@@ -19,7 +19,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/slinkity"
+    "url": "https://github.com/slinkity",
+    "directory": "packages/slinkity-preact"
   },
   "dependencies": {
     "@preact/preset-vite": "^2.3.0",
