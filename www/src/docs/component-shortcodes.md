@@ -16,22 +16,26 @@ First, ensure your component is **located in your includes directory.** This def
 
 For instance, say you've written a Vue component under `_includes/Component.vue`. You can insert this component into your templates like so:
 
-{% slottedComponent 'Tabs.svelte', hydrate=true, id='shortcode-basics', store='templates', tabs=['nunjucks', 'liquid'] %}
+{% island 'Tabs.svelte', 'client:load' %}
+{% prop 'id', 'shortcode-basics' %}
+{% prop 'store', 'templates' %}
+{% prop 'tabs', ['nunjucks', 'liquid'] %}
+
 {% renderTemplate 'md' %}
 <section>
 
 ```html
-{% component 'Component.vue' %}
+{% island 'Component.vue' %}
 ```
 </section>
 <section hidden>
 
 ```html
-{% component 'Component.vue' %}
+{% island 'Component.vue' %}
 ```
 </section>
 {% endrenderTemplate %}
-{% endslottedComponent %}
+{% endisland %}
 
 > These examples work from markdown (`.md`) and HTML (`.html`) files as well! You can use liquid syntax within either of these by default, though we recommend using Nunjucks instead. See [our recommend config options](/docs/config/#recommended-config-options) for more.
 
@@ -45,7 +49,7 @@ One feature we _won't_ provide automatically: hydrating on the client. In other 
 
 Slinkity requires a special `hydrate` or `renderWithoutSSR` prop to ship JavaScript alongside your components. This lets you use your favorite component framework for templating guilt-free, and opt-in to JS bundles when the need arises.
 
-To hydrate that `Component.vue` from earlier, you can apply the `hydrate=true` flag:
+To hydrate that `Component.vue` from earlier, you can apply the `'client:load'` flag:
 
 {% include 'examples/hydrate-component-shortcodes.md' %}
 
@@ -59,38 +63,44 @@ You can also pass data to your components as key / value pairs.
 
 Let's say you have a date component written in your favorite framework (`_includes/Date.jsx|vue|svelte`) that wants to use [11ty's supplied `date` object](https://www.11ty.dev/docs/data-eleventy-supplied/). You can pass this "date" prop like so:
 
-{% slottedComponent 'Tabs.svelte', hydrate=true, id='shortcode-date-prop', store='templates', tabs=['nunjucks', 'liquid'] %}
+{% island 'Tabs.svelte', 'client:load' %}
+{% prop 'id', 'shortcode-data-prop' %}
+{% prop 'store', 'templates' %}
+{% prop 'tabs', ['nunjucks', 'liquid'] %}
+
 {% renderTemplate 'md' %}
 <section>
 
 ```html
-{% component 'Date.jsx|vue|svelte', date=page.date %}
+{% island 'Date.jsx|vue|svelte', date=page.date %}
 ```
 
 Note that you can pass the `hydrate` flag alongside this prop as well. `hydrate` and `renderWithoutSSR` are considered just another prop, like any other! This should work fine for instance:
 
 ```html
-{% component 'Date.jsx|vue|svelte', date=page.date, hydrate=true %}
+{% island 'Date.jsx|vue|svelte', date=page.date, 'client:load' %}
 ```
 </section>
 <section hidden>
 
 ```html
-{% component 'Date.jsx|vue|svelte' 'date' page.date %}
+{% island 'Date.jsx|vue|svelte' 'date' page.date %}
 ```
 
 Note that you can pass the `hydrate` flag alongside this prop as well. `hydrate` is considered just another prop, like any other! This should work fine for instance:
 
 ```html
-{% component 'Date.jsx|vue|svelte' 'date' page.date 'hydrate' true %}
+{% island 'Date.jsx|vue|svelte' 'date' page.date 'hydrate' true %}
 ```
 </section>
 {% endrenderTemplate %}
-{% endslottedComponent %}
+{% endisland %}
 
 You can access either of these props inside your component like so:
 
-{% slottedComponent "Tabs.svelte", hydrate="eager", id="component-props", tabs=["React", "Vue", "Svelte"] %}
+{% island 'Tabs.svelte', 'client:load' %}
+{% prop 'id', 'prereqs' %}
+{% prop 'tabs', ["React", "Vue", "Svelte"] %}
 {% renderTemplate "md" %}
 <section>
 
@@ -138,30 +148,34 @@ export default {
 ```
 </section>
 {% endrenderTemplate %}
-{% endslottedComponent %}
+{% endisland %}
 
 ### Pass multiple props
 
 You're free to pass as many key / value pairs as you want. The names and ordering of your keys shouldn't matter, since they're all crunched into a single "props" object for your component.
 
-{% slottedComponent 'Tabs.svelte', hydrate=true, id='shortcode-multiple-props', store='templates', tabs=['nunjucks', 'liquid'] %}
+{% island 'Tabs.svelte', 'client:load' %}
+{% prop 'id', 'shortcode-multiple-props' %}
+{% prop 'store', 'templates' %}
+{% prop 'tabs', ['nunjucks', 'liquid'] %}
+
 {% renderTemplate 'md' %}
 <section>
 
 ```html
-{% component 'Apropcalypse.jsx|vue|svelte', date=page.date,
-url=page.url, hydrate=true, fileSlug=page.fileSlug %}
+{% island 'Apropcalypse.jsx|vue|svelte', date=page.date,
+url=page.url, 'client:load', fileSlug=page.fileSlug %}
 ```
 </section>
 <section hidden>
 
 ```html
-{% component 'Apropcalypse.jsx|vue|svelte' 'date' page.date
+{% island 'Apropcalypse.jsx|vue|svelte' 'date' page.date
 'url' page.url 'hydrate' true 'fileSlug' page.fileSlug %}
 ```
 </section>
 {% endrenderTemplate %}
-{% endslottedComponent %}
+{% endisland %}
 
 > Is that a "hydrate" flag sandwiched between the other props? Yep! Do we care? Nope.
 
@@ -171,7 +185,9 @@ We have a separate [paired shortcode](https://www.11ty.dev/docs/shortcodes/#pair
 
 Say you have a simple component to wrap text with a dropdown toggle. That component could be written like so:
 
-{% slottedComponent "Tabs.svelte", hydrate="eager", id="slotted-component", tabs=["React", "Vue", "Svelte"] %}
+{% island 'Tabs.svelte', 'client:load' %}
+{% prop 'id', 'prereqs' %}
+{% prop 'tabs', ["React", "Vue", "Svelte"] %}
 {% renderTemplate "md" %}
 <section>
 
@@ -217,43 +233,47 @@ export default {
 ```
 </section>
 {% endrenderTemplate %}
-{% endslottedComponent %}
+{% endisland %}
 
 You can use this component the same way as the `component` shortcode, now with children:
 
-{% slottedComponent 'Tabs.svelte', hydrate=true, id='slotted-shortcode-usage', store='templates', tabs=['nunjucks', 'liquid'] %}
+{% island 'Tabs.svelte', 'client:load' %}
+{% prop 'id', 'slotted-shortcode-usage' %}
+{% prop 'store', 'templates' %}
+{% prop 'tabs', ['nunjucks', 'liquid'] %}
+
 {% renderTemplate 'md' %}
 <section>
 
 ```html
-{% slottedComponent 'Dropdown.jsx|vue|svelte', heading='Full disclosure' %}
+{% island 'Dropdown.jsx|vue|svelte', heading='Full disclosure' %}
 <p>"details" and "summary" are kinda confusing element names</p>
-{% endslottedComponent %}
+{% endisland %}
 ```
 </section>
 <section hidden>
 
 ```html
-{% slottedComponent 'Dropdown.jsx|vue|svelte' 'heading' 'Full disclosure' %}
+{% island 'Dropdown.jsx|vue|svelte' 'heading' 'Full disclosure' %}
 <p>"details" and "summary" are kinda confusing element names</p>
-{% endslottedComponent %}
+{% endisland %}
 ```
 </section>
 {% endrenderTemplate %}
-{% endslottedComponent %}
+{% endisland %}
 
 ### Important gotcha: templating in children
 
 You may be rushing to try slotted components in your markdown:
 
 ```md{% raw %}
-{% slottedComponent 'FancyBackground.jsx|vue|svelte' %}
+{% island 'FancyBackground.jsx|vue|svelte' %}
 ### Why I love markdown
 
 - Bulleted lists are easy
 - Paragraph and code blocks are even easier
 
-{% endslottedComponent %}{% endraw %}
+{% endisland %}{% endraw %}
 ```
 
 🚨 **Careful, this won't work as written!** Paired shortcode content is processed as plain HTML, so markdown syntax won't work as expected 😢
@@ -261,7 +281,7 @@ You may be rushing to try slotted components in your markdown:
 But all is not lost. Since you _can_ still nest other shortcodes as paired shortcode content, you can use [11ty's handy `renderTemplate`](https://www.11ty.dev/docs/plugins/render/) like so:
 
 ```md{% raw %}
-{% slottedComponent 'FancyBackground.jsx|vue|svelte' %}
+{% island 'FancyBackground.jsx|vue|svelte' %}
 {% renderTemplate 'md' %}
 ### Why I love markdown
 
@@ -269,7 +289,7 @@ But all is not lost. Since you _can_ still nest other shortcodes as paired short
 - Paragraph and code blocks are even easier
 
 {% endrenderTemplate %}
-{% endslottedComponent %}{% endraw %}
+{% endisland %}{% endraw %}
 ```
 
 > Be sure to set up `renderTemplate` in your 11ty config before trying this. [See their docs](https://www.11ty.dev/docs/plugins/render/) for more.

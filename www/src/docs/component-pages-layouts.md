@@ -20,7 +20,9 @@ about.jsx|.vue|.svelte
 
 ...And you're ready to start templating. If you're following along at home, you'll want to add some content to this file:
 
-{% slottedComponent "Tabs.svelte", hydrate=true, id="page-templates", tabs=["React", "Vue", "Svelte"] %}
+{% island 'Tabs.svelte', 'client:load' %}
+{% prop 'id', 'prereqs' %}
+{% prop 'tabs', ["React", "Vue", "Svelte"] %}
 {% renderTemplate "md" %}
 <section>
 
@@ -59,7 +61,7 @@ export default function About() {
 ```
 </section>
 {% endrenderTemplate %}
-{% endslottedComponent %}
+{% endisland %}
 
 Now, you should see a tragic tale on `/about` 👀
 
@@ -87,7 +89,9 @@ For example, let's say you have a simple layout in your project called `_include
 
 You can apply this layout to your `/about` page using front matter:
 
-{% slottedComponent "Tabs.svelte", hydrate=true, id="page-frontmatter", tabs=["React", "Vue", "Svelte"] %}
+{% island 'Tabs.svelte', 'client:load' %}
+{% prop 'id', 'prereqs' %}
+{% prop 'tabs', ["React", "Vue", "Svelte"] %}
 {% renderTemplate "md" %}
 <section>
 
@@ -135,7 +139,7 @@ export default {
 </section>
 
 {% endrenderTemplate %}
-{% endslottedComponent %}
+{% endisland %}
 
 ## Use 11ty data as props
 
@@ -155,7 +159,9 @@ Say you have a list of incredible, amazing, intelligent Slinkity contributors in
 
 Since [all `_data` files are piped into 11ty's data cascade](https://www.11ty.dev/docs/data-global/), this is now available to your component page via the `contributors` prop:
 
-{% slottedComponent "Tabs.svelte", hydrate=true, id="page-props", tabs=["React", "Vue", "Svelte"] %}
+{% island 'Tabs.svelte', 'client:load' %}
+{% prop 'id', 'prereqs' %}
+{% prop 'tabs', ["React", "Vue", "Svelte"] %}
 {% renderTemplate "md" %}
 <section>
 
@@ -212,7 +218,7 @@ export default {
 </section>
 
 {% endrenderTemplate %}
-{% endslottedComponent %}
+{% endisland %}
 
 > To get the most out of these data props, we recommend learning more about the 11ty data cascade. Here's some helpful resources:
 > - 📝 [**The official 11ty docs**](https://www.11ty.dev/docs/data-cascade/)
@@ -256,7 +262,9 @@ module.exports = function(eleventyConfig) {
 
 You can access this filter across your component pages like so:
 
-{% slottedComponent "Tabs.svelte", hydrate=true, id="page-permalink-basic", tabs=["React", "Vue", "Svelte"] %}
+{% island 'Tabs.svelte', 'client:load' %}
+{% prop 'id', 'prereqs' %}
+{% prop 'tabs', ["React", "Vue", "Svelte"] %}
 {% renderTemplate "md" %}
 <section>
 
@@ -312,7 +320,7 @@ export default {
 ```
 </section>
 {% endrenderTemplate %}
-{% endslottedComponent %}
+{% endisland %}
 
 ## Handle dynamic permalinks
 
@@ -322,7 +330,9 @@ export default {
 
 Say you want to generate a blog post's URL from its title. Since front matter is available from the 11ty data object, you can use a `permalink()` function like so:
 
-{% slottedComponent "Tabs.svelte", hydrate=true, id="page-permalink-basic", tabs=["React", "Vue", "Svelte"] %}
+{% island 'Tabs.svelte', 'client:load' %}
+{% prop 'id', 'prereqs' %}
+{% prop 'tabs', ["React", "Vue", "Svelte"] %}
 {% renderTemplate "md" %}
 <section>
 
@@ -386,7 +396,7 @@ export default {
 </section>
 
 {% endrenderTemplate %}
-{% endslottedComponent %}
+{% endisland %}
 
 Here's how your site's input / output directories will look, assuming `_site` is your output and `src` is your input:
 
@@ -425,7 +435,9 @@ That list of T-shirts may look like this (`_data/tshirts.json`):
 
 You can generate routes for each of these T-shirts using the `pagination` and `permalink` properties like so:
 
-{% slottedComponent "Tabs.svelte", hydrate=true, id="page-permalink-basic", tabs=["React", "Vue", "Svelte"] %}
+{% island 'Tabs.svelte', 'client:load' %}
+{% prop 'id', 'prereqs' %}
+{% prop 'tabs', ["React", "Vue", "Svelte"] %}
 {% renderTemplate "md" %}
 <section>
 
@@ -518,7 +530,7 @@ export default {
 </section>
 
 {% endrenderTemplate %}
-{% endslottedComponent %}
+{% endisland %}
 
 Here's how your site's input / output directories will look, assuming `_site` is your output and `src` is your input:
 
@@ -549,7 +561,9 @@ Props work a _bit_ differently now that JS is involved. In order to access 11ty 
 For instance, say you need to access that same global `contributors` list [from earlier](#use-11ty-data-as-props). You can use a special `hydrate.props` function from your front matter like so:
 
 
-{% slottedComponent "Tabs.svelte", hydrate=true, id="page-hydrated-props", tabs=["React", "Vue", "Svelte"] %}
+{% island 'Tabs.svelte', 'client:load' %}
+{% prop 'id', 'prereqs' %}
+{% prop 'tabs', ["React", "Vue", "Svelte"] %}
 {% renderTemplate "md" %}
 <section>
 
@@ -639,7 +653,7 @@ export default {
 </section>
 
 {% endrenderTemplate %}
-{% endslottedComponent %}
+{% endisland %}
 
 A few takeaways here:
 

@@ -1,4 +1,6 @@
-{% slottedComponent "Tabs.svelte", hydrate="eager", id="prereqs", tabs=["React", "Vue", "Svelte"] %}
+{% island 'Tabs.svelte', 'client:load' %}
+{% prop 'id', 'prereqs' %}
+{% prop 'tabs', ["React", "Vue", "Svelte"] %}
 {% renderTemplate "md" %}
 <section>
 
@@ -69,4 +71,4 @@ module.exports = function(eleventyConfig) {
 ```
 </section>
 {% endrenderTemplate %}
-{% endslottedComponent %}
+{% endisland %}

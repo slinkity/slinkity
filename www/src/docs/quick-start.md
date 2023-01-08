@@ -96,7 +96,9 @@ First, we'll need one of our "renderers" to handle React, Vue, and/or Svelte. Do
 
 Now, we can write a component under the `_includes/` directory like so:
 
-{% slottedComponent "Tabs.svelte", hydrate="eager", id="prereqs", tabs=["React", "Vue", "Svelte"] %}
+{% island 'Tabs.svelte', 'client:load' %}
+{% prop 'id', 'prereqs' %}
+{% prop 'tabs', ["React", "Vue", "Svelte"] %}
 {% renderTemplate "md" %}
 <section>
 
@@ -123,7 +125,7 @@ Finally, let's place this component onto our page with a [component shortcode](/
 ...
 <body>
   <h1>Look ma, it's Slinkity!</h1>
-  {% component 'GlassCounter.jsx', hydrate='eager' %}
+  {% island 'GlassCounter.jsx', hydrate='eager' %}
 </body>
 ```
 </section>
@@ -159,7 +161,7 @@ Finally, let's place this component onto our page with a [component shortcode](/
 ...
 <body>
   <h1>Look ma, it's Slinkity!</h1>
-  {% component 'GlassCounter.vue', hydrate='eager' %}
+  {% island 'GlassCounter.vue', hydrate='eager' %}
 </body>
 ```
 </section>
@@ -185,12 +187,12 @@ Finally, let's place this component onto our page with a [component shortcode](/
 ...
 <body>
   <h1>Look ma, it's Slinkity!</h1>
-  {% component 'GlassCounter.svelte', hydrate='eager' %}
+  {% island 'GlassCounter.svelte', hydrate='eager' %}
 </body>
 ```
 </section>
 {% endrenderTemplate %}
-{% endslottedComponent %}
+{% endisland %}
 
 This will do a few things:
 1. Find `_includes/GlassCounter.*`. Note that we'll always look inside the `_includes` directory to find your components.

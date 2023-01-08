@@ -1,4 +1,6 @@
-{% slottedComponent "Tabs.svelte", hydrate=true, id="page-hydrate-frontmatter", tabs=["React", "Vue", "Svelte"] %}
+{% island 'Tabs.svelte', 'client:load' %}
+{% prop 'id', 'prereqs' %}
+{% prop 'tabs', ["React", "Vue", "Svelte"] %}
 {% renderTemplate "md" %}
 <section>
 
@@ -6,8 +8,8 @@
 // about.jsx
 import { useState } from 'react'
 
-export const frontMatter = {
-  hydrate: true,
+export const island = {
+  client: 'load',
 }
 
 export default function About() {
@@ -34,8 +36,8 @@ export default function About() {
 <script>
 import { ref } from "vue";
 export default {
-  frontMatter: {
-    hydrate: true,
+  island: {
+    client: 'load',
   },
   setup() {
     const count = ref(0);
@@ -51,9 +53,9 @@ export default {
 ```html
 <!--about.svelte-->
 <script context="module">
-  export const frontMatter = {
-    hydrate: true,
-  };
+  export const island = {
+    client: 'load',
+  }
 </script>
 
 <script>
@@ -70,13 +72,4 @@ export default {
 </section>
 
 {% endrenderTemplate %}
-{% endslottedComponent %}
-
-To render _only_ client-side without server rendering, try switching from the `hydrate` prop to `renderWithoutSSR`. We only recommend this for components that 100% can't be rendered server-side:
-
-```diff
-frontMatter: {
-- hydrate: true / "onClientIdle" / "onClientMedia(...)"
-+ renderWithoutSSR: true / "onClientIdle" / "onClientMedia(...)"
-}
-```
+{% endisland %}

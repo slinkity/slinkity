@@ -37,13 +37,13 @@ This mirrors how "traditional" component-based frameworks operate. Components us
 {% raw %}
 <body>
   <!--server-render and hydrate client-side-->
-  {% component 'Example.jsx', hydrate=true %}
-  {% component 'Example.jsx', hydrate='eager' %}
-  {% component 'Example.jsx', hydrate='onClientLoad' %}
+  {% island 'Example.jsx', 'client:load' %}
+  {% island 'Example.jsx', hydrate='eager' %}
+  {% island 'Example.jsx', hydrate='onClientLoad' %}
   <!--don't server-render and *only* render client-side-->
-  {% component 'Example.jsx', renderWithoutSSR=true %}
-  {% component 'Example.jsx', renderWithoutSSR='eager' %}
-  {% component 'Example.jsx', renderWithoutSSR='onClientLoad' %}
+  {% island 'Example.jsx', renderWithoutSSR=true %}
+  {% island 'Example.jsx', renderWithoutSSR='eager' %}
+  {% island 'Example.jsx', renderWithoutSSR='onClientLoad' %}
 </body>
 {% endraw %}
 ```
@@ -62,11 +62,11 @@ Similar to [lazy-loading images](https://developer.mozilla.org/en-US/docs/Web/Pe
 {% raw %}
 <body>
   <!--server-render and hydrate client-side-->
-  {% component 'Example.jsx', hydrate='onComponentVisible' %}
-  {% component 'Example.jsx', hydrate='lazy' %}
+  {% island 'Example.jsx', hydrate='onComponentVisible' %}
+  {% island 'Example.jsx', hydrate='lazy' %}
   <!--don't server-render and *only* render client-side-->
-  {% component 'Example.jsx', renderWithoutSSR='onComponentVisible' %}
-  {% component 'Example.jsx', renderWithoutSSR='lazy' %}
+  {% island 'Example.jsx', renderWithoutSSR='onComponentVisible' %}
+  {% island 'Example.jsx', renderWithoutSSR='lazy' %}
 </body>
 {% endraw %}
 ```
@@ -81,9 +81,9 @@ Here, we load your component client-side as soon as the browser's main thread ha
 {% raw %}
 <body>
   <!--server-render and hydrate client-side-->
-  {% component 'Example.jsx', hydrate='onClientIdle' %}
+  {% island 'Example.jsx', hydrate='onClientIdle' %}
   <!--don't server-render and *only* render client-side-->
-  {% component 'Example.jsx', renderWithoutSSR='onClientIdle' %}
+  {% island 'Example.jsx', renderWithoutSSR='onClientIdle' %}
 </body>
 {% endraw %}
 ```
@@ -98,9 +98,9 @@ This helper loads your component client-side when a media query is met. This is 
 {% raw %}
 <body>
   <!--server-render and hydrate client-side-->
-  {% component 'SlideOutMenu.vue', hydrate='onClientMedia(screen (max-width: 400px))' %}
+  {% island 'SlideOutMenu.vue', hydrate='onClientMedia(screen (max-width: 400px))' %}
   <!--don't server-render and *only* render client-side-->
-  {% component 'SlideOutMenu.vue', renderWithoutSSR='onClientMedia(screen (max-width: 400px))' %}
+  {% island 'SlideOutMenu.vue', renderWithoutSSR='onClientMedia(screen (max-width: 400px))' %}
 </body>
 {% endraw %}
 ```
