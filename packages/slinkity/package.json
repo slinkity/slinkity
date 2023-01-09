@@ -18,6 +18,12 @@
   "engines": {
     "node": ">=14"
   },
+  "files": [
+    "dist",
+    "client",
+    "index.d.ts",
+    "index.cjs"
+  ],
   "keywords": [
     "static-site-generator",
     "static-site",
