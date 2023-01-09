@@ -1,6 +1,4 @@
-export default function client({ Component, target, props, isClientOnly }) {
-  const slots = {};
-
+export default function client({ Component, target, props, slots, isClientOnly }) {
   new Component({
     target,
     props: {
@@ -25,6 +23,8 @@ function createSlotDefinition(children) {
 		() => ({
 			// mount
 			m(target) {
+				// Inserts children in `<slinkity-fragment>` wrapper
+				// Generated in core
 				target.insertAdjacentHTML(
 					'beforeend',
 					children,
