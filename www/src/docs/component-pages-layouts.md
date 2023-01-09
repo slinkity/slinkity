@@ -22,9 +22,24 @@ about.jsx|.vue|.svelte
 
 {% island 'Tabs.svelte', 'client:load' %}
 {% prop 'id', 'prereqs' %}
-{% prop 'tabs', ["React", "Vue", "Svelte"] %}
+{% prop 'store', 'framework' %}
+{% prop 'tabs', ["Preact", "React", "Vue", "Svelte"] %}
 {% renderTemplate "md" %}
 <section>
+
+```jsx
+// about.jsx
+export default function About() {
+  return (
+    <article>
+      <h2>A tragic tale</h2>
+      <p>Did YOU ever hear the Tragedy of Darth Plagueis the Wise?</p>
+    </article>
+  )
+}
+```
+</section>
+<section hidden>
 
 ```jsx
 // about.jsx
@@ -63,15 +78,16 @@ export default function About() {
 {% endrenderTemplate %}
 {% endisland %}
 
-Now, you should see a tragic tale on `/about` 👀
+Now, you should see a tragic tale on `/about`.
 
 > Before frantically Googling "state variables don't work in Slinkity template," This is intentional! We _avoid_ hydrating your component clientside by default. To opt-in to using `useState`, vue `ref`s, and the like, [jump to our hydration section](#hydrate-your-page) 💧
 
 ## Apply front matter
 
-If you're familiar with 11ty, you've likely worked with front matter before. It allows you to associate "data" with your current template, which can be picked up by [layouts](https://www.11ty.dev/docs/layouts/), [11ty's collections API](https://www.11ty.dev/docs/collections/), and more (see [11ty's front matter documentation](https://www.11ty.dev/docs/data-frontmatter/) for full details).
+If you're familiar with 11ty, you've likely worked with front matter before. It allows you to associate "data" with your current template, which can be picked up by [layouts](https://www.11ty.dev/docs/layouts/), [11ty's collections API](https://www.11ty.dev/docs/collections/), and more. See [11ty's front matter documentation](https://www.11ty.dev/docs/data-frontmatter/) for full details.
 
 For example, let's say you have a simple layout in your project called `_includes/base.njk`. This layout will:
+
 1. Inject a given route's `title` property into the page `<title>`
 2. Apply the content of that layout between some `<body>` tags
 
@@ -91,13 +107,26 @@ You can apply this layout to your `/about` page using front matter:
 
 {% island 'Tabs.svelte', 'client:load' %}
 {% prop 'id', 'prereqs' %}
-{% prop 'tabs', ["React", "Vue", "Svelte"] %}
+{% prop 'store', 'framework' %}
+{% prop 'tabs', ["Preact", "React", "Vue", "Svelte"] %}
 {% renderTemplate "md" %}
 <section>
 
 ```jsx
 // about.jsx
-export const frontMatter = {
+export const frontmatter = {
+  title: 'A tragic tale',
+  layout: 'base.njk',
+}
+
+function About() {...}
+```
+</section>
+<section hidden>
+
+```jsx
+// about.jsx
+export const frontmatter = {
   title: 'A tragic tale',
   layout: 'base.njk',
 }
@@ -113,7 +142,7 @@ function About() {...}
 
 <script>
 export default {
-  frontMatter: {
+  frontmatter: {
     title: "A tragic tale",
     layout: "base.njk",
   },
@@ -123,12 +152,12 @@ export default {
 </section>
 <section hidden>
 
-> Note: don't forget `context="module"` here! This allows us to export data from our component. [See the Svelte docs](https://svelte.dev/tutorial/module-exports) for more.
+> Don't forget `context="module"` here! This allows us to export data from our component. [See the Svelte docs](https://svelte.dev/tutorial/module-exports) for more.
 
 ```html
 <!--about.svelte-->
 <script context="module">
-  export const frontMatter = {
+  export const frontmatter = {
     title: "A tragic tale",
     layout: "base.njk",
   };
@@ -145,7 +174,7 @@ export default {
 
 You've pushed data _up_ into the data cascade using front matter. So how do you pull data back _down_ in your components?
 
-Assuming your page isn't hydrated ([see how hydrated props work](#hydrate-your-page)), all 11ty data is magically available as props 😁
+Assuming your page isn't hydrated ([see how hydrated props work](#hydrate-your-page)), all 11ty data is magically available as props.
 
 Say you have a list of incredible, amazing, intelligent Slinkity contributors in a global data file called `_data/contributors.json`:
 
@@ -161,9 +190,25 @@ Since [all `_data` files are piped into 11ty's data cascade](https://www.11ty.de
 
 {% island 'Tabs.svelte', 'client:load' %}
 {% prop 'id', 'prereqs' %}
-{% prop 'tabs', ["React", "Vue", "Svelte"] %}
+{% prop 'store', 'framework' %}
+{% prop 'tabs', ["Preact", "React", "Vue", "Svelte"] %}
 {% renderTemplate "md" %}
 <section>
+
+```jsx
+// about.jsx
+export default function About({ contributors }) {
+  return (
+    <ul>
+      {contributors.map(({ name, ghProfile }) => (
+        <li><a href={ghProfile}>{name}</a></li>
+      ))}
+    </ul>
+  )
+}
+```
+</section>
+<section hidden>
 
 ```jsx
 // about.jsx
@@ -221,12 +266,13 @@ export default {
 {% endisland %}
 
 > To get the most out of these data props, we recommend learning more about the 11ty data cascade. Here's some helpful resources:
+>
 > - 📝 [**The official 11ty docs**](https://www.11ty.dev/docs/data-cascade/)
 > - 🚏 [**A beginner-friendly walkthrough**](https://benmyers.dev/blog/eleventy-data-cascade/) by Ben Myers
 
 ## Access shortcodes and filters
 
-All [shortcodes](https://www.11ty.dev/docs/shortcodes/) and [filters](https://www.11ty.dev/docs/filters/) are accessible from the `__functions` prop as javascript functions. This includes any shortcode or filter created using the following eleventy config helpers:
+All [shortcodes](https://www.11ty.dev/docs/shortcodes/) and [filters](https://www.11ty.dev/docs/filters/) are accessible with the `useFunctions` helper. This includes any shortcode or filter created using the following eleventy config helpers:
 
 ```js
 // .eleventy.js
@@ -245,8 +291,6 @@ module.exports = function(eleventyConfig) {
 };
 ```
 
-> For those wondering "what are shortcodes and filters:" they're universal helpers you can access from any page template, no imports necessary. These are especially useful in not-so-JavaScript templates like Nunjucks and markdown. We recommend [visiting 11ty.rocks](https://11ty.rocks/eleventyjs/content/) for concrete examples!
-
 For instance, say you registered a `capitalize` filter like so:
 
 ```js
@@ -264,18 +308,22 @@ You can access this filter across your component pages like so:
 
 {% island 'Tabs.svelte', 'client:load' %}
 {% prop 'id', 'prereqs' %}
-{% prop 'tabs', ["React", "Vue", "Svelte"] %}
+{% prop 'store', 'framework' %}
+{% prop 'tabs', ["Preact", "React", "Vue", "Svelte"] %}
 {% renderTemplate "md" %}
 <section>
 
 ```jsx
 // about.jsx
+import { useFunctions } from '@slinkity/preact/server';
+
 export default function About({ __functions }) {
+  const { capitalize } = useFunctions();
   const name = 'darth Plagueis the Wise'
   return (
     <article>
       <h2>A tragic tale</h2>
-      <p>Did YOU ever hear the Tragedy of {__functions.capitalize(name)}?</p>
+      <p>Did YOU ever hear the Tragedy of {capitalize(name)}?</p>
     </article>
   )
 }
@@ -283,48 +331,38 @@ export default function About({ __functions }) {
 </section>
 <section hidden>
 
-```html
-<!--about.vue-->
-<template>
-  <article>
-    <h2>A tragic tale</h2>
-    <p>Did YOU ever hear the Tragedy of {{ __functions.capitalize(name) }}?</p>
-  </article>
-</template>
+```jsx
+// about.jsx
+import { useFunctions } from '@slinkity/react/server';
 
-<script>
-export default {
-  props: ["__functions"],
-  setup() {
-    return {
-      name: "darth Plagueis the Wise",
-    };
-  },
-};
-</script>
+export default function About({ __functions }) {
+  const { capitalize } = useFunctions();
+  const name = 'darth Plagueis the Wise'
+  return (
+    <article>
+      <h2>A tragic tale</h2>
+      <p>Did YOU ever hear the Tragedy of {capitalize(name)}?</p>
+    </article>
+  )
+}
 ```
 </section>
 <section hidden>
 
-```html
-<!--about.svelte-->
-<script>
-  export let __functions = {};
-  const name = "darth Plagueis the Wise";
-</script>
+🚧 Vue support in progress
 
-<article>
-  <h2>A tragic tale</h2>
-  <p>Did YOU ever hear the Tragedy of {__functions.capitalize(name)}?</p>
-</article>
-```
+</section>
+<section hidden>
+
+🚧 Svelte support in progress
+
 </section>
 {% endrenderTemplate %}
 {% endisland %}
 
 ## Handle dynamic permalinks
 
-[Dynamic permalinks](https://www.11ty.dev/docs/permalinks/#use-data-variables-in-permalink) are incredibly useful when generating a URL from 11ty data. You may be used to template strings when using plain 11ty (say, [using Nunjucks](https://www.11ty.dev/docs/permalinks/#use-data-variables-in-permalink) to output a URL). But with Slinkity, you have the power of JavaScript functions at your disposal 😎
+[Dynamic permalinks](https://www.11ty.dev/docs/permalinks/#use-data-variables-in-permalink) are useful when generating a URL from 11ty data. You may be used to template strings when using plain 11ty (say, [using Nunjucks](https://www.11ty.dev/docs/permalinks/#use-data-variables-in-permalink) to output a URL). But with Slinkity, you have the power of JavaScript functions at your disposal 😎
 
 ### Example - Generate a permalink from a page title
 
@@ -332,20 +370,37 @@ Say you want to generate a blog post's URL from its title. Since front matter is
 
 {% island 'Tabs.svelte', 'client:load' %}
 {% prop 'id', 'prereqs' %}
-{% prop 'tabs', ["React", "Vue", "Svelte"] %}
+{% prop 'store', 'frameworks' %}
+{% prop 'tabs', ["Preact", "React", "Vue", "Svelte"] %}
 {% renderTemplate "md" %}
 <section>
 
 ```jsx
 // about.jsx
-export const frontMatter = {
+export const frontmatter = {
   title: 'A tragic tale',
-  permalink(eleventyData) {
+  permalink(eleventyData, functions) {
     // note: shortcodes and filters are available
-    // from __functions. We're using 11ty's built-in
-    // slugify filter here.
-    const { __functions, title } = eleventyData
-    return \`/${__functions.slugify(title)}/\`
+    // from `functions`. We're using 11ty's built-in
+    // `slugify` filter here.
+    return \`/${functions.slugify(eleventyData.title)}/\`
+  },
+}
+
+export default function About() {...}
+```
+</section>
+<section hidden>
+
+```jsx
+// about.jsx
+export const frontmatter = {
+  title: 'A tragic tale',
+  permalink(eleventyData, functions) {
+    // note: shortcodes and filters are available
+    // from `functions`. We're using 11ty's built-in
+    // `slugify` filter here.
+    return \`/${functions.slugify(eleventyData.title)}/\`
   },
 }
 
@@ -360,14 +415,13 @@ export default function About() {...}
 
 <script>
 export default {
-  frontMatter: {
+  frontmatter: {
     title: "A tragic tale",
-    permalink(eleventyData) {
+    permalink(eleventyData, functions) {
       // note: shortcodes and filters are available
-      // from __functions. We're using 11ty's built-in
-      // slugify filter here.
-      const { __functions, title } = eleventyData
-      return \`/${__functions.slugify(title)}/\`
+      // from `functions`. We're using 11ty's built-in
+      // `slugify` filter here.
+      return \`/${functions.slugify(eleventyData.title)}/\`
     },
   },
 }
@@ -379,14 +433,13 @@ export default {
 ```html
 <!--about.svelte-->
 <script context="module">
-  export const frontMatter = {
+  export const frontmatter = {
     title: "A tragic tale",
-    permalink(eleventyData) {
+    permalink(eleventyData, functions) {
       // note: shortcodes and filters are available
-      // from __functions. We're using 11ty's built-in
-      // slugify filter here.
-      const { __functions, title } = eleventyData;
-      return \`/${__functions.slugify(title)}/\`;
+      // from `functions`. We're using 11ty's built-in
+      // `slugify` filter here.
+      return \`/${functions.slugify(eleventyData.title)}/\`
     },
   };
 </script>
@@ -410,9 +463,10 @@ Here's how your site's input / output directories will look, assuming `_site` is
 
 ### Example - Dynamic permalinks with pagination
 
-Pagination is another common use case for dynamic permalinks. We won't go _too_ in depth on 11ty's pagination options ([see their docs for full details](https://www.11ty.dev/docs/pagination/#aliasing-to-a-different-variable)), but we'll cover the primary use case: generate some routes from an array of data.
+Pagination is another common use case for dynamic permalinks. We won't go _too_ in depth on 11ty's pagination options ([see their docs for full details](https://www.11ty.dev/docs/pagination/#aliasing-to-a-different-variable)), but we'll cover the primary use case: generate routes from an array of data.
 
 Say that:
+
 1. You have an array of T-shirts to sell on your e-commerce site
 2. You want to generate a unique route to preview each T-shirt
 
@@ -437,13 +491,42 @@ You can generate routes for each of these T-shirts using the `pagination` and `p
 
 {% island 'Tabs.svelte', 'client:load' %}
 {% prop 'id', 'prereqs' %}
-{% prop 'tabs', ["React", "Vue", "Svelte"] %}
+{% prop 'store', 'frameworks' %}
+{% prop 'tabs', ["Preact", "React", "Vue", "Svelte"] %}
 {% renderTemplate "md" %}
 <section>
 
 ```jsx
 // tshirt.jsx
-export const frontMatter = {
+export const frontmatter = {
+  pagination: {
+    // name of your data
+    data: 'tshirts',
+    // number of routes per array element
+    size: 1,
+    // variable to access array element values
+    // from your permalink fn and your component page
+    alias: 'tshirt' 
+  },
+  // note the trailing "/" here!
+  permalink: ({ tshirt }) => \`/${tshirt.slug}/\`
+}
+
+export default function Tshirt({ tshirt }) {
+  return (
+    <article>
+      <h1>{tshirt.name}</h1>
+      <img src={tshirt.image} alt={tshirt.name} />
+    </article>
+  )
+}
+```
+</section>
+<section hidden>
+
+```jsx
+// tshirt.jsx
+export const frontmatter = {
   pagination: {
     // name of your data
     data: 'tshirts',
@@ -480,7 +563,7 @@ export default function Tshirt({ tshirt }) {
 
 <script>
 export default {
-  frontMatter: {
+  frontmatter: {
     pagination: {
       // name of your data
       data: "tshirts",
@@ -503,7 +586,7 @@ export default {
 ```html
 <!--tshirt.svelte-->
 <script context="module">
-  export const frontMatter = {
+  export const frontmatter = {
     pagination: {
       // name of your data
       data: "tshirts",
@@ -548,36 +631,53 @@ Here's how your site's input / output directories will look, assuming `_site` is
 
 We've used components as build-time templating languages. Now let's add some JavaScript into the mix 🥗
 
-You can enable client-side rendering using the `hydrate` front matter prop:
+You can enable client-side rendering using the `island` export:
 
 {% include 'examples/hydrate-component-page.md' %}
 
-Like [component shortcodes](/docs/component-shortcodes), you're free to use any of [our partial hydration modes](/docs/partial-hydration) (`"onComponentVisible"`, `"onClientMedia(...)"`, and more).
+Like [component shortcodes](/docs/component-shortcodes), you're free to use any of [our `client:` directives](/docs/partial-hydration) (`client:visible`, `client:idle`, and more).
 
 ### Handle props on hydrated components
 
 Props work a _bit_ differently now that JS is involved. In order to access 11ty data from your component, you'll need to choose which pieces of data you need.
 
-For instance, say you need to access that same global `contributors` list [from earlier](#use-11ty-data-as-props). You can use a special `hydrate.props` function from your front matter like so:
-
+For instance, say you need to access that same global `contributors` list [from earlier](#use-11ty-data-as-props). You can add a `props` function to your `island` export to access this data and pass the pieces you need to the client:
 
 {% island 'Tabs.svelte', 'client:load' %}
 {% prop 'id', 'prereqs' %}
-{% prop 'tabs', ["React", "Vue", "Svelte"] %}
+{% prop 'store', 'framework' %}
+{% prop 'tabs', ["Preact", "React", "Vue", "Svelte"] %}
 {% renderTemplate "md" %}
 <section>
 
 ```jsx
 // about.jsx
-export const frontMatter = {
-  hydrate: {
-    mode: true,
-    // the result of this function
-    // will be passed to your component as props
-    props: (eleventyData) => ({
-      contributors: eleventyData.contributors,
-    })
-  }
+export const island = {
+  when: 'client:load',
+  props: (eleventyData) => ({
+    contributors: eleventyData.contributors,
+  })
+}
+export default function About({ contributors }) {
+  return (
+    <ul>
+      {contributors.map(({ name, ghProfile }) => (
+        <li><a href={ghProfile}>{name}</a></li>
+      ))}
+    </ul>
+  )
+}
+```
+</section>
+<section hidden>
+
+```jsx
+// about.jsx
+export const island = {
+  when: 'client:load',
+  props: (eleventyData) => ({
+    contributors: eleventyData.contributors,
+  })
 }
 export default function About({ contributors }) {
   return (
@@ -605,16 +705,12 @@ export default function About({ contributors }) {
 <script>
 export default {
   props: ["contributors"],
-  frontMatter: {
-    hydrate: {
-      mode: true,
-      // the result of this function
-      // will be passed to your component as props
-      props: (eleventyData) => ({
-        contributors: eleventyData.contributors,
-      }),
-    },
-  },
+  island: {
+    when: 'client:load',
+    props: (eleventyData) => ({
+      contributors: eleventyData.contributors,
+    })
+  }
 };
 </script>
 ```
@@ -624,16 +720,12 @@ export default {
 ```html
 <!--about.svelte-->
 <script context="module">
-  export const frontMatter = {
-    hydrate: {
-      mode: true,
-      // the result of this function
-      // will be passed to your component as props
-      props: (eleventyData) => ({
-        contributors: eleventyData.contributors,
-      }),
-    },
-  };
+  export const island = {
+    when: 'client:load',
+    props: (eleventyData) => ({
+      contributors: eleventyData.contributors,
+    })
+  }
 </script>
 
 <script>
@@ -657,10 +749,9 @@ export default {
 
 A few takeaways here:
 
-1. We update `hydrate: true` to `hydrate: { mode: true }`
-2. We include a `hydrate.props` function for Slinkity to decide which props our component needs
-3. Slinkity runs this function _at build time_ (not on the client!) to decide which props to generate
-4. These props are accessible from the browser-rendered component
+- We include an `island.props` function for Slinkity to decide which props our component needs
+- Slinkity runs this function _at build time_ (not on the client!) to decide which props to generate
+- These props are accessible from the browser-rendered component
 
 ### 🚨 (Important!) Be mindful about your data
 
@@ -687,10 +778,6 @@ props({ collections }) {
 }
 ```
 
-### Can I call `frontMatter.hydrate.props()` inside my components?
+Now that we've discussed page hydration, let's learn how to choose if and when that JS loads.
 
-_Technically_ yes, but we wouldn't recommend it. Note that Slinkity calls this function at _build-time_ to figure out which resources to bundle. In other words, it's not meant to re-run in the browser. This is very similar to [NextJS' `getStaticProps`](https://nextjs.org/docs/basic-features/data-fetching#getstaticprops-static-generation) or [NuxtJS' data fetchers](https://nuxtjs.org/docs/2.x/features/data-fetching).
-
-Oh, and for more on hydration options...
-
-**[Learn the different ways to render components →](/docs/partial-hydration/)**
+**[Learn about `client:` directives →](/docs/partial-hydration/)**
