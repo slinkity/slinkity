@@ -8,7 +8,7 @@
     "test:chromium": "pnpm playwright test --browser=chromium",
     "test:firefox": "pnpm playwright test --browser=firefox",
     "test:webkit": "pnpm playwright test --browser=webkit",
-    "install": "pnpm playwright install",
+    "test:install": "pnpm playwright install",
     "test": "run-s test:*"
   },
   "keywords": [],
