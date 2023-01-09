@@ -3,7 +3,12 @@ const ssr = require('./ssr.cjs');
 const { svelte } = require('@sveltejs/vite-plugin-svelte');
 const preprocess = require('svelte-preprocess');
 
-module.exports = function slinkitySvelte() {
+/**
+ * 
+ * @param {import('@sveltejs/vite-plugin-svelte').SvelteOptions} pluginOptions
+ * @returns 
+ */
+module.exports = function slinkitySvelte(pluginOptions = {}) {
   return {
     name: 'svelte',
     extensions: ['svelte'],
@@ -15,10 +20,11 @@ module.exports = function slinkitySvelte() {
       },
       plugins: [
         svelte({
-          preprocess: preprocess(),
+          preprocess: pluginOptions.preprocess ?? preprocess(),
           compilerOptions: {
             hydratable: true,
           },
+          ...pluginOptions,
         }),
       ],
     },
