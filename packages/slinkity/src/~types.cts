@@ -38,18 +38,27 @@ export type PropsByInputPath = Map<
   }
 >;
 
-export type SsrIslandsByInputPath = Map<
+export type IslandsByInputPath = Map<
   InputPath,
   Record<
     IslandId,
     {
       islandPath: string;
       propIds: Set<string>;
-      isUsedOnClient: boolean;
-      slots: Record<string, string>;
+      renderOn: RenderOn;
+      unparsedLoadConditions: string[];
+      slots: Slots;
+      renderer?: Renderer;
     }
   >
 >;
+
+export type RenderOn = "server" | "client" | "both";
+
+export type Slots = {
+  default: string;
+  [slotName: string]: string;
+};
 
 export type RenderedContent = {
   content: string;
@@ -77,7 +86,7 @@ export type ViteServerFactory = {
 export type PluginGlobals = {
   viteServer: ViteServerFactory;
   propsByInputPath: PropsByInputPath;
-  ssrIslandsByInputPath: SsrIslandsByInputPath;
+  islandsByInputPath: IslandsByInputPath;
   pageByRelOutputPath: PageByRelOutputPath;
   rendererByExt: RendererByExt;
   cssUrlsByInputPath: CssUrlsByInputPath;

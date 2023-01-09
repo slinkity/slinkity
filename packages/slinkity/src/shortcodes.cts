@@ -1,13 +1,17 @@
-import type { PluginGlobals, UserConfig, ShortcodeThis } from "./~types.cjs";
+import type {
+  PluginGlobals,
+  UserConfig,
+  ShortcodeThis,
+  RenderOn,
+} from "./~types.cjs";
 import {
-  toSsrComment,
   toPropComment,
   toResolvedIslandPath,
   extractPropIdsFromHtml,
-  toIslandRoot,
   addPropToStore,
   toIslandId,
   toIslandExt,
+  toIslandComment,
 } from "./~utils.cjs";
 
 export function shortcodes({
@@ -19,40 +23,8 @@ export function shortcodes({
   userConfig: UserConfig;
 } & Pick<
   PluginGlobals,
-  "ssrIslandsByInputPath" | "propsByInputPath" | "rendererByExt"
+  "islandsByInputPath" | "propsByInputPath" | "rendererByExt"
 >) {
-  eleventyConfig.addPairedShortcode(
-    "serverOnlyIsland",
-    function (
-      this: ShortcodeThis,
-      htmlWithPropComments: string,
-      unresolvedIslandPath: string
-    ) {
-      const { inputPath } = this.page;
-      const islandId = toIslandId();
-      const islandPath = toResolvedIslandPath(
-        unresolvedIslandPath,
-        userConfig.islandsDir
-      );
-      const { htmlWithoutPropComments, propIds } =
-        extractPropIdsFromHtml(htmlWithPropComments);
-
-      const existingSsrComponents =
-        globals.ssrIslandsByInputPath.get(inputPath);
-      globals.ssrIslandsByInputPath.set(inputPath, {
-        ...existingSsrComponents,
-        [islandId]: {
-          islandPath,
-          propIds,
-          isUsedOnClient: false,
-          slots: { default: htmlWithoutPropComments },
-        },
-      });
-
-      return toSsrComment(islandId);
-    }
-  );
-
   eleventyConfig.addPairedShortcode(
     "island",
     function (
@@ -61,43 +33,18 @@ export function shortcodes({
       unresolvedIslandPath: string,
       ...loadConditions: string[]
     ) {
-      const { inputPath } = this.page;
       const islandId = toIslandId();
-      const islandPath = toResolvedIslandPath(
-        unresolvedIslandPath,
-        userConfig.islandsDir
-      );
-      const { htmlWithoutPropComments, propIds } =
-        extractPropIdsFromHtml(htmlWithPropComments);
-
-      const props = globals.propsByInputPath.get(inputPath);
-      if (propIds.size && props) {
-        for (const propId of propIds) {
-          props.clientPropIds.add(propId);
-        }
-      }
-      const existingSsrComponents =
-        globals.ssrIslandsByInputPath.get(inputPath);
-      globals.ssrIslandsByInputPath.set(inputPath, {
-        ...existingSsrComponents,
-        [islandId]: {
-          islandPath,
-          propIds,
-          isUsedOnClient: true,
-          slots: { default: htmlWithoutPropComments },
-        },
-      });
-      const isClientOnly = false;
-      const renderer = globals.rendererByExt.get(toIslandExt(islandPath));
-      return toIslandRoot({
+      const renderOn = loadConditions.length ? "both" : "server";
+      updateIslandsByInputPath({
         islandId,
-        islandPath,
+        renderOn,
+        inputPath: this.page.inputPath,
+        htmlWithPropComments,
+        unresolvedIslandPath,
         loadConditions,
-        pageInputPath: inputPath,
-        propIds: [...propIds],
-        isClientOnly,
-        renderer,
       });
+
+      return toIslandComment(islandId);
     }
   );
 
@@ -109,33 +56,63 @@ export function shortcodes({
       unresolvedIslandPath: string,
       ...loadConditions: string[]
     ) {
-      const { inputPath } = this.page;
       const islandId = toIslandId();
-      const islandPath = toResolvedIslandPath(
-        unresolvedIslandPath,
-        userConfig.islandsDir
-      );
-      const { propIds } = extractPropIdsFromHtml(htmlWithPropComments);
-      const props = globals.propsByInputPath.get(inputPath);
-      if (propIds.size && props) {
-        for (const propId of propIds) {
-          props.clientPropIds.add(propId);
-        }
-      }
-
-      const isClientOnly = true;
-      const renderer = globals.rendererByExt.get(toIslandExt(islandPath));
-      return toIslandRoot({
+      const renderOn = "client";
+      updateIslandsByInputPath({
         islandId,
-        islandPath,
-        loadConditions,
-        pageInputPath: inputPath,
-        propIds: [...propIds],
-        isClientOnly,
-        renderer,
+        renderOn,
+        inputPath: this.page.inputPath,
+        htmlWithPropComments,
+        unresolvedIslandPath,
+        loadConditions: loadConditions.length
+          ? loadConditions
+          : ["client:load"],
       });
+
+      return toIslandComment(islandId);
     }
   );
+
+  function updateIslandsByInputPath({
+    islandId,
+    inputPath,
+    htmlWithPropComments,
+    unresolvedIslandPath,
+    loadConditions,
+    renderOn,
+  }: {
+    islandId: string;
+    inputPath: string;
+    htmlWithPropComments: string;
+    unresolvedIslandPath: string;
+    loadConditions: string[];
+    renderOn: RenderOn;
+  }) {
+    const islandPath = toResolvedIslandPath(
+      unresolvedIslandPath,
+      userConfig.islandsDir
+    );
+    const { htmlWithoutPropComments, propIds } =
+      extractPropIdsFromHtml(htmlWithPropComments);
+
+    const props = globals.propsByInputPath.get(inputPath);
+    if (propIds.size && props) {
+      for (const propId of propIds) {
+        props.clientPropIds.add(propId);
+      }
+    }
+    globals.islandsByInputPath.set(inputPath, {
+      ...globals.islandsByInputPath.get(inputPath),
+      [islandId]: {
+        renderOn,
+        islandPath,
+        propIds,
+        slots: { default: htmlWithoutPropComments },
+        unparsedLoadConditions: loadConditions,
+        renderer: globals.rendererByExt.get(toIslandExt(islandPath)),
+      },
+    });
+  }
 
   eleventyConfig.addShortcode(
     "prop",

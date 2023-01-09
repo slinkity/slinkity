@@ -2,12 +2,11 @@ import { ZodError } from "zod";
 import { LOADERS } from "./~consts.cjs";
 import { islandMetaSchema, PluginGlobals } from "./~types.cjs";
 import {
-  toSsrComment,
   addPropToStore,
-  toIslandRoot,
   toResolvedPath,
   toIslandId,
   toIslandExt,
+  toIslandComment,
 } from "./~utils.cjs";
 
 export function pages({
@@ -15,7 +14,7 @@ export function pages({
   ...globals
 }: { eleventyConfig: any } & Pick<
   PluginGlobals,
-  "ssrIslandsByInputPath" | "propsByInputPath" | "rendererByExt" | "viteServer"
+  "islandsByInputPath" | "propsByInputPath" | "rendererByExt" | "viteServer"
 >) {
   for (const [ext, renderer] of globals.rendererByExt.entries()) {
     if (renderer.page) {
@@ -49,7 +48,7 @@ export function pages({
             const islandId = toIslandId();
             const islandPath = toResolvedPath(inputPath);
             const existingSsrComponents =
-              globals.ssrIslandsByInputPath.get(inputPath);
+              globals.islandsByInputPath.get(inputPath);
 
             const server = await globals.viteServer.getOrInitialize();
             const Component = await server.ssrLoadModule(inputPath);
@@ -105,34 +104,19 @@ export function pages({
               propIds.add(id);
             }
 
-            globals.ssrIslandsByInputPath.set(inputPath, {
+            globals.islandsByInputPath.set(inputPath, {
               ...existingSsrComponents,
               [islandId]: {
                 islandPath,
                 propIds,
-                isUsedOnClient,
+                renderOn: isUsedOnClient ? "both" : "server",
                 slots: { default: "" },
+                unparsedLoadConditions: loadConditions,
+                renderer: globals.rendererByExt.get(toIslandExt(islandPath)),
               },
             });
 
-            if (isUsedOnClient) {
-              // Client-only page templates are not supported!
-              const isClientOnly = false;
-              const renderer = globals.rendererByExt.get(
-                toIslandExt(islandPath)
-              );
-              return toIslandRoot({
-                islandId,
-                islandPath,
-                loadConditions,
-                pageInputPath: inputPath,
-                propIds: [...propIds],
-                isClientOnly,
-                renderer,
-              });
-            } else {
-              return toSsrComment(islandId);
-            }
+            return toIslandComment(islandId);
           };
         },
       });

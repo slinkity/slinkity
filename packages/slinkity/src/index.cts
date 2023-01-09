@@ -9,7 +9,7 @@ import type {
   RenderedContent,
   Renderer,
   RunMode,
-  SsrIslandsByInputPath,
+  IslandsByInputPath,
   TransformThis,
   RenderedContentByUrl,
   UserConfig,
@@ -23,6 +23,8 @@ import {
   toResolvedVirtualModId,
   prependForwardSlash,
   getRoot,
+  toIslandComment,
+  toClientLoader,
 } from "./~utils.cjs";
 import { defineConfig } from "./defineConfig.cjs";
 import { pages } from "./pages.cjs";
@@ -36,7 +38,7 @@ export function plugin(
   unresolvedUserConfig: Partial<UserConfig>
 ) {
   const propsByInputPath: PropsByInputPath = new Map();
-  const ssrIslandsByInputPath: SsrIslandsByInputPath = new Map();
+  const islandsByInputPath: IslandsByInputPath = new Map();
   const cssUrlsByInputPath: CssUrlsByInputPath = new Map();
   const pageByRelOutputPath: PageByRelOutputPath = new Map();
   /** Used to serve content within dev server middleware */
@@ -151,7 +153,7 @@ export function plugin(
           propsByInputPath,
           cssUrlsByInputPath,
           pageByRelOutputPath,
-          rendererByExt: rendererByExt,
+          rendererByExt,
         });
       }
     }
@@ -160,16 +162,16 @@ export function plugin(
   shortcodes({
     eleventyConfig,
     userConfig,
-    ssrIslandsByInputPath,
+    islandsByInputPath,
     propsByInputPath,
-    rendererByExt: rendererByExt,
+    rendererByExt,
   });
 
   pages({
     eleventyConfig,
-    ssrIslandsByInputPath,
+    islandsByInputPath,
     propsByInputPath,
-    rendererByExt: rendererByExt,
+    rendererByExt,
     viteServer,
   });
 
@@ -181,7 +183,7 @@ export function plugin(
     inputPath,
     outputPath,
   }: RenderedContent): Promise<string> {
-    const islands = ssrIslandsByInputPath.get(inputPath);
+    const islands = islandsByInputPath.get(inputPath);
     if (!islands) return content;
 
     const ssrRegex = new RegExp(toSsrComment("(.*)"), "g");
@@ -191,7 +193,7 @@ export function plugin(
     await Promise.all(
       ssrMatches.map(async ([, islandId]) => {
         if (islands[islandId]) {
-          const { islandPath, propIds } = islands[islandId];
+          const { islandPath, propIds, slots } = islands[islandId];
           const islandExt = toIslandExt(islandPath);
           if (!islandExt) {
             throw new Error(
@@ -241,12 +243,12 @@ export function plugin(
               page: { inputPath, outputPath },
             });
           }
-          // TODO: support slots
           const { html } = await islandRenderer.ssr({
             Component,
             props,
             ssrLoadModule: server.ssrLoadModule,
             javascriptFunctions: boundJsFns,
+            slots,
           });
           ssrContentByIslandId.set(islandId, html);
         } else {
@@ -296,6 +298,44 @@ export function plugin(
       };
     },
   });
+
+  eleventyConfig.addTransform(
+    "slinkity-transform-island-comments",
+    async function (this: TransformThis, content: string) {
+      const islands = islandsByInputPath.get(this.inputPath);
+      if (!islands) return content;
+
+      const islandRegex = new RegExp(toIslandComment("(.*)"), "g");
+
+      return content.replace(islandRegex, (_, islandId) => {
+        const {
+          islandPath,
+          propIds,
+          renderer,
+          slots,
+          unparsedLoadConditions,
+          renderOn,
+        } = islands[islandId];
+
+        if (renderOn === "server") return toSsrComment(islandId);
+
+        const clientLoaderContent = toClientLoader({
+          islandId,
+          islandPath,
+          propIds: [...propIds],
+          pageInputPath: this.inputPath,
+          renderer,
+          slots,
+          unparsedLoadConditions,
+          isClientOnly: renderOn === "client",
+        });
+
+        return `<slinkity-root data-id=${JSON.stringify(islandId)}>${
+          renderOn === "both" ? toSsrComment(islandId) : ""
+        }</slinkity-root>${clientLoaderContent}`;
+      });
+    }
+  );
 
   eleventyConfig.addTransform(
     "slinkity-prod-handle-ssr-comments",

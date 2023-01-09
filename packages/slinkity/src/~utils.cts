@@ -2,7 +2,7 @@ import { nanoid } from "nanoid";
 import devalue from "devalue";
 import * as path from "path";
 import * as vite from "vite";
-import type { PropsByInputPath, Renderer } from "./~types.cjs";
+import type { PropsByInputPath, Renderer, Slots } from "./~types.cjs";
 import { z } from "zod";
 import { LOADERS, PROPS_VIRTUAL_MOD } from "./~consts.cjs";
 
@@ -21,16 +21,20 @@ export function toResolvedVirtualModId(id: string) {
   return "\0" + id;
 }
 
-export function toPropComment(orRegExp: string) {
-  return `<!--slinkity-prop ${orRegExp}-->`;
+export function toPropComment(idOrRegExp: string) {
+  return `<!--slinkity-prop ${idOrRegExp}-->`;
 }
 
 export function toIslandId() {
   return nanoid(6);
 }
 
-export function toSsrComment(orRegExp: string) {
-  return `<!--slinkity-ssr ${orRegExp}-->`;
+export function toSsrComment(idOrRegExp: string) {
+  return `<!--slinkity-ssr ${idOrRegExp}-->`;
+}
+
+export function toIslandComment(idOrRegExp: string) {
+  return `<!--slinkity-island ${idOrRegExp}-->`;
 }
 
 export function toResolvedIslandPath(
@@ -117,29 +121,47 @@ export function addPropToStore({
 
 export function toIslandRoot({
   islandId,
+  children,
+}: {
+  islandId: string;
+  children: string;
+}) {
+  return `<slinkity-root data-id=${JSON.stringify(
+    islandId
+  )}>${children}</slinkity-root>`;
+}
+
+export function toClientLoader({
+  islandId,
+  islandPath,
+  pageInputPath,
+  unparsedLoadConditions,
+  propIds,
+  slots,
+  isClientOnly,
   renderer,
-  ...loaderParams
 }: {
   islandId: string;
   islandPath: string;
   pageInputPath: string;
-  loadConditions: string[];
+  unparsedLoadConditions: string[];
   propIds: string[];
+  slots: Slots;
   isClientOnly: boolean;
   renderer?: Renderer;
 }) {
   if (typeof renderer?.clientEntrypoint !== "string") {
     throw new Error(
       `No client renderer found for ${JSON.stringify(
-        loaderParams.islandPath
+        islandPath
       )} in ${JSON.stringify(
-        loaderParams.pageInputPath
+        pageInputPath
       )}! Please add a renderer to your Slinkity plugin config. See https://slinkity.dev/docs/component-shortcodes/#prerequisites for more.`
     );
   }
   const { clientEntrypoint } = renderer;
   const loadConditions: [client: typeof LOADERS[number], options: string][] =
-    loaderParams.loadConditions.map((loadCondition) => {
+    unparsedLoadConditions.map((loadCondition) => {
       const firstEqualsIdx = loadCondition.indexOf("=");
       const rawKey =
         firstEqualsIdx === -1
@@ -151,7 +173,7 @@ export function toIslandRoot({
       if (!key.success) {
         throw new Error(
           `[slinkity] ${JSON.stringify(rawKey)} in ${JSON.stringify(
-            loaderParams.pageInputPath
+            pageInputPath
           )} is not a valid client directive. Try client:load, client:idle, or other valid directives (https://slinkity.dev/docs/partial-hydration/).`
         );
       }
@@ -162,28 +184,23 @@ export function toIslandRoot({
     return client.replace("client:", "");
   }
   const propsImportParams = new URLSearchParams({
-    inputPath: loaderParams.pageInputPath,
+    inputPath: pageInputPath,
   });
 
-  return `
-  <slinkity-root data-id=${JSON.stringify(islandId)}>${
-    loaderParams.isClientOnly ? "" : toSsrComment(islandId)
-  }</slinkity-root>
-  <script type="module">
-  ${loadConditions
+  return `<script type="module">${loadConditions
     .map(([client]) => {
       const importName = toImportName(client);
       return `import ${importName} from "slinkity/client/${importName}";`;
     })
     .join("\n")}
       ${
-        loaderParams.propIds.length
+        propIds.length
           ? `
       import propsById from ${JSON.stringify(
         `${PROPS_VIRTUAL_MOD}?${propsImportParams}`
       )};
       const props = {};
-      for (let propId of ${JSON.stringify(loaderParams.propIds)}) {
+      for (let propId of ${JSON.stringify(propIds)}) {
         const { name, value } = propsById[propId];
         props[name] = value;
       }
@@ -206,14 +223,14 @@ export function toIslandRoot({
         .join(",\n")}
     ]).then(async function () {
       const [{ default: Component }, { default: renderer }] = await Promise.all([
-        import(${JSON.stringify(loaderParams.islandPath)}),
+        import(${JSON.stringify(islandPath)}),
         import(${JSON.stringify(clientEntrypoint)}),
       ]);
-      renderer({ Component, target, props, isClientOnly: ${JSON.stringify(
-        loaderParams.isClientOnly
-      )} });
+      renderer({ Component, target, props, slots: ${JSON.stringify(
+        slots
+      )}, isClientOnly: ${JSON.stringify(isClientOnly)}
     });
-  </script>`;
+  });</script>`;
 }
 
 /**

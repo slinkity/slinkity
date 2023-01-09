@@ -15,6 +15,7 @@ export const rendererSchema = z.object({
       z.object({
         Component: z.any(),
         props: z.any(),
+        slots: z.record(z.string()),
         ssrLoadModule: z.any(),
         javascriptFunctions: z.record(
           z.function().args(z.any()).returns(z.any())
