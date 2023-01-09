@@ -50,10 +50,7 @@ export function plugin(eleventyConfig: any, unresolvedUserConfig: Partial<UserCo
 
   eleventyConfig.addGlobalData('__slinkity', {
     get head() {
-      console.log(
-        yellow('[slinkity] `__slinkity.head` is no longer needed. Remove it from your templates!'),
-      );
-      return '';
+      return '<p>[slinkity] `__slinkity.head` is no longer needed. Remove it from your templates!</p>';
     },
   });
 
