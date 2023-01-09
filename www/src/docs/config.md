@@ -89,6 +89,19 @@ The directory where all {%raw%}`{% island %}`{%endraw%} shortcode components sho
 
 > The `islandsDir` must be a unique directory. This means you cannot use your includes directory or `.`.
 
+```js
+const slinkity = require('slinkity')
+
+module.exports = function(eleventyConfig) {
+  eleventyConfig.addPlugin(
+    slinkity.plugin,
+    slinkity.defineConfig({
+      islandsDir: 'archipelagos',
+    })
+  )
+}
+```
+
 ### `buildTempDir`
 
 Type: `string`
@@ -96,6 +109,19 @@ Type: `string`
 Default: `.eleventy-temp-build`
 
 During production builds, Slinkity will build your 11ty output to a temporary directory that is deleted once the build is component. This acts as the input during Vite's client-side build. You can override the name of this directory using `buildTempDir`.
+
+```js
+const slinkity = require('slinkity')
+
+module.exports = function(eleventyConfig) {
+  eleventyConfig.addPlugin(
+    slinkity.plugin,
+    slinkity.defineConfig({
+      buildTempDir: '.custom-temp-build',
+    })
+  )
+}
+```
 
 ## 11ty's `.eleventy.js` / `eleventy.config.js`
 

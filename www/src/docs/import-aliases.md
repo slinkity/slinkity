@@ -26,6 +26,7 @@ And HTML files:
 - **/@input** - Relative to your project's input directory, as configured using the `--input` CLI flag or 11ty's `dir` config option (see [our config docs](/docs/config) for more details)
 - **/@includes** - Relative to your project's `_includes` directory (defaults to `[input-directory]/_includes`, but can be changed [using 11ty's `dir` config option](https://www.11ty.dev/docs/config/#directory-for-includes))
 - **/@layouts** - Relative to your project's layouts directory (defaults to your `_includes` directory, but can be changed [using 11ty's `dir` config option](https://www.11ty.dev/docs/config/#directory-for-layouts-(optional)))
+- **/@islands** - Relative to your project's islands directory (defaults to `_islands`, but can be changed [using Slinkity's `islandsDir` option](/docs/config#islandsdir))
 
 
 ## The problem this solves: processing resources outside your `output` directory
@@ -45,6 +46,7 @@ styles/
 ```
 
 Now, say we want to use that `styles/base.scss` in our `src/index.html` file. With a plain 11ty setup, we'd probably do the following:
+
 1. Wire up a `sass` command to compile that `styles/base.scss` file, and output a processed `css` file under `_site/base.css`
 2. Wire up an import in our `index.html` like so:
 
