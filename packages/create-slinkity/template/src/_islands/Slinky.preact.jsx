@@ -1,11 +1,11 @@
-import React from 'react'
-import '/@root/styles/slinky.scss'
-// woah, what's that /@root doing here?
-// see our "import alias" docs to learn more!
+import { useState } from 'preact/hooks'
+// Use the `/@root/` alias to import resources from your project root.
+// See our "import alias" docs for more:
 // https://slinkity.dev/docs/import-aliases/
+import '/@root/styles/slinky.scss'
 
 export default function SpinningLogo({ hydrate = 'none' }) {
-  const [slinkDirection, setSlinkDirection] = React.useState('left')
+  const [slinkDirection, setSlinkDirection] = useState('left')
 
   function toggleSlinkDirection() {
     if (slinkDirection === 'left') {
@@ -67,11 +67,9 @@ export default function SpinningLogo({ hydrate = 'none' }) {
           </linearGradient>
         </defs>
       </svg>
-      {hydrate !== 'none' ? (
-        <button className="slinky__button" onClick={toggleSlinkDirection}>
-          {slinkDirection === 'left' ? 'Move slinky right 👉' : 'Move slinky left 👈'}
-        </button>
-      ) : null}
+      <button className="slinky__button" onClick={toggleSlinkDirection}>
+        {slinkDirection === 'left' ? 'Move slinky right 👉' : 'Move slinky left 👈'}
+      </button>
     </section>
   )
 }

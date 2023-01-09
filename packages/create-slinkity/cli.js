@@ -14,6 +14,31 @@ const RENDERER_IMPORT_COMMENT = '// insert renderer imports here'
 const RENDERER_CONFIG_COMMENT = '/* apply component renderers here */'
 
 const componentFlavorMeta = {
+  preact: {
+    packageJson: {
+      dependencies: {
+        preact: '^10.10.6',
+      },
+      devDependencies: {
+        '@slinkity/preact': '^1.0.0',
+      },
+    },
+    slinkityConfig: {
+      renderer: 'preact()',
+      importStatement: "const preact = require('@slinkity/preact')",
+    },
+    navLink: {
+      href: '/preact-page',
+      text: 'Preact',
+    },
+    shortcode: '{% island "Slinky.jsx", "client:load" %}{% endisland %}',
+    exclusiveTemplates: [
+      'src/preact-page.jsx',
+      // will strip off `.preact` when copying
+      'src/_islands/Slinky.preact.jsx',
+      'styles/slinky.scss'
+    ],
+  },
   react: {
     packageJson: {
       dependencies: {
@@ -21,19 +46,24 @@ const componentFlavorMeta = {
         'react-dom': '^17.0.2',
       },
       devDependencies: {
-        '@slinkity/renderer-react': '^1.0.0',
+        '@slinkity/react': '^1.0.0',
       },
     },
     slinkityConfig: {
-      renderer: 'react',
-      importStatement: "const react = require('@slinkity/renderer-react')",
+      renderer: 'react()',
+      importStatement: "const react = require('@slinkity/react')",
     },
     navLink: {
       href: '/react-page',
       text: 'React',
     },
-    shortcode: '{% component "Slinky.jsx", hydrate=true %}',
-    exclusiveTemplates: ['src/react-page.jsx', 'src/_includes/Slinky.jsx', 'styles/slinky.scss'],
+    shortcode: '{% island "Slinky.jsx", "client:load" %}{% endisland %}',
+    exclusiveTemplates: [
+      'src/react-page.jsx',
+      // will strip off `.react` when copying
+      'src/_islands/Slinky.react.jsx',
+      'styles/slinky.scss'
+    ],
   },
   vue: {
     packageJson: {
@@ -41,19 +71,19 @@ const componentFlavorMeta = {
         vue: '^3.2.28',
       },
       devDependencies: {
-        '@slinkity/renderer-vue': '^1.0.0',
+        '@slinkity/vue': '^1.0.0',
       },
     },
     slinkityConfig: {
-      renderer: 'vue',
-      importStatement: "const vue = require('@slinkity/renderer-vue')",
+      renderer: 'vue()',
+      importStatement: "const vue = require('@slinkity/vue')",
     },
     navLink: {
       href: '/vue-page',
       text: 'Vue',
     },
-    shortcode: '{% component "Slinky.vue", hydrate=true %}',
-    exclusiveTemplates: ['src/vue-page.vue', 'src/_includes/Slinky.vue'],
+    shortcode: '{% island "Slinky.vue", "client:load" %}{% endisland %}',
+    exclusiveTemplates: ['src/vue-page.vue', 'src/_islands/Slinky.vue'],
   },
   svelte: {
     packageJson: {
@@ -61,19 +91,19 @@ const componentFlavorMeta = {
         svelte: '^3.46.2',
       },
       devDependencies: {
-        '@slinkity/renderer-svelte': '^1.0.0',
+        '@slinkity/svelte': '^1.0.0',
       },
     },
     slinkityConfig: {
-      renderer: 'svelte',
-      importStatement: "const svelte = require('@slinkity/renderer-svelte')",
+      renderer: 'svelte()',
+      importStatement: "const svelte = require('@slinkity/svelte')",
     },
     navLink: {
       href: '/svelte-page',
       text: 'Svelte',
     },
-    shortcode: '{% component "Slinky.svelte", hydrate=true %}',
-    exclusiveTemplates: ['src/svelte-page.svelte', 'src/_includes/Slinky.svelte'],
+    shortcode: '{% island "Slinky.svelte", "client:load" %}{% endisland %}',
+    exclusiveTemplates: ['src/svelte-page.svelte', 'src/_islands/Slinky.svelte'],
   },
 }
 
@@ -109,9 +139,10 @@ function applyRenderersToEleventyConfig(eleventyConfigContents, selectedComponen
       name: 'components',
       message: 'What flavor of components do you want, if any?',
       choices: [
-        { title: 'React', value: 'react' },
+        { title: 'Preact', value: 'preact' },
         { title: 'Vue', value: 'vue' },
         { title: 'Svelte', value: 'svelte' },
+        { title: 'React', value: 'react' },
       ],
     },
   ])
@@ -138,7 +169,10 @@ function applyRenderersToEleventyConfig(eleventyConfigContents, selectedComponen
   )
   for (const template of templates) {
     const src = path.join(srcResolved, template)
-    const dest = path.join(destResolved, template)
+    const dest = path.join(
+      destResolved,
+      template,
+    )
     copy(src, dest, (filePath) => {
       // check whether or not we should copy the file
       const relativePath = path.relative(srcResolved, filePath)
@@ -193,7 +227,7 @@ function applyRenderersToEleventyConfig(eleventyConfigContents, selectedComponen
   )
 
   console.log(`Welcome to your first ${yellow('Slinkity site!')}`)
-  console.log('Step 1: run these commands to install and serve locally 👇')
+  console.log('Step 1: run these commands to install and serve locally.')
   console.log(`
 cd ${dest}
 npm i
@@ -214,7 +248,7 @@ function copy(src, dest, shouldOmit) {
   if (stat.isDirectory()) {
     copyDir(src, dest, shouldOmit)
   } else if (!shouldOmit(src)) {
-    fs.copyFileSync(src, dest)
+    fs.copyFileSync(src, dest.replace('.react', '').replace('.preact', ''))
   }
 }
 

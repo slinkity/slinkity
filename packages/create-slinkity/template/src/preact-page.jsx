@@ -1,13 +1,15 @@
-import React from 'react'
+import { useState } from 'preact/hooks'
 
-export const frontMatter = {
+export const frontmatter = {
   title: 'React to this',
   layout: 'layout',
-  hydrate: 'eager',
+}
+export const island = {
+  when: 'client:load',
 }
 
-function ReactDemo() {
-  const [count, setCount] = React.useState(0)
+function PreactDemo() {
+  const [count, setCount] = useState(0)
 
   return (
     <>

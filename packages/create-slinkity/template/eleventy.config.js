@@ -15,15 +15,6 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy('public')
 
   return {
-    /**
-     * Why use Nunjucks?
-     * 
-     * We recommend using Nunjucks over Liquid for nicer component shortcode syntax in your markdown
-     * See our docs on passing props to components here: https://slinkity.dev/docs/component-shortcodes/#passing-props-to-shortcodes
-     * Prefer liquid, or don't mind liquid's shortcode syntax? No problem!
-     * Just delete this line to switch back to liquid:
-     */
-    markdownTemplateEngine: 'njk',
     dir: {
       /**
        * Why set an input directory?

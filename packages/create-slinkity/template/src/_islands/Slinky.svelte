@@ -62,16 +62,13 @@
       </linearGradient>
     </defs>
   </svg>
-  <!--only show our interactive button when the component is hydrated-->
-  {#if hydrate !== "none"}
-    <button class="slinky__button" on:click={toggleSlinkDirection}>
-      {#if slinkDirection === "left"}
-        <span>Move slinky right 👉</span>
-      {:else}
-        <span>Move slinky left 👈</span>
-      {/if}
-    </button>
-  {/if}
+  <button class="slinky__button" on:click={toggleSlinkDirection}>
+    {#if slinkDirection === "left"}
+      <span>Move slinky right 👉</span>
+    {:else}
+      <span>Move slinky left 👈</span>
+    {/if}
+  </button>
 </section>
 
 <style lang="scss">

@@ -51,8 +51,7 @@
         </linearGradient>
       </defs>
     </svg>
-    <!--only show our interactive button when the component is hydrated-->
-    <button v-if="hydrate" class="slinky__button" @click="toggleSlinkDirection">
+    <button class="slinky__button" @click="toggleSlinkDirection">
       <span v-if="slinkDirection === 'left'">Move slinky right 👉</span>
       <span v-if="slinkDirection === 'right'">Move slinky left 👈</span>
     </button>
