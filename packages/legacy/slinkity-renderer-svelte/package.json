@@ -30,6 +30,6 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/slinkity",
-    "directory": "packages/slinkity-renderer-svelte"
+    "directory": "packages/legacy/slinkity-renderer-svelte"
   }
 }
