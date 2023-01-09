@@ -1,17 +1,17 @@
 #!/usr/bin/env node
-const path = require('path')
-const fs = require('fs')
-const { yellow, red } = require('kolorist')
-const prompts = require('prompts')
+const path = require('path');
+const fs = require('fs');
+const { yellow, red } = require('kolorist');
+const prompts = require('prompts');
 
-const ELEVENTY_CONFIG = '.eleventy.js'
-const INDEX_MD = 'src/index.md'
-const LAYOUT_NJK = 'src/_includes/layout.njk'
-const PKG = 'package.json'
-const filesToPreprocess = new Set([ELEVENTY_CONFIG, INDEX_MD, PKG, LAYOUT_NJK])
+const ELEVENTY_CONFIG = 'eleventy.config.js';
+const INDEX_MD = 'src/index.md';
+const LAYOUT_NJK = 'src/_includes/layout.njk';
+const PKG = 'package.json';
+const filesToPreprocess = new Set([ELEVENTY_CONFIG, INDEX_MD, PKG, LAYOUT_NJK]);
 
-const RENDERER_IMPORT_COMMENT = '// insert renderer imports here'
-const RENDERER_CONFIG_COMMENT = '/* apply component renderers here */'
+const RENDERER_IMPORT_COMMENT = '// insert renderer imports here';
+const RENDERER_CONFIG_COMMENT = '/* apply component renderers here */';
 
 const componentFlavorMeta = {
   preact: {
@@ -36,7 +36,7 @@ const componentFlavorMeta = {
       'src/preact-page.jsx',
       // will strip off `.preact` when copying
       'src/_islands/Slinky.preact.jsx',
-      'styles/slinky.scss'
+      'styles/slinky.scss',
     ],
   },
   react: {
@@ -62,7 +62,7 @@ const componentFlavorMeta = {
       'src/react-page.jsx',
       // will strip off `.react` when copying
       'src/_islands/Slinky.react.jsx',
-      'styles/slinky.scss'
+      'styles/slinky.scss',
     ],
   },
   vue: {
@@ -105,28 +105,28 @@ const componentFlavorMeta = {
     shortcode: '{% island "Slinky.svelte", "client:load" %}{% endisland %}',
     exclusiveTemplates: ['src/svelte-page.svelte', 'src/_islands/Slinky.svelte'],
   },
-}
+};
 
 function applyRenderersToEleventyConfig(eleventyConfigContents, selectedComponentFlavors) {
-  let updatedEleventyConfig = eleventyConfigContents
+  let updatedEleventyConfig = eleventyConfigContents;
   const renderers = selectedComponentFlavors.map(
     (flavor) => componentFlavorMeta[flavor].slinkityConfig.renderer,
-  )
+  );
   if (renderers) {
     updatedEleventyConfig = updatedEleventyConfig.replace(
       RENDERER_CONFIG_COMMENT,
       renderers.join(', '),
-    )
+    );
   }
   const imports = selectedComponentFlavors.map(
     (flavor) => '\n' + componentFlavorMeta[flavor].slinkityConfig.importStatement,
-  )
-  updatedEleventyConfig = updatedEleventyConfig.replace(RENDERER_IMPORT_COMMENT, imports.join(''))
-  return updatedEleventyConfig
+  );
+  updatedEleventyConfig = updatedEleventyConfig.replace(RENDERER_IMPORT_COMMENT, imports.join(''));
+  return updatedEleventyConfig;
 }
 
-;(async () => {
-  let dest = process.argv[2]
+(async () => {
+  let dest = process.argv[2];
   const promptResponses = await prompts([
     {
       type: dest ? null : 'text',
@@ -145,96 +145,93 @@ function applyRenderersToEleventyConfig(eleventyConfigContents, selectedComponen
         { title: 'React', value: 'react' },
       ],
     },
-  ])
+  ]);
   if (!dest) {
-    dest = promptResponses.dest
+    dest = promptResponses.dest;
   }
   // if there's no dest provided as a CLI argument OR by a prompt,
   // they must have ctrl + C'd out of the program
-  if (!dest) process.exit(0)
+  if (!dest) process.exit(0);
 
-  const srcResolved = path.join(__dirname, 'template')
-  const destResolved = path.join(process.cwd(), dest)
-  fs.mkdirSync(destResolved)
+  const srcResolved = path.join(__dirname, 'template');
+  const destResolved = path.join(process.cwd(), dest);
+  fs.mkdirSync(destResolved);
 
   // copy files to output
-  const templates = fs.readdirSync(srcResolved)
+  const templates = fs.readdirSync(srcResolved);
   const componentTemplates = new Set(
     Object.values(componentFlavorMeta).flatMap(({ exclusiveTemplates }) => exclusiveTemplates),
-  )
+  );
   const selectedComponentTemplates = new Set(
     promptResponses.components.flatMap(
       (component) => componentFlavorMeta[component].exclusiveTemplates,
     ),
-  )
+  );
   for (const template of templates) {
-    const src = path.join(srcResolved, template)
-    const dest = path.join(
-      destResolved,
-      template,
-    )
+    const src = path.join(srcResolved, template);
+    const dest = path.join(destResolved, template);
     copy(src, dest, (filePath) => {
       // check whether or not we should copy the file
-      const relativePath = path.relative(srcResolved, filePath)
-      const isFileToPreprocess = filesToPreprocess.has(relativePath)
+      const relativePath = path.relative(srcResolved, filePath);
+      const isFileToPreprocess = filesToPreprocess.has(relativePath);
       const isOmittedComponentTemplate =
-        componentTemplates.has(relativePath) && !selectedComponentTemplates.has(relativePath)
-      return isFileToPreprocess || isOmittedComponentTemplate
-    })
+        componentTemplates.has(relativePath) && !selectedComponentTemplates.has(relativePath);
+      return isFileToPreprocess || isOmittedComponentTemplate;
+    });
   }
 
   // package.json
-  const pkg = require(path.join(srcResolved, PKG))
-  pkg.name = toValidPackageName(dest)
+  const pkg = require(path.join(srcResolved, PKG));
+  pkg.name = toValidPackageName(dest);
   for (const componentFlavor of promptResponses.components) {
     pkg.dependencies = {
       ...pkg.dependencies,
       ...componentFlavorMeta[componentFlavor].packageJson.dependencies,
-    }
+    };
     pkg.devDependencies = {
       ...pkg.devDependencies,
       ...componentFlavorMeta[componentFlavor].packageJson.devDependencies,
-    }
+    };
   }
-  fs.writeFileSync(path.join(destResolved, PKG), JSON.stringify(pkg, null, 2))
+  fs.writeFileSync(path.join(destResolved, PKG), JSON.stringify(pkg, null, 2));
 
   // index.md
-  const indexMd = fs.readFileSync(path.join(srcResolved, INDEX_MD)).toString()
+  const indexMd = fs.readFileSync(path.join(srcResolved, INDEX_MD)).toString();
   const shortcodes = promptResponses.components.map(
     (componentFlavor) => componentFlavorMeta[componentFlavor].shortcode,
-  )
+  );
   fs.writeFileSync(
     path.join(destResolved, INDEX_MD),
     indexMd.replace('<!--insert-component-shortcodes-here-->', shortcodes.join('\n')),
-  )
+  );
 
   // layout.njk
-  const layoutNjk = fs.readFileSync(path.join(srcResolved, LAYOUT_NJK)).toString()
+  const layoutNjk = fs.readFileSync(path.join(srcResolved, LAYOUT_NJK)).toString();
   const navLinks = promptResponses.components.map((componentFlavor) => {
-    const { href, text } = componentFlavorMeta[componentFlavor].navLink
-    return `<a href="${href}">${text}</a>`
-  })
+    const { href, text } = componentFlavorMeta[componentFlavor].navLink;
+    return `<a href="${href}">${text}</a>`;
+  });
   fs.writeFileSync(
     path.join(destResolved, LAYOUT_NJK),
     layoutNjk.replace('<!--insert-nav-links-here-->', navLinks.join('\n      ')),
-  )
+  );
 
   // slinkity plugin config
-  const eleventyConfig = fs.readFileSync(path.join(srcResolved, ELEVENTY_CONFIG)).toString()
+  const eleventyConfig = fs.readFileSync(path.join(srcResolved, ELEVENTY_CONFIG)).toString();
   fs.writeFileSync(
     path.join(destResolved, ELEVENTY_CONFIG),
     applyRenderersToEleventyConfig(eleventyConfig, promptResponses.components),
-  )
+  );
 
-  console.log(`Welcome to your first ${yellow('Slinkity site!')}`)
-  console.log('Step 1: run these commands to install and serve locally.')
+  console.log(`Welcome to your first ${yellow('Slinkity site!')}`);
+  console.log('Step 1: run these commands to install and serve locally.');
   console.log(`
 cd ${dest}
 npm i
 npm start
-`)
-  console.log(`Step 2: ${red('have fun ❤️')}`)
-})()
+`);
+  console.log(`Step 2: ${red('have fun ❤️')}`);
+})();
 
 /**
  * Util to copy file or file directory to dest
@@ -244,11 +241,11 @@ npm start
  * @param {(filePath: string) => boolean} shouldOmit
  */
 function copy(src, dest, shouldOmit) {
-  const stat = fs.statSync(src)
+  const stat = fs.statSync(src);
   if (stat.isDirectory()) {
-    copyDir(src, dest, shouldOmit)
+    copyDir(src, dest, shouldOmit);
   } else if (!shouldOmit(src)) {
-    fs.copyFileSync(src, dest.replace('.react', '').replace('.preact', ''))
+    fs.copyFileSync(src, dest.replace('.react', '').replace('.preact', ''));
   }
 }
 
@@ -260,11 +257,11 @@ function copy(src, dest, shouldOmit) {
  * @param {(filePath: string) => boolean} shouldOmit
  */
 function copyDir(srcDir, destDir, shouldOmit) {
-  fs.mkdirSync(destDir, { recursive: true })
+  fs.mkdirSync(destDir, { recursive: true });
   for (const file of fs.readdirSync(srcDir)) {
-    const srcFile = path.resolve(srcDir, file)
-    const destFile = path.resolve(destDir, file)
-    copy(srcFile, destFile, shouldOmit)
+    const srcFile = path.resolve(srcDir, file);
+    const destFile = path.resolve(destDir, file);
+    copy(srcFile, destFile, shouldOmit);
   }
 }
 
@@ -280,5 +277,5 @@ function toValidPackageName(projectName) {
     .toLowerCase()
     .replace(/\s+/g, '-')
     .replace(/^[._]/, '')
-    .replace(/[^a-z0-9-~]+/g, '-')
+    .replace(/[^a-z0-9-~]+/g, '-');
 }
