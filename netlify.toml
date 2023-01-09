@@ -4,8 +4,4 @@
 [build]
   base = "www"
   publish = "_site"
-  command = """\
-    npx pnpm i --filter slinkity --filter @slinkity/svelte --store=node_modules/.pnpm-store &&\
-    npx pnpm i --filter slinkity-docs --store=node_modules/.pnpm-store &&\
-    npm run build\
-    """
+  command = "pnpm run build"
