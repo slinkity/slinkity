@@ -7,8 +7,7 @@
     ".": "./index.cjs",
     "./ssr": "./ssr.cjs",
     "./client": "./client.mjs",
-    "./server": "./server.jsx",
-    "./FunctionsProvider": "./FunctionsProvider.jsx"
+    "./server": "./server.jsx"
   },
   "keywords": [],
   "author": "bholmesdev",

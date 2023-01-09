@@ -3,10 +3,10 @@ const { renderToString } = require('react-dom/server');
 const pkg = require('./package.json');
 
 module.exports = async function ssr({ Component, props, ssrLoadModule, javascriptFunctions }) {
-  const FunctionsProvider = await ssrLoadModule(`${pkg.name}/FunctionsProvider`);
+  const { FunctionsContext } = await ssrLoadModule(`${pkg.name}/server`);
   const vnode = React.createElement(
-    FunctionsProvider.default,
-    { javascriptFunctions },
+    FunctionsContext.Provider,
+    { value: javascriptFunctions },
     React.createElement(Component.default, props),
   );
   return {
