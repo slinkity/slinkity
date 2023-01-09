@@ -81,7 +81,8 @@
     "lint:css:fix": "stylelint --fix \"{packages,www}/**/*.scss\"",
     "lint:js": "eslint \"packages/slinkity/**/*.{js,mjs,cts}\"",
     "lint:js:fix": "eslint --fix \"packages/slinkity/**/*.{js,mjs,cts}\"",
-    "test:e2e": "pnpm -r --filter slinkity run test:e2e",
+    "test:e2e:install": "pnpm -r --filter @tests/e2e run install",
+    "test:e2e": "pnpm -r --filter @tests/e2e run test",
     "changeset": "changeset",
     "changeset:publish": "changeset publish"
   },
