@@ -1,20 +1,20 @@
-import { ZodError } from "zod";
-import { LOADERS } from "./~consts.cjs";
-import { islandMetaSchema, PluginGlobals } from "./~types.cjs";
+import { ZodError } from 'zod';
+import { LOADERS } from './~consts.cjs';
+import { islandMetaSchema, PluginGlobals } from './~types.cjs';
 import {
   addPropToStore,
   toResolvedPath,
   toIslandId,
   toIslandExt,
   toIslandComment,
-} from "./~utils.cjs";
+} from './~utils.cjs';
 
 export function pages({
   eleventyConfig,
   ...globals
 }: { eleventyConfig: any } & Pick<
   PluginGlobals,
-  "islandsByInputPath" | "propsByInputPath" | "rendererByExt" | "viteServer"
+  'islandsByInputPath' | 'propsByInputPath' | 'rendererByExt' | 'viteServer'
 >) {
   for (const [ext, renderer] of globals.rendererByExt.entries()) {
     if (renderer.page) {
@@ -28,15 +28,12 @@ export function pages({
         },
         compileOptions: {
           permalink() {
-            const __functions = this;
-            return function render({
-              permalink,
-              ...data
-            }: {
-              permalink(data: any): string;
-            }) {
-              if (typeof permalink === "function") {
-                return permalink(data, __functions);
+            return function render(
+              this: Record<string, any>,
+              { permalink, ...data }: { permalink(data: any, functions: any): string },
+            ) {
+              if (typeof permalink === 'function') {
+                return permalink(data, this);
               } else {
                 return permalink;
               }
@@ -47,47 +44,43 @@ export function pages({
           return async function render(serverData: Record<string, any>) {
             const islandId = toIslandId();
             const islandPath = toResolvedPath(inputPath);
-            const existingSsrComponents =
-              globals.islandsByInputPath.get(inputPath);
+            const existingSsrComponents = globals.islandsByInputPath.get(inputPath);
 
             const server = await globals.viteServer.getOrInitialize();
             const Component = await server.ssrLoadModule(inputPath);
-            const unparsedIslandMeta = await renderer
-              .page?.({ Component })
-              .getIslandMeta();
+            const unparsedIslandMeta = await renderer.page?.({ Component }).getIslandMeta();
 
             let loadConditions: typeof LOADERS[number][] = [];
             let props = serverData;
 
             if (unparsedIslandMeta) {
-              const islandMetaRes =
-                islandMetaSchema.safeParse(unparsedIslandMeta);
+              const islandMetaRes = islandMetaSchema.safeParse(unparsedIslandMeta);
               if (!islandMetaRes.success) {
                 throw new Error(
                   `"island" export in ${JSON.stringify(
-                    inputPath
-                  )} is invalid. Try importing the "IslandExport" type from "slinkity." Usage: https://slinkity.dev/docs/component-pages-layouts/#handle-props-on-hydrated-components`
+                    inputPath,
+                  )} is invalid. Try importing the "IslandExport" type from "slinkity." Usage: https://slinkity.dev/docs/component-pages-layouts/#handle-props-on-hydrated-components`,
                 );
               }
               const islandMeta = islandMetaRes.data;
               try {
-                props = islandMeta.props
-                  ? await islandMeta.props(
+                const propsRes = islandMeta.props
+                  ? islandMeta.props(
                       serverData,
-                      eleventyConfig.javascriptFunctions
+                      eleventyConfig.javascriptFunctions as Record<string, any>,
                     )
                   : {};
+
+                props = propsRes instanceof Promise ? await propsRes : propsRes;
               } catch (e) {
                 if (e instanceof ZodError) {
                   throw new Error(
-                    'Props functions must return an object. Check the "props" function in your "island" export.'
+                    'Props functions must return an object. Check the "props" function in your "island" export.',
                   );
                 } else throw e;
               }
               loadConditions =
-                typeof islandMeta.when === "string"
-                  ? [islandMeta.when]
-                  : islandMeta.when;
+                typeof islandMeta.when === 'string' ? [islandMeta.when] : islandMeta.when;
             }
 
             const propIds: Set<string> = new Set();
@@ -109,8 +102,8 @@ export function pages({
               [islandId]: {
                 islandPath,
                 propIds,
-                renderOn: isUsedOnClient ? "both" : "server",
-                slots: { default: "" },
+                renderOn: isUsedOnClient ? 'both' : 'server',
+                slots: { default: '' },
                 unparsedLoadConditions: loadConditions,
                 renderer: globals.rendererByExt.get(toIslandExt(islandPath)),
               },

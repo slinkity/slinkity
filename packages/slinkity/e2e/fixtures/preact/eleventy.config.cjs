@@ -6,12 +6,12 @@ module.exports = function (eleventyConfig) {
     slinkity.plugin,
     slinkity.defineConfig({
       renderers: [slinkityPreact()],
-    })
+    }),
   );
 
   return {
     dir: {
       input: 'src',
-    }
-  }
-}
+    },
+  };
+};

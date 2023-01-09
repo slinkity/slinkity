@@ -1,15 +1,10 @@
-import type {
-  EleventyDir,
-  PluginGlobals,
-  UserConfig,
-  ViteServerFactory,
-} from "./~types.cjs";
-import * as vite from "vite";
-import * as path from "path";
-import * as fs from "fs";
-import { sync as globSync } from "fast-glob";
-import { PROPS_VIRTUAL_MOD } from "./~consts.cjs";
-import { getRoot, toResolvedVirtualModId } from "./~utils.cjs";
+import type { EleventyDir, PluginGlobals, UserConfig, ViteServerFactory } from './~types.cjs';
+import * as vite from 'vite';
+import * as path from 'path';
+import * as fs from 'fs';
+import { sync as globSync } from 'fast-glob';
+import { PROPS_VIRTUAL_MOD } from './~consts.cjs';
+import { getRoot, toResolvedVirtualModId } from './~utils.cjs';
 
 export async function productionBuild({
   userConfig,
@@ -20,10 +15,7 @@ export async function productionBuild({
   eleventyDir: EleventyDir;
 } & Pick<
   PluginGlobals,
-  | "propsByInputPath"
-  | "cssUrlsByInputPath"
-  | "pageByRelOutputPath"
-  | "rendererByExt"
+  'propsByInputPath' | 'cssUrlsByInputPath' | 'pageByRelOutputPath' | 'rendererByExt'
 >) {
   const eleventyTempBuildDir = userConfig.buildTempDir;
   const resolvedOutput = path.resolve(getRoot(), eleventyDir.output);
@@ -34,14 +26,11 @@ export async function productionBuild({
       absolute: true,
     });
     // throw to remove temp build output in "finally" block
-    if (!inputFiles.length) throw new Error("Output directory empty!");
+    if (!inputFiles.length) throw new Error('Output directory empty!');
     let viteConfig: vite.InlineConfig = {
       root: eleventyTempBuildDir,
-      mode: "production",
-      plugins: [
-        slinkityPropsPlugin(globals),
-        slinkityInjectHeadPlugin(globals),
-      ],
+      mode: 'production',
+      plugins: [slinkityPropsPlugin(globals), slinkityInjectHeadPlugin(globals)],
       resolve: {
         alias: getAliases({ eleventyDir, userConfig, root }),
       },
@@ -73,17 +62,14 @@ export function createViteServer({
   eleventyDir: EleventyDir;
 } & Pick<
   PluginGlobals,
-  | "cssUrlsByInputPath"
-  | "propsByInputPath"
-  | "pageByRelOutputPath"
-  | "rendererByExt"
+  'cssUrlsByInputPath' | 'propsByInputPath' | 'pageByRelOutputPath' | 'rendererByExt'
 >): ViteServerFactory {
   const root = getRoot();
 
   let viteConfig: vite.InlineConfig = {
     root,
     clearScreen: false,
-    appType: "custom",
+    appType: 'custom',
     server: {
       middlewareMode: true,
     },
@@ -96,18 +82,23 @@ export function createViteServer({
   viteConfig = mergeRendererConfigs({ viteConfig, userConfig });
 
   let viteServer: vite.ViteDevServer;
-  let awaitingServer: ((value: vite.ViteDevServer) => void)[] = [];
+  const awaitingServer: ((value: vite.ViteDevServer) => void)[] = [];
   return {
     async getOrInitialize() {
       if (viteServer) return new Promise((resolve) => resolve(viteServer));
 
       if (awaitingServer.length === 0) {
-        vite.createServer(viteConfig).then((_viteServer) => {
-          viteServer = _viteServer;
-          for (const resolve of awaitingServer) {
-            resolve(viteServer);
-          }
-        });
+        vite
+          .createServer(viteConfig)
+          .then((_viteServer) => {
+            viteServer = _viteServer;
+            for (const resolve of awaitingServer) {
+              resolve(viteServer);
+            }
+          })
+          .catch((err) => {
+            throw err;
+          });
       }
       return new Promise((resolve) => {
         awaitingServer.push(resolve);
@@ -118,11 +109,11 @@ export function createViteServer({
 
 function slinkityPropsPlugin({
   propsByInputPath,
-}: Pick<PluginGlobals, "propsByInputPath">): vite.Plugin {
+}: Pick<PluginGlobals, 'propsByInputPath'>): vite.Plugin {
   const resolvedVirtualModuleId = toResolvedVirtualModId(PROPS_VIRTUAL_MOD);
 
   return {
-    name: "slinkity-props-plugin",
+    name: 'slinkity-props-plugin',
     resolveId(id) {
       if (id.startsWith(PROPS_VIRTUAL_MOD)) {
         return id.replace(PROPS_VIRTUAL_MOD, resolvedVirtualModuleId);
@@ -130,11 +121,11 @@ function slinkityPropsPlugin({
     },
     async load(id) {
       if (id.startsWith(resolvedVirtualModuleId)) {
-        const { searchParams } = new URL(id, "file://");
-        const inputPath = searchParams.get("inputPath");
+        const { searchParams } = new URL(id, 'file://');
+        const inputPath = searchParams.get('inputPath');
         if (!inputPath) return;
 
-        let code = "export default {\n";
+        let code = 'export default {\n';
         const propInfo = propsByInputPath.get(inputPath);
         if (propInfo?.clientPropIds.size) {
           const { hasStore, props, clientPropIds } = propInfo;
@@ -142,15 +133,14 @@ function slinkityPropsPlugin({
             const { name, getSerializedValue } = props[clientPropId];
             const serializedKey = JSON.stringify(clientPropId);
             const serializedEntry = `{ name: ${JSON.stringify(
-              name
+              name,
             )}, value: ${getSerializedValue()} }`;
             code += `  ${serializedKey}: ${serializedEntry},\n`;
           }
-          code += "}";
+          code += '}';
           if (hasStore) {
             // TODO: make this better
-            code +=
-              "\n" + (await fs.promises.readFile("./utils/store.client.mjs"));
+            code += '\n' + (await fs.promises.readFile('./utils/store.client.mjs', 'utf-8'));
           }
         }
         return { code };
@@ -160,12 +150,12 @@ function slinkityPropsPlugin({
 }
 
 function slinkityInjectHeadPlugin(
-  globals: Pick<PluginGlobals, "cssUrlsByInputPath" | "pageByRelOutputPath">
+  globals: Pick<PluginGlobals, 'cssUrlsByInputPath' | 'pageByRelOutputPath'>,
 ): vite.Plugin {
   return {
-    name: "vite-plugin-slinkity-inject-head",
+    name: 'vite-plugin-slinkity-inject-head',
     transformIndexHtml: {
-      enforce: "pre",
+      enforce: 'pre',
       transform(html, ctx) {
         let inputPath: string | undefined;
         if (ctx.originalUrl) {
@@ -182,8 +172,8 @@ function slinkityInjectHeadPlugin(
         if (!collectedCss) return [];
 
         return [...collectedCss].map((href) => ({
-          tag: "link",
-          attrs: { rel: "stylesheet", href },
+          tag: 'link',
+          attrs: { rel: 'stylesheet', href },
         }));
       },
     },
@@ -214,13 +204,10 @@ function getAliases({
 }): vite.AliasOptions {
   const resolvedInput = path.resolve(root, eleventyDir.input);
   return {
-    "/@root": root,
-    "/@input": resolvedInput,
-    "/@layouts": path.resolve(
-      resolvedInput,
-      eleventyDir.layouts ?? eleventyDir.includes
-    ),
-    "/@includes": path.resolve(resolvedInput, eleventyDir.includes),
-    "/@islands": userConfig.islandsDir,
+    '/@root': root,
+    '/@input': resolvedInput,
+    '/@layouts': path.resolve(resolvedInput, eleventyDir.layouts ?? eleventyDir.includes),
+    '/@includes': path.resolve(resolvedInput, eleventyDir.includes),
+    '/@islands': userConfig.islandsDir,
   };
 }

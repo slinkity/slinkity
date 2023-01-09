@@ -1,11 +1,5 @@
-import { existsSync } from "fs";
-import { yellow } from "kleur/colors";
-import type {
-  PluginGlobals,
-  UserConfig,
-  ShortcodeThis,
-  RenderOn,
-} from "./~types.cjs";
+import { existsSync } from 'fs';
+import type { PluginGlobals, UserConfig, ShortcodeThis, RenderOn } from './~types.cjs';
 import {
   toPropComment,
   toResolvedIslandPath,
@@ -14,7 +8,7 @@ import {
   toIslandId,
   toIslandExt,
   toIslandComment,
-} from "./~utils.cjs";
+} from './~utils.cjs';
 
 export function shortcodes({
   eleventyConfig,
@@ -23,12 +17,9 @@ export function shortcodes({
 }: {
   eleventyConfig: any;
   userConfig: UserConfig;
-} & Pick<
-  PluginGlobals,
-  "islandsByInputPath" | "propsByInputPath" | "rendererByExt"
->) {
+} & Pick<PluginGlobals, 'islandsByInputPath' | 'propsByInputPath' | 'rendererByExt'>) {
   eleventyConfig.addPairedShortcode(
-    "island",
+    'island',
     function (
       this: ShortcodeThis,
       htmlWithPropComments: string,
@@ -36,7 +27,7 @@ export function shortcodes({
       ...loadConditions: string[]
     ) {
       const islandId = toIslandId();
-      const renderOn = loadConditions.length ? "both" : "server";
+      const renderOn = loadConditions.length ? 'both' : 'server';
       updateIslandsByInputPath({
         islandId,
         renderOn,
@@ -47,11 +38,11 @@ export function shortcodes({
       });
 
       return toIslandComment(islandId);
-    }
+    },
   );
 
   eleventyConfig.addPairedShortcode(
-    "clientOnlyIsland",
+    'clientOnlyIsland',
     function (
       this: ShortcodeThis,
       htmlWithPropComments: string,
@@ -59,20 +50,18 @@ export function shortcodes({
       ...loadConditions: string[]
     ) {
       const islandId = toIslandId();
-      const renderOn = "client";
+      const renderOn = 'client';
       updateIslandsByInputPath({
         islandId,
         renderOn,
         inputPath: this.page.inputPath,
         htmlWithPropComments,
         unresolvedIslandPath,
-        loadConditions: loadConditions.length
-          ? loadConditions
-          : ["client:load"],
+        loadConditions: loadConditions.length ? loadConditions : ['client:load'],
       });
 
       return toIslandComment(islandId);
-    }
+    },
   );
 
   function updateIslandsByInputPath({
@@ -90,22 +79,18 @@ export function shortcodes({
     loadConditions: string[];
     renderOn: RenderOn;
   }) {
-    const islandPath = toResolvedIslandPath(
-      unresolvedIslandPath,
-      userConfig.islandsDir
-    );
+    const islandPath = toResolvedIslandPath(unresolvedIslandPath, userConfig.islandsDir);
     if (!existsSync(islandPath)) {
       if (!existsSync(userConfig.islandsDir)) {
         throw new Error(
-          `[slinkity] No "_islands/" directory found. When using shortcodes, all components must be in "_islands." See our docs for more: https://slinkity.dev/docs/component-shortcodes`
+          '[slinkity] No "_islands/" directory found. When using shortcodes, all components must be in "_islands." See our docs for more: https://slinkity.dev/docs/component-shortcodes',
         );
       }
       throw new Error(
-        `[slinkity] Could not find island at path "${islandPath}." Does the file exist?`
+        `[slinkity] Could not find island at path "${islandPath}." Does the file exist?`,
       );
     }
-    const { htmlWithoutPropComments, propIds } =
-      extractPropIdsFromHtml(htmlWithPropComments);
+    const { htmlWithoutPropComments, propIds } = extractPropIdsFromHtml(htmlWithPropComments);
 
     const props = globals.propsByInputPath.get(inputPath);
     if (propIds.size && props) {
@@ -126,31 +111,26 @@ export function shortcodes({
     });
   }
 
-  eleventyConfig.addShortcode(
-    "prop",
-    function (this: ShortcodeThis, name: string, value: any) {
-      const { inputPath } = this.page;
-      const { id } = addPropToStore({
-        name,
-        value,
-        propsByInputPath: globals.propsByInputPath,
-        inputPath,
-      });
+  eleventyConfig.addShortcode('prop', function (this: ShortcodeThis, name: string, value: any) {
+    const { inputPath } = this.page;
+    const { id } = addPropToStore({
+      name,
+      value,
+      propsByInputPath: globals.propsByInputPath,
+      inputPath,
+    });
 
-      return toPropComment(id);
-    }
-  );
+    return toPropComment(id);
+  });
 
   // TODO: remove for 1.0 stable
-  eleventyConfig.addShortcode("component", componentRemovedWarning);
-  eleventyConfig.addPairedShortcode(
-    "slottedComponent",
-    componentRemovedWarning
-  );
+  eleventyConfig.addShortcode('component', componentRemovedWarning);
+  eleventyConfig.addPairedShortcode('slottedComponent', componentRemovedWarning);
 }
 
 function componentRemovedWarning() {
-  const shortcodeWarning = `[slinkity] The "component" shortcode has been replaced with "island." This offers new methods for hydration and prop passing. See our shortcode docs for more: https://slinkity.dev/docs/component-shortcodes`;
+  const shortcodeWarning =
+    '[slinkity] The "component" shortcode has been replaced with "island." This offers new methods for hydration and prop passing. See our shortcode docs for more: https://slinkity.dev/docs/component-shortcodes';
   console.warn(shortcodeWarning);
   return `<p>⚠️ ${shortcodeWarning}</p>`;
 }

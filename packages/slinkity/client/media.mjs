@@ -7,5 +7,5 @@ export default function media({ options }) {
     } else {
       mql.addEventListener('change', resolve, { once: true });
     }
-  })
+  });
 }

@@ -1,15 +1,15 @@
-import { nanoid } from "nanoid";
-import devalue from "devalue";
-import * as path from "path";
-import * as vite from "vite";
-import type { PropsByInputPath, Renderer, Slots } from "./~types.cjs";
-import { z } from "zod";
-import { LOADERS, PROPS_VIRTUAL_MOD } from "./~consts.cjs";
+import { nanoid } from 'nanoid';
+import devalue from 'devalue';
+import * as path from 'path';
+import * as vite from 'vite';
+import type { PropsByInputPath, Renderer, Slots } from './~types.cjs';
+import { z } from 'zod';
+import { LOADERS, PROPS_VIRTUAL_MOD } from './~consts.cjs';
 
 export class SlinkityInternalError extends Error {
   constructor(msg: string) {
     super(msg);
-    this.name = "[Slinkity internal]";
+    this.name = '[Slinkity internal]';
   }
 }
 
@@ -18,7 +18,7 @@ export class SlinkityInternalError extends Error {
  * https://vitejs.dev/guide/api-plugin.html#virtual-modules-convention
  */
 export function toResolvedVirtualModId(id: string) {
-  return "\0" + id;
+  return '\0' + id;
 }
 
 export function toPropComment(idOrRegExp: string) {
@@ -37,10 +37,7 @@ export function toIslandComment(idOrRegExp: string) {
   return `<!--slinkity-island ${idOrRegExp}-->`;
 }
 
-export function toResolvedIslandPath(
-  unresolvedIslandPath: string,
-  islandsDir: string
-) {
+export function toResolvedIslandPath(unresolvedIslandPath: string, islandsDir: string) {
   return vite.normalizePath(path.resolve(islandsDir, unresolvedIslandPath));
 }
 
@@ -52,25 +49,25 @@ export function extractPropIdsFromHtml(html: string): {
   htmlWithoutPropComments: string;
   propIds: Set<string>;
 } {
-  const propRegex = new RegExp(toPropComment("(.*)"), "g");
+  const propRegex = new RegExp(toPropComment('(.*)'), 'g');
   const matches = [...html.matchAll(propRegex)];
 
   return {
-    htmlWithoutPropComments: html.replace(propRegex, "").trim(),
+    htmlWithoutPropComments: html.replace(propRegex, '').trim(),
     propIds: new Set(
       matches.map(([, id]) => {
         return id;
-      })
+      }),
     ),
   };
 }
 
 export function prependForwardSlash(pathStr: string) {
-  return pathStr.startsWith("/") ? pathStr : "/" + pathStr;
+  return pathStr.startsWith('/') ? pathStr : '/' + pathStr;
 }
 
 export function toIslandExt(islandPath: string): string {
-  return path.extname(islandPath).replace(/^\./, "");
+  return path.extname(islandPath).replace(/^\./, '');
 }
 
 type AddPropToStoreParams = {
@@ -81,6 +78,16 @@ type AddPropToStoreParams = {
   isUsedOnClient?: boolean;
 };
 
+type Store = {
+  isSlinkityComponentFactory: true;
+  id: string;
+  value: any;
+};
+
+function isSlinkityStoreFactory(value: any): value is Store {
+  return value.isSlinkityComponentFactory === true;
+}
+
 export function addPropToStore({
   name,
   value,
@@ -89,13 +96,9 @@ export function addPropToStore({
   isUsedOnClient,
 }: AddPropToStoreParams): { id: string } {
   const existingPropsInfo = propsByInputPath.get(inputPath);
-  let getSerializedValue, id;
+  let getSerializedValue, id: string;
   let hasStore = Boolean(existingPropsInfo?.hasStore);
-  if (
-    typeof value === "object" &&
-    value !== null &&
-    value.isSlinkityStoreFactory
-  ) {
+  if (typeof value === 'object' && value !== null && isSlinkityStoreFactory(value)) {
     getSerializedValue = () => `new SlinkityStore(${devalue(value.value)})`;
     id = value.id;
     hasStore = true;
@@ -119,16 +122,8 @@ export function addPropToStore({
   return { id };
 }
 
-export function toIslandRoot({
-  islandId,
-  children,
-}: {
-  islandId: string;
-  children: string;
-}) {
-  return `<slinkity-root data-id=${JSON.stringify(
-    islandId
-  )}>${children}</slinkity-root>`;
+export function toIslandRoot({ islandId, children }: { islandId: string; children: string }) {
+  return `<slinkity-root data-id=${JSON.stringify(islandId)}>${children}</slinkity-root>`;
 }
 
 export function toClientLoader({
@@ -150,38 +145,32 @@ export function toClientLoader({
   isClientOnly: boolean;
   renderer?: Renderer;
 }) {
-  if (typeof renderer?.clientEntrypoint !== "string") {
+  if (typeof renderer?.clientEntrypoint !== 'string') {
     throw new Error(
-      `No client renderer found for ${JSON.stringify(
-        islandPath
-      )} in ${JSON.stringify(
-        pageInputPath
-      )}! Please add a renderer to your Slinkity plugin config. See https://slinkity.dev/docs/component-shortcodes/#prerequisites for more.`
+      `No client renderer found for ${JSON.stringify(islandPath)} in ${JSON.stringify(
+        pageInputPath,
+      )}! Please add a renderer to your Slinkity plugin config. See https://slinkity.dev/docs/component-shortcodes/#prerequisites for more.`,
     );
   }
   const { clientEntrypoint } = renderer;
   const loadConditions: [client: typeof LOADERS[number], options: string][] =
     unparsedLoadConditions.map((loadCondition) => {
-      const firstEqualsIdx = loadCondition.indexOf("=");
-      const rawKey =
-        firstEqualsIdx === -1
-          ? loadCondition
-          : loadCondition.slice(0, firstEqualsIdx);
-      const options =
-        firstEqualsIdx === -1 ? "" : loadCondition.slice(firstEqualsIdx + 1);
+      const firstEqualsIdx = loadCondition.indexOf('=');
+      const rawKey = firstEqualsIdx === -1 ? loadCondition : loadCondition.slice(0, firstEqualsIdx);
+      const options = firstEqualsIdx === -1 ? '' : loadCondition.slice(firstEqualsIdx + 1);
       const key = z.enum(LOADERS).safeParse(rawKey);
       if (!key.success) {
         throw new Error(
           `[slinkity] ${JSON.stringify(rawKey)} in ${JSON.stringify(
-            pageInputPath
-          )} is not a valid client directive. Try client:load, client:idle, or other valid directives (https://slinkity.dev/docs/partial-hydration/).`
+            pageInputPath,
+          )} is not a valid client directive. Try client:load, client:idle, or other valid directives (https://slinkity.dev/docs/partial-hydration/).`,
         );
       }
       return [key.data, options];
     });
 
   function toImportName(client: typeof LOADERS[number]) {
-    return client.replace("client:", "");
+    return client.replace('client:', '');
   }
   const propsImportParams = new URLSearchParams({
     inputPath: pageInputPath,
@@ -192,12 +181,12 @@ export function toClientLoader({
       const importName = toImportName(client);
       return `import ${importName} from "slinkity/client/${importName}";`;
     })
-    .join("\n")}
+    .join('\n')}
       ${
         propIds.length
           ? `
       import propsById from ${JSON.stringify(
-        `${PROPS_VIRTUAL_MOD}?${propsImportParams}`
+        `${PROPS_VIRTUAL_MOD}?${propsImportParams.toString()}`,
       )};
       const props = {};
       for (let propId of ${JSON.stringify(propIds)}) {
@@ -209,25 +198,21 @@ export function toClientLoader({
       const props = {};
       `
       }
-    const target = document.querySelector('slinkity-root[data-id=${JSON.stringify(
-      islandId
-    )}]');
+    const target = document.querySelector('slinkity-root[data-id=${JSON.stringify(islandId)}]');
     Promise.race([
       ${loadConditions
         .map(([client, options]) => {
           const importName = toImportName(client);
-          return `${importName}({ target, options: ${JSON.stringify(
-            options
-          )} })`;
+          return `${importName}({ target, options: ${JSON.stringify(options)} })`;
         })
-        .join(",\n")}
+        .join(',\n')}
     ]).then(async function () {
       const [{ default: Component }, { default: renderer }] = await Promise.all([
         import(${JSON.stringify(islandPath)}),
         import(${JSON.stringify(clientEntrypoint)}),
       ]);
       renderer({ Component, target, props, slots: ${JSON.stringify(
-        slots
+        slots,
       )}, isClientOnly: ${JSON.stringify(isClientOnly)}
     });
   });</script>`;
@@ -247,7 +232,7 @@ export function isStyleImport(imp: string): boolean {
 export function collectCSSImportedViaEsm(
   mod: vite.ModuleNode,
   collectedCSSModUrls: Set<string>,
-  visitedModUrls: Set<string> = new Set()
+  visitedModUrls: Set<string> = new Set(),
 ) {
   if (!mod || !mod.url || visitedModUrls.has(mod.url)) return;
 

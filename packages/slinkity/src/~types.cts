@@ -1,7 +1,7 @@
-import { rendererSchema, userConfigSchema } from "./defineConfig.cjs";
-import type { ViteDevServer, InlineConfig as ViteInlineConfig } from "vite";
-import { z } from "zod";
-import { LOADERS } from "./~consts.cjs";
+import { rendererSchema, userConfigSchema } from './defineConfig.cjs';
+import type { ViteDevServer } from 'vite';
+import { z } from 'zod';
+import { LOADERS } from './~consts.cjs';
 
 export const islandMetaSchema = z
   .object({
@@ -9,10 +9,10 @@ export const islandMetaSchema = z
     props: z
       .function(
         z.tuple([z.record(z.any()), z.record(z.any())]),
-        z.union([z.record(z.any()), z.promise(z.record(z.any()))])
+        z.union([z.record(z.any()), z.promise(z.record(z.any()))]),
       )
       .args(z.record(z.any()), z.record(z.any()))
-      .returns(z.record(z.any())),
+      .returns(z.union([z.record(z.any()), z.promise(z.record(z.any()))])),
   })
   .partial({
     props: true,
@@ -53,7 +53,7 @@ export type IslandsByInputPath = Map<
   >
 >;
 
-export type RenderOn = "server" | "client" | "both";
+export type RenderOn = 'server' | 'client' | 'both';
 
 export type Slots = {
   default: string;
@@ -94,7 +94,7 @@ export type PluginGlobals = {
 
 export type SlinkityStore = <T>(
   initialValue: T,
-  options: never
+  options: never,
 ) => {
   isSlinkityStoreFactory: true;
   id: string;
@@ -110,7 +110,7 @@ export type IslandExport = {
    * Defaults to 'client:load'
    * https://slinkity.dev/docs/partial-hydration/
    */
-  when: z.infer<typeof islandMetaSchema>["when"];
+  when: z.infer<typeof islandMetaSchema>['when'];
   /**
    * Generates props to pass to your hydrated component.
    * If you're new to Slinkity, we recommend reading our "Be mindful about your data" docs first:
@@ -118,7 +118,7 @@ export type IslandExport = {
    * @param eleventyData Page data from 11ty's data cascade
    * @param functions Univeral shortcodes and javascript functions
    */
-  props?: z.infer<typeof islandMetaSchema>["props"];
+  props?: z.infer<typeof islandMetaSchema>['props'];
 };
 
 export type UserConfig = z.infer<typeof userConfigSchema>;
@@ -144,8 +144,8 @@ export type EleventyDir = {
   layouts?: string;
 };
 
-export type RunMode = "build" | "watch" | "serve";
-export type OutputMode = "fs" | "json" | "ndjson";
+export type RunMode = 'build' | 'watch' | 'serve';
+export type OutputMode = 'fs' | 'json' | 'ndjson';
 
 export type EleventyEventParams = {
   after: {

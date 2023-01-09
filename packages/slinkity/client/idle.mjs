@@ -7,5 +7,5 @@ export default function idle() {
       // wait 200ms to give main thread some time to free up
       setTimeout(resolve, 200);
     }
-  })
+  });
 }

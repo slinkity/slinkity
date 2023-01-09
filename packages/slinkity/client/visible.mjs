@@ -6,7 +6,7 @@ const intersectionObserverOptions = {
 /** @param {{ target: HTMLElement }} */
 export default function visible({ target }) {
   return new Promise(function (resolve) {
-    const observer = new IntersectionObserver(async function (entries) {
+    const observer = new IntersectionObserver(function (entries) {
       for (const entry of entries) {
         if (entry.isIntersecting) {
           observer.disconnect();
@@ -15,5 +15,5 @@ export default function visible({ target }) {
       }
     }, intersectionObserverOptions);
     observer.observe(target);
-  })
+  });
 }
