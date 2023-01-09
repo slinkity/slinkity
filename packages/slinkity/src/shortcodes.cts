@@ -1,3 +1,4 @@
+import { yellow } from "kleur/colors";
 import type {
   PluginGlobals,
   UserConfig,
@@ -127,5 +128,20 @@ export function shortcodes({
 
       return toPropComment(id);
     }
+  );
+
+  // TODO: remove for 1.0 stable
+  eleventyConfig.addShortcode("component", componentRemovedWarning);
+  eleventyConfig.addPairedShortcode(
+    "slottedComponent",
+    componentRemovedWarning
+  );
+}
+
+function componentRemovedWarning() {
+  console.warn(
+    yellow(
+      `[slinkity] The "component" shortcode has been replaced with "island." This offers new methods for hydration and prop passing. See our shortcode docs for more: https://slinkity.dev/docs/component-shortcodes`
+    )
   );
 }
