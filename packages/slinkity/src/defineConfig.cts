@@ -40,5 +40,20 @@ export const userConfigSchema = z.object({
 });
 
 export function defineConfig(userConfig: Partial<UserConfig>): UserConfig {
-  return userConfigSchema.parse(userConfig);
+  const parsed = userConfigSchema.safeParse(userConfig);
+  if (parsed.success) {
+    return parsed.data;
+  } else {
+    for (const issue of parsed.error.issues) {
+      if (issue.path[0] === "renderers") {
+        throw new Error(
+          `[slinkity] Config invalid. Check that you're using our new component renderer packages (ex. \`@slinkity/react\` instead of \`@slinkity/renderer-react\`). See https://slinkity.dev/docs/component-shortcodes#prerequisites`
+        );
+      }
+    }
+
+    throw new Error(
+      "[slinkity] Config invalid. See https://slinkity.dev/docs/config/#slinkity-plugin-configuration for all configuration options."
+    );
+  }
 }
