@@ -1,6 +1,6 @@
-const pkg = require('./package.json')
-const ssr = require('./ssr.cjs')
-const { default: vitePreact } = require('@preact/preset-vite')
+const pkg = require('./package.json');
+const ssr = require('./ssr.cjs');
+const { default: vitePreact } = require('@preact/preset-vite');
 
 module.exports = function slinkityPreact() {
   return {
@@ -17,12 +17,12 @@ module.exports = function slinkityPreact() {
     page({ Component }) {
       return {
         getData() {
-          return Component.frontmatter ?? Component.frontMatter ?? {}
+          return Component.frontmatter ?? Component.frontMatter ?? {};
         },
         getIslandMeta() {
-          return Component.island
+          return Component.island;
         },
-      }
+      };
     },
-  }
-}
+  };
+};

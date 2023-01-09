@@ -1,7 +1,7 @@
-const pkg = require('./package.json')
-const ssr = require('./ssr.cjs')
-const { svelte } = require('@sveltejs/vite-plugin-svelte')
-const preprocess = require('svelte-preprocess')
+const pkg = require('./package.json');
+const ssr = require('./ssr.cjs');
+const { svelte } = require('@sveltejs/vite-plugin-svelte');
+const preprocess = require('svelte-preprocess');
 
 module.exports = function slinkitySvelte() {
   return {
@@ -25,12 +25,12 @@ module.exports = function slinkitySvelte() {
     page({ Component }) {
       return {
         getData() {
-          return Component.frontmatter ?? Component.frontMatter ?? {}
+          return Component.frontmatter ?? Component.frontMatter ?? {};
         },
         getIslandMeta() {
-          return Component.island
+          return Component.island;
         },
-      }
+      };
     },
-  }
-}
+  };
+};

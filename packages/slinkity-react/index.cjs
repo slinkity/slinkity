@@ -1,6 +1,6 @@
-const pkg = require('./package.json')
-const ssr = require('./ssr.cjs')
-const { default: viteReact } = require('@vitejs/plugin-react')
+const pkg = require('./package.json');
+const ssr = require('./ssr.cjs');
+const { default: viteReact } = require('@vitejs/plugin-react');
 
 module.exports = function slinkityReact() {
   return {
@@ -23,12 +23,12 @@ module.exports = function slinkityReact() {
     page({ Component }) {
       return {
         getData() {
-          return Component.frontmatter ?? Component.frontMatter ?? {}
+          return Component.frontmatter ?? Component.frontMatter ?? {};
         },
         getIslandMeta() {
-          return Component.island
+          return Component.island;
         },
-      }
+      };
     },
-  }
-}
+  };
+};

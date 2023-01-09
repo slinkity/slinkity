@@ -1,14 +1,11 @@
-import React from 'react'
-import ReactDOM from 'react-dom'
+import React from 'react';
+import ReactDOM from 'react-dom';
 
 export default function client({ Component, target, props, isClientOnly }) {
-  const element = React.createElement(
-    Component,
-    props,
-  )
+  const element = React.createElement(Component, props);
   if (isClientOnly) {
-    ReactDOM.render(element, target)
+    ReactDOM.render(element, target);
   } else {
-    ReactDOM.hydrate(element, target)
+    ReactDOM.hydrate(element, target);
   }
 }

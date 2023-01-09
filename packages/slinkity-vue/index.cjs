@@ -1,6 +1,6 @@
-const pkg = require('./package.json')
-const ssr = require('./ssr.cjs')
-const { default: viteVue } = require('@vitejs/plugin-vue')
+const pkg = require('./package.json');
+const ssr = require('./ssr.cjs');
+const { default: viteVue } = require('@vitejs/plugin-vue');
 
 module.exports = function slinkityVue() {
   return {
@@ -20,12 +20,12 @@ module.exports = function slinkityVue() {
     page({ Component }) {
       return {
         getData() {
-          return Component.default.frontmatter ?? Component.default.frontMatter ?? {}
+          return Component.default.frontmatter ?? Component.default.frontMatter ?? {};
         },
         getIslandMeta() {
-          return Component.default.island
+          return Component.default.island;
         },
-      }
+      };
     },
-  }
-}
+  };
+};
