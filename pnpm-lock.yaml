@@ -214,8 +214,8 @@ importers:
     specifiers:
       '@11ty/eleventy': 2.0.0-canary.15
       '@slinkity/preact': workspace:*
-      '@slinkity/svelte': workspace:^0.1.0
-      '@slinkity/vue': workspace:^0.1.0
+      '@slinkity/svelte': workspace:*
+      '@slinkity/vue': workspace:*
       preact: ^10.10.6
       serve: ^14.0.1
       slinkity: workspace:*
