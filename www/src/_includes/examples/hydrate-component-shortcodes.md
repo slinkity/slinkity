@@ -1,8 +1,8 @@
-```html
-{% raw %}
-<!--server-render and hydrate client-side-->
+```liquid{% raw %}
+<!--server-render with hydration-->
 {% island 'Component.vue', 'client:load' %}{% endisland %}
-<!--don't server-render and *only* render client-side-->
-{% clientOnlyIsland 'Component.vue' %}{% endclientOnlyIsland %}
+
+<!--client-side rendering only-->
+{% clientOnlyIsland 'Component.vue', 'client:load' %}{% endclientOnlyIsland %}
 {% endraw %}
 ```
