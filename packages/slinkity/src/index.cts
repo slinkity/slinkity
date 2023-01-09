@@ -32,6 +32,7 @@ import { shortcodes } from "./shortcodes.cjs";
 import { createViteServer, productionBuild } from "./vite.cjs";
 import { PROPS_VIRTUAL_MOD } from "./~consts.cjs";
 import { normalizePath } from "vite";
+import { yellow } from "kleur/colors";
 
 export function plugin(
   eleventyConfig: any,
@@ -52,6 +53,17 @@ export function plugin(
       runMode = params.runMode;
     }
   );
+
+  eleventyConfig.addGlobalData("__slinkity", {
+    get head() {
+      console.log(
+        yellow(
+          `[slinkity] \`__slinkity.head\` is no longer needed. Remove it from your templates!`
+        )
+      );
+      return "";
+    },
+  });
 
   const userConfig = defineConfig(unresolvedUserConfig);
   userConfig.islandsDir = path.resolve(
