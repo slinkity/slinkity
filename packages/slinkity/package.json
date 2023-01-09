@@ -82,9 +82,7 @@
     "build": "run-p build:*",
     "test:e2e": "cd e2e && playwright test",
     "dev": "run-s \"build:src --watch\"",
-    "play": "cd playground && eleventy --serve --incremental",
-    "lint": "eslint \"*.{js,jsx,mjs}\"",
-    "lint:fix": "eslint --fix \"*.{js,jsx,mjs}\""
+    "play": "cd playground && eleventy --serve --incremental"
   },
   "volta": {
     "node": "14.18.1"
