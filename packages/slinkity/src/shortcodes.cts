@@ -150,9 +150,7 @@ export function shortcodes({
 }
 
 function componentRemovedWarning() {
-  console.warn(
-    yellow(
-      `[slinkity] The "component" shortcode has been replaced with "island." This offers new methods for hydration and prop passing. See our shortcode docs for more: https://slinkity.dev/docs/component-shortcodes`
-    )
-  );
+  const shortcodeWarning = `[slinkity] The "component" shortcode has been replaced with "island." This offers new methods for hydration and prop passing. See our shortcode docs for more: https://slinkity.dev/docs/component-shortcodes`;
+  console.warn(shortcodeWarning);
+  return `<p>⚠️ ${shortcodeWarning}</p>`;
 }
