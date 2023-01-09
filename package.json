@@ -69,8 +69,12 @@
     "typescript": "^4.4.4"
   },
   "scripts": {
-    "build": "pnpm -r --filter slinkity run build",
-    "dev": "pnpm -r --filter slinkity run dev",
+    "build": "run-s build:*",
+    "build:slinkity": "pnpm -r --filter slinkity run build",
+    "build:www": "pnpm -r --filter www run build",
+    "dev": "run-p dev:*",
+    "dev:slinkity": "pnpm -r --filter slinkity run dev",
+    "dev:www": "pnpm -r --filter www run dev",
     "lint": "run-p lint:css lint:js",
     "lint:fix": "run-p lint:*:fix",
     "lint:css": "stylelint \"{packages,www}/**/*.scss\"",
@@ -78,8 +82,6 @@
     "lint:js": "eslint \"packages/slinkity/**/*.{js,mjs,cts}\"",
     "lint:js:fix": "eslint --fix \"packages/slinkity/**/*.{js,mjs,cts}\"",
     "test": "cd packages/slinkity/e2e && pnpm run test",
-    "www:build": "npm -C www run build",
-    "www:dev": "npm -C www run dev",
     "changeset": "changeset",
     "changeset:publish": "changeset publish"
   },

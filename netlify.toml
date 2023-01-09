@@ -4,4 +4,4 @@
 [build]
   base = "www"
   publish = "_site"
-  command = "pnpm run build"
+  command = "pnpm run build:www"
