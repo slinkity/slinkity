@@ -1,4 +1,5 @@
 ignorePatterns:
+  - "www"
   - "**/dist/*"
   - "*.cjs"
   - "**/node_modules/*"
