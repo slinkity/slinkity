@@ -1,4 +1,5 @@
 ignorePatterns:
+  - "packages/create-slinkity/template"
   - "www"
   - "**/dist/*"
   - "*.cjs"
