@@ -1,8 +1,10 @@
 <script context="module">
-  export const frontMatter = {
+  export const island = {
+    when: 'client:load',
+  }
+  export const frontmatter = {
     title: "Seriously Svelte",
     layout: "layout",
-    hydrate: "eager",
   };
 </script>
 

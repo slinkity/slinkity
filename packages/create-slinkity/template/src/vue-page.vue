@@ -40,10 +40,12 @@
 <script>
 import { ref } from "vue";
 export default {
-  frontMatter: {
+  island: {
+    when: 'client:load',
+  },
+  frontmatter: {
     title: "Enjoy the Vue",
     layout: "layout",
-    hydrate: "eager",
   },
   setup() {
     const count = ref(0);

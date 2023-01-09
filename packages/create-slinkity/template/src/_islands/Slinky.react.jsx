@@ -4,7 +4,7 @@ import React from 'react'
 // https://slinkity.dev/docs/import-aliases/
 import '/@root/styles/slinky.scss'
 
-export default function SpinningLogo({ hydrate = 'none' }) {
+export default function SpinningLogo() {
   const [slinkDirection, setSlinkDirection] = React.useState('left')
 
   function toggleSlinkDirection() {

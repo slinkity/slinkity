@@ -1,6 +1,4 @@
 <script>
-  export let hydrate = "none";
-
   let slinkDirection = "left";
   function toggleSlinkDirection() {
     if (slinkDirection === "left") {

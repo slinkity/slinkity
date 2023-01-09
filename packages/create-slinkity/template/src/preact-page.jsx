@@ -1,20 +1,20 @@
-import { useState } from 'preact/hooks'
+import { useState } from 'preact/hooks';
 
+export const island = {
+  when: 'client:load',
+};
 export const frontmatter = {
   title: 'React to this',
   layout: 'layout',
-}
-export const island = {
-  when: 'client:load',
-}
+};
 
-function PreactDemo() {
-  const [count, setCount] = useState(0)
+export default function PreactDemo() {
+  const [count, setCount] = useState(0);
 
   return (
     <>
       <p>
-        To create the page you see here, we placed a<code>react-page.jsx</code> file alongside the
+        To create the page you see here, we placed a<code>preact-page.jsx</code> file alongside the
         other pages on our site. That's because component pages are like any other template on your
         11ty site, just with 1 extra superpower:
         <strong>you can hydrate the page with JavaScript.</strong>
@@ -29,7 +29,8 @@ function PreactDemo() {
       </p>
 
       <p>
-        Tip: try removing the `island` export. Your page should no longer load JavaScript! This is our default behavior to treat component frameworks like any other templating language.
+        Tip: try removing the `island` export. Your page should no longer load JavaScript! This is
+        our default behavior to treat component frameworks like any other templating language.
       </p>
 
       <p className="counter">
@@ -47,7 +48,5 @@ function PreactDemo() {
         <code>title</code> key is accessible from any layout templates applied to our page.
       </p>
     </>
-  )
+  );
 }
-
-export default ReactDemo

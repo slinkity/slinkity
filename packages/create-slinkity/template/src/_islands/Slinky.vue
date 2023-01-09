@@ -61,7 +61,6 @@
 <script>
 import { ref } from "vue";
 export default {
-  props: ["hydrate"],
   setup() {
     const slinkDirection = ref("left");
     function toggleSlinkDirection() {

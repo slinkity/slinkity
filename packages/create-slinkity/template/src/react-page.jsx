@@ -1,13 +1,15 @@
-import React from 'react'
+import React from 'react';
 
-export const frontMatter = {
+export const island = {
+  when: 'client:load',
+};
+export const frontmatter = {
   title: 'React to this',
   layout: 'layout',
-  hydrate: 'eager',
-}
+};
 
-function ReactDemo() {
-  const [count, setCount] = React.useState(0)
+export default function ReactDemo() {
+  const [count, setCount] = React.useState(0);
 
   return (
     <>
@@ -27,7 +29,8 @@ function ReactDemo() {
       </p>
 
       <p>
-        Tip: try removing the `island` export. Your page should no longer load JavaScript! This is our default behavior to treat component frameworks like any other templating language.
+        Tip: try removing the `island` export. Your page should no longer load JavaScript! This is
+        our default behavior to treat component frameworks like any other templating language.
       </p>
 
       <p className="counter">
@@ -45,7 +48,5 @@ function ReactDemo() {
         <code>title</code> key is accessible from any layout templates applied to our page.
       </p>
     </>
-  )
+  );
 }
-
-export default ReactDemo
