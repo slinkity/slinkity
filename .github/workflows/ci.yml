@@ -46,7 +46,7 @@ jobs:
       - name: Install dependencies
         run: "pnpm i"
 
-      - name: Build Slinkity package
+      - name: Build Slinkity and www
         run: pnpm run build
 
   tests_e2e:
@@ -71,7 +71,7 @@ jobs:
         run: "pnpm i"
         
       - name: Build Slinkity package
-        run: pnpm run build
+        run: pnpm run build:slinkity
 
       - name: Install playwright browsers
         run: pnpm run test:e2e:install
