@@ -1,3 +1,6 @@
 packages:
-  - packages/**
+  - packages/*
+  - packages/legacy/*
+  - packages/slinkity/e2e
+  - packages/slinkity/playground
   - www
