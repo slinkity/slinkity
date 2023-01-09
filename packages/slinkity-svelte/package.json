@@ -1,6 +1,6 @@
 {
   "name": "@slinkity/svelte",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Svelte component renderer for the legendary 11ty tool, Slinkity",
   "main": "index.cjs",
   "exports": {
