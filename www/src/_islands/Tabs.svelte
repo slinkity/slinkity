@@ -11,7 +11,7 @@
   let tabEl;
   let tabPanelEl;
 
-  $: tabPanels = tabPanelEl?.querySelector("slinkity-fragment").children;
+  $: tabPanels = tabPanelEl?.children;
   $: tabIdx = $currentTabIdx[store] ?? 0;
   $: setTabPanelAttrs(tabPanels, tabIdx);
 
