@@ -1,7 +1,7 @@
 {
   "name": "slinkity",
   "description": "To 11ty and beyond! The all-in-one tool for templates where you want them, component frameworks where you need them",
-  "version": "1.0.0-canary.0",
+  "version": "1.0.0-canary.1",
   "license": "MIT",
   "main": "index.cjs",
   "types": "index.d.ts",
