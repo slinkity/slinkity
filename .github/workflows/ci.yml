@@ -49,7 +49,8 @@ jobs:
       - name: Build Slinkity package
         run: pnpm run build
 
-  test:
+  tests_e2e:
+    name: Run end-to-end tests
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
@@ -69,5 +70,8 @@ jobs:
       - name: Install dependencies
         run: "pnpm i"
 
-      - name: Test package
-        run: pnpm run test
+      - name: Install playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: Run tests
+        run: pnpm run test:e2e
