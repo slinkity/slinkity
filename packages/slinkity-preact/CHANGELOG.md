@@ -1,6 +1,6 @@
-# create-slinkity
+# @slinkity/preact
 
-## 2.0.0
+## 1.0.0
 
 ### Major Changes
 
@@ -13,8 +13,7 @@
 
   See our new Slinkity canary docs to get started: https://slinkity.dev/docs
 
-## 1.2.0
+### Patch Changes
 
-### Minor Changes
-
-- 5cc17e1: Update for new Slinkity configuration in v0.8. This removes all references to the slinkity CLI, and writes the new 11ty plugin into your generated 11ty config
+- Updated dependencies [802843c]
+  - slinkity@1.0.0

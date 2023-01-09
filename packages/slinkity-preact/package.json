@@ -1,6 +1,6 @@
 {
   "name": "@slinkity/preact",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Preact component renderer for the legendary 11ty tool, Slinkity",
   "main": "index.cjs",
   "exports": {
