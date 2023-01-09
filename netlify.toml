@@ -2,5 +2,6 @@
   NPM_FLAGS = "--version"
 
 [build]
-  publish = "www/_site"
-  command = "pnpm run build:www"
+  base = "www"
+  publish = "_site"
+  command = "pnpm -w run build"
