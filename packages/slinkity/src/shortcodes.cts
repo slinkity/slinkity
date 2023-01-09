@@ -1,3 +1,4 @@
+import { existsSync } from "fs";
 import { yellow } from "kleur/colors";
 import type {
   PluginGlobals,
@@ -93,6 +94,16 @@ export function shortcodes({
       unresolvedIslandPath,
       userConfig.islandsDir
     );
+    if (!existsSync(islandPath)) {
+      if (!existsSync(userConfig.islandsDir)) {
+        throw new Error(
+          `[slinkity] No "_islands/" directory found. When using shortcodes, all components must be in "_islands." See our docs for more: https://slinkity.dev/docs/component-shortcodes`
+        );
+      }
+      throw new Error(
+        `[slinkity] Could not find island at path "${islandPath}." Does the file exist?`
+      );
+    }
     const { htmlWithoutPropComments, propIds } =
       extractPropIdsFromHtml(htmlWithPropComments);
 
