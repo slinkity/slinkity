@@ -1,6 +1,6 @@
 {
   "name": "create-slinkity",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "The splendid starter to scaffold your Slinkity site.",
   "main": "cli.js",
   "repository": {

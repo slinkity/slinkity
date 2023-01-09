@@ -1,5 +1,11 @@
 # @slinkity/react
 
+## 1.0.1
+
+### Patch Changes
+
+- 8072fb9: Fix FunctionsProvider failure during SSR
+
 ## 1.0.0
 
 ### Major Changes
