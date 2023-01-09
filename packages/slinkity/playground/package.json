@@ -15,8 +15,12 @@
   "dependencies": {
     "@11ty/eleventy": "2.0.0-canary.15",
     "@slinkity/preact": "workspace:*",
+    "@slinkity/svelte": "workspace:^0.1.0",
+    "@slinkity/vue": "workspace:^0.1.0",
     "preact": "^10.10.6",
-    "slinkity": "workspace:*"
+    "slinkity": "workspace:*",
+    "svelte": "^3.46.2",
+    "vue": "^3.2.28"
   },
   "devDependencies": {
     "serve": "^14.0.1"

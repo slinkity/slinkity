@@ -4,13 +4,16 @@ layout: 'layout.njk'
 
 <h1>Title</h1>
 <p>Hey there!!!</p>
-{% island 'Slinky.jsx', 'client:load' %}
+{% island 'WithSlots.svelte', 'client:load' %}
+<h1>With slots?</h1>
 {%endisland%}
 
-{% serverOnlyIsland 'test.jsx' %}
+<div>
+{% island 'test.jsx' %}
   {% prop 'test', 5 %}
-{% endserverOnlyIsland %}
+{% endisland %}
 <hr style="margin-top: 100vh" />
 {% island 'Counter.jsx', 'client:visible' %}
   {% prop 'initialCount', 3 %}
 {% endisland %}
+</div>
