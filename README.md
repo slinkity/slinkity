@@ -44,13 +44,10 @@ This project is still in early alpha, so we have many features soon to come! [Th
 | SCSS and SASS                                                                         | ✅         |
 | PostCSS config (ex. Tailwind)                                                         | ✅         |
 | CSS imports via ESM (including CSS modules)                                           | ✅         |
-| Eleventy serverless compatibility                                                     | ⏳         |
-| Shared state between any component shortcode                                          | ❌         |
-| Styled components & Emotion support                                                   | ❌         |
+| Shared state between any component shortcode                                          | ⏳         |
 
 - ✅ = Ready to use
 - ⏳ = In progress
-- ❌ = Not started, but on roadmap
 
 ## Have an idea? Notice a bug?
 

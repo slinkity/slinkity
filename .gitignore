@@ -1,9 +1,9 @@
 node_modules
 *.DS_Store
 *.tgz
-.cache
 _site
 lib
+**/dist/**/*
 
 # pnpm
 *.pnpm-debug.log

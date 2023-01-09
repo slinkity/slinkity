@@ -1,0 +1,35 @@
+{
+  "name": "@slinkity/renderer-svelte",
+  "version": "1.0.0",
+  "description": "Svelte component renderer for the legendary 11ty tool, Slinkity",
+  "main": "index.js",
+  "files": [
+    "client.js",
+    "server.js",
+    "Wrapper.svelte",
+    "Wrapper.svelte.ssr.js"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "bholmesdev",
+  "license": "ISC",
+  "dependencies": {
+    "@sveltejs/vite-plugin-svelte": "^1.0.0-next.35",
+    "svelte-preprocess": "^4.10.2"
+  },
+  "devDependencies": {
+    "svelte": "^3.46.2"
+  },
+  "peerDependencies": {
+    "slinkity": "^0.8.0",
+    "svelte": "^3.46.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/slinkity",
+    "directory": "packages/legacy/slinkity-renderer-svelte"
+  }
+}

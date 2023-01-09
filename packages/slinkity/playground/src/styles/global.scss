@@ -1,0 +1,64 @@
+:root {
+  --purple-1: hsl(258deg 47% 2%);
+  --purple-2: hsl(258deg 47% 12%);
+  --purple-3: hsl(258deg 47% 22%);
+  --purple-4: hsl(258deg 47% 62%);
+  --pink: #ff00d6;
+  --yellow: #faff02;
+  --primary: var(--pink);
+  --secondary: var(--yellow);
+  --content-max-width: 700px;
+}
+
+html {
+  font-family: Atkinson, Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif;
+  line-height: 1.3;
+}
+
+body {
+  background: #223;
+  font-family: sans-serif;
+  color: white;
+}
+
+main {
+  max-width: var(--content-max-width);
+  margin: auto;
+}
+
+a,
+a:visited,
+button {
+  transition-property: background-position-x, color, opacity;
+  transition-duration: 0.2s;
+  transition-timing-function: linear;
+  background:
+    linear-gradient(
+      80deg,
+      var(--starting-color, var(--purple-1)) 33%,
+      var(--primary),
+      var(--secondary)
+    );
+  background-size: 300% 100%;
+  background-position-x: 0;
+
+  &:hover {
+    background-position-x: 100%;
+    color: var(--purple-1);
+    text-decoration: none;
+  }
+}
+
+a,
+a:visited {
+  color: var(--primary);
+  padding: 2px;
+}
+
+button {
+  border: none;
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  cursor: pointer;
+}

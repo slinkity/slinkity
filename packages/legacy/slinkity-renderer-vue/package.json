@@ -1,0 +1,33 @@
+{
+  "name": "@slinkity/renderer-vue",
+  "version": "1.0.0",
+  "description": "Vue component renderer for the legendary 11ty tool, Slinkity",
+  "main": "index.js",
+  "files": [
+    "client.js",
+    "server.js",
+    "StaticHtml.js"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "bholmesdev",
+  "license": "ISC",
+  "dependencies": {
+    "@vitejs/plugin-vue": "^1.10.2"
+  },
+  "devDependencies": {
+    "vue": "^3.2.28"
+  },
+  "peerDependencies": {
+    "slinkity": "^0.8.0",
+    "vue": "^3.2.28"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/slinkity",
+    "directory": "packages/legacy/slinkity-renderer-vue"
+  }
+}

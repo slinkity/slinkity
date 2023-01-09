@@ -2,15 +2,15 @@
   "name": "my-slinkity-site",
   "version": "1.0.0",
   "description": "A splendid starter for my Slinkity site!",
-  "main": ".eleventy.js",
+  "main": "eleventy.config.js",
   "scripts": {
-    "dev": "eleventy --serve --incremental",
-    "start": "eleventy --serve --incremental",
+    "dev": "eleventy --serve --incremental --quiet",
+    "start": "eleventy --serve --incremental --quiet",
     "build": "eleventy"
   },
   "dependencies": {},
   "devDependencies": {
-    "@11ty/eleventy": "^1.0.0",
-    "slinkity": "^0.8.0"
+    "@11ty/eleventy": "^2.0.0-canary.25",
+    "slinkity": "^1.0.0-canary.0"
   }
 }

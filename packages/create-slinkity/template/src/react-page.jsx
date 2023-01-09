@@ -27,9 +27,7 @@ function ReactDemo() {
       </p>
 
       <p>
-        Tip: try setting <code>hydrate</code> to <code>"none"</code>, or removing the key entirely.
-        The counter below should stop working! This is because we're no longer sending our component
-        to the client, effectively turning React into just another templating language.
+        Tip: try removing the `island` export. Your page should no longer load JavaScript! This is our default behavior to treat component frameworks like any other templating language.
       </p>
 
       <p className="counter">
@@ -37,10 +35,10 @@ function ReactDemo() {
         <button onClick={() => setCount(count + 1)}>+ 1</button>
       </p>
 
-      <h3>Front matter</h3>
+      <h3>Frontmatter</h3>
 
       <p>
-        Our included <code>frontMatter</code> wires up the layout and passes information "upstream"
+        Our included <code>frontmatter</code> wires up the layout and passes information "upstream"
         for other templates to read from. It works the same way for component-based pages as it does
         for
         <a href="https://www.11ty.dev/docs/data-frontmatter/">11ty's front matter</a>. Here, the{' '}

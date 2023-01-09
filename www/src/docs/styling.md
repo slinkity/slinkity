@@ -61,6 +61,7 @@ Say your stylesheet imports a number of extra chunks:
 ### PostCSS config
 
 Slinkity supports everything Vite supports for PostCSS. You can happily:
+
 - Add a `postcss.config.js` file at the base of your project for Vite to find
 - Add extra resources (ex. a `tailwind.config.js`) to extend your config further. Following Tailwind's docs should cover that use case without any trouble, but you can [find a Tailwind + Slinkity example here](https://github.com/holben888/spookity) for a copy / paste solution 🙃
 - Install any necessary plugins using a Vite config at the base of your project. [More on config here](/docs/config/#vite's-vite.config.js)
@@ -78,38 +79,6 @@ import '/@root/styles/theme.scss'
 import 'npm-package/global-styles.css'
 ```
 
-🚨 To get these working in your document, you'll need one extra piece in your document's `head`:
-
-### The `__slinkity.head`
-
-This data prop denotes where style imports should be injected onto your page. This gives you total control of where and when styles imported by components will be applied.
-
-> Note we say "components" here. `__slinkity.head` is specifically for styles imported by [component shortcodes](/docs/component-shortcodes/) and [component pages](/docs/component-pages-layouts/). It's not necessary for other stylesheets loaded in your project!
-
-We recommend applying this prop in your project's base layout to ensure it's applied wherever your components are used ([see 11ty's docs](https://www.11ty.dev/docs/layouts/) on creating and applying layouts). **Note this prop is HTML rather than plain text,** so you'll need to insert as HTML using your templating language of choice.
-
-**Nunjucks example** - note the `safe` filter:
-
-```html
-<!--_includes/base-layout.njk-->
-<html>
-    <head>
-      {% raw %}{{ __slinkity.head | safe }}{% endraw %}
-    </head>
-</html>
-```
-
-**Liquid example**
-
-```html
-<!--_includes/base-layout.liquid-->
-<html>
-    <head>
-      {% raw %}{{ __slinkity.head }}{% endraw %}
-    </head>
-</html>
-```
-
 ## Dev and production outputs
 
 You might be wondering: what does Vite _actually do_ with my processed stylesheets when I build my site? This will depend on whether you're `--serve`ing or building for production.
@@ -117,6 +86,7 @@ You might be wondering: what does Vite _actually do_ with my processed styleshee
 ### Dev server
 
 If you're using the dev server, all files (styles, scripts, etc) are stored in Vite's internal cache and served on request. This means stylesheets will only be compiled **for the given page you're viewing in your browser.** So:
+
 1. No more waiting on a build process to bundle _every_ stylesheet in your project. It only builds the resources necessary for the page you're viewing.
 2. You get hot module reloading (HMR) whenever you edit your stylesheets. This means no more browser refreshes; you'll see your styling changes instantly, while keeping any JavaScript state intact.
 

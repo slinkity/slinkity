@@ -1,12 +1,5 @@
 {
-    "editor.formatOnSave": true,
-    "[javascript]": {
-        "editor.formatOnSave": false
-    },
-    "[javascriptreact]": {
-        "editor.formatOnSave": false
-    },
-    "eslint.alwaysShowStatus": true,
+    "editor.formatOnSave": false,
     "stylelint.enable": true,
     "stylelint.validate": [
         "scss",
@@ -15,5 +8,5 @@
     "editor.codeActionsOnSave": {
         "source.fixAll.eslint": true,
         "source.fixAll.stylelint": true
-    }
+    },
 }

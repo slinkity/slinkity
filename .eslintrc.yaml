@@ -1,5 +1,7 @@
 ignorePatterns:
-  - "**/lib/*"
+  - "www"
+  - "**/dist/*"
+  - "*.cjs"
   - "**/node_modules/*"
 env:
   node: true
@@ -9,16 +11,32 @@ env:
 extends:
   - "eslint:recommended"
   - "plugin:react/recommended"
+  - "plugin:react/jsx-runtime"
+  - "prettier"
+  - plugin:@typescript-eslint/recommended
+  - plugin:@typescript-eslint/recommended-requiring-type-checking
+parser: "@typescript-eslint/parser"
+parserOptions:
+  project:
+    - "./packages/*/tsconfig.json"
+    - "./tsconfig.base.json"
+  tsconfigRootDir: "./"
+plugins:
+  - "@typescript-eslint"
+  - import
   - "prettier"
 settings:
+  import/resolver:
+    typescript: {}
   react:
     version: detect
-plugins:
-  - "prettier"
-parserOptions:
-  ecmaVersion: 2020
-  sourceType: module
 rules:
+  '@typescript-eslint/unbound-method': off
+  '@typescript-eslint/no-explicit-any': off
+  '@typescript-eslint/no-unsafe-assignment': off
+  '@typescript-eslint/no-unsafe-member-access': off
+  '@typescript-eslint/no-unsafe-call': off
+  '@typescript-eslint/no-unsafe-return': off
   quotes:
     - error
     - single
@@ -29,8 +47,9 @@ rules:
       singleQuote: true
       printWidth: 100
       endOfLine: "auto"
-      semi: false
+      semi: true
   react/prop-types:
     - 0
   react/no-unescaped-entities:
     - 0
+

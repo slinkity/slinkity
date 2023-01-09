@@ -1,0 +1,31 @@
+---
+layout: 'layout.njk'
+---
+
+<h1>Slinkity</h1>
+
+<h2>client:load</h2>
+
+{% island 'Slinky.tsx', 'client:load' %}
+{% prop 'testid', 'client:load' %}
+{% endisland %}
+
+<h2>client:idle</h2>
+
+{% island 'Slinky.tsx', 'client:idle' %}
+{% prop 'testid', 'client:idle' %}
+{% endisland %}
+
+<h2 style="margin-top: 100vh">client:visible</h2>
+
+{% island 'Slinky.tsx', 'client:visible' %}
+{% prop 'testid', 'client:visible' %}
+{% endisland %}
+<!--used for scrollIntoView-->
+<hr data-testid="scroll-anchor" />
+
+<h2>client:media</h2>
+
+{% island 'Slinky.tsx', 'client:media=(max-width: 400px)' %}
+{% prop 'testid', 'client:media' %}
+{% endisland %}

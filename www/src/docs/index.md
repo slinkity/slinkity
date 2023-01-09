@@ -34,13 +34,10 @@ This project is still in early alpha, so we have many features soon to come! [Th
 | SCSS and SASS                                                                         | {% featureProgress '✅' %} |
 | PostCSS config (ex. Tailwind)                                                         | {% featureProgress '✅' %} |
 | CSS imports via ESM (including CSS modules)                                           | {% featureProgress '✅' %} |
-| Eleventy serverless compatibility                                                     | {% featureProgress '⏳' %} |
-| Shared state between any component shortcode                                          | {% featureProgress '❌' %} |
-| Styled components & Emotion support                                                   | {% featureProgress '❌' %} |
+| Shared state between any component shortcode                                          | {% featureProgress '⏳' %} |
 
 - ✅ = Ready to use
 - ⏳ = In progress
-- ❌ = Not started, but on roadmap
 
 ## Have an idea? Notice a bug?
 

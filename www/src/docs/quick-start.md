@@ -5,6 +5,7 @@ title: Quick start
 {% include 'npm-init-slinkity-snippet.md' %}
 
 It includes:
+
 - component(s) embedded into a static `.md` template → [more on component shortcodes here](/docs/component-shortcodes/)
 - route(s) built using a component framework as a templating language → [more on component pages here](/docs/component-pages-layouts/)
 - a `netlify.toml` configured to deploy in a flash → [more on deployment here](/docs/deployment/)
@@ -19,7 +20,7 @@ Want to bring Slinkity to your current 11ty project? No sweat! Slinkity is built
 First, install Slinkity + the latest 11ty into your project:
 
 ```bash
-npm i --save-dev slinkity @11ty/eleventy
+npm i --save-dev slinkity @11ty/eleventy@canary
 ```
 
 > Slinkity requires Node v14 and up. You can check your version by running `node -v` in your terminal before trying Slinkity.
@@ -40,7 +41,7 @@ module.exports = function(eleventyConfig) {
 }
 ```
 
-You may want one of our pre-built component renderers for React, Vue, or Svelte support too. To setup those config options, jump to the ["add your first component shortcode" section](#add-your-first-component-shortcode).
+You may want one of our pre-built component renderers for Preact, Vue, or Svelte support too. To setup those config options, jump to the ["add your first component shortcode" section](#add-your-first-component-shortcode).
 
 ### Development server
 
@@ -50,7 +51,7 @@ Slinkity attaches Vite to 11ty's built-in development server [as middleware](htt
 eleventy --serve --incremental --quiet
 ```
 
-- **--incremental** will prevent any [flashes of unstyled content (FOUC)](https://webkit.org/blog/66/the-fouc-problem/#:~:text=FOUC%20stands%20for%20Flash%20of,having%20any%20style%20information%20yet.&text=When%20a%20browser%20loads%20a,file%20from%20the%20Web%20site.) during Vite's page reloads. It'll also show your changes in the browser much faster!
+- **--incremental** will prevent any [flashes of unstyled content (FOUC)](https://webkit.org/blog/66/the-fouc-problem/#:~:text=FOUC%20stands%20for%20Flash%20of,having%20any%20style%20information%20yet.&text=When%20a%20browser%20loads%20a,file%20from%20the%20Web%20site.) during Vite's page reloads. It'll also show your changes in the browser much faster.
 - **--quiet** will hide extraneous logs in your console. Since Vite already describes changes with informative live reload and HMR logs, it's best to silence duplicate information from 11ty.
 
 For more configuration details, head to:
@@ -90,18 +91,50 @@ If you run this using the `eleventy --serve --incremental` command, you'll just 
 
 But what if we want something... interactive? For instance, say we're tracking how many glasses of water we've had today (because [hydration is important](https://www.gatsbyjs.com/docs/conceptual/react-hydration/)!). If we know a little JavaScript, we can whip up a counter using our favorite flavor of components.
 
-First, we'll need one of our "renderers" to handle React, Vue, and/or Svelte. Don't worry, this is definitely a set-it-and-forget-it step 😁
+First, we'll need one of our "renderers" to handle React, Vue, and/or Svelte:
 
 {% include 'prereqs.md' %}
 
 Now, we can write a component under the `_includes/` directory like so:
 
-{% slottedComponent "Tabs.svelte", hydrate="eager", id="prereqs", tabs=["React", "Vue", "Svelte"] %}
+{% island 'Tabs.svelte', 'client:load' %}
+{% prop 'id', 'prereqs' %}
+{% prop 'store', 'framework' %}
+{% prop 'tabs', ["Preact", "React", "Vue", "Svelte"] %}
 {% renderTemplate "md" %}
 <section>
 
 ```jsx
-// _includes/GlassCounter.jsx
+// _islands/GlassCounter.jsx
+import { useState } from 'preact/hooks'
+
+function GlassCounter() {
+  const [count, setCount] = useState(0)
+  return (
+    <>
+      <p>You've had {count} glasses of water 💧</p>
+      <button onClick={() => setCount(count + 1)}>Add one</button>
+    </>
+  )
+}
+
+export default GlassCounter
+```
+
+Finally, let's place this component onto our page with a [component shortcode](/docs/component-shortcodes):
+
+```html
+...
+<body>
+  <h1>Look ma, it's Slinkity!</h1>
+  {% island 'GlassCounter.jsx', 'client:load' %}{% endisland %}
+</body>
+```
+</section>
+<section hidden>
+
+```jsx
+// _islands/GlassCounter.jsx
 import { useState } from 'react'
 
 function GlassCounter() {
@@ -123,14 +156,14 @@ Finally, let's place this component onto our page with a [component shortcode](/
 ...
 <body>
   <h1>Look ma, it's Slinkity!</h1>
-  {% component 'GlassCounter.jsx', hydrate='eager' %}
+  {% island 'GlassCounter.jsx', 'client:load' %}{% endisland %}
 </body>
 ```
 </section>
 <section hidden>
 
 ```html
-<!--_includes/GlassCounter.vue-->
+<!--_islands/GlassCounter.vue-->
 <template>
   <p>You've had {{ count }} glasses of water 💧</p>
   <button @click="add()">Add one</button>
@@ -159,14 +192,14 @@ Finally, let's place this component onto our page with a [component shortcode](/
 ...
 <body>
   <h1>Look ma, it's Slinkity!</h1>
-  {% component 'GlassCounter.vue', hydrate='eager' %}
+  {% island 'GlassCounter.vue', 'client:load' %}{% endisland %}
 </body>
 ```
 </section>
 <section hidden>
 
 ```html
-<!--_includes/GlassCounter.svelte-->
+<!--_islands/GlassCounter.svelte-->
 <script>
   let count = 0;
 
@@ -185,17 +218,18 @@ Finally, let's place this component onto our page with a [component shortcode](/
 ...
 <body>
   <h1>Look ma, it's Slinkity!</h1>
-  {% component 'GlassCounter.svelte', hydrate='eager' %}
+  {% island 'GlassCounter.svelte', 'client:load' %}{% endisland %}
 </body>
 ```
 </section>
 {% endrenderTemplate %}
-{% endslottedComponent %}
+{% endisland %}
 
 This will do a few things:
-1. Find `_includes/GlassCounter.*`. Note that we'll always look inside the `_includes` directory to find your components.
+
+1. Find `_islands/GlassCounter.*`. Note that we'll always look inside the `_islands` directory to find your components.
 2. [Prerender](https://jamstack.org/glossary/pre-render/) your component at build time. This means you'll always see your component, even when disabling JS in your browser ([try it!](https://developer.chrome.com/docs/devtools/javascript/disable/)).
-3. ["Hydrate"](/docs/partial-hydration/) that prerendered component with JavaScript. This is thanks to our `hydrate='eager'` flag.
+3. ["Hydrate"](/docs/partial-hydration/) that prerendered component with JavaScript. This is thanks to our `client:load` directive.
 
 Now in your browser preview, clicking "Add one" should increase your counter 🎉
 

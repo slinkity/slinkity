@@ -3,6 +3,7 @@ title: Configuring your project
 ---
 
 It's worth reiterating what Slinkity _really_ is here: the glue between [the 11ty SSG](https://www.11ty.dev/) and the [Vite bundler](https://vitejs.dev/). So, as you might expect, there are 3 things you could configure:
+
 - **Slinkity** via our 11ty plugin options
 - **11ty** via the standard `.eleventy.js` / `eleventy.config.js` at the base of your project, or whatever config path you specify using the `--config` CLI flag
 - **Vite** via a `vite.config.js` at the base of your project
@@ -22,17 +23,6 @@ module.exports = function(eleventyConfig) {
   return { dir: { input: '[dir]' } }
 }
 ```
-3. If you're using our [component shortcodes](/docs/component-shortcodes), **set nunjucks to your default templating language** for markdown (`.md`) and html (`.html`) files. Nunjucks offers a nicer shortcode syntax for passing data to your components as props. You can find side-by-side comparisons in our [component shortcode documentation](/docs/component-shortcodes/#choose-how-and-when-to-hydrate). If you like what you see, add this to your 11ty config:
-
-```js
-// .eleventy.js or eleventy.config.js
-module.exports = function(eleventyConfig) {
-  return {
-    markdownTemplateEngine: "njk",
-    htmlTemplateEngine: "njk",
-  }
-}
-```
 
 ## Slinkity plugin configuration
 
@@ -42,10 +32,12 @@ You can apply Slinkity-specific configuration (component `renderers` namely) as 
 const slinkity = require('slinkity')
 
 module.exports = function(eleventyConfig) {
-  eleventyConfig.addPlugin(slinkity.plugin, slinkity.defineConfig({
-    // config options here. For example:
-    renderers: [...],
-  }))
+  eleventyConfig.addPlugin(
+    slinkity.plugin,
+    slinkity.defineConfig({
+      renderers: [...],
+    })
+  )
 }
 ```
 
@@ -55,13 +47,13 @@ These are the bread and butter of your component pages and shortcodes. You can p
 
 ```js
 const slinkity = require('slinkity')
-const react = require('@slinkity/renderer-react')
-const vue = require('@slinkity/renderer-vue')
-const svelte = require('@slinkity/renderer-svelte')
+const preact = require('@slinkity/preact')
+const vue = require('@slinkity/vue')
+const svelte = require('@slinkity/svelte')
 
 module.exports = function(eleventyConfig) {
   eleventyConfig.addPlugin(slinkity.plugin, slinkity.defineConfig({
-    renderers: [react, vue, svelte],
+    renderers: [preact(), vue(), svelte()],
   }))
 }
 ```
@@ -74,50 +66,62 @@ type Renderer = {
   name: string;
   /** file extensions this renderer can handle */
   extensions: string[];
-  /** path to module used for clientside hydration - browser code */
-  client: string;
-  /** path to module used for server rendering - NodeJS code */
-  server: string;
-  /** inject CSS imported by component module into document head */
-  injectImportedStyles: boolean;
+  /** path to module used for clientside hydration - ESM */
+  clientEntrypoint: string;
+  /** server code used for SSR - CommonJS */
+  ssr: string;
   /** config to append to Vite server and production builds */
   viteConfig?(): UserConfigExport | Promise<UserConfigExport>;
   /** config to render as a component page */
-  page({ toCommonJSModule }: {
-    toCommonJSModule: ViteSSR['toCommonJSModule'];
-  }): PageReturn | Promise<PageReturn>;
-  /** NOT YET SUPPORTED: Adds polyfills to Node's global object */
-  polyfills: never;
-  /** NOT YET SUPPORTED: List of imports to add as scripts on the client */
-  hydrationPolyfills: never;
+  page({ Component }): PageReturn | Promise<PageReturn>;
 }
 ```
 
-You can also [follow the source code](https://github.com/slinkity/slinkity/tree/main/packages) of our existing renderer packages. Don't worry, the code is fairly simple!
+You can also [follow the source code](https://github.com/slinkity/slinkity/tree/main/packages) of our existing renderer packages.
 
-### eleventyIgnores
+### `islandsDir`
 
-Expects: `string[]` or `(ignores: string[]) => string[]`
+Type: `string`
 
-By default, Slinkity will [ask 11ty to ignore](https://www.11ty.dev/docs/ignores/#configuration-api) certain files (or globs of files) to prevent unnecessary reloads during development. These should be files that Vite _and Vite alone_ is in charge of processing.
+Default: `_islands`
 
-The full list of ignores will vary as you add renderers to your project. So to make configuration easier, we expose all our ignores using a helper function like so:
+The directory where all {%raw%}`{% island %}`{%endraw%} shortcode components should live. Any value set **will be relative to your input directory,** similar to `_includes`.
+
+> The `islandsDir` must be a unique directory. This means you cannot use your includes directory or `.`.
 
 ```js
-// slinkity.config.js
-module.exports = defineConfig({
-  eleventyIgnores(ignores) {
-    // to check which ignores are applied
-    console.log({ ignores })
+const slinkity = require('slinkity')
 
-    // we discover 11ty will ignore all `.css` files in our `_includes` folder
-    // say we don't want that to happen, so we filter that ignore out of the list:
-    return ignores.filter(ignore => !ignore.endsWith('css'))
-  }
-})
+module.exports = function(eleventyConfig) {
+  eleventyConfig.addPlugin(
+    slinkity.plugin,
+    slinkity.defineConfig({
+      islandsDir: 'archipelagos',
+    })
+  )
+}
 ```
 
-You can also apply a string array without using this helper function. However, we expect _most_ people will use `eleventyIgnores` to `filter` out ignores when they run into build troubles, so use the code snippet above as your guide!
+### `buildTempDir`
+
+Type: `string`
+
+Default: `.eleventy-temp-build`
+
+During production builds, Slinkity will build your 11ty output to a temporary directory that is deleted once the build is component. This acts as the input during Vite's client-side build. You can override the name of this directory using `buildTempDir`.
+
+```js
+const slinkity = require('slinkity')
+
+module.exports = function(eleventyConfig) {
+  eleventyConfig.addPlugin(
+    slinkity.plugin,
+    slinkity.defineConfig({
+      buildTempDir: '.custom-temp-build',
+    })
+  )
+}
+```
 
 ## 11ty's `.eleventy.js` / `eleventy.config.js`
 
@@ -142,96 +146,3 @@ You'll configure all bundler-specific options in this file. If you aren't _quite
 - **Bundler-specific settings** for [ESBuild](https://vitejs.dev/config/#esbuild) and [Rollup](https://vitejs.dev/config/#build-rollupoptions). A common use case is the `jsxInject` option, which auto-applies `import React from 'react'` to the top of every `.jsx` file.
 
 **🚨 Note:** We run Vite in "[middleware mode](https://vitejs.dev/guide/ssr.html#setting-up-the-dev-server)" as part of our Browsersync server. This means server-specific options like `server.watch` and `server.port` will not take effect! 
-
-## ⚠ Deprecated: The Slinkity CLI
-
-> 🚨 This CLI is deprecated in Slinkity v0.8+. Expect this CLI to be removed in v1.0!
-
-Before Slinkity could be applied as a plugin, we implemented a thin CLI wrapper around 11ty to apply our configuration. We maintain this documentation for legacy users only. **Do _not_ attempt to run the Slinkity CLI if Slinkity is also applied as a plugin.**
-
-For the most part, our CLI adds very little on top of the plain `eleventy` command you might be used to. We expose all of 11ty's existing flags without any changes! Our CLI merely exists to spin up Vite at the right time, and wire up everyone's configurations accordingly. Here are the main flags we support. Be sure to check `slinkity --help` in your CLI for the full list of options:
-
-- **`--input="input-dir"` Sets the input directory for your project.** 11ty defaults to the base of your project directory, which could cause 11ty to accidentally process config files, your `README.md`, etc (unless you [update your 11ty ignores](https://www.11ty.dev/docs/ignores/)). We recommend using a directory like `--input="src"`, but the decision's up to you.
-- **`--output="output-dir"` Sets the output / build directory for your project.** Defaults to `_site`
-- **`--watch` Spins up 11ty _without_ the dev server.** Note: Vite won't process your components, styles, etc when running in this mode! If you're using Vite in any capacity, you probably want to run `--serve` instead.
-- **`--serve` Spins up 11ty with a dev server [using Browsersync](https://browsersync.io/).** Vite will run as a middleware, listening for page visits in your browser and compiling resources on-the-fly. This keeps your builds fast when working in development.
-- **`--port XXXX` Sets the port for your dev server when using `--serve`.** Defaults to `8080` in keeping with 11ty's default. 
-- **`--incremental` Tells 11ty to only reprocess the pages that changed between builds.** We _highly_ recommend using this flag with Vite to prevent any [flashes of unstyled content (FOUC)](https://webkit.org/blog/66/the-fouc-problem/#:~:text=FOUC%20stands%20for%20Flash%20of,having%20any%20style%20information%20yet.&text=When%20a%20browser%20loads%20a,file%20from%20the%20Web%20site.) while working. It'll also speed up your reloads quite a bit!
-- **`--formats` Whitelists only certain template types for 11ty to process.** Note this will _not_ be applied to Vite. So if you're worried `--formats="html"` will prevent React or `scss` from working, fear not!
-- **`--quiet`** Tones down 11ty's console output during builds.
-- **`--config "/path/to/config/file"` Sets the location of your 11ty-specific config file (`.eleventy.js`).** No, you can't set the path for your Vite or Slinkity configs. We hope to add this soon!
-
-### ⚠ Deprecated: configuring with `slinkity.config.js`
-
-To configure your project when using the `slinkity` CLI, you'll need a separate `slinkity.config.js` file. **No, `slinkity.config.js` options will not apply when using Slinkity as a plugin.**
-
-You can write this config in any flavor of JS you want, including ESM:
-
-```js
-// slinkity.config.js
-// export either an object
-export default {
-  ...config,
-}
-// or a function (asynchronous works too!)
-export default async function() {
-  return {
-    ...config,
-  }
-}
-```
-
-or CommonJS:
-
-```js
-// slinkity.config.js
-// either an object
-module.exports = {
-  ...config,
-}
-// or a function
-module.exports = async function() {
-  return {
-    ...config,
-  }
-}
-```
-
-#### Autocomplete / Intellisense in your editor
-
-We include a few handy tools for autocomplete as well. You can import our `defineConfig` function for suggestions + documentation as you apply configuration keys.
-
-ESM:
-
-```js
-// slinkity.config.js
-import { defineConfig } from 'slinkity'
-
-export default defineConfig({
-  ...config
-})
-```
-
-CommonJS:
-
-```js
-// slinkity.config.js
-const { defineConfig } = require('slinkity')
-
-module.exports = defineConfig({
-  ...config,
-})
-```
-
-You can also apply a [TypeScript](https://www.typescriptlang.org/) type for the same effect. Feel free to use a `.ts` file extension here. Note that CommonJS is _not_ supported for this format:
-
-```ts
-// slinkity.config.ts
-import { UserSlinkityConfig } from 'slinkity'
-
-const config: UserSlinkityConfig = {
-  ...config,
-}
-
-export default config
-```

@@ -12,7 +12,7 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v2.0.1
         with:
-          version: 6.29.1
+          version: 7.23.0
 
       - name: Set up Node
         uses: actions/setup-node@v2
@@ -35,7 +35,7 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v2.0.1
         with:
-          version: 6.29.1
+          version: 7.23.0
 
       - name: Set up Node
         uses: actions/setup-node@v2
@@ -46,10 +46,11 @@ jobs:
       - name: Install dependencies
         run: "pnpm i"
 
-      - name: Build Slinkity package
+      - name: Build Slinkity and www
         run: pnpm run build
 
-  test:
+  tests_e2e:
+    name: Run end-to-end tests
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
@@ -58,16 +59,22 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v2.0.1
         with:
-          version: 6.29.1
+          version: 7.23.0
 
       - name: Set up Node
         uses: actions/setup-node@v2
         with:
-          node-version: 14
+          node-version: 16
           cache: "pnpm"
 
       - name: Install dependencies
         run: "pnpm i"
+        
+      - name: Build Slinkity package
+        run: pnpm run build:slinkity
 
-      - name: Test package
-        run: pnpm run test
+      - name: Install playwright browsers
+        run: pnpm run test:e2e:install
+
+      - name: Run tests
+        run: pnpm run test:e2e
