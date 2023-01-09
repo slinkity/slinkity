@@ -36,7 +36,7 @@ export function pages({
               permalink(data: any): string;
             }) {
               if (typeof permalink === "function") {
-                return permalink({ ...data, __functions });
+                return permalink(data, __functions);
               } else {
                 return permalink;
               }
