@@ -33,7 +33,7 @@ module.exports = function(eleventyConfig) {
 First, install React's suite of dependencies + the [Slinkity React renderer](https://www.npmjs.com/package/@slinkity/react):
 
 ```bash
-npm i -D react react-dom @slinkity/renderer-react
+npm i -D react react-dom @slinkity/react
 ```
 
 Then, add this renderer to a `slinkity.config.js` at the base of your project:
