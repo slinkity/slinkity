@@ -3,7 +3,7 @@ title: It's Slinkity time
 layout: layout
 ---
 
-If you're reading this from your browser... congrats! You just built (or dev server-ed) you're first Slinkity site 👊
+If you're reading this from your browser... congrats! You just built (or dev server-ed) your first Slinkity site 👊
 
 ## Component shortcodes
 
@@ -20,7 +20,7 @@ We invite you to head over there and start breaking things! You'll see near-inst
 <details>
   <summary>H-M-What now?</summary>
   <p>
-    This is a new way to send file changes to the browser. When using the dev server, we'll <em>avoid refreshing the page</em> when you edit HMR-supported file types (styles for instance). Instead, we'll tell the browser to just reload that single resoruce and immediately show you your changes. More on this in <a href="https://vitejs.dev/guide/features.html#hot-module-replacement">Vite's documentation.</a>
+    This is a new way to send file changes to the browser. When using the dev server, we'll <em>avoid refreshing the page</em> when you edit HMR-supported file types (styles for instance). Instead, we'll tell the browser to just reload that single resource and immediately show you your changes. More on this in <a href="https://vitejs.dev/guide/features.html#hot-module-replacement">Vite's documentation.</a>
   </p>
   <p>
     This is especially useful when styling stateful components. For instance, say you're editing a dropdown's styles for when it's in the "open" state.
@@ -37,7 +37,7 @@ We invite you to head over there and start breaking things! You'll see near-inst
     Each stylesheet is loaded onto the page from a layout file (<code>src/_includes/layout.njk</code>) using a regular <code>link</code> tag like so: <code>link rel="stylesheet" href="/@root/styles/index.scss"</code>
   </p>
   <p>
-    Theres 2 important takeaways here:
+    There's 2 important takeaways here:
   </p>
   <ol>
     <li>We use the <code>@root</code> import alias to import from the root of our project. Check out <a href="https://slinkity.dev/docs/import-aliases/">our docs on import aliases</a> for more details.</li>
