@@ -89,8 +89,5 @@
     "test:e2e": "cd e2e && playwright test",
     "dev": "run-s \"build:src --watch\"",
     "play": "cd playground && eleventy --serve --incremental"
-  },
-  "volta": {
-    "node": "14.18.1"
   }
 }

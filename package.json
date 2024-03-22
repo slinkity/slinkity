@@ -11,7 +11,7 @@
     "url": "https://bholmes.dev/"
   },
   "engines": {
-    "node": ">=14"
+    "node": ">=16"
   },
   "keywords": [
     "static-site-generator",
@@ -90,9 +90,5 @@
     "roots": [
       "<rootDir>/packages/"
     ]
-  },
-  "volta": {
-    "node": "14.18.1",
-    "npm": "7.24.2"
   }
 }
