@@ -1,20 +1,18 @@
-![Slinkity - To eleventy and beyond](https://slinkity.dev/assets/og-image-banner.jpg)
-
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/slinkity/slinkity/blob/main/LICENSE.md)
 [![Twitter: slinkitydotdev](https://img.shields.io/twitter/follow/slinkitydotdev.svg?style=social)](https://twitter.com/slinkitydotdev)
 
 # Slinkity
 
-> 🚧 **This project is heavily under construction!** 🚧 As excited as you may be, we don't recommend this early alpha for production use. Still, give it a try if you want to have some fun and don't mind [logging bugs](https://github.com/slinkity/slinkity/issues) along the way :)
+> ⚠️ **This project is no longer maintained.** The project owner ([@bholmesdev](https://github.com/bholmesdev)) now works on [Astro](https://astro.build) full-time. If you want to build component-driven content sites, give Astro a try! If you're committed to 11ty and want to use client components, consider [11ty's WebC project](https://www.11ty.dev/docs/languages/webc/).
 
-[Slinkity](https://slinkity.dev) is the simplest way to handle styles and component frameworks on your 11ty site. Once installed, this:
+## About
+
+[Slinkity](https://slinkity.dev) is a simple way to handle styles and component frameworks on your 11ty site. Once installed, this:
 
 - 🚀 **Unlocks component frameworks** like React for writing page templates and layout templates. Turn an existing `.html` or `.liquid` file into a `.jsx` file, and you're off to the componentized races.
 - 🔖 **Includes powerful shortcodes** to insert components into existing pages. Add a line like this to your markdown, HTML, Nunjucks, etc, and watch the magic happen: `{% react 'path/to/component' %}`
 - 💧 **Hydrates these components** when and how you want. Use component frameworks as a static template to start, and opt-in to shipping JS as needed with our [partial hydration helpers](https://slinkity.dev/docs/partial-hydration/).
 - 💅 **Bundles all your resources** with the power of Vite. Use your favorite CSS preprocessor, JS minifier, and more with minimal config.
-
-### [📣 Find our full announcement post here →](https://slinkity.dev)
 
 ## Technologies used
 
