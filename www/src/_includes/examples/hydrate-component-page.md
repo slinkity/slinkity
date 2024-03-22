@@ -9,7 +9,7 @@
 import { useState } from 'react'
 
 export const island = {
-  client: 'load',
+  when: 'client:load',
 }
 
 export default function About() {
@@ -37,7 +37,7 @@ export default function About() {
 import { ref } from "vue";
 export default {
   island: {
-    client: 'load',
+    when: 'client:load',
   },
   setup() {
     const count = ref(0);
@@ -54,7 +54,7 @@ export default {
 <!--about.svelte-->
 <script context="module">
   export const island = {
-    client: 'load',
+    when: 'client:load',
   }
 </script>
 
