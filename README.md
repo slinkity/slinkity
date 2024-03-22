@@ -23,30 +23,8 @@ Slinkity stands on the shoulders of giants. You can think of Slinkity as the "gl
 
 ## Getting started
 
-Use our handy CLI command to spin up a Slinkity site: `npm init slinkity`. This demos our core functionality while staying as lean as possible, making it the perfect launchpad for new projects 🚀
+Use our CLI command to spin up a Slinkity site: `npm init slinkity`. This demos our core functionality while staying as lean as possible.
 
 To learn more, and explore adding Slinkity to _existing_ 11ty projects...
 
 ### [🐣 See our "quick start" guide →](https://slinkity.dev/docs/quick-start)
-
-## Feature set
-
-This project is still in early alpha, so we have many features soon to come! [This demo](https://www.youtube.com/watch?v=X_zp6CodHjc&t=493s) covers a majority of features we support today. For reference, here's our complete roadmap of current and upcoming features:
-
-| Feature                                                                               | Status    |
-|---------------------------------------------------------------------------------------|-----------|
-| CLI to run 11ty and Vite simultaneously                                               | ✅         |
-| Plugin ecosystem for your favorite component framework (React, Vue, Svelte, etc)      | ✅         |
-| Component pages                                                                       | ✅         |
-| Component shortcodes                                                                  | ✅         |
-| SCSS and SASS                                                                         | ✅         |
-| PostCSS config (ex. Tailwind)                                                         | ✅         |
-| CSS imports via ESM (including CSS modules)                                           | ✅         |
-| Shared state between any component shortcode                                          | ⏳         |
-
-- ✅ = Ready to use
-- ⏳ = In progress
-
-## Have an idea? Notice a bug?
-
-We'd love to hear your feedback! Feel free to log an issue on our [GitHub issues page](https://github.com/slinkity/slinkity/issues). If your question is more personal, [our Twitter DMs](https://twitter.com/slinkitydotdev) are always open as well.
